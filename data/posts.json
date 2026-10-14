@@ -1468,5 +1468,1000 @@
       "amor,",
       "apoyo"
     ]
+  },
+  {
+    "slug": "50-banderines-para-cumpleanos-imprimir-gratis",
+    "title": "50 banderines para cumpleaños para imprimir gratis: diseños únicos y fáciles de personalizar",
+    "description": "Elegí entre 50 ideas de banderines para cumpleaños, conocé cómo imprimirlos y abrí una plantilla HTML gratuita para decorar tu fiesta.",
+    "category": "recursos-gratuitos",
+    "intro": "Los banderines aportan color, ayudan a destacar una mesa o un rincón para fotos y permiten adaptar la decoración a casi cualquier temática. Reunimos 50 ideas y una plantilla imprimible gratuita para que puedas prepararlos en casa.",
+    "keywords": [
+      "50 banderines para cumpleaños para imprimir gratis",
+      "banderines de cumpleaños",
+      "guirnaldas imprimibles",
+      "decoración de cumpleaños",
+      "banderines para fiestas",
+      "plantillas gratuitas"
+    ],
+    "banderines": [
+      {
+        "text": "Feliz cumpleaños",
+        "name": "Clásico elegante",
+        "bg": "#fff0e6",
+        "accent": "#c34d2c"
+      },
+      {
+        "text": "¡Celebrá!",
+        "name": "Celeste festivo",
+        "bg": "#e9f3ff",
+        "accent": "#275dad"
+      },
+      {
+        "text": "Que se cumplan tus sueños",
+        "name": "Degradé de colores",
+        "bg": "#fff5b8",
+        "accent": "#a85b12"
+      },
+      {
+        "text": "Feliz cumple",
+        "name": "Minimalista moderno",
+        "bg": "#f4eaff",
+        "accent": "#7546a8"
+      },
+      {
+        "text": "Un año más de alegrías",
+        "name": "Amarillo alegre",
+        "bg": "#e5f6ed",
+        "accent": "#277a55"
+      },
+      {
+        "text": "Supercumple",
+        "name": "Superhéroes",
+        "bg": "#ffe8f1",
+        "accent": "#b42e67"
+      },
+      {
+        "text": "Día de princesa",
+        "name": "Corona rosa",
+        "bg": "#edf6ff",
+        "accent": "#157c91"
+      },
+      {
+        "text": "Fiesta arcoíris",
+        "name": "Multicolor",
+        "bg": "#f9ebdf",
+        "accent": "#8a4f2b"
+      },
+      {
+        "text": "Viaje en el tiempo",
+        "name": "Retro vintage",
+        "bg": "#f1f0ff",
+        "accent": "#4c4da8"
+      },
+      {
+        "text": "Pequeño científico",
+        "name": "Ciencia divertida",
+        "bg": "#fff0c9",
+        "accent": "#866116"
+      },
+      {
+        "text": "¡Soy +1!",
+        "name": "Primer cumpleaños",
+        "bg": "#fff0e6",
+        "accent": "#c34d2c"
+      },
+      {
+        "text": "Dulces sueños",
+        "name": "Nubes suaves",
+        "bg": "#e9f3ff",
+        "accent": "#275dad"
+      },
+      {
+        "text": "Aventura",
+        "name": "Exploradores",
+        "bg": "#fff5b8",
+        "accent": "#a85b12"
+      },
+      {
+        "text": "Amiguitos",
+        "name": "Huellas y amistad",
+        "bg": "#f4eaff",
+        "accent": "#7546a8"
+      },
+      {
+        "text": "Juguemos",
+        "name": "Dados y juegos",
+        "bg": "#e5f6ed",
+        "accent": "#277a55"
+      },
+      {
+        "text": "Gracias por existir",
+        "name": "Corazón",
+        "bg": "#ffe8f1",
+        "accent": "#b42e67"
+      },
+      {
+        "text": "Sos especial",
+        "name": "Estrellas",
+        "bg": "#edf6ff",
+        "accent": "#157c91"
+      },
+      {
+        "text": "Abrazos y sonrisas",
+        "name": "Cariño",
+        "bg": "#f9ebdf",
+        "accent": "#8a4f2b"
+      },
+      {
+        "text": "El mejor regalo sos vos",
+        "name": "Regalo",
+        "bg": "#f1f0ff",
+        "accent": "#4c4da8"
+      },
+      {
+        "text": "Amor infinito",
+        "name": "Corazón infinito",
+        "bg": "#fff0c9",
+        "accent": "#866116"
+      },
+      {
+        "text": "#FelizCumple",
+        "name": "Redes sociales",
+        "bg": "#fff0e6",
+        "accent": "#c34d2c"
+      },
+      {
+        "text": "Hoy es TU día",
+        "name": "Negro y dorado",
+        "bg": "#e9f3ff",
+        "accent": "#275dad"
+      },
+      {
+        "text": "Smile!",
+        "name": "Sonrisas",
+        "bg": "#fff5b8",
+        "accent": "#a85b12"
+      },
+      {
+        "text": "Cumple mágico",
+        "name": "Fantasía",
+        "bg": "#f4eaff",
+        "accent": "#7546a8"
+      },
+      {
+        "text": "Brillá como nunca",
+        "name": "Brillo plateado",
+        "bg": "#e5f6ed",
+        "accent": "#277a55"
+      },
+      {
+        "text": "Sol de fiesta",
+        "name": "Forma de sol",
+        "bg": "#ffe8f1",
+        "accent": "#b42e67"
+      },
+      {
+        "text": "Nube de deseos",
+        "name": "Forma de nube",
+        "bg": "#edf6ff",
+        "accent": "#157c91"
+      },
+      {
+        "text": "Corazón contento",
+        "name": "Forma de corazón",
+        "bg": "#f9ebdf",
+        "accent": "#8a4f2b"
+      },
+      {
+        "text": "Una estrella sos",
+        "name": "Forma de estrella",
+        "bg": "#f1f0ff",
+        "accent": "#4c4da8"
+      },
+      {
+        "text": "Globos al cielo",
+        "name": "Forma de globos",
+        "bg": "#fff0c9",
+        "accent": "#866116"
+      },
+      {
+        "text": "Gran Gatsby",
+        "name": "Años veinte",
+        "bg": "#fff0e6",
+        "accent": "#c34d2c"
+      },
+      {
+        "text": "Noche de cine",
+        "name": "Cine",
+        "bg": "#e9f3ff",
+        "accent": "#275dad"
+      },
+      {
+        "text": "Carnaval de colores",
+        "name": "Carnaval",
+        "bg": "#fff5b8",
+        "accent": "#a85b12"
+      },
+      {
+        "text": "Modo gamer",
+        "name": "Videojuegos",
+        "bg": "#f4eaff",
+        "accent": "#7546a8"
+      },
+      {
+        "text": "Aventura espacial",
+        "name": "Planetas",
+        "bg": "#e5f6ed",
+        "accent": "#277a55"
+      },
+      {
+        "text": "Arcoíris feliz",
+        "name": "Arcoíris",
+        "bg": "#ffe8f1",
+        "accent": "#b42e67"
+      },
+      {
+        "text": "Rosa degradé",
+        "name": "Rosa suave",
+        "bg": "#edf6ff",
+        "accent": "#157c91"
+      },
+      {
+        "text": "Azul degradé",
+        "name": "Azul fresco",
+        "bg": "#f9ebdf",
+        "accent": "#8a4f2b"
+      },
+      {
+        "text": "Rayas divertidas",
+        "name": "Rayas",
+        "bg": "#f1f0ff",
+        "accent": "#4c4da8"
+      },
+      {
+        "text": "Lluvia de puntos",
+        "name": "Puntos",
+        "bg": "#fff0c9",
+        "accent": "#866116"
+      },
+      {
+        "text": "Dorado y negro",
+        "name": "Elegancia",
+        "bg": "#fff0e6",
+        "accent": "#c34d2c"
+      },
+      {
+        "text": "Blanco y dorado",
+        "name": "Clásico premium",
+        "bg": "#e9f3ff",
+        "accent": "#275dad"
+      },
+      {
+        "text": "Azul y plata",
+        "name": "Plateado",
+        "bg": "#fff5b8",
+        "accent": "#a85b12"
+      },
+      {
+        "text": "Flores delicadas",
+        "name": "Floral",
+        "bg": "#f4eaff",
+        "accent": "#7546a8"
+      },
+      {
+        "text": "Menos es más",
+        "name": "Minimalista",
+        "bg": "#e5f6ed",
+        "accent": "#277a55"
+      },
+      {
+        "text": "Pequeña ciudad",
+        "name": "Profesiones",
+        "bg": "#ffe8f1",
+        "accent": "#b42e67"
+      },
+      {
+        "text": "Pasión por el deporte",
+        "name": "Deportes",
+        "bg": "#edf6ff",
+        "accent": "#157c91"
+      },
+      {
+        "text": "Que suene la música",
+        "name": "Música",
+        "bg": "#f9ebdf",
+        "accent": "#8a4f2b"
+      },
+      {
+        "text": "Manos a la obra",
+        "name": "Arte",
+        "bg": "#f1f0ff",
+        "accent": "#4c4da8"
+      },
+      {
+        "text": "Tu propio diseño",
+        "name": "Personalizable",
+        "bg": "#fff0c9",
+        "accent": "#866116"
+      }
+    ],
+    "sections": [
+      {
+        "h2": "Cómo elegir banderines para tu celebración",
+        "paragraphs": [
+          "Antes de imprimir, definí dónde vas a colgarlos, qué colores ya tiene la decoración y qué tamaño te conviene. Para una pared o fondo de fotos, las letras grandes se leen mejor; para una mesa, los diseños pequeños funcionan muy bien."
+        ],
+        "bullets": [
+          "Elegí una paleta de dos o tres colores para que la guirnalda se vea ordenada.",
+          "Usá cartulina o papel grueso si los banderines van a colgarse durante varias horas.",
+          "Dejá margen para perforar o pegar el hilo sin tapar el diseño."
+        ]
+      },
+      {
+        "h2": "Banderines clásicos y elegantes",
+        "paragraphs": [
+          "Ideas para una decoración simple que combine con casi cualquier festejo."
+        ],
+        "bullets": [
+          "1. Clásico elegante: Feliz cumpleaños.",
+          "2. Celeste festivo: ¡Celebrá!.",
+          "3. Degradé de colores: Que se cumplan tus sueños.",
+          "4. Minimalista moderno: Feliz cumple.",
+          "5. Amarillo alegre: Un año más de alegrías.",
+          "6. Superhéroes: Supercumple.",
+          "7. Corona rosa: Día de princesa.",
+          "8. Multicolor: Fiesta arcoíris.",
+          "9. Retro vintage: Viaje en el tiempo.",
+          "10. Ciencia divertida: Pequeño científico."
+        ]
+      },
+      {
+        "h2": "Banderines infantiles y de fantasía",
+        "paragraphs": [
+          "Diseños alegres para cumpleaños infantiles y reuniones familiares."
+        ],
+        "bullets": [
+          "11. Primer cumpleaños: ¡Soy +1!.",
+          "12. Nubes suaves: Dulces sueños.",
+          "13. Exploradores: Aventura.",
+          "14. Huellas y amistad: Amiguitos.",
+          "15. Dados y juegos: Juguemos.",
+          "16. Corazón: Gracias por existir.",
+          "17. Estrellas: Sos especial.",
+          "18. Cariño: Abrazos y sonrisas.",
+          "19. Regalo: El mejor regalo sos vos.",
+          "20. Corazón infinito: Amor infinito."
+        ]
+      },
+      {
+        "h2": "Banderines emotivos y para compartir",
+        "paragraphs": [
+          "Mensajes cálidos para sumar personalidad a la celebración."
+        ],
+        "bullets": [
+          "21. Redes sociales: #FelizCumple.",
+          "22. Negro y dorado: Hoy es TU día.",
+          "23. Sonrisas: Smile!.",
+          "24. Fantasía: Cumple mágico.",
+          "25. Brillo plateado: Brillá como nunca.",
+          "26. Forma de sol: Sol de fiesta.",
+          "27. Forma de nube: Nube de deseos.",
+          "28. Forma de corazón: Corazón contento.",
+          "29. Forma de estrella: Una estrella sos.",
+          "30. Forma de globos: Globos al cielo."
+        ]
+      },
+      {
+        "h2": "Banderines con formas y colores",
+        "paragraphs": [
+          "Opciones visuales que funcionan bien como fondo de fotos."
+        ],
+        "bullets": [
+          "31. Años veinte: Gran Gatsby.",
+          "32. Cine: Noche de cine.",
+          "33. Carnaval: Carnaval de colores.",
+          "34. Videojuegos: Modo gamer.",
+          "35. Planetas: Aventura espacial.",
+          "36. Arcoíris: Arcoíris feliz.",
+          "37. Rosa suave: Rosa degradé.",
+          "38. Azul fresco: Azul degradé.",
+          "39. Rayas: Rayas divertidas.",
+          "40. Puntos: Lluvia de puntos."
+        ]
+      },
+      {
+        "h2": "Banderines temáticos y originales",
+        "paragraphs": [
+          "Ideas para fiestas con un concepto claro o una estética especial."
+        ],
+        "bullets": [
+          "41. Elegancia: Dorado y negro.",
+          "42. Clásico premium: Blanco y dorado.",
+          "43. Plateado: Azul y plata.",
+          "44. Floral: Flores delicadas.",
+          "45. Minimalista: Menos es más.",
+          "46. Profesiones: Pequeña ciudad.",
+          "47. Deportes: Pasión por el deporte.",
+          "48. Música: Que suene la música.",
+          "49. Arte: Manos a la obra.",
+          "50. Personalizable: Tu propio diseño."
+        ]
+      },
+      {
+        "h2": "Cómo imprimir y armar la guirnalda",
+        "paragraphs": [
+          "Abrí la plantilla imprimible y usá la opción de imprimir del navegador. También podés elegir “Guardar como PDF” para conservar una copia y volver a imprimir cuando la necesites."
+        ],
+        "bullets": [
+          "Probá primero con una hoja común para revisar el tamaño.",
+          "Para que duren más, imprimí en cartulina liviana o pegá cada hoja sobre un soporte firme.",
+          "Recortá siguiendo el contorno, hacé dos agujeros superiores y pasá un hilo o cinta.",
+          "Alterná colores y dejá un pequeño espacio entre banderines para que cada diseño se lea."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "q": "¿Cómo puedo imprimir banderines de cumpleaños gratis?",
+        "a": "Abrí la plantilla imprimible, elegí el tamaño de papel y usá la función de imprimir del navegador. También podés guardar una copia como PDF para imprimirla después."
+      },
+      {
+        "q": "¿Qué papel conviene usar para los banderines?",
+        "a": "La cartulina liviana ofrece más firmeza que el papel común. Si tu impresora no admite papel grueso, imprimí en hojas normales y pegá cada diseño sobre una base."
+      },
+      {
+        "q": "¿Cómo cuelgo los banderines?",
+        "a": "Podés hacer dos perforaciones cerca de las esquinas superiores y pasar un hilo, o usar cinta de papel en la parte trasera. Evitá tapar el diseño."
+      }
+    ],
+    "related": [
+      "30-plantillas-de-invitaciones-para-cumpleanos",
+      "20-ideas-de-tematicas-para-cumpleanos-que-nadie-mas-tiene",
+      "decoracion-de-cumpleanos-economica"
+    ]
+  },
+  {
+    "slug": "30-plantillas-de-invitaciones-para-cumpleanos",
+    "title": "30 plantillas de invitaciones para cumpleaños: textos listos para personalizar",
+    "description": "30 plantillas de invitaciones para cumpleaños infantiles, adultos, fiestas temáticas y reuniones familiares, listas para copiar, adaptar e imprimir.",
+    "category": "recursos-gratuitos",
+    "intro": "Una buena invitación combina un tono acorde a la fiesta con la información que nadie debería tener que preguntar después. Estas 30 plantillas son puntos de partida: reemplazá los campos entre corchetes, revisá los datos y compartí la versión que mejor encaje con tu celebración.",
+    "keywords": [
+      "30 plantillas de invitaciones para cumpleaños",
+      "invitaciones de cumpleaños para imprimir",
+      "textos de invitación",
+      "plantillas de cumpleaños gratis",
+      "invitación infantil",
+      "invitación para adultos"
+    ],
+    "templates": [
+      {
+        "title": "Infantil colorida",
+        "text": "¡Vamos a festejar los [edad] de [nombre]! Te esperamos el [fecha] a las [hora] en [dirección]. Confirmá asistencia al [contacto].",
+        "group": 0,
+        "bg": "#fff5b8",
+        "accent": "#a85b12"
+      },
+      {
+        "title": "Animales y aventura",
+        "text": "¡Una aventura de cumpleaños nos espera! Vení a celebrar con [nombre] el [fecha] a las [hora] en [dirección]. Avisanos si venís al [contacto].",
+        "group": 0,
+        "bg": "#f4eaff",
+        "accent": "#7546a8"
+      },
+      {
+        "title": "Princesas y fantasía",
+        "text": "Un día de cuentos, juegos y torta: [nombre] cumple [edad] y quiere compartirlo con vos. [fecha], [hora], [dirección].",
+        "group": 0,
+        "bg": "#e5f6ed",
+        "accent": "#277a55"
+      },
+      {
+        "title": "Superhéroes",
+        "text": "¡Se necesita tu superpoder para una misión especial! Cumpleaños de [nombre], [fecha] a las [hora], en [dirección]. Confirmá al [contacto].",
+        "group": 0,
+        "bg": "#ffe8f1",
+        "accent": "#b42e67"
+      },
+      {
+        "title": "Dinosaurios",
+        "text": "¡Prepárate para una fiesta jurásica! [nombre] cumple [edad]. Te esperamos el [fecha] a las [hora] en [dirección].",
+        "group": 0,
+        "bg": "#edf6ff",
+        "accent": "#157c91"
+      },
+      {
+        "title": "Espacio y planetas",
+        "text": "¡Despegamos hacia una nueva aventura! Celebramos el cumple de [nombre] el [fecha] a las [hora]. Base de lanzamiento: [dirección].",
+        "group": 0,
+        "bg": "#f9ebdf",
+        "accent": "#8a4f2b"
+      },
+      {
+        "title": "Primer cumpleaños",
+        "text": "¡Un añito lleno de primeras veces! Acompañanos a celebrar el primer cumple de [nombre] el [fecha] a las [hora] en [dirección].",
+        "group": 0,
+        "bg": "#f1f0ff",
+        "accent": "#4c4da8"
+      },
+      {
+        "title": "Merienda en casa",
+        "text": "¡Hay torta, algo rico y ganas de verte! Te espero para mi cumple el [fecha] a las [hora] en [dirección]. Confirmá al [contacto].",
+        "group": 0,
+        "bg": "#fff0c9",
+        "accent": "#866116"
+      },
+      {
+        "title": "Picnic en el parque",
+        "text": "La fiesta se muda al aire libre. Vení al picnic de cumpleaños de [nombre] el [fecha] a las [hora] en [lugar]. Traé ganas de pasarla bien.",
+        "group": 0,
+        "bg": "#fff0e6",
+        "accent": "#c34d2c"
+      },
+      {
+        "title": "Pileta y verano",
+        "text": "¡Cumple con clima de verano! Te esperamos el [fecha] desde las [hora] en [dirección]. Traé toalla y ropa cómoda. Confirmá al [contacto].",
+        "group": 0,
+        "bg": "#e9f3ff",
+        "accent": "#275dad"
+      },
+      {
+        "title": "Elegante minimalista",
+        "text": "Con mucha alegría te invitamos a celebrar el cumpleaños de [nombre]. [fecha], [hora], [dirección]. Agradecemos confirmar al [contacto].",
+        "group": 1,
+        "bg": "#fff5b8",
+        "accent": "#a85b12"
+      },
+      {
+        "title": "Floral",
+        "text": "Flores, buenos deseos y una nueva vuelta al sol. Acompañanos a celebrar a [nombre] el [fecha] a las [hora] en [dirección].",
+        "group": 1,
+        "bg": "#f4eaff",
+        "accent": "#7546a8"
+      },
+      {
+        "title": "Noche de luces",
+        "text": "Una noche para brindar, bailar y crear recuerdos. Cumpleaños de [nombre], [fecha] a las [hora], en [dirección]. Vestimenta: [opcional].",
+        "group": 1,
+        "bg": "#e5f6ed",
+        "accent": "#277a55"
+      },
+      {
+        "title": "Fiesta sorpresa",
+        "text": "¡Shhh, es sorpresa! Ayudanos a celebrar a [nombre] el [fecha] a las [hora] en [dirección]. Llegá unos minutos antes y no reveles el plan.",
+        "group": 1,
+        "bg": "#ffe8f1",
+        "accent": "#b42e67"
+      },
+      {
+        "title": "Cumpleaños de 18",
+        "text": "¡Llegaron los 18 de [nombre]! Vení a compartir una noche especial el [fecha] a las [hora] en [dirección]. Confirmá tu lugar al [contacto].",
+        "group": 1,
+        "bg": "#edf6ff",
+        "accent": "#157c91"
+      },
+      {
+        "title": "Cumpleaños de 30",
+        "text": "Treinta razones para celebrar y muchas más por venir. Te espero el [fecha] a las [hora] en [dirección] para brindar por esta nueva etapa.",
+        "group": 1,
+        "bg": "#f9ebdf",
+        "accent": "#8a4f2b"
+      },
+      {
+        "title": "Cumpleaños de 40",
+        "text": "Los 40 se celebran mejor con buena compañía. Sumate al festejo de [nombre] el [fecha] a las [hora] en [dirección].",
+        "group": 1,
+        "bg": "#f1f0ff",
+        "accent": "#4c4da8"
+      },
+      {
+        "title": "Cumpleaños de 50",
+        "text": "Medio siglo de historias merece un encuentro especial. Acompañanos a celebrar a [nombre] el [fecha] a las [hora] en [dirección].",
+        "group": 1,
+        "bg": "#fff0c9",
+        "accent": "#866116"
+      },
+      {
+        "title": "Fiesta temática",
+        "text": "Guardá la fecha: el cumpleaños de [nombre] tiene temática [tema]. Nos encontramos el [fecha] a las [hora] en [dirección]. ¡Venite con ganas de jugar!",
+        "group": 1,
+        "bg": "#fff0e6",
+        "accent": "#c34d2c"
+      },
+      {
+        "title": "Karaoke",
+        "text": "Prepará tu canción favorita: festejamos el cumple de [nombre] con karaoke el [fecha] a las [hora] en [dirección]. El escenario te espera.",
+        "group": 1,
+        "bg": "#e9f3ff",
+        "accent": "#275dad"
+      },
+      {
+        "title": "Noche de juegos",
+        "text": "Dados, cartas y torta: te invitamos al cumpleaños de [nombre] el [fecha] a las [hora] en [dirección]. Si tenés un juego favorito, traelo.",
+        "group": 2,
+        "bg": "#fff5b8",
+        "accent": "#a85b12"
+      },
+      {
+        "title": "Cumple en el trabajo",
+        "text": "¡Vamos a hacer una pausa para celebrar! Te esperamos para compartir el cumpleaños de [nombre] el [fecha] a las [hora] en [lugar].",
+        "group": 2,
+        "bg": "#f4eaff",
+        "accent": "#7546a8"
+      },
+      {
+        "title": "Cumpleaños virtual",
+        "text": "Aunque estemos lejos, queremos festejar juntos. Conectate el [fecha] a las [hora] en [enlace]. Prepará algo rico y brindemos a la distancia.",
+        "group": 2,
+        "bg": "#e5f6ed",
+        "accent": "#277a55"
+      },
+      {
+        "title": "Invitación familiar",
+        "text": "Nos juntamos para celebrar a [nombre], compartir algo rico y pasar un buen rato. Te esperamos el [fecha] a las [hora] en [dirección].",
+        "group": 2,
+        "bg": "#ffe8f1",
+        "accent": "#b42e67"
+      },
+      {
+        "title": "Cumpleaños con amigos",
+        "text": "Un año más, la misma buena compañía. Vení a festejar conmigo el [fecha] a las [hora] en [dirección]. Avisame si podés venir.",
+        "group": 2,
+        "bg": "#edf6ff",
+        "accent": "#157c91"
+      },
+      {
+        "title": "Cena íntima",
+        "text": "Me gustaría compartir una cena tranquila para celebrar mi cumpleaños. Te espero el [fecha] a las [hora] en [dirección]. Confirmá al [contacto].",
+        "group": 2,
+        "bg": "#f9ebdf",
+        "accent": "#8a4f2b"
+      },
+      {
+        "title": "Fiesta de disfraces",
+        "text": "Elegí tu personaje y sumate al cumpleaños de [nombre]. Nos vemos el [fecha] a las [hora] en [dirección]. ¡Premio simbólico al disfraz más original!",
+        "group": 2,
+        "bg": "#f1f0ff",
+        "accent": "#4c4da8"
+      },
+      {
+        "title": "Cumpleaños musical",
+        "text": "La playlist la hacemos entre todos. Vení a celebrar a [nombre] el [fecha] a las [hora] en [dirección] y mandá tu canción favorita.",
+        "group": 2,
+        "bg": "#fff0c9",
+        "accent": "#866116"
+      },
+      {
+        "title": "Cumpleaños en el jardín",
+        "text": "Un festejo al aire libre, algo rico y buena compañía. Te esperamos el [fecha] a las [hora] en [dirección]. Si llueve, avisaremos el plan alternativo.",
+        "group": 2,
+        "bg": "#fff0e6",
+        "accent": "#c34d2c"
+      },
+      {
+        "title": "Formal con confirmación",
+        "text": "Tenemos el gusto de invitarte al cumpleaños de [nombre], que se realizará el [fecha] a las [hora] en [dirección]. Por favor, confirmá antes del [fecha límite] al [contacto].",
+        "group": 2,
+        "bg": "#e9f3ff",
+        "accent": "#275dad"
+      }
+    ],
+    "sections": [
+      {
+        "h2": "Plantillas infantiles y temáticas",
+        "paragraphs": [
+          "Las primeras diez opciones son ideales para fiestas infantiles, aventuras y celebraciones con una temática reconocible."
+        ],
+        "bullets": [
+          "1. Infantil colorida: ¡Vamos a festejar los [edad] de [nombre]! Te esperamos el [fecha] a las [hora] en [dirección]. Confirmá asistencia al [contacto].",
+          "2. Animales y aventura: ¡Una aventura de cumpleaños nos espera! Vení a celebrar con [nombre] el [fecha] a las [hora] en [dirección]. Avisanos si venís al [contacto].",
+          "3. Princesas y fantasía: Un día de cuentos, juegos y torta: [nombre] cumple [edad] y quiere compartirlo con vos. [fecha], [hora], [dirección].",
+          "4. Superhéroes: ¡Se necesita tu superpoder para una misión especial! Cumpleaños de [nombre], [fecha] a las [hora], en [dirección]. Confirmá al [contacto].",
+          "5. Dinosaurios: ¡Prepárate para una fiesta jurásica! [nombre] cumple [edad]. Te esperamos el [fecha] a las [hora] en [dirección].",
+          "6. Espacio y planetas: ¡Despegamos hacia una nueva aventura! Celebramos el cumple de [nombre] el [fecha] a las [hora]. Base de lanzamiento: [dirección].",
+          "7. Primer cumpleaños: ¡Un añito lleno de primeras veces! Acompañanos a celebrar el primer cumple de [nombre] el [fecha] a las [hora] en [dirección].",
+          "8. Merienda en casa: ¡Hay torta, algo rico y ganas de verte! Te espero para mi cumple el [fecha] a las [hora] en [dirección]. Confirmá al [contacto].",
+          "9. Picnic en el parque: La fiesta se muda al aire libre. Vení al picnic de cumpleaños de [nombre] el [fecha] a las [hora] en [lugar]. Traé ganas de pasarla bien.",
+          "10. Pileta y verano: ¡Cumple con clima de verano! Te esperamos el [fecha] desde las [hora] en [dirección]. Traé toalla y ropa cómoda. Confirmá al [contacto]."
+        ]
+      },
+      {
+        "h2": "Invitaciones para adolescentes y adultos",
+        "paragraphs": [
+          "Estas ideas sirven para cumpleaños redondos, reuniones con amigos, cenas y fiestas con música."
+        ],
+        "bullets": [
+          "11. Elegante minimalista: Con mucha alegría te invitamos a celebrar el cumpleaños de [nombre]. [fecha], [hora], [dirección]. Agradecemos confirmar al [contacto].",
+          "12. Floral: Flores, buenos deseos y una nueva vuelta al sol. Acompañanos a celebrar a [nombre] el [fecha] a las [hora] en [dirección].",
+          "13. Noche de luces: Una noche para brindar, bailar y crear recuerdos. Cumpleaños de [nombre], [fecha] a las [hora], en [dirección]. Vestimenta: [opcional].",
+          "14. Fiesta sorpresa: ¡Shhh, es sorpresa! Ayudanos a celebrar a [nombre] el [fecha] a las [hora] en [dirección]. Llegá unos minutos antes y no reveles el plan.",
+          "15. Cumpleaños de 18: ¡Llegaron los 18 de [nombre]! Vení a compartir una noche especial el [fecha] a las [hora] en [dirección]. Confirmá tu lugar al [contacto].",
+          "16. Cumpleaños de 30: Treinta razones para celebrar y muchas más por venir. Te espero el [fecha] a las [hora] en [dirección] para brindar por esta nueva etapa.",
+          "17. Cumpleaños de 40: Los 40 se celebran mejor con buena compañía. Sumate al festejo de [nombre] el [fecha] a las [hora] en [dirección].",
+          "18. Cumpleaños de 50: Medio siglo de historias merece un encuentro especial. Acompañanos a celebrar a [nombre] el [fecha] a las [hora] en [dirección].",
+          "19. Fiesta temática: Guardá la fecha: el cumpleaños de [nombre] tiene temática [tema]. Nos encontramos el [fecha] a las [hora] en [dirección]. ¡Venite con ganas de jugar!",
+          "20. Karaoke: Prepará tu canción favorita: festejamos el cumple de [nombre] con karaoke el [fecha] a las [hora] en [dirección]. El escenario te espera."
+        ]
+      },
+      {
+        "h2": "Invitaciones familiares y formatos especiales",
+        "paragraphs": [
+          "Elegí estas plantillas para reuniones íntimas, encuentros a distancia o celebraciones que necesitan datos adicionales."
+        ],
+        "bullets": [
+          "21. Noche de juegos: Dados, cartas y torta: te invitamos al cumpleaños de [nombre] el [fecha] a las [hora] en [dirección]. Si tenés un juego favorito, traelo.",
+          "22. Cumple en el trabajo: ¡Vamos a hacer una pausa para celebrar! Te esperamos para compartir el cumpleaños de [nombre] el [fecha] a las [hora] en [lugar].",
+          "23. Cumpleaños virtual: Aunque estemos lejos, queremos festejar juntos. Conectate el [fecha] a las [hora] en [enlace]. Prepará algo rico y brindemos a la distancia.",
+          "24. Invitación familiar: Nos juntamos para celebrar a [nombre], compartir algo rico y pasar un buen rato. Te esperamos el [fecha] a las [hora] en [dirección].",
+          "25. Cumpleaños con amigos: Un año más, la misma buena compañía. Vení a festejar conmigo el [fecha] a las [hora] en [dirección]. Avisame si podés venir.",
+          "26. Cena íntima: Me gustaría compartir una cena tranquila para celebrar mi cumpleaños. Te espero el [fecha] a las [hora] en [dirección]. Confirmá al [contacto].",
+          "27. Fiesta de disfraces: Elegí tu personaje y sumate al cumpleaños de [nombre]. Nos vemos el [fecha] a las [hora] en [dirección]. ¡Premio simbólico al disfraz más original!",
+          "28. Cumpleaños musical: La playlist la hacemos entre todos. Vení a celebrar a [nombre] el [fecha] a las [hora] en [dirección] y mandá tu canción favorita.",
+          "29. Cumpleaños en el jardín: Un festejo al aire libre, algo rico y buena compañía. Te esperamos el [fecha] a las [hora] en [dirección]. Si llueve, avisaremos el plan alternativo.",
+          "30. Formal con confirmación: Tenemos el gusto de invitarte al cumpleaños de [nombre], que se realizará el [fecha] a las [hora] en [dirección]. Por favor, confirmá antes del [fecha límite] al [contacto]."
+        ]
+      },
+      {
+        "h2": "Qué revisar antes de enviar la invitación",
+        "paragraphs": [
+          "Antes de compartirla, comprobá que todos los datos estén completos y que el mensaje sea fácil de leer en el teléfono."
+        ],
+        "bullets": [
+          "Nombre y edad de quien cumple años, si corresponde.",
+          "Fecha, hora y dirección exacta o enlace de conexión.",
+          "Indicaciones útiles: ropa cómoda, disfraz, traje de baño o qué llevar.",
+          "Forma y fecha límite para confirmar asistencia."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "q": "¿Cómo personalizo una plantilla de invitación?",
+        "a": "Reemplazá los campos entre corchetes con los datos reales, ajustá el tono y comprobá que fecha, horario y dirección estén correctos antes de enviarla."
+      },
+      {
+        "q": "¿Puedo imprimir estas plantillas?",
+        "a": "Sí. Podés usar la función de impresión del navegador para imprimir la página o guardar una copia en PDF. Para una invitación física, copiá el texto en un diseño con el tamaño que prefieras."
+      },
+      {
+        "q": "¿Qué información debe tener una invitación de cumpleaños?",
+        "a": "Como mínimo, quién cumple años, fecha, hora, lugar y un medio para confirmar asistencia. Añadí instrucciones especiales solo si ayudan a los invitados."
+      }
+    ],
+    "related": [
+      "que-poner-en-una-invitacion-de-cumpleanos",
+      "50-banderines-para-cumpleanos-imprimir-gratis",
+      "checklist-organizar-cumpleanos"
+    ]
+  },
+  {
+    "slug": "20-ideas-de-tematicas-para-cumpleanos-que-nadie-mas-tiene",
+    "title": "20 ideas de temáticas para cumpleaños que nadie más tiene (2026)",
+    "description": "20 temáticas originales para cumpleaños con ideas de ambientación, materiales y consejos prácticos para adaptar cada propuesta a tu presupuesto.",
+    "category": "ideas-y-tematicas",
+    "intro": "Si querés salir de las temáticas de siempre, empezá por una experiencia que encaje con la personalidad de quien cumple años. Estas 20 propuestas combinan ambientación y actividades, pero podés hacerlas simples: elegí dos detalles visuales, una dinámica y un menú posible.",
+    "keywords": [
+      "20 ideas de temáticas para cumpleaños que nadie más tiene",
+      "temáticas originales de cumpleaños",
+      "ideas de fiestas 2026",
+      "temáticas para adultos",
+      "temáticas para niños",
+      "decoración de cumpleaños"
+    ],
+    "themes": [
+      {
+        "title": "Noche de detectives",
+        "description": "Convertí la fiesta en un caso por resolver con pistas, sobres y una búsqueda final.",
+        "materials": "Sobres, tarjetas de pistas, linternas y una caja con premio.",
+        "tip": "Prepará desafíos cortos para que todos puedan participar.",
+        "group": 0
+      },
+      {
+        "title": "Escape room en casa",
+        "description": "Armá una secuencia de acertijos que lleve al grupo a descubrir dónde está la torta o el regalo.",
+        "materials": "Candados simples, acertijos impresos, cajas y cronómetro.",
+        "tip": "Probá las pistas antes de que lleguen los invitados.",
+        "group": 0
+      },
+      {
+        "title": "Museo de recuerdos",
+        "description": "Cada rincón representa una etapa de la vida de quien cumple años.",
+        "materials": "Fotos, carteles, objetos significativos y tarjetas con anécdotas.",
+        "tip": "Pediles a los invitados que aporten una historia breve.",
+        "group": 0
+      },
+      {
+        "title": "Fiesta de los años 2000",
+        "description": "Recuperá música, colores, juegos y accesorios de esa época para una celebración nostálgica.",
+        "materials": "Playlist, lentes de colores, pósteres y accesorios retro.",
+        "tip": "Convertí la música en una votación entre invitados.",
+        "group": 0
+      },
+      {
+        "title": "Campamento bajo techo",
+        "description": "Creá una noche de camping con mantas, luces cálidas y juegos de historias.",
+        "materials": "Sábanas, almohadones, luces LED y tarjetas de desafíos.",
+        "tip": "Si es para niños, elegí luces seguras y evitá llamas reales.",
+        "group": 0
+      },
+      {
+        "title": "Taller de arte colaborativo",
+        "description": "Cada invitado crea una parte de una obra colectiva que queda como recuerdo.",
+        "materials": "Papel grande, marcadores, témperas lavables y delantales.",
+        "tip": "No busques perfección: la gracia es que todos dejen su marca.",
+        "group": 1
+      },
+      {
+        "title": "Misterio en la cena",
+        "description": "Asigná personajes y pistas para que los invitados resuelvan una historia mientras comen.",
+        "materials": "Tarjetas de personajes, sobres, pistas y una lista de sospechosos.",
+        "tip": "Elegí una historia sencilla que se pueda resolver en una hora.",
+        "group": 1
+      },
+      {
+        "title": "Fiesta de viajes imaginarios",
+        "description": "Cada rincón representa un destino y la comida o música acompaña el recorrido.",
+        "materials": "Mapas, etiquetas de destinos, música y platos sencillos.",
+        "tip": "Dale a cada invitado un pasaporte para juntar sellos.",
+        "group": 1
+      },
+      {
+        "title": "Laboratorio de experimentos seguros",
+        "description": "Proponé estaciones con actividades visuales y fáciles de limpiar.",
+        "materials": "Vasos, agua, colorantes alimentarios, bicarbonato y bandejas.",
+        "tip": "Usá solo materiales apropiados para la edad y supervisá cada estación.",
+        "group": 1
+      },
+      {
+        "title": "Noche de juegos de mesa",
+        "description": "Armá mesas por tipo de juego y un sistema de puntos amistoso.",
+        "materials": "Juegos, tarjetas de puntuación, premios simbólicos y snacks.",
+        "tip": "Mezclá juegos rápidos y largos para que nadie quede afuera.",
+        "group": 1
+      },
+      {
+        "title": "Fiesta de colores secretos",
+        "description": "Cada invitado recibe un color y descubre pequeños desafíos asociados durante la fiesta.",
+        "materials": "Pulseras, servilletas, carteles y tarjetas de colores.",
+        "tip": "Mantené los colores en la decoración para no encarecer la comida.",
+        "group": 2
+      },
+      {
+        "title": "Premios inventados",
+        "description": "Organizá una entrega de premios divertidos para celebrar cualidades y anécdotas del grupo.",
+        "materials": "Diplomas, sobres, una playlist de entrada y un micrófono opcional.",
+        "tip": "Que las categorías sean cariñosas y nunca expongan a nadie.",
+        "group": 2
+      },
+      {
+        "title": "Cine al aire libre",
+        "description": "Transformá el patio o living en una función con entradas y votación de película.",
+        "materials": "Sillas, mantas, entradas impresas, pochoclos y pantalla.",
+        "tip": "Elegí la película por votación y prepará una alternativa por clima.",
+        "group": 2
+      },
+      {
+        "title": "Cumpleaños de cocina",
+        "description": "Los invitados preparan equipos para decorar galletas, pizzas pequeñas o postres simples.",
+        "materials": "Ingredientes, delantales, utensilios y tarjetas de recetas.",
+        "tip": "Revisá alergias y ofrecé una opción para quienes no cocinan.",
+        "group": 2
+      },
+      {
+        "title": "Detectives de naturaleza",
+        "description": "Organizá una búsqueda de hojas, formas, colores y objetos del entorno.",
+        "materials": "Tarjetas de observación, lupas, lápices y bolsitas de papel.",
+        "tip": "No arranquen plantas ni molesten animales.",
+        "group": 2
+      },
+      {
+        "title": "Festival de talentos sin presión",
+        "description": "Cada persona puede mostrar una habilidad, contar un chiste o elegir una canción.",
+        "materials": "Tarjetas de turnos, música y un rincón de escenario.",
+        "tip": "Dejá que participar sea opcional y celebrá todas las intervenciones.",
+        "group": 3
+      },
+      {
+        "title": "Viaje por décadas",
+        "description": "Cada sector representa una década con música, objetos y vestuario inspirados en ella.",
+        "materials": "Carteles, playlist por década, accesorios y fotos familiares.",
+        "tip": "Elegí tres décadas para que la preparación siga siendo sencilla.",
+        "group": 3
+      },
+      {
+        "title": "Fiesta de pistas musicales",
+        "description": "Reproducí fragmentos de canciones y armá equipos para adivinar artista o tema.",
+        "materials": "Parlante, tarjetas de respuestas y una playlist variada.",
+        "tip": "Incluí canciones que conecten distintas edades de invitados.",
+        "group": 3
+      },
+      {
+        "title": "Mundo en miniatura",
+        "description": "Creá estaciones de profesiones, tiendas o misiones para jugar a una ciudad pequeña.",
+        "materials": "Carteles, cajas recicladas, disfraces sencillos y fichas de juego.",
+        "tip": "Asigná tareas cortas para que todos puedan rotar.",
+        "group": 3
+      },
+      {
+        "title": "Cena de colores y sabores",
+        "description": "Cada plato o rincón se inspira en un color o una combinación de sabores.",
+        "materials": "Manteles, etiquetas, vasos de colores y recetas fáciles.",
+        "tip": "Usá la temática como guía visual, no como obligación de comprar todo nuevo.",
+        "group": 3
+      }
+    ],
+    "sections": [
+      {
+        "h2": "Temáticas originales para sorprender",
+        "paragraphs": [
+          "Propuestas que convierten el festejo en una historia o una misión."
+        ],
+        "bullets": [
+          "1. Noche de detectives: Convertí la fiesta en un caso por resolver con pistas, sobres y una búsqueda final. Materiales: Sobres, tarjetas de pistas, linternas y una caja con premio. Consejo: Prepará desafíos cortos para que todos puedan participar.",
+          "2. Escape room en casa: Armá una secuencia de acertijos que lleve al grupo a descubrir dónde está la torta o el regalo. Materiales: Candados simples, acertijos impresos, cajas y cronómetro. Consejo: Probá las pistas antes de que lleguen los invitados.",
+          "3. Museo de recuerdos: Cada rincón representa una etapa de la vida de quien cumple años. Materiales: Fotos, carteles, objetos significativos y tarjetas con anécdotas. Consejo: Pediles a los invitados que aporten una historia breve.",
+          "4. Fiesta de los años 2000: Recuperá música, colores, juegos y accesorios de esa época para una celebración nostálgica. Materiales: Playlist, lentes de colores, pósteres y accesorios retro. Consejo: Convertí la música en una votación entre invitados.",
+          "5. Campamento bajo techo: Creá una noche de camping con mantas, luces cálidas y juegos de historias. Materiales: Sábanas, almohadones, luces LED y tarjetas de desafíos. Consejo: Si es para niños, elegí luces seguras y evitá llamas reales."
+        ]
+      },
+      {
+        "h2": "Ideas participativas para grupos",
+        "paragraphs": [
+          "Ideas para que los invitados participen y no sean solo espectadores."
+        ],
+        "bullets": [
+          "6. Taller de arte colaborativo: Cada invitado crea una parte de una obra colectiva que queda como recuerdo. Materiales: Papel grande, marcadores, témperas lavables y delantales. Consejo: No busques perfección: la gracia es que todos dejen su marca.",
+          "7. Misterio en la cena: Asigná personajes y pistas para que los invitados resuelvan una historia mientras comen. Materiales: Tarjetas de personajes, sobres, pistas y una lista de sospechosos. Consejo: Elegí una historia sencilla que se pueda resolver en una hora.",
+          "8. Fiesta de viajes imaginarios: Cada rincón representa un destino y la comida o música acompaña el recorrido. Materiales: Mapas, etiquetas de destinos, música y platos sencillos. Consejo: Dale a cada invitado un pasaporte para juntar sellos.",
+          "9. Laboratorio de experimentos seguros: Proponé estaciones con actividades visuales y fáciles de limpiar. Materiales: Vasos, agua, colorantes alimentarios, bicarbonato y bandejas. Consejo: Usá solo materiales apropiados para la edad y supervisá cada estación.",
+          "10. Noche de juegos de mesa: Armá mesas por tipo de juego y un sistema de puntos amistoso. Materiales: Juegos, tarjetas de puntuación, premios simbólicos y snacks. Consejo: Mezclá juegos rápidos y largos para que nadie quede afuera."
+        ]
+      },
+      {
+        "h2": "Temáticas creativas y de experiencia",
+        "paragraphs": [
+          "Experiencias que se recuerdan por lo que se hace en la fiesta."
+        ],
+        "bullets": [
+          "11. Fiesta de colores secretos: Cada invitado recibe un color y descubre pequeños desafíos asociados durante la fiesta. Materiales: Pulseras, servilletas, carteles y tarjetas de colores. Consejo: Mantené los colores en la decoración para no encarecer la comida.",
+          "12. Premios inventados: Organizá una entrega de premios divertidos para celebrar cualidades y anécdotas del grupo. Materiales: Diplomas, sobres, una playlist de entrada y un micrófono opcional. Consejo: Que las categorías sean cariñosas y nunca expongan a nadie.",
+          "13. Cine al aire libre: Transformá el patio o living en una función con entradas y votación de película. Materiales: Sillas, mantas, entradas impresas, pochoclos y pantalla. Consejo: Elegí la película por votación y prepará una alternativa por clima.",
+          "14. Cumpleaños de cocina: Los invitados preparan equipos para decorar galletas, pizzas pequeñas o postres simples. Materiales: Ingredientes, delantales, utensilios y tarjetas de recetas. Consejo: Revisá alergias y ofrecé una opción para quienes no cocinan.",
+          "15. Detectives de naturaleza: Organizá una búsqueda de hojas, formas, colores y objetos del entorno. Materiales: Tarjetas de observación, lupas, lápices y bolsitas de papel. Consejo: No arranquen plantas ni molesten animales."
+        ]
+      },
+      {
+        "h2": "Opciones para celebrar con personalidad",
+        "paragraphs": [
+          "Opciones para adaptar a edades, espacios y presupuestos diferentes."
+        ],
+        "bullets": [
+          "16. Festival de talentos sin presión: Cada persona puede mostrar una habilidad, contar un chiste o elegir una canción. Materiales: Tarjetas de turnos, música y un rincón de escenario. Consejo: Dejá que participar sea opcional y celebrá todas las intervenciones.",
+          "17. Viaje por décadas: Cada sector representa una década con música, objetos y vestuario inspirados en ella. Materiales: Carteles, playlist por década, accesorios y fotos familiares. Consejo: Elegí tres décadas para que la preparación siga siendo sencilla.",
+          "18. Fiesta de pistas musicales: Reproducí fragmentos de canciones y armá equipos para adivinar artista o tema. Materiales: Parlante, tarjetas de respuestas y una playlist variada. Consejo: Incluí canciones que conecten distintas edades de invitados.",
+          "19. Mundo en miniatura: Creá estaciones de profesiones, tiendas o misiones para jugar a una ciudad pequeña. Materiales: Carteles, cajas recicladas, disfraces sencillos y fichas de juego. Consejo: Asigná tareas cortas para que todos puedan rotar.",
+          "20. Cena de colores y sabores: Cada plato o rincón se inspira en un color o una combinación de sabores. Materiales: Manteles, etiquetas, vasos de colores y recetas fáciles. Consejo: Usá la temática como guía visual, no como obligación de comprar todo nuevo."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "q": "¿Cómo elegir una temática de cumpleaños original?",
+        "a": "Partí de los intereses de la persona homenajeada y de lo que pueden disfrutar los invitados. Una actividad clara y dos detalles visuales suelen alcanzar para que la idea se entienda."
+      },
+      {
+        "q": "¿Cómo organizar una fiesta temática con poco presupuesto?",
+        "a": "Elegí un punto protagonista, reutilizá objetos que ya tengas y priorizá una actividad que conecte con la temática antes de comprar decoración adicional."
+      },
+      {
+        "q": "¿Qué temática funciona para distintas edades?",
+        "a": "Los juegos de mesa, el cine, la música, los viajes por décadas y los talleres creativos se pueden ajustar según la edad y los gustos del grupo."
+      }
+    ],
+    "related": [
+      "ideas-tematicas-para-cumpleanos",
+      "50-banderines-para-cumpleanos-imprimir-gratis",
+      "juegos-para-cumpleanos-infantiles"
+    ]
   }
 ]
