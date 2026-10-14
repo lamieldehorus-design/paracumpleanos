@@ -43,8 +43,8 @@ for (const route of routes.concat("/404.html")) {
 }
 
 const phrasePost = posts.find((item) => item.slug === "100-frases-de-cumpleanos-que-emocionan");
-const phraseCount = phrasePost
-  ? phrasePost.sections.reduce((total, section) => total + (section.bullets || []).length, 0)
+const phraseCount = phrasePost && phrasePost.sections[0]
+  ? (phrasePost.sections[0].bullets || []).length
   : 0;
 
 if (missing.length || missingStatcounter.length) {
