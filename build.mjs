@@ -1,1 +1,85 @@
-const fs=require('node:fs'),path=require('node:path');const ROOT=__dirname,BASE='https://paracumpleanos.com';const posts=JSON.parse(fs.readFileSync(path.join(ROOT,'data/posts.json'),'utf8')),cats=JSON.parse(fs.readFileSync(path.join(ROOT,'data/categories.json'),'utf8'));const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');const stat='<script type="text/javascript">var sc_project=13334162;var sc_invisible=1;var sc_security="3e891d7b";</script><script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>';const ns='<noscript><div class="statcounter"><a href="https://statcounter.com/" target="_blank" rel="noopener"><img src="https://c.statcounter.com/13334162/0/3e891d7b/1/" alt="Web Analytics Made Easy - Statcounter" referrerpolicy="no-referrer-when-downgrade"></a></div></noscript>';const head='<header class="site-header"><div class="wrap header-inner"><a class="brand" href="/"><span class="brand-mark">🎂</span><span><strong>Para Cumpleaños</strong><small>Ideas para celebrar</small></span></a><button class="menu-toggle" aria-expanded="false" aria-controls="main-nav">☰ Menú</button><nav id="main-nav" class="main-nav"><a href="/categoria/frases-y-mensajes/">Frases y mensajes</a><a href="/categoria/ideas-y-tematicas/">Ideas y temáticas</a><a href="/categoria/organizacion/">Organización</a><a href="/categoria/recursos-gratuitos/">Herramientas gratis</a></nav></div></header>';const foot='<footer class="site-footer"><div class="wrap footer-grid"><div><strong>Para Cumpleaños</strong><p>Frases, ideas y herramientas para celebrar.</p></div><div><a href="/categoria/frases-y-mensajes/">Frases</a><a href="/categoria/ideas-y-tematicas/">Ideas</a><a href="/categoria/organizacion/">Organización</a></div><div><a href="/herramientas/generador-de-frases/">Generador</a><a href="/herramientas/planificador-de-cumpleanos/">Planificador</a></div><div><a href="/sobre-nosotros/">Sobre nosotros</a><a href="/contacto/">Contacto</a><a href="/privacidad/">Privacidad</a></div></div><div class="wrap footer-bottom">© 2026 Para Cumpleaños</div></footer><script src="/assets/js/site.js" defer></script>';function write(r,s){let f=r==='/'?'index.html':path.join(r.replace(/^\\/|\\/$/g,''),'index.html');if(r==='/404.html')f='404.html';fs.mkdirSync(path.dirname(path.join(ROOT,f)),{recursive:true});fs.writeFileSync(path.join(ROOT,f),s,'utf8');}function page(t,d,r,b,noindex){let u=BASE+(r==='/'?'/':r.endsWith('/')?r:r+'/');return '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(t)+'</title><meta name="description" content="'+esc(d)+'"><meta name="robots" content="'+(noindex?'noindex,follow':'index,follow,max-image-preview:large')+'"><link rel="canonical" href="'+u+'"><meta property="og:title" content="'+esc(t)+'"><meta property="og:description" content="'+esc(d)+'"><meta property="og:url" content="'+u+'"><link rel="stylesheet" href="/assets/css/site.css">'+stat+'</head><body>'+ns+head+'<main id="contenido">'+b+'</main>'+foot+'</body></html>';}function card(p){let c=cats.find(x=>x.slug===p.category)||cats[0];return '<article class="post-card"><div class="card-kicker">'+esc(c.title)+'</div><h3><a href="/posts/'+p.slug+'/">'+esc(p.title)+'</a></h3><p>'+esc(p.description)+'</p><a class="text-link" href="/posts/'+p.slug+'/">Leer la guía →</a></article>';}function writePost(p){let c=cats.find(x=>x.slug===p.category)||cats[0],body='<nav class="breadcrumbs wrap"><a href="/">Inicio</a> / <a href="/categoria/'+c.slug+'/">'+esc(c.title)+'</a></nav><article class="wrap article-wrap"><header class="article-header"><h1>'+esc(p.title)+'</h1><p class="lead">'+esc(p.description)+'</p><div class="share-row"><a class="share-button" href="https://wa.me/?text='+encodeURIComponent(p.title+' '+BASE+'/posts/'+p.slug+'/')+'">Compartir por WhatsApp</a><button class="share-button" data-copy-url>Copiar enlace</button></div></header><div class="article-content"><p class="article-intro">'+esc(p.intro)+'</p>'+p.sections.map(s=>'<section class="article-section"><h2>'+esc(s.h2)+'</h2>'+(s.paragraphs||[]).map(x=>'<p>'+esc(x)+'</p>').join('')+'<ul>'+(s.bullets||[]).map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></section>').join('')+(p.faqs||[]).map(f=>'<details><summary>'+esc(f.q)+'</summary><p>'+esc(f.a)+'</p></details>').join('')+'</div></article>';write('/posts/'+p.slug+'/',page(p.title+' | Para Cumpleaños',p.description,'/posts/'+p.slug+'/',body));}function writeCat(c){let arr=posts.filter(p=>p.category===c.slug||(c.slug==='tendencias-2026'&&p.category==='ideas-y-tematicas')||(c.slug==='recursos-gratuitos'&&p.category==='organizacion'));let b='<section class="page-hero wrap"><span class="category-icon">'+c.icon+'</span><h1>'+esc(c.title)+'</h1><p class="lead">'+esc(c.description)+'</p><p>'+esc(c.intro)+'</p></section><section class="section"><div class="wrap"><div class="card-grid">'+arr.map(card).join('')+'</div></div></section>';write('/categoria/'+c.slug+'/',page(c.title+' | Para Cumpleaños',c.description,'/categoria/'+c.slug+'/',b));}posts.forEach(writePost);cats.forEach(writeCat);const routeList=['/',...cats.map(c=>'/categoria/'+c.slug+'/'),...posts.map(p=>'/posts/'+p.slug+'/'),'/herramientas/generador-de-frases/','/herramientas/planificador-de-cumpleanos/','/sobre-nosotros/','/contacto/','/privacidad/'];fs.writeFileSync(path.join(ROOT,'robots.txt'),'User-agent: *\\nAllow: /\\nDisallow: /data/\\nSitemap: '+BASE+'/sitemap.xml\\n');fs.writeFileSync(path.join(ROOT,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?>\\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\\n'+routeList.map(r=>'<url><loc>'+BASE+r+'</loc><changefreq>'+(r==='/'?'weekly':'monthly')+'</changefreq><priority>'+(r==='/'?'1.0':r.indexOf('/categoria/')===0?'0.8':r.indexOf('/posts/')===0?'0.7':'0.6')+'</priority></url>').join('\\n')+'\\n</urlset>\\n');write('/','<section class="hero"><div class="wrap hero-grid"><div><span class="eyebrow">Ideas para celebrar</span><h1>Un cumpleaños especial empieza con una buena idea.</h1><p>Encontrá frases para dedicar, temáticas para inspirarte y herramientas simples para organizar una celebración a tu manera.</p><a class="button" href="/categoria/frases-y-mensajes/">Encontrar una frase</a> <a class="button-secondary" href="/herramientas/planificador-de-cumpleanos/">Organizar mi cumpleaños</a></div><div class="hero-art"><span class="big-cake">🎂</span></div></div></section><section class="section"><div class="wrap"><h2>Explorá por tema</h2><div class="category-grid">'+cats.map(c=>'<a class="category-card" href="/categoria/'+c.slug+'/"><span class="icon">'+c.icon+'</span><h3>'+esc(c.title)+'</h3><p>'+esc(c.description)+'</p></a>').join('')+'</div></div></section><section class="section"><div class="wrap"><h2>Guías recomendadas</h2><div class="card-grid">'+posts.slice(0,9).map(card).join('')+'</div></div></section>');console.log('Páginas regeneradas: '+posts.length+' artículos y '+cats.length+' categorías.');
+const fs = require("node:fs");
+const path = require("node:path");
+
+const ROOT = __dirname;
+const BASE = "https://paracumpleanos.com";
+const posts = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "posts.json"), "utf8"));
+const categories = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "categories.json"), "utf8"));
+const STATIC_ROUTES = [
+  "/herramientas/generador-de-frases/",
+  "/herramientas/planificador-de-cumpleanos/",
+  "/sobre-nosotros/",
+  "/contacto/",
+  "/privacidad/"
+];
+
+function fileForRoute(route) {
+  if (route === "/") return path.join(ROOT, "index.html");
+  if (route === "/404.html") return path.join(ROOT, "404.html");
+  const relative = route.split("/").filter(Boolean).join(path.sep);
+  return path.join(ROOT, relative, "index.html");
+}
+
+const routes = [
+  "/",
+  ...categories.map((item) => "/categoria/" + item.slug + "/"),
+  ...posts.map((item) => "/posts/" + item.slug + "/"),
+  ...STATIC_ROUTES
+];
+const missing = [];
+const missingStatcounter = [];
+
+for (const route of routes.concat("/404.html")) {
+  const file = fileForRoute(route);
+  if (!fs.existsSync(file)) {
+    missing.push(route);
+    continue;
+  }
+  const html = fs.readFileSync(file, "utf8");
+  if (!html.includes("sc_project=13334162") ||
+      !html.includes("c.statcounter.com/13334162/0/3e891d7b/1/")) {
+    missingStatcounter.push(route);
+  }
+}
+
+const phrasePost = posts.find((item) => item.slug === "100-frases-de-cumpleanos-que-emocionan");
+const phraseCount = phrasePost
+  ? phrasePost.sections.reduce((total, section) => total + (section.bullets || []).length, 0)
+  : 0;
+
+if (missing.length || missingStatcounter.length) {
+  if (missing.length) console.error("Páginas faltantes:", missing.join(", "));
+  if (missingStatcounter.length) console.error("Falta Statcounter:", missingStatcounter.join(", "));
+  process.exit(1);
+}
+if (phraseCount !== 100) {
+  console.error("La colección debe contener 100 frases; contiene " + phraseCount + ".");
+  process.exit(1);
+}
+
+const xml = [
+  '<?xml version="1.0" encoding="UTF-8"?>',
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  ...routes.map((route) => {
+    const priority = route === "/" ? "1.0" :
+      route.startsWith("/categoria/") ? "0.8" :
+      route.startsWith("/posts/") ? "0.7" : "0.6";
+    const frequency = route === "/" ? "weekly" : "monthly";
+    return "<url><loc>" + BASE + route + "</loc><changefreq>" + frequency +
+      "</changefreq><priority>" + priority + "</priority></url>";
+  }),
+  "</urlset>",
+  ""
+].join("\n");
+
+fs.writeFileSync(path.join(ROOT, "sitemap.xml"), xml, "utf8");
+fs.writeFileSync(
+  path.join(ROOT, "robots.txt"),
+  "User-agent: *\nAllow: /\nDisallow: /data/\nSitemap: " + BASE + "/sitemap.xml\n",
+  "utf8"
+);
+
+console.log("Validación correcta: " + routes.length + " URLs, " +
+  categories.length + " categorías, " + posts.length +
+  " artículos, 100 frases y Statcounter presente en todas las páginas.");
+console.log("Sitemap.xml y robots.txt actualizados.");
