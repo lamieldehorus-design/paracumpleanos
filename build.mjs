@@ -6,8 +6,9 @@ const BASE = "https://paracumpleanos.com";
 const posts = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "posts.json"), "utf8"));
 const categories = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "categories.json"), "utf8"));
 const STATIC_ROUTES = [
-  "/herramientas/generador-de-frases/",
-  "/herramientas/planificador-de-cumpleanos/",
+  "/frases-de-cumpleanos/",
+  "/mensajes-de-cumpleanos/",
+  "/postales-de-cumpleanos/",
   "/sobre-nosotros/",
   "/contacto/",
   "/privacidad/",
@@ -82,5 +83,5 @@ fs.writeFileSync(
 
 console.log("Validación correcta: " + routes.length + " URLs, " +
   categories.length + " categorías, " + posts.length +
-  " artículos, 100 frases y Statcounter presente en todas las páginas.");
+  " colecciones, 100 frases y Statcounter presente en todas las páginas.");
 console.log("Sitemap.xml y robots.txt actualizados.");
