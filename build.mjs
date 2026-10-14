@@ -10,7 +10,8 @@ const STATIC_ROUTES = [
   "/herramientas/planificador-de-cumpleanos/",
   "/sobre-nosotros/",
   "/contacto/",
-  "/privacidad/"
+  "/privacidad/",
+  "/recursos/banderines-cumpleanos-imprimibles/"
 ];
 
 function fileForRoute(route) {
