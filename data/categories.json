@@ -1,0 +1,37 @@
+[
+  {
+    "slug": "frases-y-mensajes",
+    "title": "Frases y mensajes",
+    "icon": "💌",
+    "description": "Frases de cumpleaños para familiares, amistades y pareja. Mensajes emotivos, divertidos y cortos para copiar y compartir.",
+    "intro": "Encontrá palabras para cada vínculo y cada estilo. Estas ideas sirven para tarjetas, cartas, WhatsApp y redes sociales. Elegí una opción que represente lo que querés decir y sumale un detalle personal."
+  },
+  {
+    "slug": "ideas-y-tematicas",
+    "title": "Ideas y temáticas",
+    "icon": "🎈",
+    "description": "Temáticas, juegos y decoración para cumpleaños infantiles, juveniles y de adultos, con ideas para distintos gustos y presupuestos.",
+    "intro": "Una celebración memorable no depende de una decoración enorme. Elegí una idea central que combine con la persona homenajeada y desarrollala con colores, música, comida y una actividad para compartir."
+  },
+  {
+    "slug": "organizacion",
+    "title": "Organización",
+    "icon": "🗓️",
+    "description": "Guías para organizar un cumpleaños, preparar invitaciones, ordenar tareas y calcular un presupuesto sin olvidar detalles.",
+    "intro": "Organizar con tiempo reduce las corridas de último momento. Ordená fecha, invitados, lugar, comida, compras y confirmaciones con pasos concretos que puedas adaptar a tu festejo."
+  },
+  {
+    "slug": "tendencias-2026",
+    "title": "Tendencias 2026",
+    "icon": "✨",
+    "description": "Ideas actuales para celebrar cumpleaños en 2026: reuniones íntimas, experiencias compartidas y detalles personalizados.",
+    "intro": "Las tendencias sirven como inspiración, no como reglas. Priorizá una celebración que refleje a quien cumple años: reuniones íntimas, actividades participativas y detalles personalizados."
+  },
+  {
+    "slug": "recursos-gratuitos",
+    "title": "Recursos gratuitos",
+    "icon": "🧰",
+    "description": "Herramientas sencillas, listas de control y recursos gratuitos para planificar una celebración y crear mensajes.",
+    "intro": "Pasá de las ideas a un plan concreto con recursos simples. Generá un mensaje para dedicar, revisá una lista de tareas y calculá un presupuesto orientativo sin instalar programas."
+  }
+]
