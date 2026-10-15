@@ -6,6 +6,18 @@ if(form){var input=document.querySelector("#site-search"),items=[].slice.call(do
 var initialQuery=new URLSearchParams(window.location.search).get("q");if(initialQuery&&input)input.value=initialQuery;
 var run=function(){var query=(input.value||"").trim().toLocaleLowerCase("es"),matches=0;items.forEach(function(item){var haystack=(item.getAttribute("data-search")||item.textContent).toLocaleLowerCase("es"),show=!!query&&haystack.indexOf(query)>-1;item.hidden=!show;if(show)matches++;});if(count)count.textContent=query?matches+" colecciones encontradas":"Escribí una palabra para ver las colecciones relacionadas.";if(empty)empty.hidden=!query||matches>0;};
 input.addEventListener("input",run);form.addEventListener("submit",function(event){event.preventDefault();run();var term=(input.value||"").trim();if(term){var url=new URL(window.location.href);url.searchParams.set("q",term);window.history.replaceState({}, "", url.toString());}var results=document.querySelector("#search-results");if(results)results.scrollIntoView({behavior:"smooth",block:"start"});});run();}
+var messageSection=document.querySelector("#lista-de-mensajes");
+if(messageSection){
+var messageItems=[].slice.call(messageSection.querySelectorAll(".message-example"));
+var moreButton=document.querySelector("#show-more-messages");
+var messageStatus=document.querySelector("#message-load-status");
+var updateMessageLoad=function(){
+var shown=messageItems.filter(function(item){return !item.hidden;}).length;
+if(messageStatus)messageStatus.textContent="Mostrando "+shown+" de "+messageItems.length+" mensajes.";
+if(moreButton){if(shown>=messageItems.length){moreButton.hidden=true;}else{moreButton.hidden=false;moreButton.textContent="Mostrar "+Math.min(10,messageItems.length-shown)+" mensajes más";}}
+};
+if(moreButton&&messageItems.length){moreButton.addEventListener("click",function(){messageItems.filter(function(item){return item.hidden;}).slice(0,10).forEach(function(item){item.hidden=false;});updateMessageLoad();});updateMessageLoad();}
+}
 document.querySelectorAll("[data-copy-url]").forEach(function(button){button.addEventListener("click",async function(){var original=button.textContent;try{await navigator.clipboard.writeText(window.location.href);button.textContent="Enlace copiado";}catch(error){button.textContent="Copiá la URL del navegador";}setTimeout(function(){button.textContent=original;},1800);});});
 document.querySelectorAll("[data-copy-text]").forEach(function(button){button.addEventListener("click",async function(){var original=button.textContent;try{await navigator.clipboard.writeText(button.getAttribute("data-copy-text")||"");button.textContent="Copiado";}catch(error){button.textContent="Seleccioná y copiá el texto";}setTimeout(function(){button.textContent=original;},1800);});});
 document.querySelectorAll("[data-print-page]").forEach(function(button){button.addEventListener("click",function(){window.print();});});
