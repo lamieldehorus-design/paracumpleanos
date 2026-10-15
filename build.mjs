@@ -52,7 +52,10 @@ for (const route of messageRoutes) {
   const messageCount = (html.match(/class="message-example"/g) || []).length;
   const title = (html.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || "";
   const description = (html.match(/<meta name="description" content="([^"]*)"/) || [])[1] || "";
-  if (messageCount !== 50 || !title.includes("50 mensajes de cumpleaños") || !description.includes("50 mensajes de cumpleaños")) {
+  const visibleMessageCount = (html.match(/class="message-example" id="mensaje-[0-9]+">/g) || []).length;
+  const hiddenMessageCount = (html.match(/class="message-example" id="mensaje-[0-9]+" hidden>/g) || []).length;
+  const hasLoadMore = html.includes('id="show-more-messages"') && html.includes('id="message-load-status"');
+  if (messageCount !== 100 || visibleMessageCount !== 10 || hiddenMessageCount !== 90 || !hasLoadMore || !title.includes("100 mensajes de cumpleaños") || !description.includes("100 mensajes de cumpleaños")) {
     invalidMessageCollections.push(route + " (" + messageCount + " mensajes)");
   }
 }
@@ -76,7 +79,7 @@ const phraseCount = phrasePost && phrasePost.sections[0]
   : 0;
 
 if (invalidMessageCollections.length) {
-  console.error("Colecciones de mensajes que deben tener 50 textos y metadatos actualizados:", invalidMessageCollections.join(", "));
+  console.error("Colecciones de mensajes que deben tener 100 textos, carga progresiva y metadatos actualizados:", invalidMessageCollections.join(", "));
   process.exit(1);
 }
 if (missing.length || missingStatcounter.length) {
@@ -115,5 +118,5 @@ fs.writeFileSync(
 console.log("Validación correcta: " + routes.length + " URLs, " +
   categories.length + " categorías, " + posts.length +
   " colecciones, 100 frases y Statcounter presente en todas las páginas. " +
-  "Además, " + messageRoutes.length + " colecciones tienen 50 mensajes cada una.");
+  "Además, " + messageRoutes.length + " colecciones tienen 100 mensajes cada una y muestran 10 por vez.");
 console.log("Sitemap.xml y robots.txt actualizados.");
