@@ -43,6 +43,20 @@ const routes = [
 const missing = [];
 const missingStatcounter = [];
 
+const messageRoutes = STATIC_ROUTES.filter((route) => route.startsWith("/mensajes-de-cumpleanos-para-"));
+const invalidMessageCollections = [];
+for (const route of messageRoutes) {
+  const file = fileForRoute(route);
+  if (!fs.existsSync(file)) continue;
+  const html = fs.readFileSync(file, "utf8");
+  const messageCount = (html.match(/class="message-example"/g) || []).length;
+  const title = (html.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || "";
+  const description = (html.match(/<meta name="description" content="([^"]*)"/) || [])[1] || "";
+  if (messageCount !== 50 || !title.includes("50 mensajes de cumpleaños") || !description.includes("50 mensajes de cumpleaños")) {
+    invalidMessageCollections.push(route + " (" + messageCount + " mensajes)");
+  }
+}
+
 for (const route of routes.concat("/404.html")) {
   const file = fileForRoute(route);
   if (!fs.existsSync(file)) {
@@ -61,6 +75,10 @@ const phraseCount = phrasePost && phrasePost.sections[0]
   ? (phrasePost.sections[0].bullets || []).length
   : 0;
 
+if (invalidMessageCollections.length) {
+  console.error("Colecciones de mensajes que deben tener 50 textos y metadatos actualizados:", invalidMessageCollections.join(", "));
+  process.exit(1);
+}
 if (missing.length || missingStatcounter.length) {
   if (missing.length) console.error("Páginas faltantes:", missing.join(", "));
   if (missingStatcounter.length) console.error("Falta Statcounter:", missingStatcounter.join(", "));
@@ -96,5 +114,6 @@ fs.writeFileSync(
 
 console.log("Validación correcta: " + routes.length + " URLs, " +
   categories.length + " categorías, " + posts.length +
-  " colecciones, 100 frases y Statcounter presente en todas las páginas.");
+  " colecciones, 100 frases y Statcounter presente en todas las páginas. " +
+  "Además, " + messageRoutes.length + " colecciones tienen 50 mensajes cada una.");
 console.log("Sitemap.xml y robots.txt actualizados.");
