@@ -8,6 +8,18 @@ const categories = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "categorie
 const STATIC_ROUTES = [
   "/frases-de-cumpleanos/",
   "/mensajes-de-cumpleanos/",
+  "/mensajes-de-cumpleanos-para-mama/",
+  "/mensajes-de-cumpleanos-para-papa/",
+  "/mensajes-de-cumpleanos-para-mi-pareja/",
+  "/mensajes-de-cumpleanos-para-una-hija/",
+  "/mensajes-de-cumpleanos-para-un-hijo/",
+  "/mensajes-de-cumpleanos-para-alguien-lejos/",
+  "/mensajes-de-cumpleanos-para-un-hermano/",
+  "/mensajes-de-cumpleanos-para-un-primo/",
+  "/mensajes-de-cumpleanos-para-un-tio/",
+  "/mensajes-de-cumpleanos-para-una-tia/",
+  "/mensajes-de-cumpleanos-para-un-abuelo/",
+  "/mensajes-de-cumpleanos-para-una-abuela/",
   "/postales-de-cumpleanos/",
   "/sobre-nosotros/",
   "/contacto/",
@@ -65,7 +77,8 @@ const xml = [
   ...routes.map((route) => {
     const priority = route === "/" ? "1.0" :
       route.startsWith("/categoria/") ? "0.8" :
-      route.startsWith("/posts/") ? "0.7" : "0.6";
+      route.startsWith("/posts/") ? "0.7" :
+      route === "/frases-de-cumpleanos/" || route === "/mensajes-de-cumpleanos/" || route === "/postales-de-cumpleanos/" || route.startsWith("/mensajes-de-cumpleanos-para-") ? "0.9" : "0.6";
     const frequency = route === "/" ? "weekly" : "monthly";
     return "<url><loc>" + BASE + route + "</loc><changefreq>" + frequency +
       "</changefreq><priority>" + priority + "</priority></url>";
