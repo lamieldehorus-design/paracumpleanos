@@ -7,3 +7,6 @@
 @media(max-width:900px){.category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.postal-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.postal-grid,.postal-preview-grid{grid-template-columns:1fr}.postal-art{min-height:230px}.phrase-list li{align-items:flex-start;flex-direction:column}.phrase-list .share-button{align-self:flex-start}.postal-card-info{padding:17px}}
 @media print{.postal-actions,.postal-card-info,.site-header,.site-footer,.breadcrumbs{display:none!important}.postal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.postal-art{break-inside:avoid}}
+
+/* Carga progresiva de colecciones de mensajes */
+.message-load-more{display:flex;flex-direction:column;align-items:center;gap:10px;margin:28px 0 34px;text-align:center}.message-load-more p{margin:0;color:var(--muted);font-size:.9rem}.message-load-more .button{min-width:220px}
