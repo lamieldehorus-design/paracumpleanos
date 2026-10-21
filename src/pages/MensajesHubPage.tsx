@@ -1,5 +1,6 @@
 import { Link } from '../router';
 import { CopyButton } from '../components/CopyButton';
+import { WhatsAppButton } from '../components/WhatsAppButton';
 import { VoteButtons } from '../components/VoteButtons';
 import { FAQSection } from '../components/FAQSection';
 import { SEOHead } from '../components/SEOHead';
@@ -190,6 +191,7 @@ export function MensajesHubPage() {
               <p>{item.text}</p>
               <div className="button-row" style={{ alignItems: 'center' }}>
                 <CopyButton textToCopy={item.text} defaultLabel="Copiar mensaje" />
+                <WhatsAppButton textToShare={item.text} />
                 <VoteButtons
                   itemId={`preview-${item.slug}`}
                   title={item.title}

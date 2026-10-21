@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { RelationshipCollection } from '../types';
 import { Link } from '../router';
 import { CopyButton } from '../components/CopyButton';
+import { WhatsAppButton } from '../components/WhatsAppButton';
 import { VoteButtons } from '../components/VoteButtons';
 import { FAQSection } from '../components/FAQSection';
 import { SEOHead } from '../components/SEOHead';
@@ -88,10 +89,12 @@ export function RelationshipMessagesPage({ collection }: RelationshipMessagesPag
               onChange={(e) => setFilterQuery(e.target.value)}
               style={{
                 width: '100%',
-                padding: '12px 16px',
-                borderRadius: '12px',
+                padding: '14px 16px',
+                borderRadius: '14px',
                 border: '1px solid #dcdce8',
-                fontSize: '0.95rem'
+                fontSize: '16px',
+                minHeight: '48px',
+                boxSizing: 'border-box'
               }}
             />
           </div>
@@ -106,6 +109,7 @@ export function RelationshipMessagesPage({ collection }: RelationshipMessagesPag
                   <p>{msg.text}</p>
                   <div className="message-actions">
                     <CopyButton textToCopy={msg.text} defaultLabel="Copiar mensaje" />
+                    <WhatsAppButton textToShare={msg.text} />
                     <VoteButtons
                       itemId={itemId}
                       title={`${collection.name}: ${msg.title}`}

@@ -3,6 +3,7 @@ import { Post } from '../types';
 import { Link } from '../router';
 import { getCategoryBySlug, getPostBySlug } from '../data';
 import { CopyButton } from '../components/CopyButton';
+import { WhatsAppButton } from '../components/WhatsAppButton';
 import { VoteButtons } from '../components/VoteButtons';
 import { FAQSection } from '../components/FAQSection';
 import { SEOHead } from '../components/SEOHead';
@@ -212,6 +213,7 @@ export function PostDetailPage({ post }: PostDetailPageProps) {
                         <span>{bullet}</span>
                         <div className="phrase-item-actions">
                           <CopyButton textToCopy={bullet} defaultLabel="Copiar" copiedLabel="Copiado" />
+                          <WhatsAppButton textToShare={bullet} />
                           <VoteButtons
                             itemId={`post-${post.slug}-s${sIdx}-b${bIdx}`}
                             title={bullet.length > 55 ? bullet.slice(0, 52) + '...' : bullet}
@@ -246,6 +248,7 @@ export function PostDetailPage({ post }: PostDetailPageProps) {
                     <p>{tpl.text}</p>
                     <div className="button-row" style={{ alignItems: 'center' }}>
                       <CopyButton textToCopy={tpl.text} defaultLabel="Copiar texto" copiedLabel="Copiado" />
+                      <WhatsAppButton textToShare={tpl.text} />
                       <VoteButtons
                         itemId={`post-${post.slug}-tpl-${tIdx}`}
                         title={`${tpl.label}: ${tpl.text.slice(0, 45)}...`}

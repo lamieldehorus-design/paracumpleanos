@@ -1,5 +1,6 @@
 import { Link } from '../router';
 import { CopyButton } from '../components/CopyButton';
+import { WhatsAppButton } from '../components/WhatsAppButton';
 import { VoteButtons } from '../components/VoteButtons';
 import { FAQSection } from '../components/FAQSection';
 import { PostCard } from '../components/PostCard';
@@ -146,6 +147,7 @@ export function FrasesPage() {
                 <span>{phrase}</span>
                 <div className="phrase-item-actions">
                   <CopyButton textToCopy={phrase} defaultLabel="Copiar frase" />
+                  <WhatsAppButton textToShare={phrase} />
                   <VoteButtons
                     itemId={`frase-ejemplo-${idx + 1}`}
                     title={phrase.length > 55 ? phrase.slice(0, 52) + '...' : phrase}
