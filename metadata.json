@@ -1,0 +1,7 @@
+{
+  "name": "Para Cumpleaños",
+  "description": "Frases de cumpleaños, mensajes para cada persona y postales para compartir. Felicitaciones emotivas, divertidas y originales con ideas para celebrar.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
