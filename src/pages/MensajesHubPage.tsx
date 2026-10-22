@@ -171,9 +171,9 @@ export function MensajesHubPage() {
         <div className="wrap narrow">
           <div className="section-heading">
             <div>
-              <span className="eyebrow">100 mensajes por persona</span>
+              <span className="eyebrow">159 mensajes por persona</span>
               <h2>Mensajes de cumpleaños completos para dedicar</h2>
-              <p>Encontrá una dedicatoria larga para copiar, enviar por WhatsApp o adaptar a una tarjeta. Debajo de cada ejemplo tenés un acceso a una colección con 100 mensajes completos para esa persona.</p>
+              <p>Encontrá una dedicatoria para copiar, enviar por WhatsApp o adaptar a una tarjeta. Debajo de cada ejemplo tenés un acceso a una colección completa con 159 mensajes listos para esa persona.</p>
             </div>
           </div>
 
@@ -199,7 +199,7 @@ export function MensajesHubPage() {
                   url={`/mensajes-de-cumpleanos/#preview-${item.slug}`}
                 />
                 <Link className="button-secondary" href={`/${item.slug}/`}>
-                  100 mensajes para {item.name.toLowerCase()}
+                  159 mensajes para {item.name.toLowerCase()} →
                 </Link>
               </div>
             </article>

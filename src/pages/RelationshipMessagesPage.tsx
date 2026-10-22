@@ -11,32 +11,100 @@ interface RelationshipMessagesPageProps {
   collection: RelationshipCollection;
 }
 
-export function RelationshipMessagesPage({ collection }: RelationshipMessagesPageProps) {
-  const [visibleCount, setVisibleCount] = useState(10);
-  const [filterQuery, setFilterQuery] = useState('');
+type ToneFilter = 'all' | 'whatsapp' | 'emotive' | 'humor';
 
+export function RelationshipMessagesPage({ collection }: RelationshipMessagesPageProps) {
+  const [visibleCount, setVisibleCount] = useState(15);
+  const [filterQuery, setFilterQuery] = useState('');
+  const [selectedTone, setSelectedTone] = useState<ToneFilter>('all');
+
+  const totalCount = collection.messages.length;
+
+  // Filter messages by tone & search query
   const filteredMessages = useMemo(() => {
+    let list = collection.messages;
+
+    if (selectedTone === 'whatsapp') {
+      list = list.filter((m) => {
+        const t = (m.title + ' ' + m.text).toLowerCase();
+        return m.text.length <= 165 || t.includes('whatsapp') || t.includes('café') || t.includes('mate') || t.includes('abrazo');
+      });
+    } else if (selectedTone === 'humor') {
+      list = list.filter((m) => {
+        const t = (m.title + ' ' + m.text).toLowerCase();
+        return (
+          t.includes('chiste') ||
+          t.includes('humor') ||
+          t.includes('torta') ||
+          t.includes('complic') ||
+          t.includes('maña') ||
+          t.includes('viejo') ||
+          t.includes('años') ||
+          t.includes('permiso') ||
+          t.includes('siesta') ||
+          t.includes('asado') ||
+          t.includes('paciencia') ||
+          t.includes('tupper') ||
+          t.includes('broma')
+        );
+      });
+    } else if (selectedTone === 'emotive') {
+      list = list.filter((m) => {
+        const t = (m.title + ' ' + m.text).toLowerCase();
+        const isHumorous =
+          t.includes('chiste') ||
+          t.includes('humor') ||
+          t.includes('torta') ||
+          t.includes('tupper') ||
+          t.includes('broma');
+        return !isHumorous && m.text.length > 150;
+      });
+    }
+
     const q = filterQuery.trim().toLowerCase();
-    if (!q) return collection.messages;
-    return collection.messages.filter(
-      (m) => m.title.toLowerCase().includes(q) || m.text.toLowerCase().includes(q)
-    );
-  }, [collection.messages, filterQuery]);
+    if (q) {
+      list = list.filter(
+        (m) => m.title.toLowerCase().includes(q) || m.text.toLowerCase().includes(q)
+      );
+    }
+
+    return list;
+  }, [collection.messages, filterQuery, selectedTone]);
 
   const displayedMessages = useMemo(() => {
-    if (filterQuery.trim()) {
-      return filteredMessages;
-    }
-    return collection.messages.slice(0, visibleCount);
-  }, [collection.messages, filteredMessages, visibleCount, filterQuery]);
+    return filteredMessages.slice(0, visibleCount);
+  }, [filteredMessages, visibleCount]);
 
   const handleShowMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 10, collection.messages.length));
+    setVisibleCount((prev) => Math.min(prev + 15, filteredMessages.length));
   };
 
-  const isFiltering = filterQuery.trim().length > 0;
-  const totalCount = collection.messages.length;
-  const currentShown = isFiltering ? filteredMessages.length : Math.min(visibleCount, totalCount);
+  const handleShowAll = () => {
+    setVisibleCount(filteredMessages.length);
+  };
+
+  const matchCount = filteredMessages.length;
+  const currentShown = Math.min(visibleCount, matchCount);
+  const progressPercent = matchCount > 0 ? Math.round((currentShown / matchCount) * 100) : 100;
+
+  // Schema.org structured data for SEO (Romuald Fons Mobile-First SEO: Google discovers all phrases)
+  const jsonLd = useMemo(() => {
+    return [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: collection.title,
+        description: collection.lead || collection.intro,
+        numberOfItems: collection.messages.length,
+        itemListElement: collection.messages.slice(0, 100).map((m, idx) => ({
+          '@type': 'ListItem',
+          position: idx + 1,
+          name: m.title,
+          description: m.text,
+        })),
+      },
+    ];
+  }, [collection]);
 
   return (
     <div className="wrap article-wrap">
@@ -49,6 +117,7 @@ export function RelationshipMessagesPage({ collection }: RelationshipMessagesPag
           { name: 'Mensajes de cumpleaños', item: '/mensajes-de-cumpleanos/' },
           { name: collection.title, item: `/${collection.slug}/` },
         ]}
+        jsonLd={jsonLd}
       />
       <nav className="breadcrumbs" aria-label="Ruta de navegación">
         <Link href="/">Inicio</Link>
@@ -59,12 +128,12 @@ export function RelationshipMessagesPage({ collection }: RelationshipMessagesPag
       </nav>
 
       <header className="article-header">
-        <span className="eyebrow">100 dedicatorias completas para elegir</span>
+        <span className="eyebrow">{totalCount} DEDICATORIAS COMPLETAS PARA ELEGIR</span>
         <h1>{collection.title}: dedicatorias completas para copiar</h1>
         <p className="lead">{collection.lead}</p>
         <div className="button-row">
           <a className="button" href="#lista-de-mensajes">
-            Ver los 100 mensajes
+            Ver los {totalCount} mensajes
           </a>
           <Link className="button-secondary" href="/mensajes-de-cumpleanos/">
             Volver a todos los mensajes
@@ -76,29 +145,72 @@ export function RelationshipMessagesPage({ collection }: RelationshipMessagesPag
         {collection.intro && <p className="article-intro">{collection.intro}</p>}
 
         <section className="article-section" id="lista-de-mensajes">
-          <h2>100 mensajes de cumpleaños para {collection.name.toLowerCase()}, listos para copiar y dedicar</h2>
+          <h2>
+            {totalCount} mensajes de cumpleaños para {collection.name.toLowerCase()}, listos para copiar y dedicar
+          </h2>
           <p>
             Elegí el tono que mejor represente lo que querés decir. Podés copiar el mensaje completo y cambiar cualquier detalle para hacerlo más tuyo.
           </p>
 
-          <div style={{ margin: '18px 0 24px' }}>
+          {/* Filtros por estilo */}
+          <div className="filter-bar" role="tablist" aria-label="Filtrar por estilo">
+            <button
+              type="button"
+              className={`filter-tab ${selectedTone === 'all' ? 'active' : ''}`}
+              onClick={() => {
+                setSelectedTone('all');
+                setVisibleCount(15);
+              }}
+            >
+              Todas ({totalCount})
+            </button>
+            <button
+              type="button"
+              className={`filter-tab ${selectedTone === 'whatsapp' ? 'active' : ''}`}
+              onClick={() => {
+                setSelectedTone('whatsapp');
+                setVisibleCount(15);
+              }}
+            >
+              Directas WhatsApp
+            </button>
+            <button
+              type="button"
+              className={`filter-tab ${selectedTone === 'emotive' ? 'active' : ''}`}
+              onClick={() => {
+                setSelectedTone('emotive');
+                setVisibleCount(15);
+              }}
+            >
+              Emotivas y profundas
+            </button>
+            <button
+              type="button"
+              className={`filter-tab ${selectedTone === 'humor' ? 'active' : ''}`}
+              onClick={() => {
+                setSelectedTone('humor');
+                setVisibleCount(15);
+              }}
+            >
+              Con humor y picardía
+            </button>
+          </div>
+
+          {/* Buscador */}
+          <div className="search-box-wrap">
             <input
               type="search"
-              placeholder={`Filtrar entre los 100 mensajes para ${collection.name.toLowerCase()}...`}
+              className="search-box-input"
+              placeholder={`Filtrar entre los ${totalCount} mensajes para ${collection.name.toLowerCase()}...`}
               value={filterQuery}
-              onChange={(e) => setFilterQuery(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                borderRadius: '14px',
-                border: '1px solid #dcdce8',
-                fontSize: '16px',
-                minHeight: '48px',
-                boxSizing: 'border-box'
+              onChange={(e) => {
+                setFilterQuery(e.target.value);
+                setVisibleCount(15);
               }}
             />
           </div>
 
+          {/* Listado de mensajes en tarjetas nativas */}
           <div className="messages-list">
             {displayedMessages.map((msg, index) => {
               const msgId = msg.id || `mensaje-${index + 1}`;
@@ -108,8 +220,8 @@ export function RelationshipMessagesPage({ collection }: RelationshipMessagesPag
                   <h3>{msg.title}</h3>
                   <p>{msg.text}</p>
                   <div className="message-actions">
-                    <CopyButton textToCopy={msg.text} defaultLabel="Copiar mensaje" />
                     <WhatsAppButton textToShare={msg.text} />
+                    <CopyButton textToCopy={msg.text} defaultLabel="Copiar mensaje" />
                     <VoteButtons
                       itemId={itemId}
                       title={`${collection.name}: ${msg.title}`}
@@ -123,26 +235,63 @@ export function RelationshipMessagesPage({ collection }: RelationshipMessagesPag
           </div>
 
           {displayedMessages.length === 0 && (
-            <p className="empty-state">No se encontraron mensajes con ese criterio.</p>
+            <p className="empty-state">
+              No se encontraron mensajes con ese criterio.{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setFilterQuery('');
+                  setSelectedTone('all');
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--blue)',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  padding: 0,
+                  marginLeft: '6px'
+                }}
+              >
+                Ver todos
+              </button>
+            </p>
           )}
 
-          {!isFiltering && (
-            <div className="message-load-more">
-              <p id="message-load-status">
-                Mostrando {currentShown} de {totalCount} mensajes.
-              </p>
-              {currentShown < totalCount && (
+          {/* Carga progresiva */}
+          <div className="message-load-more">
+            <div className="progress-bar-container">
+              <div className="progress-bar-track">
+                <div
+                  className="progress-bar-fill"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+            </div>
+            <p id="message-load-status">
+              Mostrando {currentShown} de {matchCount} mensajes.
+            </p>
+            {currentShown < matchCount && (
+              <div className="button-row" style={{ justifyContent: 'center' }}>
                 <button
                   id="show-more-messages"
                   type="button"
                   className="button"
                   onClick={handleShowMore}
                 >
-                  Mostrar {Math.min(10, totalCount - currentShown)} mensajes más
+                  Mostrar {Math.min(15, matchCount - currentShown)} mensajes más
                 </button>
-              )}
-            </div>
-          )}
+                <button
+                  type="button"
+                  className="button-secondary"
+                  onClick={handleShowAll}
+                >
+                  Ver todos ({matchCount})
+                </button>
+              </div>
+            )}
+          </div>
         </section>
       </div>
 

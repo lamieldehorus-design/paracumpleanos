@@ -33,7 +33,7 @@
 
 | Sitio | Prioridad Mobile-First & Search Intent |
 | :--- | :--- |
-| **`paracumpleanos.com`** | Categorías de mensajes de acceso inmediato, botón de **copiar al portapapeles** en 1 toque, botón directo de **compartir en WhatsApp**, buscador instantáneo y carga progresiva crawlable para colecciones de 100 mensajes. |
+| **`paracumpleanos.com`** | Categorías de mensajes de acceso inmediato, botón de **copiar al portapapeles** en 1 toque, botón directo de **compartir en WhatsApp**, buscador instantáneo y carga progresiva crawlable para colecciones de 159 mensajes. |
 | **`imagenesypostales.com`** | Herramientas utilizables desde el celular, imágenes vectoriales y comprimidas de carga ultra-rápida, tarjetas de postales con vista previa nítida y descarga/envío directo sin ralentizar el navegador móvil. |
 | **`buenosdia.com`** | Lectura cómoda de devocionales, reflexiones y saludos matutinos, textos bien aireados, navegación limpia y botones para compartir la frase del día en redes y mensajería en segundos. |
 

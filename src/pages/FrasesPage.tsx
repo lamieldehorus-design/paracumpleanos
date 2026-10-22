@@ -84,14 +84,53 @@ export function FrasesPage() {
                 Buscar por persona
               </a>
               <Link className="button-secondary" href="/mensajes-de-cumpleanos/">
-                Ver mensajes completos
+                Ver 159 mensajes por vínculo
               </Link>
             </div>
           </div>
           <div className="hero-art">
             <span className="floating-note note-one">Palabras que llegan 💌</span>
             <span className="big-cake">🎂</span>
-            <span className="floating-note note-two">Un deseo sincero ✨</span>
+            <span className="floating-note note-two">159 frases por vínculo ✨</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Relaciones principales con 159 frases cada una */}
+      <section className="section section-soft">
+        <div className="wrap">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">Colecciones completas</span>
+              <h2>159 dedicatorias para cada persona especial</h2>
+              <p>Colecciones con buscador interactivo, carga rápida para móvil y botones directos para WhatsApp y Copiar.</p>
+            </div>
+          </div>
+          <div className="relationship-quick-grid">
+            {[
+              { name: 'Mamá', slug: 'mensajes-de-cumpleanos-para-mama', icon: '❤️' },
+              { name: 'Papá', slug: 'mensajes-de-cumpleanos-para-papa', icon: '⭐' },
+              { name: 'Mi pareja', slug: 'mensajes-de-cumpleanos-para-mi-pareja', icon: '💑' },
+              { name: 'Una hija', slug: 'mensajes-de-cumpleanos-para-una-hija', icon: '🌸' },
+              { name: 'Un hijo', slug: 'mensajes-de-cumpleanos-para-un-hijo', icon: '🚀' },
+              { name: 'Alguien lejos', slug: 'mensajes-de-cumpleanos-para-alguien-lejos', icon: '✈️' },
+              { name: 'Un hermano', slug: 'mensajes-de-cumpleanos-para-un-hermano', icon: '🤝' },
+              { name: 'Un primo', slug: 'mensajes-de-cumpleanos-para-un-primo', icon: '🎉' },
+              { name: 'Un tío', slug: 'mensajes-de-cumpleanos-para-un-tio', icon: '👔' },
+              { name: 'Una tía', slug: 'mensajes-de-cumpleanos-para-una-tia', icon: '☕' },
+              { name: 'Un abuelo', slug: 'mensajes-de-cumpleanos-para-un-abuelo', icon: '📖' },
+              { name: 'Una abuela', slug: 'mensajes-de-cumpleanos-para-una-abuela', icon: '👵' },
+            ].map((rel) => (
+              <Link
+                key={rel.slug}
+                href={`/${rel.slug}/`}
+                className="relationship-quick-item"
+              >
+                <span style={{ fontSize: '1.4rem' }}>{rel.icon}</span>
+                <strong>{rel.name}</strong>
+                <span>159 frases</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -101,8 +140,8 @@ export function FrasesPage() {
           <div className="section-heading">
             <div>
               <span className="eyebrow">Elegí el vínculo</span>
-              <h2>Frases de cumpleaños según la persona</h2>
-              <p>Buscá un saludo que se adapte a la relación y a lo que querés decir.</p>
+              <h2>Frases y artículos recomendados</h2>
+              <p>Guías editoriales y selecciones de frases para inspirar tus saludos.</p>
             </div>
           </div>
 
