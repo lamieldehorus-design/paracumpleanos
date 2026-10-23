@@ -8,12 +8,40 @@ import { VoteButtons } from '../components/VoteButtons';
 import { FAQSection } from '../components/FAQSection';
 import { SEOHead } from '../components/SEOHead';
 
+const RELATIONSHIPS_LIST = [
+  { slug: 'mensajes-de-cumpleanos-para-mama', name: 'Mamá', emoji: '🌸', desc: 'Amor incondicional y gratitud diaria' },
+  { slug: 'mensajes-de-cumpleanos-para-papa', name: 'Papá', emoji: '👔', desc: 'Sabiduría, esfuerzo y guía de vida' },
+  { slug: 'mensajes-de-cumpleanos-para-mi-novio', name: 'Mi Novio', emoji: '💖', desc: 'Complicidad, romance y proyectos juntos' },
+  { slug: 'mensajes-de-cumpleanos-para-mi-novia', name: 'Mi Novia', emoji: '🌹', desc: 'Ternura, cariño sincero y futuro' },
+  { slug: 'mensajes-de-cumpleanos-para-mi-esposo', name: 'Mi Esposo', emoji: '💍', desc: 'Compañero de vida, lealtad y hogar' },
+  { slug: 'mensajes-de-cumpleanos-para-mi-esposa', name: 'Mi Esposa', emoji: '💫', desc: 'Amor maduro, admiración y respeto' },
+  { slug: 'mensajes-de-cumpleanos-para-un-amigo', name: 'Un Amigo', emoji: '🌟', desc: 'Lealtad incondicional y risas compartidas' },
+  { slug: 'mensajes-de-cumpleanos-para-una-amiga', name: 'Una Amiga', emoji: '👭', desc: 'Apoyo mutuo, confidencias y anécdotas' },
+  { slug: 'mensajes-de-cumpleanos-para-mi-hijo', name: 'Mi Hijo', emoji: '👦', desc: 'Orgullo, crecimiento y bendición familiar' },
+  { slug: 'mensajes-de-cumpleanos-para-mi-hija', name: 'Mi Hija', emoji: '👧', desc: 'Luz del hogar, valentía y ternura' },
+  { slug: 'mensajes-de-cumpleanos-para-mi-hermano', name: 'Mi Hermano', emoji: '🤜', desc: 'Recuerdos de infancia y unión fraterna' },
+  { slug: 'mensajes-de-cumpleanos-para-mi-hermana', name: 'Mi Hermana', emoji: '🌺', desc: 'Complicidad de vida y abrazo sincero' },
+];
+
+const DIRECT_RELATIONSHIP_BY_POST_SLUG: Record<string, { slug: string; name: string; emoji: string }> = {
+  'frases-de-cumpleanos-para-mi-mama': { slug: 'mensajes-de-cumpleanos-para-mama', name: 'mamá', emoji: '🌸' },
+  'frases-de-cumpleanos-para-mi-papa': { slug: 'mensajes-de-cumpleanos-para-papa', name: 'papá', emoji: '👔' },
+  'frases-de-cumpleanos-para-mi-esposo': { slug: 'mensajes-de-cumpleanos-para-mi-esposo', name: 'tu esposo', emoji: '💍' },
+  'frases-de-cumpleanos-para-mi-esposa': { slug: 'mensajes-de-cumpleanos-para-mi-esposa', name: 'tu esposa', emoji: '💫' },
+  'frases-de-cumpleanos-para-mi-amor': { slug: 'mensajes-de-cumpleanos-para-mi-novio', name: 'tu pareja o novio/a', emoji: '💖' },
+  'frases-de-cumpleanos-para-amigos': { slug: 'mensajes-de-cumpleanos-para-un-amigo', name: 'un amigo o amiga', emoji: '🌟' },
+  'frases-de-cumpleanos-para-mi-hijo': { slug: 'mensajes-de-cumpleanos-para-mi-hijo', name: 'tu hijo', emoji: '👦' },
+  'feliz-cumpleanos-querida-hija': { slug: 'mensajes-de-cumpleanos-para-mi-hija', name: 'tu hija', emoji: '👧' },
+  'frases-de-cumpleanos-para-hermanos': { slug: 'mensajes-de-cumpleanos-para-mi-hermano', name: 'tu hermano o hermana', emoji: '🤜' },
+};
+
 interface PostDetailPageProps {
   post: Post;
 }
 
 export function PostDetailPage({ post }: PostDetailPageProps) {
   const category = getCategoryBySlug(post.category);
+  const directRel = DIRECT_RELATIONSHIP_BY_POST_SLUG[post.slug];
 
   // Budget Calculator state for budget post
   const [guestCount, setGuestCount] = useState<number>(20);
@@ -95,6 +123,35 @@ export function PostDetailPage({ post }: PostDetailPageProps) {
 
         <div className="article-content">
           {post.intro && <p className="article-intro">{post.intro}</p>}
+
+          {/* Contextual Interlink Callout Banner */}
+          {directRel ? (
+            <aside className="contextual-interlink-banner">
+              <div className="banner-left">
+                <span className="banner-badge">✨ Colección ampliada con 159 dedicatorias</span>
+                <h3>¿Buscás una dedicatoria profunda y personal para {directRel.name}?</h3>
+                <p>
+                  Si querés un mensaje con mayor desarrollo emocional, recuerdos cotidianos y reflexiones de vida, leé nuestra colección completa de <strong>159 mensajes narrativos para {directRel.name}</strong>, estructurados en párrafos de 3 a 5 oraciones.
+                </p>
+              </div>
+              <Link href={`/${directRel.slug}/`} className="button banner-action-btn">
+                Ver 159 mensajes para {directRel.name} →
+              </Link>
+            </aside>
+          ) : (
+            <aside className="contextual-interlink-banner">
+              <div className="banner-left">
+                <span className="banner-badge">💌 Dedicatorias por vínculo</span>
+                <h3>Personalizá este saludo con un mensaje para alguien especial</h3>
+                <p>
+                  Una gran celebración se acompaña con palabras que conmuevan. Explorá nuestras <strong>12 colecciones con más de 1.900 dedicatorias narrativas</strong> creadas para mamá, papá, pareja, amigos, hijos y hermanos.
+                </p>
+              </div>
+              <Link href="/mensajes-de-cumpleanos/" className="button banner-action-btn">
+                Explorar frases por vínculo →
+              </Link>
+            </aside>
+          )}
 
           {/* Interactive Calculator for Budget post */}
           {post.slug === 'como-calcular-presupuesto-de-cumpleanos' && (
@@ -302,22 +359,70 @@ export function PostDetailPage({ post }: PostDetailPageProps) {
           )}
 
           <div className="article-end">
-            <p>Elegí las ideas que mejor encajen con tu celebración y adaptalas a tu manera.</p>
-            {category && (
-              <Link className="button" href={`/categoria/${category.slug}/`}>
-                Ver más de {category.title.toLowerCase()}
+            <p>Elegí las frases e ideas que mejor encajen con tu celebración y adaptalas con recuerdos propios.</p>
+            <div className="button-row">
+              {category && (
+                <Link className="button" href={`/categoria/${category.slug}/`}>
+                  Más artículos de {category.title.toLowerCase()}
+                </Link>
+              )}
+              <Link className="button-secondary" href="/mensajes-de-cumpleanos/">
+                Ver mensajes por vínculo
               </Link>
-            )}
+              <Link className="button-secondary" href="/frases-de-cumpleanos/">
+                Ver frases cortas
+              </Link>
+            </div>
           </div>
         </div>
       </article>
+
+      {/* Comprehensive 12-Relationship Interlink Grid Section */}
+      <section className="section section-soft relationship-interlink-section">
+        <div className="wrap">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">Red de dedicatorias</span>
+              <h2>Mensajes y frases según el vínculo especial</h2>
+              <p>Descubrí más de 1.900 dedicatorias narrativas escritas con gratitud, anécdotas y aprendizajes de vida:</p>
+            </div>
+            <Link href="/mensajes-de-cumpleanos/" className="text-link">
+              Ver índice completo de vínculos →
+            </Link>
+          </div>
+
+          <div className="relationship-interlink-grid">
+            {RELATIONSHIPS_LIST.map((rel) => (
+              <Link key={rel.slug} href={`/${rel.slug}/`} className="rel-interlink-card">
+                <span className="rel-interlink-icon" aria-hidden="true">{rel.emoji}</span>
+                <div className="rel-interlink-info">
+                  <strong>{rel.name}</strong>
+                  <p>{rel.desc}</p>
+                  <span className="rel-count-badge">159 frases redactadas</span>
+                </div>
+                <span className="rel-interlink-arrow" aria-hidden="true">→</span>
+              </Link>
+            ))}
+          </div>
+
+          <div className="interlink-quick-bar">
+            <span>Explorá otras colecciones de Para Cumpleaños:</span>
+            <div className="quick-links-group">
+              <Link href="/frases-de-cumpleanos/">✨ Frases célebres y originales</Link>
+              <Link href="/postales-de-cumpleanos/">💌 Postales para WhatsApp</Link>
+              <Link href="/recursos/banderines-cumpleanos-imprimibles/">🎨 Banderines imprimibles gratis</Link>
+              <Link href="/categoria/frases-y-mensajes/">📚 Todas las guías de mensajes</Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
         <section className="section section-muted">
           <div className="wrap">
             <div className="section-heading">
-              <h2>También te puede servir</h2>
+              <h2>Artículos y guías relacionados</h2>
             </div>
             <div className="card-grid">
               {relatedPosts.map((rel) => (
@@ -328,7 +433,7 @@ export function PostDetailPage({ post }: PostDetailPageProps) {
                   </h3>
                   <p>{rel.description}</p>
                   <Link className="text-link" href={`/posts/${rel.slug}/`}>
-                    Ver colección →
+                    Ver colección completa →
                   </Link>
                 </article>
               ))}
