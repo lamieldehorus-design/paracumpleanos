@@ -41,6 +41,20 @@ export function HomePage() {
     .map((slug) => posts.find((p) => p.slug === slug))
     .filter(Boolean) as typeof posts;
 
+  const milestoneSlugs = [
+    'frases-de-cumpleanos-18-anos',
+    'frases-de-cumpleanos-30-anos',
+    'frases-de-cumpleanos-40-anos',
+    'frases-de-cumpleanos-50-anos',
+    'frases-de-cumpleanos-60-anos',
+    'frases-de-cumpleanos-cristianas',
+    'mensajes-de-cumpleanos-atrasados'
+  ];
+
+  const milestonePosts = milestoneSlugs
+    .map((slug) => posts.find((p) => p.slug === slug))
+    .filter(Boolean) as typeof posts;
+
   return (
     <>
       <SEOHead
@@ -132,6 +146,32 @@ export function HomePage() {
                 post={post}
                 kicker="Para dedicar"
                 actionLabel="Ver frases →"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Edades clave y ocasiones especiales */}
+      <section className="section">
+        <div className="wrap">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">Edades y momentos clave</span>
+              <h2>Felicitaciones para cada etapa de la vida</h2>
+              <p>Dedicatorias para cumpleaños de 18, 30, 40, 50 y 60 años, bendiciones cristianas y saludos atrasados.</p>
+            </div>
+            <Link className="text-link" href="/frases-de-cumpleanos/">
+              Ver todas las colecciones →
+            </Link>
+          </div>
+          <div className="card-grid">
+            {milestonePosts.map((post) => (
+              <PostCard
+                key={post.slug}
+                post={post}
+                kicker="Especial"
+                actionLabel="Ver dedicatorias →"
               />
             ))}
           </div>

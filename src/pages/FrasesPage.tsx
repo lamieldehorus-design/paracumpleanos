@@ -19,7 +19,14 @@ const FRASES_SLUGS = [
   'feliz-cumpleanos-querida-hija',
   'frases-de-cumpleanos-para-mi-hijo',
   'frases-cortas-de-cumpleanos-para-whatsapp',
-  '100-frases-de-cumpleanos-que-emocionan'
+  '100-frases-de-cumpleanos-que-emocionan',
+  'frases-de-cumpleanos-18-anos',
+  'frases-de-cumpleanos-30-anos',
+  'frases-de-cumpleanos-40-anos',
+  'frases-de-cumpleanos-50-anos',
+  'frases-de-cumpleanos-60-anos',
+  'frases-de-cumpleanos-cristianas',
+  'mensajes-de-cumpleanos-atrasados'
 ];
 
 const FRASES_EJEMPLO = [
