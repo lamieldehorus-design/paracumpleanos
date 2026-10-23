@@ -380,11 +380,41 @@ function getPageMetadata(urlStr) {
       // Generate post body text
       let postBodyHtml = `<p class="article-lead">${escapeHtml(post.intro || post.description)}</p>`;
 
+      const directRel = {
+        'frases-de-cumpleanos-para-mi-mama': { slug: 'mensajes-de-cumpleanos-para-mama', name: 'mamá' },
+        'frases-de-cumpleanos-para-mi-papa': { slug: 'mensajes-de-cumpleanos-para-papa', name: 'papá' },
+        'frases-de-cumpleanos-para-mi-esposo': { slug: 'mensajes-de-cumpleanos-para-mi-esposo', name: 'tu esposo' },
+        'frases-de-cumpleanos-para-mi-esposa': { slug: 'mensajes-de-cumpleanos-para-mi-esposa', name: 'tu esposa' },
+        'frases-de-cumpleanos-para-mi-amor': { slug: 'mensajes-de-cumpleanos-para-mi-novio', name: 'tu pareja o novio/a' },
+        'frases-de-cumpleanos-para-amigos': { slug: 'mensajes-de-cumpleanos-para-un-amigo', name: 'un amigo o amiga' },
+        'frases-de-cumpleanos-para-mi-hijo': { slug: 'mensajes-de-cumpleanos-para-mi-hijo', name: 'tu hijo' },
+        'feliz-cumpleanos-querida-hija': { slug: 'mensajes-de-cumpleanos-para-mi-hija', name: 'tu hija' },
+        'frases-de-cumpleanos-para-hermanos': { slug: 'mensajes-de-cumpleanos-para-mi-hermano', name: 'tu hermano o hermana' }
+      }[post.slug];
+
+      if (directRel) {
+        postBodyHtml += `
+          <aside class="contextual-interlink-banner">
+            <h3>¿Buscás una dedicatoria profunda y personal para ${escapeHtml(directRel.name)}?</h3>
+            <p>Descubrí nuestra colección exclusiva con <strong>159 mensajes narrativos de 3 a 5 oraciones</strong> con anécdotas, agradecimiento sincero y aprendizajes de vida.</p>
+            <p><a href="/${directRel.slug}/" class="button">Ver 159 mensajes para ${escapeHtml(directRel.name)} →</a></p>
+          </aside>
+        `;
+      } else {
+        postBodyHtml += `
+          <aside class="contextual-interlink-banner">
+            <h3>Personalizá este saludo según la persona especial a felicitar</h3>
+            <p>Accedé a nuestras <strong>12 colecciones con más de 1.900 dedicatorias narrativas</strong> creadas para mamá, papá, pareja, amigos, hijos y hermanos.</p>
+            <p><a href="/mensajes-de-cumpleanos/" class="button">Explorar frases por vínculo →</a></p>
+          </aside>
+        `;
+      }
+
       if (post.sections && post.sections.length > 0) {
         postBodyHtml += post.sections
           .map((s) => `
             <section class="post-section">
-              <h2>${escapeHtml(s.heading)}</h2>
+              <h2>${escapeHtml(s.heading || s.h2 || s.title || '')}</h2>
               ${s.paragraphs ? s.paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join('') : ''}
               ${s.bullets ? `<ul>${s.bullets.map((b) => `<li>${escapeHtml(b)}</li>`).join('')}</ul>` : ''}
             </section>
@@ -400,6 +430,33 @@ function getPageMetadata(urlStr) {
           </section>
         `;
       }
+
+      // 12-Relationship Interlinks Grid
+      const relLinks = [
+        { slug: 'mensajes-de-cumpleanos-para-mama', name: 'Mamá', emoji: '🌸' },
+        { slug: 'mensajes-de-cumpleanos-para-papa', name: 'Papá', emoji: '👔' },
+        { slug: 'mensajes-de-cumpleanos-para-mi-novio', name: 'Mi Novio', emoji: '💖' },
+        { slug: 'mensajes-de-cumpleanos-para-mi-novia', name: 'Mi Novia', emoji: '🌹' },
+        { slug: 'mensajes-de-cumpleanos-para-mi-esposo', name: 'Mi Esposo', emoji: '💍' },
+        { slug: 'mensajes-de-cumpleanos-para-mi-esposa', name: 'Mi Esposa', emoji: '💫' },
+        { slug: 'mensajes-de-cumpleanos-para-un-amigo', name: 'Un Amigo', emoji: '🌟' },
+        { slug: 'mensajes-de-cumpleanos-para-una-amiga', name: 'Una Amiga', emoji: '👭' },
+        { slug: 'mensajes-de-cumpleanos-para-mi-hijo', name: 'Mi Hijo', emoji: '👦' },
+        { slug: 'mensajes-de-cumpleanos-para-mi-hija', name: 'Mi Hija', emoji: '👧' },
+        { slug: 'mensajes-de-cumpleanos-para-mi-hermano', name: 'Mi Hermano', emoji: '🤜' },
+        { slug: 'mensajes-de-cumpleanos-para-mi-hermana', name: 'Mi Hermana', emoji: '🌺' }
+      ];
+
+      postBodyHtml += `
+        <section class="relationship-interlink-section">
+          <h2>Dedicatorias y frases por vínculo especial</h2>
+          <p>Explorá más de 1.900 mensajes narrativos únicos con anécdotas y aprendizajes de vida:</p>
+          <div class="relationship-interlink-grid">
+            ${relLinks.map((r) => `<a href="/${r.slug}/" class="rel-interlink-card"><span>${r.emoji} ${escapeHtml(r.name)}</span> (159 frases)</a>`).join('\n')}
+          </div>
+          <p><a href="/mensajes-de-cumpleanos/">Ver índice de todos los vínculos →</a> · <a href="/frases-de-cumpleanos/">Ver frases cortas</a></p>
+        </section>
+      `;
 
       return {
         title: `${post.title} | Para Cumpleaños`,
@@ -513,8 +570,11 @@ function renderHtml(templateHtml, meta) {
           <a href="/frases-de-cumpleanos/">Frases</a>
           <a href="/mensajes-de-cumpleanos/">Mensajes</a>
           <a href="/postales-de-cumpleanos/">Postales</a>
+          <a href="/categoria/frases-y-mensajes/">Frases y mensajes</a>
           <a href="/categoria/ideas-y-tematicas/">Ideas</a>
+          <a href="/categoria/organizacion/">Organización</a>
           <a href="/categoria/recursos-gratuitos/">Recursos</a>
+          <a href="/categoria/tendencias-2026/">Tendencias</a>
         </nav>
       </div>
     </header>
