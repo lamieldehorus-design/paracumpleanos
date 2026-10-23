@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Post } from '../types';
 import { Link } from '../router';
-import { getCategoryBySlug, getPostBySlug } from '../data';
+import { getCategoryBySlug, getPostBySlug, categories } from '../data';
 import { CopyButton } from '../components/CopyButton';
 import { WhatsAppButton } from '../components/WhatsAppButton';
 import { VoteButtons } from '../components/VoteButtons';
@@ -411,8 +411,32 @@ export function PostDetailPage({ post }: PostDetailPageProps) {
               <Link href="/frases-de-cumpleanos/">✨ Frases célebres y originales</Link>
               <Link href="/postales-de-cumpleanos/">💌 Postales para WhatsApp</Link>
               <Link href="/recursos/banderines-cumpleanos-imprimibles/">🎨 Banderines imprimibles gratis</Link>
-              <Link href="/categoria/frases-y-mensajes/">📚 Todas las guías de mensajes</Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories Navigation Hub: All 6 categories explicitly linked at the foot of the post */}
+      <section className="section section-categories-hub">
+        <div className="wrap">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">Navegación por categorías</span>
+              <h2>Explorá todas las categorías del sitio</h2>
+              <p>Accedé a guías organizadas, ideas de celebración, imprimibles y dedicatorias:</p>
+            </div>
+          </div>
+          <div className="category-footer-grid">
+            {categories.map((cat) => (
+              <Link key={cat.slug} href={`/categoria/${cat.slug}/`} className="category-footer-card">
+                <span className="cat-footer-icon" aria-hidden="true">{cat.icon}</span>
+                <div className="cat-footer-info">
+                  <strong>{cat.title}</strong>
+                  <p>{cat.description}</p>
+                </div>
+                <span className="cat-footer-arrow" aria-hidden="true">→</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

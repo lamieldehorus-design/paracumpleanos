@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useRouter } from '../router';
-import { categories, getPostsByCategory } from '../data';
+import { categories } from '../data';
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -20,7 +20,7 @@ export function Header() {
     setMobileCategoriesOpen(false);
   };
 
-  // Close dropdown on click outside
+  // Close dropdown on click outside or escape key
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -91,7 +91,7 @@ export function Header() {
               Mensajes
             </Link>
 
-            {/* Desktop Categories Dropdown */}
+            {/* Desktop Categories Clean Dropdown (solo títulos, sin choclo visual) */}
             <div className="nav-dropdown-wrapper" ref={dropdownRef}>
               <button
                 type="button"
@@ -107,61 +107,23 @@ export function Header() {
               </button>
 
               {categoriesOpen && (
-                <div className="categories-mega-menu" role="menu">
-                  <div className="mega-menu-header">
-                    <strong>Categorías y guías recomendadas</strong>
-                    <Link href="/" className="mega-menu-home-link" onClick={closeAll}>
-                      Ver todas las guías →
+                <div className="categories-simple-menu" role="menu">
+                  {categories.map((cat) => (
+                    <Link
+                      key={cat.slug}
+                      href={`/categoria/${cat.slug}/`}
+                      className="category-menu-item"
+                      onClick={closeAll}
+                    >
+                      <span className="cat-item-icon" aria-hidden="true">{cat.icon}</span>
+                      <span className="cat-item-title">{cat.title}</span>
                     </Link>
-                  </div>
-                  <div className="mega-menu-grid">
-                    {categories.map((cat) => {
-                      const catPosts = getPostsByCategory(cat.slug);
-                      return (
-                        <div key={cat.slug} className="mega-menu-col">
-                          <Link
-                            href={`/categoria/${cat.slug}/`}
-                            className="mega-menu-cat-title"
-                            onClick={closeAll}
-                          >
-                            <span className="cat-icon" aria-hidden="true">{cat.icon}</span>
-                            <span>{cat.title}</span>
-                          </Link>
-                          {catPosts.length > 0 && (
-                            <ul className="mega-menu-post-list">
-                              {catPosts.slice(0, 4).map((p) => (
-                                <li key={p.slug}>
-                                  <Link
-                                    href={`/posts/${p.slug}/`}
-                                    className="mega-menu-post-link"
-                                    onClick={closeAll}
-                                  >
-                                    {p.title.length > 45 ? `${p.title.slice(0, 42)}...` : p.title}
-                                  </Link>
-                                </li>
-                              ))}
-                              {catPosts.length > 4 && (
-                                <li className="mega-menu-more-item">
-                                  <Link
-                                    href={`/categoria/${cat.slug}/`}
-                                    className="mega-menu-more-link"
-                                    onClick={closeAll}
-                                  >
-                                    +{catPosts.length - 4} más en {cat.title.split(' ')[0]} →
-                                  </Link>
-                                </li>
-                              )}
-                            </ul>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
+                  ))}
                 </div>
               )}
             </div>
 
-            {/* Mobile Categories Accordion (Only visible in mobile nav open state) */}
+            {/* Mobile Categories Accordion (solo títulos directos) */}
             <div className="mobile-categories-section">
               <button
                 type="button"
@@ -169,39 +131,22 @@ export function Header() {
                 onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
                 aria-expanded={mobileCategoriesOpen}
               >
-                <span>📚 Categorías y artículos</span>
+                <span>📚 Categorías</span>
                 <span>{mobileCategoriesOpen ? '▲' : '▼'}</span>
               </button>
               {mobileCategoriesOpen && (
-                <div className="mobile-categories-content">
-                  {categories.map((cat) => {
-                    const catPosts = getPostsByCategory(cat.slug);
-                    return (
-                      <div key={cat.slug} className="mobile-cat-group">
-                        <Link
-                          href={`/categoria/${cat.slug}/`}
-                          className="mobile-cat-heading"
-                          onClick={closeAll}
-                        >
-                          <span aria-hidden="true">{cat.icon}</span> {cat.title}
-                        </Link>
-                        {catPosts.length > 0 && (
-                          <div className="mobile-post-links">
-                            {catPosts.slice(0, 3).map((p) => (
-                              <Link
-                                key={p.slug}
-                                href={`/posts/${p.slug}/`}
-                                className="mobile-post-link"
-                                onClick={closeAll}
-                              >
-                                • {p.title.length > 40 ? `${p.title.slice(0, 38)}...` : p.title}
-                              </Link>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                <div className="mobile-categories-simple-list">
+                  {categories.map((cat) => (
+                    <Link
+                      key={cat.slug}
+                      href={`/categoria/${cat.slug}/`}
+                      className="mobile-category-link"
+                      onClick={closeAll}
+                    >
+                      <span aria-hidden="true">{cat.icon}</span>
+                      <span>{cat.title}</span>
+                    </Link>
+                  ))}
                 </div>
               )}
             </div>

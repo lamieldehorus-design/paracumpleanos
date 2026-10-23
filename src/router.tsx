@@ -75,7 +75,11 @@ export function RouterProvider({ children }: { children: ReactNode }) {
         }
       }, 50);
     } else {
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      try {
+        window.scrollTo(0, 0);
+      } catch {
+        // ignore
+      }
     }
   };
 

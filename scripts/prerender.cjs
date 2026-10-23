@@ -456,6 +456,14 @@ function getPageMetadata(urlStr) {
           </div>
           <p><a href="/mensajes-de-cumpleanos/">Ver índice de todos los vínculos →</a> · <a href="/frases-de-cumpleanos/">Ver frases cortas</a></p>
         </section>
+
+        <section class="section-categories-hub">
+          <h2>Explorá todas las categorías del sitio</h2>
+          <p>Accedé a guías organizadas, ideas de celebración, imprimibles y dedicatorias:</p>
+          <div class="category-footer-grid">
+            ${categories.map((c) => `<a href="/categoria/${c.slug}/" class="category-footer-card"><strong>${c.icon} ${escapeHtml(c.title)}</strong><p>${escapeHtml(c.description)}</p></a>`).join('\n')}
+          </div>
+        </section>
       `;
 
       return {

@@ -71,7 +71,7 @@ export function App() {
 
     // Check relationship collections e.g. /mensajes-de-cumpleanos-para-mama
     if (currentPath.startsWith('/mensajes-de-cumpleanos-para-')) {
-      const slug = currentPath.replace('/', '');
+      const slug = currentPath.replace(/^\//, '').replace(/\/+$/, '');
       const collection = getRelationshipCollection(slug);
       if (collection) {
         return <RelationshipMessagesPage collection={collection} />;
@@ -79,9 +79,9 @@ export function App() {
     }
 
     // Check category pages e.g. /categoria/ideas-y-tematicas
-    if (currentPath.startsWith('/categoria/')) {
-      const slug = currentPath.replace('/categoria/', '');
-      const category = getCategoryBySlug(slug);
+    if (currentPath.startsWith('/categoria')) {
+      const slug = currentPath.replace(/^\/categoria\/?/, '').replace(/\/+$/, '');
+      const category = slug ? getCategoryBySlug(slug) : getCategoryBySlug('frases-y-mensajes');
       if (category) {
         return <CategoryPage category={category} />;
       }
@@ -89,7 +89,7 @@ export function App() {
 
     // Check post pages e.g. /posts/frases-de-cumpleanos-para-amigos
     if (currentPath.startsWith('/posts/')) {
-      const slug = currentPath.replace('/posts/', '');
+      const slug = currentPath.replace(/^\/posts\/?/, '').replace(/\/+$/, '');
       const post = getPostBySlug(slug);
       if (post) {
         return <PostDetailPage post={post} />;
