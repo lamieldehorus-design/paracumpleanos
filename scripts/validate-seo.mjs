@@ -46,12 +46,14 @@ for(const file of pages){
   let pathname;
   try{pathname=decodeURIComponent(parsed.pathname);}catch{pathname=parsed.pathname;}
   const relative=pathname.replace(/^\/+/, "");
-  const target=relative ? path.join(root,relative) : path.join(root,"index.html");
-  const candidates=pathname.endsWith("/")
-   ? [path.join(target,"index.html")]
-   : path.extname(target)
-    ? [target]
-    : [path.join(target,"index.html"),target+".html"];
+  const target=relative ? path.join(root,relative) : root;
+  const candidates=pathname==="/"
+   ? [path.join(root,"index.html")]
+   : pathname.endsWith("/")
+    ? [path.join(target,"index.html")]
+    : path.extname(target)
+     ? [target]
+     : [path.join(target,"index.html"),target+".html"];
   if(!candidates.some(candidate=>fs.existsSync(candidate))){
    errors.push(path.relative(root,file)+": enlace interno sin destino: "+href);
   }
