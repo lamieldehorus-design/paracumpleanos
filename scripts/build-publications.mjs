@@ -25,10 +25,119 @@ const footer='<footer><div class="wrap footer-top"><a class="brand" href="/"><sp
 const tracking='<script>var sc_project=13334162;var sc_invisible=1;var sc_security="3e891d7b";</script><script src="https://www.statcounter.com/counter/counter.js" async></script><noscript><img src="https://c.statcounter.com/13334162/0/3e891d7b/1/" alt="StatCounter"></noscript>';
 function page(title,desc,url,content,type="Article"){const schema={"@context":"https://schema.org","@type":type,"name":title,"headline":title,"description":desc,"url":url,"inLanguage":"es-AR"};if(type==="Article"){schema.author={"@type":"Organization","name":"ParaCumpleanos.com"};schema.publisher={"@type":"Organization","name":"ParaCumpleanos.com"};schema.mainEntityOfPage=url;}return '<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(title)+'</title><meta name="description" content="'+esc(desc)+'"><meta name="robots" content="index,follow,max-image-preview:large"><link rel="canonical" href="'+url+'"><meta name="theme-color" content="#ffffff"><meta property="og:site_name" content="ParaCumpleanos.com"><meta property="og:locale" content="es_AR"><meta property="og:type" content="'+(type==="Article"?"article":"website")+'"><meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc(desc)+'"><meta property="og:url" content="'+url+'"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="'+esc(title)+'"><meta name="twitter:description" content="'+esc(desc)+'"><link rel="stylesheet" href="/styles.css"><script type="application/ld+json">'+JSON.stringify(schema)+'</script>'+tracking+'</head><body>'+nav+'<main>'+content+'</main>'+footer+'<script src="/app.js" defer></script></body></html>';}
 const slugs=new Set(articles.map(a=>a.slug));
-for(const a of articles){const url='https://paracumpleanos.com/publicaciones/'+a.slug+'/';const msgs=a.messages.map((m,i)=>{const p=m.split(' | ');return '<div class="message"><p>'+(i+1)+'. '+esc(p[0])+(p[1]?'<br><span style="color:var(--muted);font-size:13px">'+esc(p[1])+'</span>':'')+'</p><div class="message-actions"><button class="copy" data-copy="'+esc(p[0])+'">Copiar mensaje</button><a class="share" target="_blank" rel="noopener noreferrer" href="https://wa.me/?text='+encodeURIComponent(p[0])+'">WhatsApp ↗</a></div></div>';}).join('');
-const related=a.related.filter(s=>slugs.has(s)).map(s=>{const q=articles.find(x=>x.slug===s);return '<a href="/publicaciones/'+q.slug+'/">'+esc(q.title)+'</a>';}).join('');
-const content='<section class="wrap page-hero"><p class="breadcrumb"><a href="/">Inicio</a> / <a href="/publicaciones/">Publicaciones</a> / '+esc(a.tag.toLowerCase())+'</p><p class="eyebrow">'+esc(a.tag)+'</p><h1>'+esc(a.title)+'</h1><p class="hero-copy">'+esc(a.intro)+'</p><p class="breadcrumb">'+a.messages.length+' mensajes originales · Podés copiarlos o compartirlos</p></section><section class="wrap layout"><article class="content"><h2>'+a.messages.length+' mensajes para elegir</h2><div class="message-list">'+msgs+'</div><h2>Cómo hacer que el saludo sea personal</h2><p>Elegí las palabras que mejor representen tu relación con esa persona. Podés sumar su nombre, un recuerdo compartido o un deseo concreto para el año que empieza. No hace falta escribir mucho: lo importante es que el mensaje suene natural y sincero.</p><p>Si buscás otro formato, explorá los <a href="/mensajes-de-cumpleanos/">mensajes de cumpleaños</a>, las <a href="/frases-de-cumpleanos/">frases de cumpleaños</a> o las <a href="/postales-de-cumpleanos/">postales para compartir</a>.</p><h2>Más ideas relacionadas</h2><p>Estas publicaciones están conectadas por el tema y el tipo de saludo que estás buscando.</p></article><aside class="side"><h2>Seguí explorando</h2>'+related+'<a href="/mensajes-de-cumpleanos/">Todos los mensajes</a><a href="/frases-de-cumpleanos/">Frases de cumpleaños</a><a href="/postales-de-cumpleanos/">Postales de cumpleaños</a></aside></section>';
-const dir=path.join(root,"publicaciones",a.slug);fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,"index.html"),page(a.title,a.description,url,content));}
+const targetCounts={
+  "mensajes-de-cumpleanos-para-una-hermana":75,
+  "mensajes-de-cumpleanos-para-mi-hija":100,
+  "mensajes-de-cumpleanos-para-un-hijo":100,
+  "mensajes-de-cumpleanos-para-mi-esposo":75,
+  "mensajes-de-cumpleanos-para-una-prima":50,
+  "mensajes-de-cumpleanos-para-un-amigo":75,
+  "mensajes-de-cumpleanos-para-alguien-especial":100,
+  "mensajes-de-cumpleanos-atrasado":50,
+  "mensajes-de-cumpleanos-para-whatsapp":500,
+  "feliz-cumpleanos-en-ingles-mensajes-y-traduccion":75,
+  "mensajes-de-cumpleanos-cristianos-con-bendiciones":75,
+  "mensajes-de-cumpleanos-chistosos":75,
+  "frases-de-cumpleanos-cortas-y-bonitas":100,
+  "felicitaciones-de-cumpleanos-originales-para-whatsapp":100,
+  "mensajes-de-cumpleanos-para-una-mujer-de-50-anos":50,
+  "mensajes-de-cumpleanos-para-una-mujer-de-60-anos":50,
+  "mensajes-de-cumpleanos-para-mi-mama":100,
+  "mensajes-de-cumpleanos-para-mi-papa":100,
+  "mensajes-de-cumpleanos-para-mi-pareja":100,
+  "mensajes-de-cumpleanos-para-una-amiga":75,
+  "mensajes-de-cumpleanos-para-una-abuela":50,
+  "mensajes-de-cumpleanos-para-una-mujer-de-70-anos":50
+};
+const additions=[
+  "Que este año te acerque a las personas, los proyectos y los lugares donde te sentís en paz.",
+  "Ojalá tengas tiempo para disfrutar lo que construiste y entusiasmo para empezar algo nuevo.",
+  "Te deseo días con menos preocupaciones, más momentos presentes y motivos honestos para sonreír.",
+  "Que cada paso tenga sentido para vos, incluso cuando el camino no salga exactamente como lo planeaste.",
+  "Deseo que te rodeen personas que escuchen, respeten tus tiempos y celebren tus logros de corazón.",
+  "Que encuentres pequeñas alegrías en los días comunes y fuerza para atravesar los que cuesten un poco más.",
+  "Ojalá recibas buenas noticias, abrazos sinceros y oportunidades que te permitan crecer a tu manera.",
+  "Que no te falte salud para disfrutar, calma para elegir y compañía para compartir lo importante.",
+  "Deseo que puedas soltar lo que pesa, cuidar lo que vale y hacer lugar para lo que te ilusiona.",
+  "Que este nuevo capítulo se parezca cada vez más a la vida que querés construir.",
+  "Ojalá te des permiso para celebrar lo conseguido sin dejar de imaginar todo lo que todavía puede venir.",
+  "Que las personas que te quieren sepan demostrártelo y que vos también encuentres formas de cuidarte.",
+  "Te deseo experiencias que te enseñen sin quitarte la alegría y cambios que abran caminos mejores.",
+  "Que tengas motivos para sentir orgullo de tu historia y libertad para escribir lo que sigue.",
+  "Ojalá el año venga con encuentros que sumen, conversaciones que hagan bien y recuerdos para guardar."
+];
+const openings=[
+  "En tu cumpleaños quiero desearte algo más que un buen día:",
+  "Si pudiera elegir tres regalos para este nuevo año, serían estos:",
+  "Hoy vale la pena detenerse un momento para celebrar todo lo que sos.",
+  "Mi deseo para vos en esta nueva vuelta al sol es sencillo y sincero:",
+  "Que este cumpleaños sea una pausa linda para mirar lo vivido y lo que viene.",
+  "No hace falta una frase perfecta para decirte cuánto deseo que estés bien.",
+  "Hoy celebro tu vida y todo lo bueno que todavía puede sorprenderte.",
+  "Para este nuevo capítulo, ojalá la vida te acerque a lo que te hace bien.",
+  "Más allá de la torta y los saludos, deseo que este año te regale:",
+  "Que el comienzo de este año personal venga acompañado de buenas razones para ilusionarte."
+];
+const endings=[
+  "Te lo deseo de corazón. ¡Feliz cumpleaños!",
+  "Que puedas disfrutarlo a tu manera y rodeado/a de cariño.",
+  "Y que no tengas que esperar hasta el próximo cumpleaños para celebrar algo lindo.",
+  "Un abrazo grande y mis mejores deseos para todo lo que viene.",
+  "Que así sea, paso a paso y a tu propio ritmo."
+];
+function expandMessages(a){
+  const target=targetCounts[a.slug]||Math.max(50,a.messages.length);
+  const messages=[...a.messages];
+  const seen=new Set(messages);
+  const context=a.tag.toLowerCase();
+  for(const opening of openings){
+    for(const wish of additions){
+      for(const ending of endings){
+        const variants=[
+          opening+" "+wish+" "+ending,
+          wish+" "+ending,
+          opening+" "+wish
+        ];
+        for(const item of variants){
+          const personalized=item.replace(/\bvos\b/g, "vos");
+          if(!seen.has(personalized)){seen.add(personalized);messages.push(personalized);}
+          if(messages.length>=target) return messages.slice(0,target);
+        }
+      }
+    }
+  }
+  let index=0;
+  while(messages.length<target){
+    const base=a.messages[index%a.messages.length].split(" | ")[0];
+    const wish=additions[index%additions.length];
+    const ending=endings[Math.floor(index/additions.length)%endings.length];
+    const item=base+" "+wish+" "+ending;
+    if(!seen.has(item)){seen.add(item);messages.push(item);}
+    index++;
+  }
+  return messages.slice(0,target);
+}
+function articleTitle(a,count){
+  return a.title.replace(/^\d+\s+/, count+" ").replace(/\b12\s+(mensajes|frases|felicitaciones)\b/i, count+" $1");
+}
+function articleDescription(a,count){
+  return a.description.replace(/\b12\s+(mensajes|frases|felicitaciones)\b/i, count+" $1");
+}
+for(const a of articles){
+  const url='https://paracumpleanos.com/publicaciones/'+a.slug+'/';
+  const messages=expandMessages(a);
+  const title=articleTitle(a,messages.length);
+  const description=articleDescription(a,messages.length);
+  const msgs=messages.map((m,i)=>{
+    const p=m.split(' | ');
+    return '<div class="message"><p>'+ (i+1)+'. '+esc(p[0])+(p[1]?'<br><span style="color:var(--muted);font-size:13px">'+esc(p[1])+'</span>':'')+'</p><div class="message-actions"><button class="copy" data-copy="'+esc(p[0])+'">Copiar mensaje</button><a class="share" target="_blank" rel="noopener noreferrer" href="https://wa.me/?text='+encodeURIComponent(p[0])+'">WhatsApp ↗</a></div></div>';
+  }).join('');
+  const related=a.related.filter(s=>slugs.has(s)).map(s=>{const q=articles.find(x=>x.slug===s);return '<a href="/publicaciones/'+q.slug+'/">'+esc(articleTitle(q,targetCounts[q.slug]||q.messages.length))+'</a>';}).join('');
+  const personalization=a.tag.toLowerCase().includes("whatsapp")?"Para WhatsApp, priorizá mensajes que se entiendan sin contexto, tengan una extensión cómoda para el chat y no dependan de una broma que la otra persona quizá no comparta.": "Para que el saludo no parezca copiado, sumá el nombre de la persona, una anécdota concreta o un deseo que tenga relación con lo que está viviendo. Cambiá cualquier palabra que no usarías en una conversación real.";
+  const sections='<section class="editorial-block"><h2>Cómo elegir el mensaje indicado</h2><p>Primero pensá qué querés transmitir: cariño, gratitud, humor, admiración o buenos deseos para la etapa que empieza. Después elegí una frase que encaje con el vínculo y con la forma habitual en que se hablan. Un mensaje breve puede emocionar más que uno largo si incluye un detalle verdadero.</p><p>'+esc(personalization)+'</p><ul><li><strong>Si buscás algo breve:</strong> quedate con una sola idea y evitá acumular deseos genéricos.</li><li><strong>Si querés emocionar:</strong> nombrá un recuerdo compartido o una cualidad que valores de esa persona.</li><li><strong>Si el vínculo es cercano:</strong> escribí con tus palabras; no hace falta que suene solemne.</li></ul></section><section class="editorial-block"><h2>Una fórmula simple para personalizarlo</h2><p>Podés combinar tres elementos: un saludo directo, un detalle que solo tenga sentido para ustedes y un deseo concreto para el año que comienza. Por ejemplo: “Feliz cumpleaños, [nombre]. Todavía me acuerdo de [recuerdo compartido]. Ojalá este año te acerque a [deseo realista]”. Reemplazá los corchetes por detalles propios y el mensaje dejará de sonar impersonal.</p><p>No hace falta usar todos los mensajes tal como aparecen. Tomalos como borradores: recortá, mezclá o cambiá el tono para que la dedicatoria final sea tuya.</p></section><section class="editorial-block"><h2>Preguntas frecuentes</h2><h3>¿Cómo escribir un mensaje de cumpleaños que no suene genérico?</h3><p>Incluí un detalle real sobre la persona, el vínculo o un deseo específico. Evitá prometer cosas que no sentís y usá palabras que dirías cara a cara.</p><h3>¿Conviene enviar un mensaje largo o corto?</h3><p>Depende de la relación y del medio. Para un chat suele funcionar un saludo corto; para una tarjeta o una dedicatoria familiar puede tener sentido desarrollar una idea más personal.</p><h3>¿Puedo copiar y compartir estos mensajes?</h3><p>Sí. Podés copiar una opción y adaptarla antes de enviarla. Personalizar el saludo ayuda a que el mensaje conserve tu voz.</p></section><section class="editorial-block closing-note"><h2>Un último consejo antes de enviarlo</h2><p>Elegí el mensaje que más se acerque a lo que sentís, leélo una vez en voz alta y cambiá cualquier expresión que no usarías normalmente. La intención importa, pero los detalles personales son los que hacen que una felicitación se recuerde.</p><p>Si querés comparar otros tonos, seguí con las <a href="/mensajes-de-cumpleanos/">colecciones de mensajes de cumpleaños</a>, las <a href="/frases-de-cumpleanos/">frases de cumpleaños</a> o las <a href="/postales-de-cumpleanos/">postales para compartir</a>.</p></section>';
+  const content='<section class="wrap page-hero"><p class="breadcrumb"><a href="/">Inicio</a> / <a href="/publicaciones/">Publicaciones</a> / '+esc(a.tag.toLowerCase())+'</p><p class="eyebrow">'+esc(a.tag)+'</p><h1>'+esc(title)+'</h1><p class="hero-copy">'+esc(a.intro)+'</p><p class="breadcrumb">'+messages.length+' opciones para elegir · Copiá, adaptá y compartí la que mejor encaje</p><p class="hero-copy">Esta colección reúne alternativas de distintos tonos para que no tengas que enviar siempre el mismo saludo. Elegí por intención y personalizá los detalles antes de compartir.</p></section><section class="wrap layout"><article class="content"><h2>'+messages.length+' mensajes de cumpleaños</h2><p>Leé las opciones y elegí la que mejor representa el vínculo. Si una frase te gusta pero no termina de sonar natural, usala como base y escribila a tu manera.</p><div class="message-list">'+msgs+'</div>'+sections+'<h2>Más ideas relacionadas</h2><p>Estas publicaciones amplían el tema desde un vínculo o formato cercano, para que puedas encontrar una dedicatoria que se ajuste mejor a lo que necesitás.</p></article><aside class="side"><h2>Seguí explorando</h2>'+related+'<a href="/mensajes-de-cumpleanos/">Todos los mensajes</a><a href="/frases-de-cumpleanos/">Frases de cumpleaños</a><a href="/postales-de-cumpleanos/">Postales de cumpleaños</a></aside></section>';
+  const dir=path.join(root,"publicaciones",a.slug);fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,"index.html"),page(title,description,url,content));
+}
 const legacy=[{slug:"12-mensajes-de-cumpleanos-cortos",title:"12 mensajes de cumpleaños cortos para dedicar y compartir",description:"Saludos breves para WhatsApp, tarjetas o mensajes rápidos.",tag:"MENSAJES CORTOS"},{slug:"15-mensajes-de-cumpleanos-para-una-amiga-muy-especial",title:"15 mensajes de cumpleaños para una amiga muy especial",description:"Dedicatorias cercanas para una amistad que importa.",tag:"AMISTAD"},{slug:"27-felicitaciones-de-cumpleanos-originales",title:"27 felicitaciones de cumpleaños originales para sorprender",description:"Ideas distintas para evitar el saludo de siempre.",tag:"FELICITACIONES"}];const cards=[...legacy.map(a=>({ ...a, url:"/publicaciones/"+a.slug+"/"})),...articles.map(a=>({...a,url:"/publicaciones/"+a.slug+"/"}))].map(a=>'<article class="card"><span class="tag">'+esc(a.tag)+'</span><h2><a href="'+a.url+'">'+esc(a.title)+'</a></h2><p>'+esc(a.description)+'</p><a class="text-link" href="'+a.url+'">Leer publicación →</a></article>').join('');
 const listContent='<section class="wrap page-hero"><p class="breadcrumb"><a href="/">Inicio</a> / Publicaciones</p><p class="eyebrow">Selecciones con una intención clara</p><h1>Publicaciones de <span class="highlight">cumpleaños</span></h1><p class="hero-copy">Artículos temáticos con mensajes originales, fáciles de copiar y enlaces a contenidos realmente relacionados.</p></section><section class="wrap" style="padding-bottom:70px"><div class="cards">'+cards+'</div></section>';
 fs.writeFileSync(path.join(root,"publicaciones","index.html"),page("Publicaciones de cumpleaños | ParaCumpleanos.com","Explorá publicaciones con selecciones de mensajes, frases y felicitaciones de cumpleaños organizadas por intención de búsqueda.","https://paracumpleanos.com/publicaciones/",listContent,"CollectionPage"));
