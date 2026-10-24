@@ -34,6 +34,30 @@ for(const url of urls){
  const relative=url.replace("https://paracumpleanos.com/","");
  if(relative && !fs.existsSync(path.join(root,relative,"index.html"))) errors.push("sitemap: URL sin página: "+url);
 }
+
+for(const file of pages){
+ const html=fs.readFileSync(file,"utf8");
+ const hrefs=[...html.matchAll(/href=["']([^"']+)["']/gi)].map(match=>match[1]);
+ for(const href of hrefs){
+  if(!href || href.startsWith("#") || /^(mailto:|tel:|javascript:|data:)/i.test(href)) continue;
+  let parsed;
+  try{parsed=new URL(href,"https://paracumpleanos.com");}catch{continue;}
+  if(parsed.hostname!=="paracumpleanos.com" && parsed.hostname!=="www.paracumpleanos.com") continue;
+  let pathname;
+  try{pathname=decodeURIComponent(parsed.pathname);}catch{pathname=parsed.pathname;}
+  const relative=pathname.replace(/^\/+/, "");
+  const target=relative ? path.join(root,relative) : path.join(root,"index.html");
+  const candidates=pathname.endsWith("/")
+   ? [path.join(target,"index.html")]
+   : path.extname(target)
+    ? [target]
+    : [path.join(target,"index.html"),target+".html"];
+  if(!candidates.some(candidate=>fs.existsSync(candidate))){
+   errors.push(path.relative(root,file)+": enlace interno sin destino: "+href);
+  }
+ }
+}
+
 console.log("Páginas HTML revisadas: "+pages.length);
 console.log("URLs en sitemap: "+urls.length);
 if(errors.length){console.error(errors.join("\n"));process.exit(1);}
