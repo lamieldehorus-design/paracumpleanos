@@ -87,6 +87,27 @@ const endings=[
 ];
 function expandMessages(a){
   const target=targetCounts[a.slug]||Math.max(50,a.messages.length);
+  if(a.slug==="mensajes-de-cumpleanos-para-whatsapp"){
+    const greetings=[
+      "¡Feliz cumple!","¡Feliz cumpleaños!","¡Muy feliz vuelta al sol!","¡Que tengas un cumple hermoso!","¡Felicidades en tu día!",
+      "¡Feliz cumple para vos!","¡Hoy se festeja! ¡Feliz cumpleaños!","¡Un abrazo enorme en tu día!","¡Que tengas un día genial!","¡Muchas felicidades!",
+      "¡Feliz cumpleaños y a disfrutar!","¡Que empiece un año buenísimo!","¡Feliz cumple, que la pases lindo!","¡Brindo por vos hoy!","¡Que sea un cumpleaños inolvidable!",
+      "¡Feliz cumpleaños! Te mando un abrazo.","¡Que hoy te celebren mucho!","¡Un saludo enorme por tu cumple!","¡Feliz día para vos!","¡Que arranques un año increíble!",
+      "¡Feliz cumpleaños! A disfrutarlo.","¡Que tengas un día lleno de cariño!","¡Feliz cumple y que se venga lo mejor!","¡Hoy toca celebrar tu vida!","¡Feliz cumpleaños, con mucho cariño!"
+    ];
+    const wishes=[
+      "Que no te falten salud, amor y buenos momentos.","Ojalá se te cumpla eso que tanto esperás.","Que este año venga con buenas noticias.",
+      "Que tengas motivos para sonreír todos los días.","Que te rodee gente que te haga bien.","Que lleguen oportunidades lindas y nuevas aventuras.",
+      "Que disfrutes mucho todo lo que construís.","Que nunca falten las risas ni los abrazos sinceros.","Que sea un año tranquilo, feliz y lleno de proyectos.",
+      "Que la vida te sorprenda para bien.","Que tengas energía para tus planes y tiempo para disfrutarlos.","Que se te abran puertas y encuentres buenas personas.",
+      "Que hoy te mimen mucho y te hagan sentir querido/a.","Que todo lo bueno que das vuelva multiplicado.","Que tengas un año con más alegrías que preocupaciones.",
+      "Que encuentres razones para celebrar incluso los días comunes.","Que te sobren ganas de hacer lo que te gusta.","Que cada mes traiga algo lindo para recordar.",
+      "Que puedas cumplir metas y disfrutar el camino.","Que te acompañen el cariño, la salud y la buena suerte."
+    ];
+    const messages=[];
+    for(const greeting of greetings) for(const wish of wishes) messages.push(greeting+" "+wish);
+    return [...a.messages,...messages].filter((m,i,all)=>all.indexOf(m)===i).slice(0,target);
+  }
   const messages=[...a.messages];
   const seen=new Set(messages);
   const context=a.tag.toLowerCase();
