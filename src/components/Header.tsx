@@ -76,6 +76,14 @@ export function Header() {
             aria-label="Navegación principal"
           >
             <Link
+              href="/publicaciones/"
+              className={path === '/publicaciones' ? 'active' : ''}
+              onClick={closeAll}
+            >
+              Publicaciones
+            </Link>
+
+            <Link
               href="/frases-de-cumpleanos/"
               className={path === '/frases-de-cumpleanos' ? 'active' : ''}
               onClick={closeAll}
