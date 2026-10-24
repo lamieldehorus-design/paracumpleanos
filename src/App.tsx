@@ -3,6 +3,7 @@ import { useRouter, normalizePath } from './router';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
+import { PublicationsPage } from './pages/PublicationsPage';
 import { FrasesPage } from './pages/FrasesPage';
 import { MensajesHubPage } from './pages/MensajesHubPage';
 import { RelationshipMessagesPage } from './pages/RelationshipMessagesPage';
@@ -39,6 +40,10 @@ export function App() {
   const renderContent = () => {
     if (currentPath === '' || currentPath === '/') {
       return <HomePage />;
+    }
+
+    if (currentPath === '/publicaciones') {
+      return <PublicationsPage />;
     }
 
     if (currentPath === '/frases-de-cumpleanos') {
