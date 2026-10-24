@@ -1,6 +1,0 @@
-node_modules
-dist
-.aistudio
-.DS_Store
-*.local
-public/assets/aistudio

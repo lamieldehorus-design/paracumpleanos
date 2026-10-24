@@ -1,0 +1,31 @@
+name: Submit sitemap URLs to IndexNow
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sitemap.xml'
+      - 'indexnow-key.txt'
+      - 'index.html'
+      - 'mensajes-de-cumpleanos/**'
+      - 'frases-de-cumpleanos/**'
+      - 'postales-de-cumpleanos/**'
+      - 'publicaciones/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Submit URLs from sitemap
+        run: |
+          python - <<'PY' > payload.json
+          import json, xml.etree.ElementTree as ET
+          key = open('indexnow-key.txt', encoding='utf-8').read().strip()
+          root = ET.parse('sitemap.xml').getroot()
+          ns = {'sm':'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          urls = [n.text.strip() for n in root.findall('sm:url/sm:loc', ns) if n.text]
+          print(json.dumps({'host':'paracumpleanos.com','key':key,'keyLocation':'https://paracumpleanos.com/indexnow-key.txt','urlList':urls}))
+          PY
+          curl --fail-with-body --silent --show-error -X POST 'https://api.indexnow.org/indexnow' -H 'Content-Type: application/json; charset=utf-8' --data-binary @payload.json
