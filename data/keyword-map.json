@@ -1,0 +1,131 @@
+{
+  "site": "paracumpleanos.com",
+  "updated": "2026-10-24",
+  "editorial_rules": [
+    "Cada URL tiene una intención principal.",
+    "Agrupar variantes semánticas equivalentes para evitar canibalización.",
+    "No crear páginas de relleno ni fijar un mínimo universal de palabras.",
+    "Los enlaces internos deben ayudar con la necesidad que la persona está resolviendo en la página actual.",
+    "Cada publicación debe incluir contenido original, título y descripción únicos, canonical, datos estructurados y enlaces contextuales."
+  ],
+  "keyword_to_url": {
+    "mensaje de cumpleaños": "/mensajes-de-cumpleanos/",
+    "mensajes de cumpleaños": "/mensajes-de-cumpleanos/",
+    "feliz cumpleaños amiga": "/publicaciones/15-mensajes-de-cumpleanos-para-una-amiga-muy-especial/",
+    "feliz cumpleaños hermana": "/publicaciones/mensajes-de-cumpleanos-para-una-hermana/",
+    "cumpleaños a mi hermana": "/publicaciones/mensajes-de-cumpleanos-para-una-hermana/",
+    "cumpleaños para una hermana": "/publicaciones/mensajes-de-cumpleanos-para-una-hermana/",
+    "cumpleaños a mi hija": "/publicaciones/mensajes-de-cumpleanos-para-mi-hija/",
+    "mensaje de cumpleaños para mi hija": "/publicaciones/mensajes-de-cumpleanos-para-mi-hija/",
+    "feliz cumpleaños hijo": "/publicaciones/mensajes-de-cumpleanos-para-un-hijo/",
+    "cumpleaños para un hijo": "/publicaciones/mensajes-de-cumpleanos-para-un-hijo/",
+    "cumpleaños a mi esposo": "/publicaciones/mensajes-de-cumpleanos-para-mi-esposo/",
+    "esposo feliz cumpleaños": "/publicaciones/mensajes-de-cumpleanos-para-mi-esposo/",
+    "feliz cumpleaños prima": "/publicaciones/mensajes-de-cumpleanos-para-una-prima/",
+    "cumpleaños amigo especial": "/publicaciones/mensajes-de-cumpleanos-para-un-amigo/",
+    "un mensaje de cumpleaños para un amigo": "/publicaciones/mensajes-de-cumpleanos-para-un-amigo/",
+    "mensaje de cumpleaños para alguien especial": "/publicaciones/mensajes-de-cumpleanos-para-alguien-especial/",
+    "cumpleaños atrasado": "/publicaciones/mensajes-de-cumpleanos-atrasado/",
+    "cumpleaños feliz para mandar por whatsapp": "/publicaciones/mensajes-de-cumpleanos-para-whatsapp/",
+    "whatsapp felicitaciones de cumpleaños originales": "/publicaciones/felicitaciones-de-cumpleanos-originales-para-whatsapp/",
+    "feliz cumpleaños en ingles": "/publicaciones/feliz-cumpleanos-en-ingles-mensajes-y-traduccion/",
+    "cumpleaños en ingles como se escribe": "/publicaciones/feliz-cumpleanos-en-ingles-mensajes-y-traduccion/",
+    "cumpleaños cristiano": "/publicaciones/mensajes-de-cumpleanos-cristianos-con-bendiciones/",
+    "cumpleaños bendecido": "/publicaciones/mensajes-de-cumpleanos-cristianos-con-bendiciones/",
+    "cumpleaños chistosos": "/publicaciones/mensajes-de-cumpleanos-chistosos/",
+    "frases de cumpleaños": "/frases-de-cumpleanos/",
+    "frases de cumpleaños cortas": "/publicaciones/frases-de-cumpleanos-cortas-y-bonitas/",
+    "cumpleaños 50 mujer": "/publicaciones/mensajes-de-cumpleanos-para-una-mujer-de-50-anos/",
+    "cumpleaños 60 mujer": "/publicaciones/mensajes-de-cumpleanos-para-una-mujer-de-60-anos/",
+    "felicitaciones de cumpleaños originales": "/publicaciones/27-felicitaciones-de-cumpleanos-originales/",
+    "tarjetas de cumpleaños": "/postales-de-cumpleanos/",
+    "postales de cumpleaños": "/postales-de-cumpleanos/"
+  },
+  "pending_clusters": [
+    {
+      "topic": "Mensajes por relación",
+      "keywords": [
+        "cumpleaños amiga querida",
+        "cumpleaños a una amiga muy especial",
+        "cumpleaños cuñada",
+        "cumpleaños comadre",
+        "cumpleaños sobrina",
+        "cumpleaños suegra",
+        "cumpleaños tia",
+        "cumpleaños tio",
+        "cumpleaños ahijada"
+      ]
+    },
+    {
+      "topic": "Mensajes por tono o contexto",
+      "keywords": [
+        "cumpleaños atrasado imagenes",
+        "cumpleaños que dios te bendiga",
+        "cumpleaños en el cielo",
+        "cumpleaños triste",
+        "agradecimiento de cumpleaños",
+        "dedicatoria de cumpleaños",
+        "oracion de cumpleaños"
+      ]
+    },
+    {
+      "topic": "Idiomas",
+      "keywords": [
+        "en frances feliz cumpleaños",
+        "en italiano feliz cumpleaños",
+        "cumpleaños en portugues",
+        "cumpleaños en ingles"
+      ]
+    },
+    {
+      "topic": "Edades",
+      "keywords": [
+        "cumpleaños 18 años mujer",
+        "cumpleaños 30 años mujer",
+        "cumpleaños 40 mujer",
+        "cumpleaños 50 mujer",
+        "cumpleaños 60 mujer",
+        "cumpleaños 70 años mujer",
+        "cumpleaños 80 años mujer",
+        "cumpleaños 90 años mujer"
+      ]
+    },
+    {
+      "topic": "Imágenes y decoración",
+      "keywords": [
+        "tarjetas de cumpleaños para editar gratis",
+        "imágenes de cumpleaños bonitas",
+        "gif de cumpleaños",
+        "globos de cumpleaños",
+        "banderines de cumpleaños",
+        "decoracion de cumpleaños",
+        "arreglos florales para cumpleaños"
+      ]
+    },
+    {
+      "topic": "Fiestas y comida",
+      "keywords": [
+        "pastel de cumpleaños",
+        "bizcocho de cumpleaños",
+        "bocaditos para cumpleaños",
+        "juegos para cumpleaños de niños",
+        "juegos para cumpleaños adultos",
+        "outfit para cumpleaños"
+      ]
+    },
+    {
+      "topic": "Consultas que requieren investigación propia",
+      "keywords": [
+        "cumpleaños de messi",
+        "cumpleaños de cristiano ronaldo",
+        "cumpleaños de los integrantes de bts",
+        "cumpleaños de lamine yamal",
+        "quien cumpleaños mañana",
+        "cumpleaños por dni",
+        "restaurantes para celebrar cumpleaños",
+        "bono de cumpleaños caja los andes",
+        "que vio el hubble en tu cumpleaños nasa"
+      ]
+    }
+  ]
+}
