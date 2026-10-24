@@ -18,7 +18,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - uses: actions/configure-pages@v5
+      - name: Generate keyword-led publications
+        run: node scripts/build-publications.mjs
+      - name: Generate current sitemap
+        run: node scripts/generate-sitemap.mjs
+      - name: Validate SEO essentials
+        run: node scripts/validate-seo.mjs
       - name: Assemble static site
         run: |
           mkdir -p _site
