@@ -6,6 +6,9 @@ on:
       - 'sitemap.xml'
       - 'indexnow-key.txt'
       - 'index.html'
+      - 'scripts/build-publications.mjs'
+      - 'scripts/generate-sitemap.mjs'
+      - 'data/**'
       - 'mensajes-de-cumpleanos/**'
       - 'frases-de-cumpleanos/**'
       - 'postales-de-cumpleanos/**'
@@ -18,6 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate keyword-led publications
+        run: node scripts/build-publications.mjs
+      - name: Generate sitemap before submission
+        run: node scripts/generate-sitemap.mjs
       - name: Submit URLs from sitemap
         run: |
           python - <<'PY' > payload.json
