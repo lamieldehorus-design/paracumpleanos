@@ -117,7 +117,7 @@ const targetCounts={
   "feliz-cumpleanos-en-portugues-mensajes-y-traduccion":50,
   "mensajes-de-cumpleanos-para-una-mujer-de-90-anos":50,
   "mensajes-de-agradecimiento-por-cumpleanos":50,
-  "mensajes-de-cumpleanos-para-alguien-que-fallecio":,
+  "mensajes-de-cumpleanos-para-alguien-que-fallecio":50,
   "mensajes-de-cumpleanos-con-dios-te-bendiga":64,
   "oracion-de-cumpleanos-por-un-ser-querido":88,
   "mensajes-de-cumpleanos-cuando-estoy-triste":33,
@@ -125,7 +125,7 @@ const targetCounts={
   "frases-de-cumpleanos-para-una-mujer-de-40-anos":150,
   "ideas-de-mensajes-de-cumpleanos-para-personalizar":200,
   "mensajes-de-cumpleanos-para-una-persona-que-no-conozco-mucho":250,
-  "frases-de-cumpleanos-para-un-estado-de-whatsapp":30050
+  "frases-de-cumpleanos-para-un-estado-de-whatsapp":300
 };
 const additions=[
   "Que este año te acerque a las personas, los proyectos y los lugares donde te sentís en paz.",
