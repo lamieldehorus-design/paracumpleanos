@@ -1,6 +1,6 @@
 {
   "site": "paracumpleanos.com",
-  "updated": "2026-10-24",
+  "updated": "2026-10-25",
   "editorial_rules": [
     "Cada URL tiene una intención principal.",
     "Agrupar variantes semánticas equivalentes para evitar canibalización.",
@@ -39,7 +39,48 @@
     "cumpleaños 60 mujer": "/publicaciones/mensajes-de-cumpleanos-para-una-mujer-de-60-anos/",
     "felicitaciones de cumpleaños originales": "/publicaciones/27-felicitaciones-de-cumpleanos-originales/",
     "tarjetas de cumpleaños": "/postales-de-cumpleanos/",
-    "postales de cumpleaños": "/postales-de-cumpleanos/"
+    "postales de cumpleaños": "/postales-de-cumpleanos/",
+    "feliz cumpleaños cuñada": "/publicaciones/mensajes-de-cumpleanos-para-una-cunada/",
+    "cumpleaños para mi cuñada": "/publicaciones/mensajes-de-cumpleanos-para-una-cunada/",
+    "mensaje de cumpleaños para una cuñada": "/publicaciones/mensajes-de-cumpleanos-para-una-cunada/",
+    "feliz cumpleaños comadre": "/publicaciones/mensajes-de-cumpleanos-para-una-comadre/",
+    "mensaje de cumpleaños para mi comadre": "/publicaciones/mensajes-de-cumpleanos-para-una-comadre/",
+    "saludos de cumpleaños para una comadre": "/publicaciones/mensajes-de-cumpleanos-para-una-comadre/",
+    "feliz cumpleaños sobrina": "/publicaciones/mensajes-de-cumpleanos-para-una-sobrina/",
+    "mensaje de cumpleaños para mi sobrina": "/publicaciones/mensajes-de-cumpleanos-para-una-sobrina/",
+    "palabras de cumpleaños para una sobrina": "/publicaciones/mensajes-de-cumpleanos-para-una-sobrina/",
+    "feliz cumpleaños suegra": "/publicaciones/mensajes-de-cumpleanos-para-una-suegra/",
+    "mensaje de cumpleaños para mi suegra": "/publicaciones/mensajes-de-cumpleanos-para-una-suegra/",
+    "saludos de cumpleaños para una suegra": "/publicaciones/mensajes-de-cumpleanos-para-una-suegra/",
+    "feliz cumpleaños ahijada": "/publicaciones/mensajes-de-cumpleanos-para-una-ahijada/",
+    "mensaje de cumpleaños para mi ahijada": "/publicaciones/mensajes-de-cumpleanos-para-una-ahijada/",
+    "dedicatoria de cumpleaños para una ahijada": "/publicaciones/mensajes-de-cumpleanos-para-una-ahijada/",
+    "feliz cumpleaños tío": "/publicaciones/mensajes-de-cumpleanos-para-un-tio/",
+    "mensaje de cumpleaños para mi tío": "/publicaciones/mensajes-de-cumpleanos-para-un-tio/",
+    "saludos de cumpleaños para un tio": "/publicaciones/mensajes-de-cumpleanos-para-un-tio/",
+    "en frances feliz cumpleaños": "/publicaciones/feliz-cumpleanos-en-frances-mensajes-y-traduccion/",
+    "feliz cumpleaños en francés": "/publicaciones/feliz-cumpleanos-en-frances-mensajes-y-traduccion/",
+    "joyeux anniversaire traduccion": "/publicaciones/feliz-cumpleanos-en-frances-mensajes-y-traduccion/",
+    "como se dice feliz cumpleaños en frances": "/publicaciones/feliz-cumpleanos-en-frances-mensajes-y-traduccion/",
+    "en italiano feliz cumpleaños": "/publicaciones/feliz-cumpleanos-en-italiano-mensajes-y-traduccion/",
+    "feliz cumpleaños en italiano": "/publicaciones/feliz-cumpleanos-en-italiano-mensajes-y-traduccion/",
+    "buon compleanno traduccion": "/publicaciones/feliz-cumpleanos-en-italiano-mensajes-y-traduccion/",
+    "como se dice feliz cumpleaños en italiano": "/publicaciones/feliz-cumpleanos-en-italiano-mensajes-y-traduccion/",
+    "cumpleaños en portugues": "/publicaciones/feliz-cumpleanos-en-portugues-mensajes-y-traduccion/",
+    "feliz cumpleaños en portugués": "/publicaciones/feliz-cumpleanos-en-portugues-mensajes-y-traduccion/",
+    "feliz aniversario portugues traduccion": "/publicaciones/feliz-cumpleanos-en-portugues-mensajes-y-traduccion/",
+    "como se dice feliz cumpleaños en portugues": "/publicaciones/feliz-cumpleanos-en-portugues-mensajes-y-traduccion/",
+    "cumpleaños 90 años mujer": "/publicaciones/mensajes-de-cumpleanos-para-una-mujer-de-90-anos/",
+    "feliz cumpleaños 90 años mujer": "/publicaciones/mensajes-de-cumpleanos-para-una-mujer-de-90-anos/",
+    "mensaje para una mujer que cumple 90 años": "/publicaciones/mensajes-de-cumpleanos-para-una-mujer-de-90-anos/",
+    "agradecimiento de cumpleaños": "/publicaciones/mensajes-de-agradecimiento-por-cumpleanos/",
+    "gracias por los saludos de cumpleaños": "/publicaciones/mensajes-de-agradecimiento-por-cumpleanos/",
+    "mensaje para agradecer felicitaciones de cumpleaños": "/publicaciones/mensajes-de-agradecimiento-por-cumpleanos/",
+    "agradecer mensajes de cumpleaños": "/publicaciones/mensajes-de-agradecimiento-por-cumpleanos/",
+    "cumpleaños en el cielo": "/publicaciones/mensajes-de-cumpleanos-para-alguien-que-fallecio/",
+    "cumpleaños de alguien fallecido": "/publicaciones/mensajes-de-cumpleanos-para-alguien-que-fallecio/",
+    "frases para recordar a alguien en su cumpleaños": "/publicaciones/mensajes-de-cumpleanos-para-alguien-que-fallecio/",
+    "mensaje de cumpleaños para una persona que ya no está": "/publicaciones/mensajes-de-cumpleanos-para-alguien-que-fallecio/"
   },
   "pending_clusters": [
     {
@@ -61,9 +102,7 @@
       "keywords": [
         "cumpleaños atrasado imagenes",
         "cumpleaños que dios te bendiga",
-        "cumpleaños en el cielo",
         "cumpleaños triste",
-        "agradecimiento de cumpleaños",
         "dedicatoria de cumpleaños",
         "oracion de cumpleaños"
       ]
@@ -71,9 +110,6 @@
     {
       "topic": "Idiomas",
       "keywords": [
-        "en frances feliz cumpleaños",
-        "en italiano feliz cumpleaños",
-        "cumpleaños en portugues",
         "cumpleaños en ingles"
       ]
     },
@@ -83,11 +119,8 @@
         "cumpleaños 18 años mujer",
         "cumpleaños 30 años mujer",
         "cumpleaños 40 mujer",
-        "cumpleaños 50 mujer",
-        "cumpleaños 60 mujer",
         "cumpleaños 70 años mujer",
-        "cumpleaños 80 años mujer",
-        "cumpleaños 90 años mujer"
+        "cumpleaños 80 años mujer"
       ]
     },
     {
@@ -125,6 +158,35 @@
         "restaurantes para celebrar cumpleaños",
         "bono de cumpleaños caja los andes",
         "que vio el hubble en tu cumpleaños nasa"
+      ]
+    }
+  ],
+  "publication_clusters": [
+    {
+      "topic": "mensajes por vínculo",
+      "keywords": [
+        "feliz cumpleaños cuñada",
+        "feliz cumpleaños comadre",
+        "feliz cumpleaños sobrina",
+        "feliz cumpleaños suegra",
+        "feliz cumpleaños ahijada",
+        "feliz cumpleaños tío"
+      ]
+    },
+    {
+      "topic": "cumpleaños en otros idiomas",
+      "keywords": [
+        "feliz cumpleaños en francés",
+        "feliz cumpleaños en italiano",
+        "feliz cumpleaños en portugués"
+      ]
+    },
+    {
+      "topic": "edades y situaciones especiales",
+      "keywords": [
+        "cumpleaños 90 años mujer",
+        "agradecimiento de cumpleaños",
+        "cumpleaños de alguien fallecido"
       ]
     }
   ]
