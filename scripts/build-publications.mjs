@@ -347,7 +347,29 @@ const recoveredPosts=[
 "Gracias por las bromas internas y los recuerdos que solo nosotros entendemos.",
 "¡Feliz cumple! Que venga un año con buenas personas, grandes historias y muchos motivos para brindar."
 ]}
-];
+,
+{slug:"frases-de-cumpleanos-para-mi-hijo",title:"Frases de cumpleaños para mi hijo: orgullo, amor y buenos deseos",description:"Frases de cumpleaños para tu hijo: palabras de amor, orgullo y aliento para celebrar su vida y acompañar sus nuevos proyectos.",tag:"HIJO",intro:"Felicitar a un hijo es una oportunidad para expresar cuánto lo querés y reconocer a la persona en la que se está convirtiendo. Elegí una frase que encaje con su edad, su personalidad y la relación que comparten.",related:"/mensajes-de-cumpleanos/",messages:[
+"Feliz cumpleaños, hijo. Deseo que sigas construyendo una vida que te haga sentir orgulloso de vos mismo.",
+"Verte crecer es una alegría enorme. Que este nuevo año te acerque a tus sueños y te regale buenas experiencias.",
+"Hijo, nunca olvides que tu valor no depende de tus logros. Te quiero por quien sos.",
+"Que tengas salud, personas sinceras cerca y confianza para animarte a probar cosas nuevas.",
+"Feliz cumpleaños. Estoy orgulloso de tu esfuerzo, de tus aprendizajes y de la forma en que seguís adelante.",
+"Que cada desafío te enseñe algo y que nunca te falten ganas de volver a intentarlo.",
+"Hijo querido, deseo que encuentres oportunidades para hacer lo que te apasiona y tiempo para disfrutarlo.",
+"Hoy celebro tu vida y todos los recuerdos que fuimos creando juntos. ¡Feliz cumpleaños!",
+"Que puedas tomar tus propias decisiones con libertad, responsabilidad y confianza en tus capacidades.",
+"Feliz cumple, hijo. Ojalá el año que empieza venga con salud, alegría y proyectos que te entusiasmen.",
+"Siempre voy a desear que estés bien, que te cuides y que te rodees de gente que te respete.",
+"Que nunca pierdas la curiosidad ni la valentía de aprender algo que todavía no sabés.",
+"Hijo, cada etapa trae algo distinto. Deseo que disfrutes tu camino sin compararte con el de nadie.",
+"Feliz cumpleaños. Gracias por las alegrías, las conversaciones y todo lo que también me enseñás vos.",
+"Que tengas fuerza para atravesar los días difíciles y sensibilidad para disfrutar los momentos buenos.",
+"Hoy quiero recordarte cuánto te quiero y cuánto deseo que puedas cumplir tus propios sueños.",
+"Feliz cumpleaños, hijo. Que encuentres amistades leales, experiencias valiosas y razones para sonreír.",
+"Que este año te permita crecer a tu ritmo, equivocarte sin miedo y celebrar cada pequeño avance.",
+"Te deseo tranquilidad para elegir, energía para avanzar y cariño para compartir todo lo bueno que venga.",
+"Feliz cumpleaños. Siempre voy a estar alentándote a que seas vos mismo y construyas tu propio camino."
+]}];
 for(const a of recoveredPosts){
  const url="https://paracumpleanos.com/posts/"+a.slug+"/";
  const list=a.messages.map((m,i)=>'<div class="message"><p>'+String(i+1)+'. '+esc(m)+'</p><div class="message-actions"><button class="copy" data-copy="'+esc(m)+'">Copiar mensaje</button><a class="share" target="_blank" rel="noopener noreferrer" href="https://wa.me/?text='+encodeURIComponent(m)+'">WhatsApp ↗</a></div></div>').join("");
