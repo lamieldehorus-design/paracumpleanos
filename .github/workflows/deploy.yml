@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html styles.css app.js robots.txt sitemap.xml CNAME BingSiteAuth.xml google939990971c7be018.html indexnow-key.txt .nojekyll _site/
-          cp -R mensajes-de-cumpleanos frases-de-cumpleanos postales-de-cumpleanos publicaciones _site/
+          cp -R mensajes-de-cumpleanos frases-de-cumpleanos postales-de-cumpleanos publicaciones posts _site/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./_site
