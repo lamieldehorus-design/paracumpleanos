@@ -235,6 +235,126 @@ for(const a of articles){
   const content='<section class="wrap page-hero"><p class="breadcrumb"><a href="/">Inicio</a> / <a href="/publicaciones/">Publicaciones</a> / '+esc(a.tag.toLowerCase())+'</p><p class="eyebrow">'+esc(a.tag)+' · Publicación n.º '+publicationNumbers.get(a.slug)+'</p><h1>'+esc(title)+'</h1><p class="hero-copy">'+esc(a.intro)+'</p><p class="breadcrumb">'+messages.length+' opciones publicadas · Copiá, adaptá y compartí la que mejor encaje</p><p class="hero-copy">Esta guía reúne '+messages.length+' opciones para este tema y explica cómo elegirlas, adaptarlas al vínculo y compartirlas con naturalidad. La cantidad visible corresponde a los mensajes que realmente aparecen en la colección.</p></section><section class="wrap layout"><article class="content"><h2>Mensajes y frases de cumpleaños: '+messages.length+' opciones</h2><p>Recorré la colección teniendo en cuenta el vínculo, el tono y el contexto. Podés copiar una opción y editarla antes de enviarla; no es necesario usarla literalmente para que te sirva de inspiración.</p><div class="message-list">'+msgs+'</div>'+sections+'<h2>Más ideas relacionadas</h2><p>Estas publicaciones tratan temas cercanos y pueden ayudarte a encontrar una dedicatoria más adecuada al vínculo o al formato que necesitás.</p></article><aside class="side"><h2>Seguí explorando</h2>'+related+'<a href="/mensajes-de-cumpleanos/">Todos los mensajes</a><a href="/frases-de-cumpleanos/">Frases de cumpleaños</a><a href="/postales-de-cumpleanos/">Postales de cumpleaños</a></aside></section>';
   const dir=path.join(root,"publicaciones",a.slug);fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,"index.html"),page(title,description,url,content));
 }
+
+const recoveredPosts=[
+{slug:"frases-de-cumpleanos-para-mi-papa",title:"Frases de cumpleaños para mi papá: cariño, gratitud y recuerdos",description:"Frases de cumpleaños para tu papá: mensajes emotivos, sencillos y originales para agradecerle, acompañarlo y desearle un gran año.",tag:"PAPÁ",intro:"Encontrar las palabras para felicitar a papá depende del vínculo que comparten. Puede ser un mensaje lleno de gratitud, una frase corta y afectuosa o una dedicatoria que recuerde algo que aprendiste de él.",related:"/frases-de-cumpleanos/",messages:[
+"¡Feliz cumpleaños, papá! Gracias por tantas enseñanzas y por los recuerdos que siguen acompañándome.",
+"Hoy deseo que tengas salud, tranquilidad y tiempo para disfrutar de todo lo que te hace bien.",
+"Feliz cumple, pa. Ojalá este año te devuelva un poco de todo el cariño que das.",
+"Gracias por mostrarme, con tus aciertos y tus esfuerzos, tantas formas de salir adelante. ¡Feliz cumpleaños!",
+"Papá, que nunca te falten motivos para reír, gente sincera cerca y proyectos que te entusiasmen.",
+"En tu cumpleaños quiero recordarte lo importante que sos para mí. Te deseo un día hermoso.",
+"Que este nuevo año venga con buenas noticias, momentos tranquilos y muchas razones para sentirte orgulloso.",
+"Feliz cumpleaños al hombre que forma parte de tantos capítulos de mi historia. Te mando un abrazo enorme.",
+"Gracias por cada consejo que entendí en el momento y por los que aprendí a valorar con el tiempo.",
+"Papá, deseo que puedas dedicarte más tiempo a vos y a esas cosas que siempre te gustó hacer.",
+"Que hoy te rodeen el afecto, las charlas lindas y las personas con las que podés ser vos mismo.",
+"Feliz cumpleaños. No siempre encuentro las palabras justas, pero nunca me falta el cariño que te tengo.",
+"Por todo lo compartido y por los buenos momentos que todavía nos esperan: ¡feliz cumpleaños, papá!",
+"Te deseo un año con salud, serenidad y oportunidades para disfrutar las cosas simples.",
+"Hoy celebro tu vida y agradezco las huellas que dejaste en la mía. ¡Que tengas un gran cumpleaños!",
+"Papá, que cada etapa nueva te encuentre con ganas de aprender, descansar y disfrutar a tu manera.",
+"Feliz cumpleaños. Ojalá recibas abrazos sinceros y palabras que te recuerden cuánto te quieren.",
+"Gracias por estar presente a tu manera y por todo lo que construimos a lo largo de los años.",
+"Que tengas un día sin apuros, con buena compañía y algo rico para compartir.",
+"¡Feliz cumpleaños, pa! Te deseo un año amable, con salud, alegría y tiempo para vos."
+]},
+{slug:"frases-de-cumpleanos-para-abuelos",title:"Frases de cumpleaños para abuelos: ternura, historia y agradecimiento",description:"Frases de cumpleaños para abuelos y abuelas, con mensajes cariñosos para celebrar sus historias, enseñanzas y presencia en la familia.",tag:"ABUELOS",intro:"Un saludo para los abuelos puede celebrar sus historias, sus consejos, las costumbres familiares o simplemente la alegría de compartir tiempo. Elegí una frase que respete su personalidad y el vínculo que tienen.",related:"/mensajes-de-cumpleanos/",messages:[
+"¡Feliz cumpleaños, abuelo! Que tengas un día lleno de cariño, charlas lindas y buenos recuerdos.",
+"Abuela, deseo que hoy recibas todo el amor que tantas veces regalaste a los demás.",
+"Gracias por las historias, los consejos y esos pequeños gestos que hacen que la familia se sienta cerca.",
+"Que este nuevo año te traiga salud, calma y muchos momentos para disfrutar con quienes querés.",
+"Feliz cumpleaños a una persona cuya historia forma parte de la nuestra y merece ser celebrada.",
+"Abuelo, ojalá nunca falten motivos para reunirnos, compartir algo rico y reírnos de las mismas anécdotas.",
+"Abuela querida, que hoy te sientas acompañada, valorada y muy querida. ¡Feliz cumpleaños!",
+"Tu experiencia y tu manera de mirar la vida nos dejaron enseñanzas que seguimos llevando con nosotros.",
+"Te deseo un cumpleaños tranquilo, con abrazos sinceros y tiempo para hacer lo que más disfrutás.",
+"Feliz cumpleaños. Que cada recuerdo lindo de hoy te recuerde cuánto significás para tu familia.",
+"Gracias por transmitir historias y costumbres que nos ayudan a entender de dónde venimos.",
+"Que la vida te regale salud, compañía y pequeños momentos que alegren tus días.",
+"Abuelo, celebrar tu cumpleaños también es celebrar todo lo que compartiste con nosotros.",
+"Abuela, deseo que recibas tantas sonrisas como las que provocás cuando estamos juntos.",
+"¡Feliz cumpleaños! Que el día tenga tu comida favorita, buena compañía y ninguna prisa.",
+"Tu cariño se nota en los detalles que permanecen en la memoria. Hoy queremos devolverte un poquito de eso.",
+"Que este año esté lleno de encuentros agradables y momentos para guardar en el corazón.",
+"Feliz cumpleaños, abuelo. Gracias por ser parte de nuestros recuerdos más queridos.",
+"Abuela, que hoy te rodeen el afecto y las voces de las personas que te hacen bien.",
+"Te deseamos un nuevo año con bienestar, ternura y muchas oportunidades para compartir en familia."
+]},
+{slug:"frases-de-cumpleanos-para-mi-esposa",title:"Frases de cumpleaños para mi esposa: amor, admiración y complicidad",description:"Frases de cumpleaños para tu esposa con palabras románticas y sinceras para celebrar su vida, reconocer quién es y compartir lo que sentís.",tag:"ESPOSA",intro:"Una dedicatoria para tu esposa puede hablar del amor, pero también de la admiración por la persona que es, sus proyectos y las pequeñas cosas que construyen juntos. Elegí un mensaje que suene a ustedes.",related:"/publicaciones/mensajes-de-cumpleanos-para-mi-novio/",messages:[
+"Feliz cumpleaños, amor. Me encanta compartir la vida con vos y descubrir todo lo que todavía nos queda por vivir.",
+"Hoy celebro tu vida, tus ideas, tu fuerza y esa manera tan tuya de hacer especiales los días comunes.",
+"Que este año te acerque a tus sueños y te regale tiempo para todo lo que te hace feliz.",
+"Gracias por las conversaciones, los planes y también por la paciencia con la que atravesamos los días difíciles.",
+"Feliz cumpleaños a mi compañera de vida y a la persona que sigo eligiendo conocer cada día.",
+"Deseo que te sientas amada, respetada y libre para perseguir cada proyecto que te ilusione.",
+"Me enamoran muchas cosas de vos, pero admiro especialmente la persona que sos cuando vas detrás de tus sueños.",
+"Que hoy recibas cariño, descanso, risas y un montón de razones para disfrutar tu día.",
+"Feliz cumpleaños, mi vida. Gracias por los recuerdos que construimos y por los que todavía nos esperan.",
+"Quiero que este nuevo año tenga espacio para tus deseos, tus amistades y todo aquello que te hace ser vos.",
+"Estar a tu lado es compartir mucho más que fechas especiales: es construir una historia con pequeños gestos.",
+"Hoy deseo que la vida te sorprenda con oportunidades bonitas y personas que valoren tu forma de ser.",
+"Feliz cumpleaños. Ojalá pueda acompañarte en muchos proyectos y celebrar cada paso que des.",
+"Gracias por sumar tu mirada, tu humor y tu cariño a nuestra vida compartida.",
+"Que nunca te falten ganas de explorar, aprender y elegir lo que te haga bien.",
+"Mi deseo para vos es simple: salud, paz, buenos encuentros y motivos propios para sonreír.",
+"Feliz cumpleaños, esposa querida. Hoy quiero celebrar tanto lo que compartimos como todo lo que te hace única.",
+"Que tengas un día tan auténtico como vos, sin exigencias y rodeada de personas que te quieren.",
+"Me alegra acompañarte y verte crecer en cada etapa. Que este año te traiga muchas satisfacciones.",
+"Te amo y te deseo un cumpleaños lleno de momentos que quieras recordar."
+]},
+{slug:"frases-de-cumpleanos-para-mi-esposo",title:"Frases de cumpleaños para mi esposo: amor y compañerismo",description:"Frases de cumpleaños para tu esposo que expresan amor, complicidad, admiración y buenos deseos con un tono cercano y personal.",tag:"ESPOSO",intro:"Para felicitar a tu esposo podés elegir una frase romántica, una dedicatoria de compañerismo o unas palabras sencillas que recuerden lo que valorás de él. Un detalle compartido vuelve el saludo más personal.",related:"/publicaciones/mensajes-de-cumpleanos-para-mi-esposo/",messages:[
+"Feliz cumpleaños, amor. Gracias por caminar conmigo y por todo lo que seguimos aprendiendo juntos.",
+"Hoy celebro tu vida y la persona que sos, con tus sueños, tus ideas y tu manera de mirar el mundo.",
+"Que este año te traiga salud, proyectos que te entusiasmen y tiempo para disfrutarlos.",
+"Me gusta la historia que construimos con conversaciones, decisiones y pequeños momentos cotidianos.",
+"Feliz cumpleaños a mi compañero, mi amor y una de las personas con quienes más disfruto compartir la vida.",
+"Deseo que encuentres nuevas oportunidades y que tengas confianza para ir detrás de lo que querés.",
+"Gracias por las risas inesperadas y por acompañarme también cuando las cosas requieren paciencia.",
+"Que hoy te sientas querido, valorado y libre para disfrutar a tu manera.",
+"Admiro muchas cosas de vos, especialmente el esfuerzo que ponés en aquello que te importa.",
+"Feliz cumpleaños, mi vida. Ojalá este nuevo año venga con experiencias que nos hagan bien a los dos.",
+"Que tengas energía para tus proyectos, calma para descansar y gente sincera con quien compartir.",
+"Gracias por los planes que salieron bien y por todo lo que aprendimos cuando hubo que cambiar de rumbo.",
+"Hoy quiero celebrar no solo nuestro vínculo, sino también la persona que sos más allá de él.",
+"Que tus deseos encuentren oportunidades y que puedas disfrutar cada avance, por pequeño que parezca.",
+"Feliz cumpleaños. Te deseo momentos simples, buenas noticias y muchas razones para sonreír.",
+"Me hace feliz acompañarte y descubrir nuevas formas de querernos con el paso del tiempo.",
+"Que nunca te falten amistades sinceras, proyectos propios y espacios para hacer lo que te apasiona.",
+"Gracias por compartir conmigo lo cotidiano, que tantas veces termina siendo lo más valioso.",
+"Feliz cumpleaños, esposo querido. Que hoy tengas todo el cariño que merecés y un día a tu gusto.",
+"Te deseo un año con bienestar, nuevas ideas y muchos momentos que podamos recordar con alegría."
+]},
+{slug:"frases-de-cumpleanos-para-amigos",title:"Frases de cumpleaños para amigos: amistad, humor y buenos deseos",description:"Frases de cumpleaños para amigos con saludos cercanos, divertidos y sinceros para celebrar una amistad de verdad.",tag:"AMIGOS",intro:"Un amigo puede merecer un saludo emotivo, una broma compartida o unas pocas palabras que demuestren que te acordaste. Estas frases cubren distintos tonos para que elijas el que encaja con su amistad.",related:"/publicaciones/mensajes-de-cumpleanos-para-un-amigo/",messages:[
+"¡Feliz cumpleaños, amigo! Que se venga un año lleno de buenas noticias y planes que valgan la pena.",
+"Brindo por tu vida, nuestra amistad y todas las anécdotas que todavía nos faltan.",
+"Que nunca te falten salud, gente leal y motivos para reírte incluso de los días complicados.",
+"Feliz cumple. Gracias por estar en las buenas y por hacer más livianas algunas de las malas.",
+"Que este nuevo año te acerque a lo que querés y te aleje de lo que te quita energía.",
+"Amigo, deseo que hoy estés rodeado de personas con las que podés ser vos mismo.",
+"Por más charlas interminables, consejos honestos y salidas que terminan siendo grandes recuerdos.",
+"Feliz cumpleaños a quien sabe escuchar, decir la verdad y también hacer reír en el momento justo.",
+"Que tengas proyectos que te entusiasmen y tiempo para disfrutar los resultados de tu esfuerzo.",
+"Un año más de vida y una buena excusa para juntarnos. ¡Feliz cumpleaños!",
+"Que te pasen cosas lindas, pero sobre todo que puedas reconocerlas y disfrutarlas cuando lleguen.",
+"Gracias por una amistad que no necesita hablar todos los días para seguir siendo importante.",
+"Feliz cumpleaños. Que tus planes salgan bien y que los imprevistos también terminen en una buena historia.",
+"Amigo, que nunca te falte alguien con quien celebrar tus logros y compartir las dudas.",
+"Te deseo un año con salud, aventuras nuevas y menos preocupaciones innecesarias.",
+"Que hoy comas rico, te rías mucho y recibas mensajes de personas que de verdad te quieren.",
+"Feliz cumpleaños a un amigo que hace más interesantes los días comunes.",
+"Que la vida te sorprenda con oportunidades y que tengas coraje para aprovecharlas.",
+"Gracias por las bromas internas y los recuerdos que solo nosotros entendemos.",
+"¡Feliz cumple! Que venga un año con buenas personas, grandes historias y muchos motivos para brindar."
+]}
+];
+for(const a of recoveredPosts){
+ const url="https://paracumpleanos.com/posts/"+a.slug+"/";
+ const list=a.messages.map((m,i)=>'<div class="message"><p>'+String(i+1)+'. '+esc(m)+'</p><div class="message-actions"><button class="copy" data-copy="'+esc(m)+'">Copiar mensaje</button><a class="share" target="_blank" rel="noopener noreferrer" href="https://wa.me/?text='+encodeURIComponent(m)+'">WhatsApp ↗</a></div></div>').join("");
+ const content='<section class="wrap page-hero"><p class="breadcrumb"><a href="/">Inicio</a> / <a href="'+a.related+'">Contenido relacionado</a> / '+esc(a.tag.toLowerCase())+'</p><p class="eyebrow">Frases y dedicatorias · '+esc(a.tag)+'</p><h1>'+esc(a.title)+'</h1><p class="hero-copy">'+esc(a.intro)+'</p><p class="breadcrumb">'+a.messages.length+' frases para elegir y adaptar</p></section><section class="wrap layout"><article class="content"><h2>'+esc(a.title)+'</h2><p>Leé las opciones y elegí la que mejor represente tu relación. Podés copiarla tal como está o sumar un recuerdo, una cualidad o un deseo concreto para que el saludo tenga tu voz.</p><div class="message-list">'+list+'</div><section class="editorial-block"><h2>Cómo elegir una frase de cumpleaños</h2><p>Pensá qué querés transmitir: cariño, gratitud, admiración, humor o buenos deseos. El tono ideal depende de la confianza que tengan y de la forma en que suelen hablarse. Una frase sencilla puede ser muy significativa si refleja algo verdadero.</p><p>Para personalizarla, agregá un detalle que la otra persona reconozca: una costumbre, una anécdota compartida o algo que admirás. No hace falta escribir mucho ni usar palabras solemnes si no forman parte de tu manera de expresarte.</p><h2>Frases cortas o dedicatorias más emotivas</h2><p>Para un mensaje rápido o un estado, una o dos líneas suelen ser suficientes. Si vas a escribir una tarjeta o un mensaje privado, podés desarrollar una idea y explicar por qué esa persona es importante para vos. Evitá exagerar el tono o hacer bromas sobre temas sensibles.</p><h2>Preguntas frecuentes</h2><h3>¿Puedo usar estas frases en WhatsApp?</h3><p>Sí. Copiá la opción que te guste y revisá si el tono encaja con la conversación o el grupo donde la vas a compartir.</p><h3>¿Cómo hacer que el mensaje sea menos genérico?</h3><p>Incluí un recuerdo real o un deseo específico. Cambiar una sola línea para que refleje la relación suele aportar más que agregar adjetivos.</p><h2>Seguí explorando</h2><p>También podés visitar las <a href="/mensajes-de-cumpleanos/">colecciones de mensajes de cumpleaños</a>, las <a href="/frases-de-cumpleanos/">frases de cumpleaños</a> y las <a href="/publicaciones/">publicaciones temáticas</a> para encontrar otras opciones.</p></section></article><aside class="side"><h2>Más contenido</h2><a href="/mensajes-de-cumpleanos/">Mensajes de cumpleaños</a><a href="/frases-de-cumpleanos/">Frases de cumpleaños</a><a href="/publicaciones/">Publicaciones</a></aside></section>';
+ const dir=path.join(root,"posts",a.slug);fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,"index.html"),page(a.title,a.description,url,content));
+}
+
 const cardItems=[...legacy.map(a=>({ ...a, url:"/publicaciones/"+a.slug+"/"})),...articles.map(a=>({...a,url:"/publicaciones/"+a.slug+"/"}))].sort((a,b)=>publicationNumbers.get(a.slug)-publicationNumbers.get(b.slug));const cards=cardItems.map(a=>'<article class="card"><span class="tag">N.º '+publicationNumbers.get(a.slug)+' · '+esc(a.tag)+'</span><h2><a href="'+a.url+'">'+esc(a.title)+'</a></h2><p>'+esc(a.description)+'</p><a class="text-link" href="'+a.url+'">Leer publicación →</a></article>').join('');
 const listContent='<section class="wrap page-hero"><p class="breadcrumb"><a href="/">Inicio</a> / Publicaciones</p><p class="eyebrow">Selecciones con una intención clara</p><h1>Publicaciones de <span class="highlight">cumpleaños</span></h1><p class="hero-copy">Artículos temáticos con mensajes originales, fáciles de copiar y enlaces a contenidos realmente relacionados.</p></section><section class="wrap" style="padding-bottom:70px"><div class="cards">'+cards+'</div></section>';
 fs.writeFileSync(path.join(root,"publicaciones","index.html"),page("Publicaciones de cumpleaños | ParaCumpleanos.com","Explorá publicaciones con selecciones de mensajes, frases y felicitaciones de cumpleaños organizadas por intención de búsqueda.","https://paracumpleanos.com/publicaciones/",listContent,"CollectionPage"));
