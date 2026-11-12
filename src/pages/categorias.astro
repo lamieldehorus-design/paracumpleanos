@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import contenido from '../../data/contenido.json';
+const hubs = contenido.filter(function (r) { return r.tipo === 'hub'; });
+---
+<Base titulo="Categorías de felicitaciones - ParaCumpleanos" descripcion="Todas las categorías de felicitaciones de cumpleaños: mamá, amiga, hijo y amor. Elegí el destinatario y encontrá el mensaje perfecto.">
+  <h1>Categorías</h1>
+  <p>Elegí para quién es la felicitación y encontrá mensajes originales listos para enviar.</p>
+  <ul>
+    {hubs.map(function (h) {
+      const cant = contenido.filter(function (r) { return r.tipo === 'mensaje' && r.categoria === h.slug; }).length;
+      return <li><a href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a> — {cant} felicitaciones</li>;
+    })}
+  </ul>
+</Base>

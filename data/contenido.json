@@ -1,0 +1,310 @@
+[
+  {
+    "tipo": "hub",
+    "slug": "feliz-cumpleanos-mama",
+    "destinatario": "mamá",
+    "cabecera": "feliz cumpleaños",
+    "modificador": "",
+    "keyword": "feliz cumpleaños mamá",
+    "titulo": "Feliz Cumpleaños Mamá - 8 Mensajes Originales",
+    "h1": "Feliz cumpleaños, mamá 💐",
+    "meta": "Feliz cumpleaños mamá: 8 mensajes originales y conmovedores para dedicarle en su día. Frases listas para copiar y enviar por WhatsApp.",
+    "emoji": "💐",
+    "lead": "¿Buscás las palabras justas para felicitar a mamá en su día? Acá vas a encontrar 8 mensajes originales, pensados para distintos momentos: para agradecerle, para hacerla reír, para emocionarla o para recordarle lo importante que es. Cada felicitación está escrita en un tono cálido y natural, lista para copiar y enviar por WhatsApp o escribir en la tarjeta del regalo. Elegí la que más se parezca a lo que sentís, personalizala con un detalle propio y hacé que su cumpleaños sea inolvidable. Porque cuando se trata de mamá, las palabras también pueden ser un abrazo."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "hoy-se-celebra-a-la-persona-que-lo-da-todo",
+    "categoria": "feliz-cumpleanos-mama",
+    "destinatario": "mamá",
+    "titulo": "Hoy se celebra a la persona que lo da todo",
+    "texto": "Hoy el día es todo tuyo, mamá. La persona que siempre está, que escucha, que sostiene sin pedir nada a cambio, cumple años. Gracias por cada sacrificio silencioso y por cada consejo que llegó justo a tiempo.\n\nOjalá sientas hoy todo el amor que repartís todos los días. Que este año te traiga salud, calma y motivos para reírte sin parar. Feliz cumpleaños, mamá. Te lo merecés más que nadie."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "gracias-por-cada-manana-mama",
+    "categoria": "feliz-cumpleanos-mama",
+    "destinatario": "mamá",
+    "titulo": "Gracias por cada mañana, mamá",
+    "texto": "Gracias, mamá, por cada mañana en la que pensaste en nosotros antes que en vos. Hoy te toca a vos: que te mimen, que te cocinen, que te cuiden.\n\nCumplís un año más siendo el motor de esta casa, y no hay regalo que alcance para tanto. Mi deseo es simple: que este año te encuentre descansada, feliz y rodeada de los que más te quieren. ¡Feliz cumpleaños!"
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "que-la-vida-te-devuelva-en-anos-todo-lo-que-nos-diste",
+    "categoria": "feliz-cumpleanos-mama",
+    "destinatario": "mamá",
+    "titulo": "Que la vida te devuelva en años todo lo que nos diste",
+    "texto": "Mamá, vos diste tanto que la vida te debería pagar con años de sobra. Hoy celebramos todo lo que sos: tu fuerza, tu humor, esa manera tuya de hacer que todo parezca más fácil.\n\nQue este nuevo año te devuelva multiplicado todo lo que repartiste: cariño, tiempo y paciencia. Brindo por vos, por tu salud y por muchos cumpleaños más juntos. ¡Feliz día, mamá querida!"
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "feliz-cumple-mi-persona-favorita",
+    "categoria": "feliz-cumpleanos-mama",
+    "destinatario": "mamá",
+    "titulo": "Feliz cumple, mi persona favorita",
+    "texto": "¡Feliz cumpleaños, mamá! Sos mi persona favorita del mundo: la que entiende mis silencios, celebra mis logros como si fueran suyos y me quiere sin condiciones.\n\nHoy quiero que te sientas tan especial como sos para todos nosotros. Que el año que empieza te traiga viajes, risas y salud de sobra. Vos te ocupás de todos; hoy nosotros nos ocupamos de vos. Te amo, mamá."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "ningun-regalo-alcanza-para-agradecerte",
+    "categoria": "feliz-cumpleanos-mama",
+    "destinatario": "mamá",
+    "titulo": "Ningún regalo alcanza para agradecerte",
+    "texto": "Ningún regalo alcanza para agradecerte todo, mamá, pero hoy igual te mando el corazón entero. Gracias por enseñarme a ser buena persona, por bancarme en las tormentas y por festejarme siempre.\n\nHoy cumplís vos, y mi regalo es tenerte un año más cerca. Que la vida te premie con salud, amor y todo lo que sueñes. ¡Feliz cumpleaños, mamá del alma!"
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "cada-ano-que-cumplis-lo-celebra-toda-la-familia",
+    "categoria": "feliz-cumpleanos-mama",
+    "destinatario": "mamá",
+    "titulo": "Cada año que cumplís lo celebra toda la familia",
+    "texto": "Cuando cumplís vos, mamá, festejamos todos, porque sos el corazón de esta familia. Hoy hay que brindar por la que nos dio todo: valores, abrazos y esa fuerza que ni mil tormentas pudieron con ella.\n\nQue este año nuevo tuyo venga lleno de salud y de momentos lindos para atesorar. Vos sos la mejor noticia de nuestras vidas. ¡Feliz cumpleaños, mamá!"
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "descansa-hoy-mama-querida",
+    "categoria": "feliz-cumpleanos-mama",
+    "destinatario": "mamá",
+    "titulo": "Descansá hoy, mamá querida",
+    "texto": "Hoy, mamá, tu único trabajo es descansar y dejarte consentir. Cumplís un año más y lo celebrás como se debe: sin correr, sin cocinar, sin preocuparte por nadie más que por vos.\n\nGracias por ser el refugio de todos nosotros. Que este año te traiga calma, salud y alegrías grandes y chicas. Te merecés el mundo entero, y hoy te regalamos al menos un día perfecto. ¡Feliz cumpleaños!"
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "si-el-carino-se-hereda",
+    "categoria": "feliz-cumpleanos-mama",
+    "destinatario": "mamá",
+    "titulo": "Si el cariño se hereda, salí ganadora",
+    "texto": "Si el cariño se hereda, mamá, yo salí ganadora de la lotería. Todo lo bueno que hay en mí te lo debo a vos.\n\nHoy cumplís vos, y quiero que sepas que sos admirada, querida y celebrada todos los días, no solo hoy. Que la vida te siga sonriendo y te regale años llenos de salud y amor. ¡Feliz cumpleaños, mamá! Brindo por vos con el corazón."
+  },
+  {
+    "tipo": "hub",
+    "slug": "feliz-cumpleanos-amiga",
+    "destinatario": "amiga",
+    "cabecera": "feliz cumpleaños",
+    "modificador": "",
+    "keyword": "feliz cumpleaños para una amiga",
+    "titulo": "Feliz Cumpleaños para una Amiga - 8 Mensajes",
+    "h1": "Feliz cumpleaños para una amiga 🌸",
+    "meta": "Feliz cumpleaños para una amiga: 8 mensajes originales y divertidos para dedicarle. Frases cálidas listas para copiar y enviar por WhatsApp.",
+    "emoji": "🌸",
+    "lead": "Tu amiga cumple años y querés decirle algo más original que un simple 'feliz cumple'. Acá tenés 8 mensajes pensados para distintas amistades: la amiga de toda la vida, la que está lejos, la que es casi hermana o la cómplice de risas infinitas. Cada texto está listo para copiar y enviar por WhatsApp, o para escribir en su tarjeta. Elegí el que más se parezca a su historia, sumale un recuerdo compartido y convertí su día en algo especial. Porque una buena amiga merece palabras a la altura."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "que-este-ano-te-pase-todo-lo-bonito-que-mereces",
+    "categoria": "feliz-cumpleanos-amiga",
+    "destinatario": "amiga",
+    "titulo": "Que este año te pase todo lo bonito que merecés",
+    "texto": "Amiga, hoy es tu día y quiero que sepas algo: merecés todo lo lindo que te pasa y más.\n\nQue este año nuevo de tu vida te traiga aventuras, risas hasta llorar y sueños cumplidos. Gracias por estar siempre, por escucharme sin juzgarme y por hacer la vida más divertida. Brindemos por vos y por todo lo que viene. ¡Feliz cumpleaños, amiga del alma!"
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "naciste-vos-y-el-mundo-mejoro-un-poco",
+    "categoria": "feliz-cumpleanos-amiga",
+    "destinatario": "amiga",
+    "titulo": "Naciste vos y el mundo mejoró un poco",
+    "texto": "Hoy hace años naciste vos y el mundo mejoró un poco, aunque vos no te des cuenta. Tenés esa magia de hacer que cualquier plan salga bien y de convertir un día cualquiera en un recuerdo.\n\nQue este cumpleaños te encuentre feliz, rodeada de gente que te quiere y con proyectos que te ilusionen. ¡Feliz cumpleaños, amiga! Hoy se brinda por la mejor compañía de la vida."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "gracias-por-existir-y-por-dejarme-acompanarte",
+    "categoria": "feliz-cumpleanos-amiga",
+    "destinatario": "amiga",
+    "titulo": "Gracias por existir y por dejarme acompañarte",
+    "texto": "Amiga, gracias por existir y por dejarme acompañarte en este viaje. Cumplís un año más y yo celebro haber ganado una amiga como vos: leal, divertida y de las que quedan.\n\nQue este nuevo año te traiga salud, amor y todas esas cosas lindas que le deseás a los demás y casi nunca te pedís a vos. ¡Feliz cumpleaños! Hoy brindo por vos con orgullo de amistad."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "aunque-estemos-lejos-hoy-te-celebro-igual",
+    "categoria": "feliz-cumpleanos-amiga",
+    "destinatario": "amiga",
+    "titulo": "Aunque estemos lejos, hoy te celebro igual",
+    "texto": "Aunque estemos lejos, hoy te celebro igual, porque los cumpleaños de mis amigas no se negocian.\n\nQue este año te traiga todo lo que estás esperando y un par de sorpresas que no vengas. Te mando un abrazo gigante que cruza kilómetros y llega directo al corazón. Gracias por ser de las que quedan aunque la distancia estorbe. ¡Feliz cumpleaños, amiga querida! Nos vemos pronto para festejar en grande."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "sos-la-hermana-que-la-vida-me-regalo",
+    "categoria": "feliz-cumpleanos-amiga",
+    "destinatario": "amiga",
+    "titulo": "Sos la hermana que la vida me regaló",
+    "texto": "Amiga, no te lo digo todos los días, pero sos la hermana que la vida me regaló. Hoy cumplís vos y me toca festejar a la suerte que tuve al encontrarte.\n\nQue este año te sorprenda con cosas buenas donde menos lo esperes, y que nunca te falten motivos para reírte. Gracias por estar, por bancarme y por quererme como soy. ¡Feliz cumpleaños! Te quiero infinito."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "otro-ano-de-risas-juntas-eso-te-deseo",
+    "categoria": "feliz-cumpleanos-amiga",
+    "destinatario": "amiga",
+    "titulo": "Otro año de risas juntas, eso te deseo",
+    "texto": "Amiga, mi deseo para este año es chiquito y enorme a la vez: otro año de risas juntas. De esas risas que duelen la panza y no se pueden explicar.\n\nQue el resto también venga: salud, amor y planes que se cumplan. Cumplís un año más siendo imprescindible en mi vida. ¡Feliz cumpleaños, amiga! Que este sea el año en que todo lo que esperás te encuentre de vuelta."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "segui-brillando-que-hoy-es-tu-dia",
+    "categoria": "feliz-cumpleanos-amiga",
+    "destinatario": "amiga",
+    "titulo": "Seguí brillando, que hoy es tu día",
+    "texto": "Seguí brillando, amiga, porque hoy es tu día y el mundo necesita tu luz. Cumplís un año más y lo hacés como vivís: con una energía que contagia.\n\nQue este nuevo año te encuentre valiente, feliz y rodeada de gente que sume. Gracias por ser mi cómplice, mi terapeuta y mi mejor plan. ¡Feliz cumpleaños! Hoy apagamos las velas y encendemos la fiesta."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "si-tuviera-que-elegir-de-nuevo-te-elegiria",
+    "categoria": "feliz-cumpleanos-amiga",
+    "destinatario": "amiga",
+    "titulo": "Si tuviera que elegir de nuevo, te elegiría",
+    "texto": "Si tuviera que elegir de nuevo una amiga, te elegiría a vos sin dudarlo. Cumplís un año más y me doy cuenta de la suerte que tengo: alguien que me escucha, me dice las cosas de frente y me celebra sin envidia.\n\nQue este año te traiga todo lo que pediste en silencio y más. ¡Feliz cumpleaños, amiga del alma! Brindo por la amistad que nos toca cuidar."
+  },
+  {
+    "tipo": "hub",
+    "slug": "feliz-cumpleanos-hijo",
+    "destinatario": "hijo",
+    "cabecera": "feliz cumpleaños",
+    "modificador": "",
+    "keyword": "feliz cumpleaños hijo",
+    "titulo": "Feliz Cumpleaños Hijo - 8 Mensajes del Corazón",
+    "h1": "Feliz cumpleaños, hijo 🌟",
+    "meta": "Feliz cumpleaños hijo: 8 mensajes originales y emotivos para felicitarlo desde el corazón. Frases listas para copiar y enviar por WhatsApp.",
+    "emoji": "🌟",
+    "lead": "Tu hijo cumple años y querés que el mensaje llegue al corazón. Acá vas a encontrar 8 felicitaciones originales para distintos momentos: para el más chico que celebra con torta y globos, para el que empieza a crecer, o para el adulto que sigue siendo tu niño. Cada texto está listo para copiar y enviar por WhatsApp o incluir en la tarjeta del regalo. Elegí el que más se parezca a lo que querés decirle, sumale un recuerdo propio y hacé sentir a tu hijo lo especial que es."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "verte-crecer-es-mi-privilegio-mas-grande",
+    "categoria": "feliz-cumpleanos-hijo",
+    "destinatario": "hijo",
+    "titulo": "Verte crecer es mi privilegio más grande",
+    "texto": "Hijo, verte crecer es mi privilegio más grande. Hoy cumplís un año más y mírate: la persona increíble que te estás volviendo. Gracias por tus abrazos, tus preguntas y por enseñarme cosas sin darte cuenta.\n\nQue este nuevo año te traiga salud, aventuras y sueños que se hagan realidad. Vos seguí soñando grande, que detrás de vos siempre vamos a estar. ¡Feliz cumpleaños, mi amor!"
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "hoy-tu-equipo-favorito-sos-vos",
+    "categoria": "feliz-cumpleanos-hijo",
+    "destinatario": "hijo",
+    "titulo": "Hoy tu equipo favorito sos vos",
+    "texto": "Hijo, hoy tu equipo favorito sos vos: jugás de titular en el día más importante, tu cumpleaños. Cumplís un año más y no dejás de sorprendernos con tu manera de ver el mundo.\n\nQue este año te traiga goles, amigos buenos y motivos para reírte fuerte. Jugá, disfrutá y festejá, que la vida te está esperando con los brazos abiertos. ¡Feliz cumpleaños, campeón!"
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "campeon-cumpliste-otro-ano-de-ganarle-a-la-vida",
+    "categoria": "feliz-cumpleanos-hijo",
+    "destinatario": "hijo",
+    "titulo": "Campeón: cumpliste otro año de ganarle a la vida",
+    "texto": "¡Campeón! Cumpliste otro año de ganarle a la vida con la sonrisa puesta. Hijo, sos de esos que hacen que todo sea más divertido: tus travesuras, tus preguntas y tu manera de querer.\n\nQue este nuevo año te traiga salud, amistades leales y aventuras para contar. Seguí creciendo con ese corazón enorme que tenés. ¡Feliz cumpleaños, hijo! Hoy el trofeo sos vos."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "gracias-por-tus-abrazos-disfrazados-de-juego",
+    "categoria": "feliz-cumpleanos-hijo",
+    "destinatario": "hijo",
+    "titulo": "Gracias por tus abrazos disfrazados de juego",
+    "texto": "Hijo, gracias por tus abrazos disfrazados de juego. A veces llegan corriendo, a veces saltando, pero siempre llegan justo. Hoy cumplís un año más y nosotros celebramos la suerte de tenerte.\n\nQue este año te traiga días largos de jugar, descubrimientos nuevos y mucha salud. Crece tranquilo, que acá estamos nosotros para alentarte en cada paso. ¡Feliz cumpleaños, mi niño grande!"
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "cada-ano-que-cumplis-me-llena-de-orgullo",
+    "categoria": "feliz-cumpleanos-hijo",
+    "destinatario": "hijo",
+    "titulo": "Cada año que cumplís me llena de orgullo",
+    "texto": "Cada año que cumplís, hijo, me llena de orgullo. Vos no sabés la alegría que da verte crecer, equivocarte, levantarte y volver a intentar.\n\nHoy es tu día y lo festejamos como se debe: con torta, risas y mucho amor. Que este nuevo año te traiga sueños nuevos y la valentía de perseguirlos. ¡Feliz cumpleaños, hijo querido! Vos sos nuestra mejor historia."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "a-tu-lado-aprendi-a-ser-mejor-persona",
+    "categoria": "feliz-cumpleanos-hijo",
+    "destinatario": "hijo",
+    "titulo": "A tu lado aprendí a ser mejor persona",
+    "texto": "Hijo, a tu lado aprendí a ser mejor persona. Me enseñaste paciencia, ternura y a ver el mundo con ojos de asombro. Hoy cumplís un año más y quiero que sepas lo feliz que nos hacés.\n\nQue este año te traiga amigos buenos, aventuras seguras y muchos motivos para sonreír. Seguí siendo el sol que sos. ¡Feliz cumpleaños, mi amor! Te queremos enorme."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "volve-siempre-a-casa-para-celebrarte",
+    "categoria": "feliz-cumpleanos-hijo",
+    "destinatario": "hijo",
+    "titulo": "Volvé siempre a casa para celebrarte",
+    "texto": "Hijo, cumplís un año más y acá va mi deseo: que venga lo que venga en la vida, volvé siempre a casa para celebrarte. Acá siempre vas a encontrar la mesa servida, el abrazo pendiente y gente que te quiere sin condiciones.\n\nQue este nuevo año te traiga salud, proyectos y la felicidad de hacer lo que amás. ¡Feliz cumpleaños, hijo! Vos sos y vas a ser siempre nuestra alegría."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "dale-que-los-suenos-no-tienen-edad",
+    "categoria": "feliz-cumpleanos-hijo",
+    "destinatario": "hijo",
+    "titulo": "Dale, que los sueños no tienen edad",
+    "texto": "Hijo, dale que los sueños no tienen edad y vos tenés muchos por cumplir. Hoy sumás un año más, pero mirá todo lo que sos: alguien que se banca todo y que le pone ganas a la vida.\n\nQue este año te traiga oportunidades, salud y personas que te cuiden. Nosotros vamos a estar siempre en la primera fila alentándote. ¡Feliz cumpleaños, hijo querido!"
+  },
+  {
+    "tipo": "hub",
+    "slug": "feliz-cumpleanos-mi-amor",
+    "destinatario": "amor",
+    "cabecera": "feliz cumpleaños",
+    "modificador": "",
+    "keyword": "feliz cumpleaños mi amor",
+    "titulo": "Feliz Cumpleaños Mi Amor - 8 Mensajes Románticos",
+    "h1": "Feliz cumpleaños, mi amor ❤️",
+    "meta": "Feliz cumpleaños mi amor: 8 mensajes románticos y originales para dedicarle a tu pareja. Frases de corazón listas para copiar y enviar por WhatsApp.",
+    "emoji": "❤️",
+    "lead": "El amor de tu vida cumple años y las palabras comunes no alcanzan. Acá tenés 8 mensajes románticos originales, pensados para distintos momentos de una relación: el primer cumple juntos, los años que se acumulan con orgullo, o esas parejas que se tratan como mejores amigos. Cada felicitación está lista para copiar y enviar por WhatsApp o escribir a mano en una nota. Elegí la que más se parezca a su historia, sumale un detalle íntimo y hacé que su día sea tan especial como esa persona te hace sentir a vos."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "antes-de-vos-pedia-deseos-a-lo-tonto",
+    "categoria": "feliz-cumpleanos-mi-amor",
+    "destinatario": "amor",
+    "titulo": "Antes de vos pedía deseos a lo tonto",
+    "texto": "Antes de vos pedía deseos a lo tonto, sin saber que la vida me iba a conceder el mejor: tenerte. Hoy cumplís un año más y yo celebro al amor de mi vida.\n\nQue este nuevo año nos encuentre juntos, riéndonos de cualquier cosa y planeando todo lo que falta. Gracias por existir y por elegirme cada día. ¡Feliz cumpleaños, mi amor! Sos mi deseo cumplido."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "celebrarte-es-mi-plan-favorito-del-ano",
+    "categoria": "feliz-cumpleanos-mi-amor",
+    "destinatario": "amor",
+    "titulo": "Celebrarte es mi plan favorito del año",
+    "texto": "Celebrarte es mi plan favorito del año, y hoy toca: tu cumpleaños. Preparé el día para que sea tan especial como vos sos para mí.\n\nQue este nuevo año te traiga salud, proyectos que te ilusionen y todo el amor que me sabés dar, devuelto multiplicado. Gracias por hacer que la vida cotidiana parezca una fiesta. ¡Feliz cumpleaños, mi amor! Vos sos mi mejor casualidad."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "cumples-anos-y-cumplo-yo-a-tu-lado",
+    "categoria": "feliz-cumpleanos-mi-amor",
+    "destinatario": "amor",
+    "titulo": "Cumples años y cumplo yo a tu lado",
+    "texto": "Hoy cumplís años y, sin darte cuenta, cumplo yo: otro año a tu lado, que es como se mide mi suerte. Gracias por ser mi compañía favorita, mi risa de todos los días y mi lugar seguro.\n\nQue este nuevo año te traiga todo lo que soñás y que lo vivamos juntos, como siempre. ¡Feliz cumpleaños, mi amor! Que se repitan muchos más a tu lado."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "despertar-a-tu-lado-sigue-siendo-mi-suerte",
+    "categoria": "feliz-cumpleanos-mi-amor",
+    "destinatario": "amor",
+    "titulo": "Despertar a tu lado sigue siendo mi suerte",
+    "texto": "Despertar a tu lado sigue siendo mi suerte, incluso después de tanto tiempo. Hoy cumplís un año más y quiero celebrar todo lo que sos: tu paciencia, tu humor y esa manera tuya de querer sin pedir nada.\n\nQue este año nuevo te traiga salud, planes juntos y motivos para sonreírle a la vida. ¡Feliz cumpleaños, mi amor! Vos sos mi mejor día, todos los días."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "ese-dia-nacio-mi-lugar-favorito-del-mundo",
+    "categoria": "feliz-cumpleanos-mi-amor",
+    "destinatario": "amor",
+    "titulo": "Ese día nació mi lugar favorito del mundo",
+    "texto": "El día que naciste vos nació mi lugar favorito del mundo, aunque todavía no lo sabía. Hoy cumplís un año más y lo festejo como si fuera mío, porque tu felicidad es la mía.\n\nQue este nuevo año te traiga todo lo que pedís bajito y un poco de lo que ni te animás a pedir. ¡Feliz cumpleaños, mi amor! En tus brazos siempre es cumpleaños."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "gracias-por-convertir-los-anos-comunes-en-fiesta",
+    "categoria": "feliz-cumpleanos-mi-amor",
+    "destinatario": "amor",
+    "titulo": "Gracias por convertir los años comunes en fiesta",
+    "texto": "Gracias por convertir los años comunes en fiesta, mi amor. Con vos un domingo cualquiera parece aniversario.\n\nHoy cumplís vos y lo celebramos como se debe, porque la vida te dio un año más y a mí la dicha de acompañarte. Que este nuevo ciclo traiga salud, sueños cumplidos y amor de sobra. ¡Feliz cumpleaños! Brindo por vos, mi persona favorita del universo."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "hoy-repartis-sonrisas-como-si-fueran-confites",
+    "categoria": "feliz-cumpleanos-mi-amor",
+    "destinatario": "amor",
+    "titulo": "Hoy repartís sonrisas como si fueran confites",
+    "texto": "Hoy cumplís años y repartís sonrisas como si fueran confites, porque celebrar es tu especialidad. Mi amor, tenés el don de hacer lindo lo cotidiano, y eso no se compra con nada.\n\nQue este nuevo año te devuelva en felicidad todo lo que sembrás. Yo ya tengo mi regalo: sos vos. ¡Feliz cumpleaños! Que la vida te mime tanto como vos mimás a los que querés."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "que-la-vida-te-de-lo-que-yo-no-puedo",
+    "categoria": "feliz-cumpleanos-mi-amor",
+    "destinatario": "amor",
+    "titulo": "Que la vida te dé lo que yo no puedo",
+    "texto": "Mi deseo hoy es humilde y enorme: que la vida te dé todo lo que yo no puedo. Salud inagotable, sueños sin freno y años que se sientan como bendición.\n\nCumplís un año más y yo sigo ganando: tenerte a mi lado es mi mayor privilegio. ¡Feliz cumpleaños, mi amor! Vos hacés que hasta los cumpleaños parezcan poco, porque sos mucho más que un día."
+  }
+]

@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import contenido from '../../data/contenido.json';
+const hubs = contenido.filter(function (r) { return r.tipo === 'hub'; });
+const mensajes = contenido.filter(function (r) { return r.tipo === 'mensaje'; });
+---
+<Base titulo="ParaCumpleanos - Felicitaciones de cumpleaños originales" descripcion="Felicitaciones de cumpleaños originales para mamá, amigas, hijos y tu pareja. Mensajes listos para copiar y enviar por WhatsApp.">
+  <h1>Felicitaciones de cumpleaños para:</h1>
+  <div class="chips">
+    {hubs.map(function (h) { return <a class="chip" href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a>; })}
+  </div>
+  <div class="grilla">
+    {mensajes.map(function (m) {
+      const resumen = m.texto.split('\n\n')[0].slice(0, 120) + '…';
+      const paraEnviar = m.titulo + '. ' + m.texto;
+      return (
+        <article class="card">
+          <h3><a href={'/' + m.slug + '/'}>{m.titulo}</a></h3>
+          <p>{resumen}</p>
+          <div class="acciones">
+            <a class="btn btn-wa" href={'https://wa.me/?text=' + encodeURIComponent(paraEnviar)} target="_blank" rel="noopener">WhatsApp</a>
+            <button class="btn btn-copiar" data-text={paraEnviar}>Copiar</button>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</Base>
