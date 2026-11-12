@@ -306,5 +306,258 @@
     "destinatario": "amor",
     "titulo": "Que la vida te dé lo que yo no puedo",
     "texto": "Mi deseo hoy es humilde y enorme: que la vida te dé todo lo que yo no puedo. Salud inagotable, sueños sin freno y años que se sientan como bendición.\n\nCumplís un año más y yo sigo ganando: tenerte a mi lado es mi mayor privilegio. ¡Feliz cumpleaños, mi amor! Vos hacés que hasta los cumpleaños parezcan poco, porque sos mucho más que un día."
+  },
+  {
+    "tipo": "hub",
+    "slug": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "cabecera": "feliz cumpleaños",
+    "modificador": "",
+    "keyword": "feliz cumpleaños para un amigo",
+    "titulo": "Feliz Cumpleaños para un Amigo - 30 Mensajes",
+    "h1": "Feliz cumpleaños para un amigo 🤝",
+    "meta": "Feliz cumpleaños para un amigo: 30 mensajes originales y divertidos para dedicarle. Frases de amistad listas para copiar y enviar por WhatsApp.",
+    "emoji": "🤝",
+    "lead": "¿Buscás cómo felicitar a un amigo en su cumpleaños sin caer en el mensaje de siempre? Acá vas a encontrar 30 felicitaciones originales para todos los estilos de amistad: el amigo de toda la vida, el hermano del corazón, el que está lejos o el que convierte cualquier juntada en anécdota. Cada mensaje está listo para copiar y enviar por WhatsApp o escribir en su tarjeta. Elegí el que más se parezca a su historia, sumale un recuerdo propio y hacé que su día sea memorable. Porque los amigos como él merecen palabras a la altura."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "hoy-cumplis-vos-y-el-plan-es-festejar-en-grande",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Hoy cumplís vos, y el plan es festejar en grande",
+    "texto": "Hoy cumplís vos, amigo, y el plan es uno solo: festejar en grande. Vos que organizás todo y te hacés el humilde cuando te toca, hoy te bancás la torta, las velas y los discursos.\n\nQue este año nuevo te traiga salud, laburo, amor y aventuras para contar. Gracias por estar siempre. ¡Feliz cumpleaños, amigo! Que se cumpla todo lo que pedís."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "que-la-amistad-que-nos-une-nunca-cambie",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Que la amistad que nos une nunca cambie",
+    "texto": "Que la amistad que nos une nunca cambie, amigo, ni con los años ni con las distancias. Hoy cumplís un año más y yo celebro tenerte de mi lado para las buenas y para las otras. Vos sumás, bancás y hacés reír como nadie.\n\nQue la vida te devuelva multiplicado todo lo que das. ¡Feliz cumpleaños! Brindo por muchos años más de este vínculo que vale oro."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "gracias-por-ser-el-amigo-que-sos",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Gracias por ser el amigo que sos",
+    "texto": "Gracias por ser el amigo que sos: leal, sincero y de los que aparecen sin que tengas que pedirlo. Hoy cumplís vos y me toca celebrar la suerte que tengo.\n\nQue este nuevo año te traiga proyectos lindos, salud y motivos para reírte todos los días. Vos te merecés eso y más. ¡Feliz cumpleaños, amigo del alma! Que nada ni nadie te quite la sonrisa."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "aunque-pasen-los-anos-sos-el-mismo-de-siempre",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Aunque pasen los años, sos el mismo de siempre",
+    "texto": "Aunque pasen los años, sos el mismo de siempre: el que se banca todo, hace reír y está en las buenas y en las malas. Hoy cumplís un año más y lo festejamos como se debe, con la mesa llena y las risas de siempre.\n\nQue este año te traiga salud, planes que se cumplan y gente buena a tu lado. ¡Feliz cumpleaños, amigo! Que la vida te trate como vos nos tratás."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "sos-de-esos-amigos-que-no-se-consiguen",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Sos de esos amigos que no se consiguen",
+    "texto": "Sos de esos amigos que no se consiguen en cualquier lado. De los que escuchan, de los que dicen la verdad aunque duela y de los que quedan. Hoy cumplís un año más y quiero que sepas lo mucho que valés.\n\nQue este nuevo año te traiga todo lo que estás esperando y un par de sorpresas más. ¡Feliz cumpleaños, amigo! La vida premió a los que te tenemos cerca."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "otro-ano-siendo-mi-complice-de-aventuras",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Otro año siendo mi cómplice de aventuras",
+    "texto": "Otro año siendo mi cómplice de aventuras, amigo. Los planes con vos siempre terminan en anécdota, y eso no tiene precio. Hoy cumplís vos y la fiesta es obligatoria: torta, risas y brindis hasta tarde.\n\nQue este año nuevo te encuentre feliz, sano y con ganas de seguir inventando planes. ¡Feliz cumpleaños! Vos sos de las mejores cosas que me dio la vida."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "segui-siendo-el-que-suma-en-mi-vida",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Seguí siendo el que suma en mi vida",
+    "texto": "Seguí siendo el que suma en mi vida, amigo, porque gente como vos no se encuentra todos los días. Hoy cumplís un año más y yo celebro tenerte.\n\nQue este año te traiga salud de sobra, sueños que se hagan realidad y razones para festejar sin parar. Vos te lo merecés todo. ¡Feliz cumpleaños! Que la vida te siga sonriendo como vos le sonreís a los demás."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "si-la-amistad-fuera-un-deporte-serias-campeon",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Si la amistad fuera un deporte, serías campeón",
+    "texto": "Si la amistad fuera un deporte, ya serías campeón del mundo. Sos el que se banca, el que juega de titular y el que nunca falla en la fecha clave. Hoy cumplís un año más y el trofeo es tuyo.\n\nQue este año nuevo te traiga victorias, salud y alegrías grandes. ¡Feliz cumpleaños, amigo! El equipo que tenés cerca gana siempre que estás vos."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "amigo-del-alma-hoy-te-toca-celebrar",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Amigo del alma, hoy te toca celebrar",
+    "texto": "Amigo del alma, hoy te toca celebrar y dejarte agasajar, que de agasajar a otros ya sos experto. Cumplís un año más y nosotros cumplimos la suerte de tenerte.\n\nQue este nuevo año te traiga salud, amor y planes que se cumplan todos. Vos aportás luz donde llegás. ¡Feliz cumpleaños! Que la vida te devuelva en felicidad todo lo que repartís."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "un-ano-mas-demostrando-que-la-edad-no-te-cambia",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Un año más demostrando que la edad no te cambia",
+    "texto": "Un año más demostrando que la edad no te cambia, amigo: mismo humor, misma energía, mismo corazón. Hoy cumplís vos y lo festejamos en grande, como a vos te gusta.\n\nQue este año te traiga salud, proyectos que ilusionen y momentos para atesorar. Los años te suman, nunca te restan. ¡Feliz cumpleaños! Brindo por vos y por la amistad que nos une."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "no-hay-regalo-a-la-altura-de-tu-amistad",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "No hay regalo a la altura de tu amistad",
+    "texto": "No hay regalo a la altura de tu amistad, pero hoy al menos te mando las palabras que me salen del corazón. Gracias por estar en cada fecha importante y en los días comunes también.\n\nHoy cumplís vos, y mi deseo es que este año te traiga salud, amor y todo lo que buscás. ¡Feliz cumpleaños, amigo! Que la vida te premie como te merecés."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "tener-un-amigo-como-vos-es-un-privilegio",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Tener un amigo como vos es un privilegio",
+    "texto": "Tener un amigo como vos es un privilegio que celebro todos los días, y hoy un poco más. Cumplís un año más siendo esa persona que escucha, aconseja y hace reír sin esfuerzo.\n\nQue este nuevo año te traiga salud, suerte y motivos para brindar. Vos sos de los que quedan, de los que valen. ¡Feliz cumpleaños, amigo! Que todo lo lindo te encuentre cerca."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "cumplis-un-ano-mas-y-yo-celebro-con-vos",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Cumplís un año más y yo celebro con vos",
+    "texto": "Cumplís un año más y yo celebro con vos, porque tu felicidad también es mía. Amigo, sos esa persona con la que el tiempo pasa volando y los problemas se hacen chicos.\n\nQue este año nuevo venga cargado de salud, amor y proyectos que te entusiasmen. Vos te lo merecés todo y más. ¡Feliz cumpleaños! Que la vida te siga dando motivos para sonreír."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "los-mejores-planes-siempre-incluyen-tu-cumpleanos",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Los mejores planes siempre incluyen tu cumpleaños",
+    "texto": "Los mejores planes del año siempre incluyen tu cumpleaños, porque festejar a mi amigo es un clásico que no me pierdo. Hoy es tu día: torta, brindis y las risas de siempre.\n\nQue este nuevo año te traiga salud, aventuras y sueños que se hagan realidad. Vos hacés más linda la vida de los que te rodean. ¡Feliz cumpleaños, amigo! Que nunca te falte un motivo para festejar."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "con-vos-la-vida-es-mas-divertida",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Con vos la vida es más divertida",
+    "texto": "Con vos la vida es más divertida, amigo: hasta los días grises terminan en risa. Hoy cumplís un año más y quiero agradecerte por esa energía que compartís sin medida.\n\nQue este año te traiga salud, amor y planes que se cumplan uno tras otro. Vos sos de los que dejan huella. ¡Feliz cumpleaños! Que la vida te regale tantos momentos lindos como los que vos regalás."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "brindemos-por-otro-ano-de-amistad-verdadera",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Brindemos por otro año de amistad verdadera",
+    "texto": "Brindemos por otro año de amistad verdadera, de esas que no se compran ni se imitan. Hoy cumplís vos, amigo, y yo celebro cada año que compartimos: las anécdotas, los silencios y los abrazos que llegan justo.\n\nQue este nuevo año te traiga salud, éxito y amor de sobra. ¡Feliz cumpleaños! Que la vida nos siga juntando por muchos años más."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "dijiste-que-este-ano-te-cuidarias-te-acordas",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Dijiste que este año te cuidarías, ¿te acordás?",
+    "texto": "Dijiste que este año te cuidarías, ¿te acordás? Bueno, empezá hoy: primero la torta, mañana la dieta. Cumplís un año más, amigo, y lo celebramos como se debe, con humor y de corazón.\n\nQue este año nuevo te traiga salud (de verdad), risas y todo lo que estás esperando. ¡Feliz cumpleaños! Vos sos el amigo que hace más liviana la vida."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "pocos-amigos-como-vos-ninguno-igual",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Pocos amigos como vos, ninguno igual",
+    "texto": "Pocos amigos como vos, y ninguno igual. Sos esa mezcla rara de lealtad, humor y corazón que la vida regala pocas veces. Hoy cumplís un año más y lo festejamos a lo grande.\n\nQue este año te traiga salud, planes que se cumplan y gente que te valore como te merecés. ¡Feliz cumpleaños, amigo! La vida es mejor desde que te conozco."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "hermano-del-corazon-feliz-cumpleanos",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Hermano del corazón, feliz cumpleaños",
+    "texto": "Hermano del corazón, feliz cumpleaños. La sangre no siempre define a la familia, y vos sos la prueba: sos hermano por elección, por historia y por cariño. Hoy cumplís un año más y lo celebramos juntos, como cada año.\n\nQue este nuevo te traiga salud, sueños cumplidos y motivos para reírte fuerte. ¡Feliz cumpleaños, amigo! Vos sos familia antes que amigo."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "elegirte-como-amigo-fue-mi-mejor-acierto",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Elegirte como amigo fue mi mejor acierto",
+    "texto": "Elegirte como amigo fue uno de mis mejores aciertos, aunque en realidad fuiste vos el que apareció y se quedó. Hoy cumplís un año más y quiero que sepas que valés mucho.\n\nQue este año nuevo te traiga salud, amor y proyectos que te llenen el alma. ¡Feliz cumpleaños, amigo! Que la vida te devuelva en bendiciones todo lo que das."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "la-vida-mejora-cuando-cumplis-anos-vos",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "La vida mejora cuando cumplís años vos",
+    "texto": "La vida mejora cuando cumplís años vos, porque tu cumpleaños es excusa perfecta para juntarnos todos. Hoy es tu día, amigo: torta, brindis y las anécdotas de siempre.\n\nQue este nuevo año te traiga salud, alegrías y sueños que se hagan realidad. Vos sos de los que hacen mejor todo lo que tocan. ¡Feliz cumpleaños! Que este año sea tu mejor año hasta ahora."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "el-amigo-que-todos-querran-tener",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "El amigo que todos querrían tener",
+    "texto": "Sos el amigo que todos querrían tener: presente, leal y con la sonrisa lista. Hoy cumplís un año más y nosotros festejamos la suerte de conocerte.\n\nQue este año nuevo te traiga salud, amor y oportunidades que te hagan crecer. Vos aportás donde llegás, y se nota. ¡Feliz cumpleaños, amigo! Que la vida te trate con la misma bondad que vos repartís."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "vos-haces-que-cualquier-dia-sea-especial",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Vos hacés que cualquier día sea especial",
+    "texto": "Vos hacés que cualquier día sea especial, amigo, así que hoy, que es tu cumpleaños, el nivel se dispara. Cumplís un año más y lo festejamos como se debe: con risas, brindis y buena compañía.\n\nQue este año te traiga salud, sueños cumplidos y momentos que valgan oro. ¡Feliz cumpleaños! Que la vida te regale todo lo que vos le das a los demás."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "nadie-festeja-como-vos-hoy-te-toca-ser-festejado",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Nadie festeja como vos, hoy te toca ser festejado",
+    "texto": "Nadie festeja como vos, así que hoy te toca el otro lado del negocio: ser festejado. Cumplís un año más, amigo, y la casa va a estar a la altura.\n\nQue este nuevo año te traiga salud, amor y proyectos que te ilusionen. Vos sos el alma de cada juntada. ¡Feliz cumpleaños! Que este año venga cargado de cosas buenas para vos."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "mi-amigo-fiel-mi-hermano-de-otra-madre",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Mi amigo fiel, mi hermano de otra madre",
+    "texto": "Mi amigo fiel, mi hermano de otra madre: hoy cumplís un año más y no hay torta que alcance para celebrar todo lo que valés. Gracias por escuchar sin juzgar y por estar sin que lo pidan.\n\nQue este año nuevo te traiga salud, amor y la certeza de que sos importante. ¡Feliz cumpleaños, amigo! Que la vida te sonría siempre, como vos nos hacés sonreír."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "de-los-que-quedan-de-los-que-acompanan",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "De los que quedan, de los que acompañan",
+    "texto": "Sos de los que quedan, de los que acompañan, de los que no fallan. Hoy cumplís un año más, amigo, y eso se celebra en grande.\n\nQue este año nuevo te traiga salud, planes que se cumplan y personas que sumen a tu lado. Vos sos de los que dejan marca. ¡Feliz cumpleaños! Que la vida te devuelva en felicidad cada gesto de amistad que damos."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "en-tu-dia-quiero-decirte-lo-que-vales",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "En tu día quiero decirte lo que valés",
+    "texto": "En tu día quiero decirte lo que a veces no digo: que valés mucho, amigo. Que tu amistad me hace mejor y que tenerte cerca es un lujo. Hoy cumplís un año más y lo festejamos como se debe.\n\nQue este año te traiga salud, amor y todo lo que estés esperando. ¡Feliz cumpleaños! Que la vida te pague con años lindos la buena persona que sos."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "todo-lo-lindo-que-te-deseo-en-tu-cumpleanos",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Todo lo lindo que te deseo en tu cumpleaños",
+    "texto": "Te deseo todo lo lindo que se le puede desear a alguien: salud, amor, paz y sueños que se hagan realidad. Hoy cumplís un año más, amigo, y lo celebramos juntos, con la alegría de siempre.\n\nQue este año nuevo te sorprenda con cosas buenas donde menos lo esperes. ¡Feliz cumpleaños! Vos te merecés un año tan bueno como el que sos para los demás."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "cuantos-anos-cumpla-la-amistad-queda-igual",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Cuántos años cumpla, la amistad queda igual",
+    "texto": "Por más años que cumpla, la amistad nuestra queda igual: firme, divertida y de las que duran. Hoy cumplís vos, amigo, y yo celebro cada año compartido.\n\nQue este nuevo ciclo te traiga salud, éxito y amor de sobra. Vos sos de los que siempre están, y eso no se olvida. ¡Feliz cumpleaños! Que la vida nos siga encontrando juntos en las buenas."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "feliz-cumpleanos-amigo-que-se-cumplan-tus-suenos",
+    "categoria": "feliz-cumpleanos-amigo",
+    "destinatario": "amigo",
+    "titulo": "Feliz cumpleaños, amigo: que se cumplan tus sueños",
+    "texto": "Feliz cumpleaños, amigo: que se cumplan tus sueños, todos, en tiempo y forma. Hoy es tu día y lo celebramos a lo grande, con la alegría que vos ponés en cada juntada.\n\nQue este año nuevo te traiga salud, amor y oportunidades nuevas. Vos hacés más fácil la vida de los que te queremos. ¡Feliz cumpleaños! Brindo por vos y por todo lo que viene."
   }
 ]
