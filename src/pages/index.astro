@@ -2,15 +2,16 @@
 import Base from '../layouts/Base.astro';
 import { contenido } from '../lib/contenido.ts';
 const hubs = contenido.filter(function (r) { return r.tipo === 'hub'; });
-const mensajes = contenido.filter(function (r) { return r.tipo === 'mensaje'; });
+const destacados = contenido.filter(function (r) { return r.tipo === 'mensaje'; }).slice(0, 12);
 ---
-<Base titulo="ParaCumpleanos - Felicitaciones de cumpleaños originales" descripcion="Felicitaciones de cumpleaños originales para mamá, amigas, hijos y tu pareja. Mensajes listos para copiar y enviar por WhatsApp.">
+<Base titulo="ParaCumpleanos - Felicitaciones de cumpleaños originales" descripcion="Felicitaciones de cumpleaños originales para mamá, papá, hermanas, pareja y más. Mensajes listos para copiar y enviar por WhatsApp.">
   <h1>Felicitaciones de cumpleaños para:</h1>
   <div class="chips">
     {hubs.map(function (h) { return <a class="chip" href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a>; })}
   </div>
+  <h2>Felicitaciones destacadas</h2>
   <div class="grilla">
-    {mensajes.map(function (m) {
+    {destacados.map(function (m) {
       const resumen = m.texto.split('\n\n')[0].slice(0, 120) + '…';
       const paraEnviar = m.titulo + '. ' + m.texto;
       return (
@@ -25,4 +26,5 @@ const mensajes = contenido.filter(function (r) { return r.tipo === 'mensaje'; })
       );
     })}
   </div>
+  <p><a href="/categorias/">Ver todas las categorías</a></p>
 </Base>

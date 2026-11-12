@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { contenido } from '../lib/contenido.ts';
+const POR_PAGINA = 12;
 export function getStaticPaths() {
   return contenido.map(function (r) {
     return { params: { slug: r.slug }, props: { registro: r } };
@@ -10,6 +11,8 @@ const { registro } = Astro.props;
 const esHub = registro.tipo === 'hub';
 const hub = esHub ? registro : contenido.find(function (r) { return r.tipo === 'hub' && r.slug === registro.categoria; });
 const mensajesCat = esHub ? contenido.filter(function (r) { return r.tipo === 'mensaje' && r.categoria === registro.slug; }) : [];
+const totalPaginas = Math.ceil(mensajesCat.length / POR_PAGINA);
+const mensajesPagina = esHub ? mensajesCat.slice(0, POR_PAGINA) : [];
 const relacionadas = esHub ? [] : contenido.filter(function (r) { return r.tipo === 'mensaje' && r.categoria === registro.categoria && r.slug !== registro.slug; }).slice(0, 6);
 const titulo = esHub ? registro.titulo : registro.titulo + ' - ParaCumpleanos';
 const descripcion = esHub ? registro.meta : registro.texto.slice(0, 155);
@@ -17,7 +20,7 @@ const itemListLd = esHub ? {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: registro.titulo,
-  itemListElement: mensajesCat.map(function (m, i) {
+  itemListElement: mensajesPagina.map(function (m, i) {
     return { '@type': 'ListItem', position: i + 1, name: m.titulo, url: 'https://paracumpleanos.com/' + m.slug + '/' };
   })
 } : null;
@@ -40,7 +43,7 @@ const breadcrumbLd = {
       <p class="lead">{registro.lead}</p>
       <p class="contador">Encontradas {mensajesCat.length} felicitaciones</p>
       <div class="grilla">
-        {mensajesCat.map(function (m) {
+        {mensajesPagina.map(function (m) {
           const resumen = m.texto.split('\n\n')[0].slice(0, 120) + '…';
           const paraEnviar = m.titulo + '. ' + m.texto;
           return (
@@ -55,6 +58,12 @@ const breadcrumbLd = {
           );
         })}
       </div>
+      {totalPaginas > 1 ? (
+        <nav class="paginacion" aria-label="Paginación">
+          <span>Página 1 de {totalPaginas}</span>
+          <a href={'/' + registro.slug + '/2/'}>Siguiente ›</a>
+        </nav>
+      ) : null}
       <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} />
     </div>
   ) : (

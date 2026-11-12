@@ -1,0 +1,49 @@
+---
+import Base from '../../layouts/Base.astro';
+import { contenido } from '../../lib/contenido.ts';
+const POR_PAGINA = 12;
+export function getStaticPaths() {
+  const paths = [];
+  contenido.filter(function (r) { return r.tipo === 'hub'; }).forEach(function (h) {
+    const msj = contenido.filter(function (r) { return r.tipo === 'mensaje' && r.categoria === h.slug; });
+    const total = Math.ceil(msj.length / POR_PAGINA);
+    for (let p = 2; p <= total; p++) {
+      paths.push({ params: { slug: h.slug, pagina: String(p) }, props: { hub: h, pagina: p, total: total } });
+    }
+  });
+  return paths;
+}
+const { hub, pagina, total } = Astro.props;
+const msj = contenido.filter(function (r) { return r.tipo === 'mensaje' && r.categoria === hub.slug; });
+const lote = msj.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA);
+const prev = pagina - 1;
+const next = pagina + 1;
+const urlPrev = prev === 1 ? '/' + hub.slug + '/' : '/' + hub.slug + '/' + prev + '/';
+---
+<Base titulo={hub.titulo + ' - Página ' + pagina} descripcion={hub.meta}>
+  <nav class="migas">
+    <a href="/">Inicio</a> › <a href={'/' + hub.slug + '/'}>{hub.destinatario}</a>
+  </nav>
+  <h1>{hub.h1}</h1>
+  <p class="contador">Página {pagina} de {total}</p>
+  <div class="grilla">
+    {lote.map(function (m) {
+      const resumen = m.texto.split('\n\n')[0].slice(0, 120) + '…';
+      const paraEnviar = m.titulo + '. ' + m.texto;
+      return (
+        <article class="card">
+          <h3><a href={'/' + m.slug + '/'}>{m.titulo}</a></h3>
+          <p>{resumen}</p>
+          <div class="acciones">
+            <a class="btn btn-wa" href={'https://wa.me/?text=' + encodeURIComponent(paraEnviar)} target="_blank" rel="noopener">WhatsApp</a>
+            <button class="btn btn-copiar" data-text={paraEnviar}>Copiar</button>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+  <nav class="paginacion" aria-label="Paginación">
+    {prev >= 1 ? <a href={urlPrev}>‹ Anterior</a> : null}
+    {next <= total ? <a href={'/' + hub.slug + '/' + next + '/'}>Siguiente ›</a> : null}
+  </nav>
+</Base>
