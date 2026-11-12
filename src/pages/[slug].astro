@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import contenido from '../../data/contenido.json';
+import { contenido } from '../lib/contenido.ts';
 export function getStaticPaths() {
   return contenido.map(function (r) {
     return { params: { slug: r.slug }, props: { registro: r } };

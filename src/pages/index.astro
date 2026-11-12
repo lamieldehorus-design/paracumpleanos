@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import contenido from '../../data/contenido.json';
+import { contenido } from '../lib/contenido.ts';
 const hubs = contenido.filter(function (r) { return r.tipo === 'hub'; });
 const mensajes = contenido.filter(function (r) { return r.tipo === 'mensaje'; });
 ---

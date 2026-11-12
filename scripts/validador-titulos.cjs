@@ -110,8 +110,19 @@ function validarTodo(todo) {
 
 // ---------- modos ----------
 
+function cargarTodo() {
+  let todo = JSON.parse(fs.readFileSync('data/contenido.json', 'utf8'));
+  const dir = 'data/categorias';
+  if (fs.existsSync(dir)) {
+    fs.readdirSync(dir).filter(function (f) { return f.slice(-5) === '.json'; }).sort().forEach(function (f) {
+      todo = todo.concat(JSON.parse(fs.readFileSync(dir + '/' + f, 'utf8')));
+    });
+  }
+  return todo;
+}
+
 function modoGate() {
-  const todo = JSON.parse(fs.readFileSync('data/contenido.json', 'utf8'));
+  const todo = cargarTodo();
   const r = validarTodo(todo);
   r.avisos.forEach(function (a) { console.log('AVISO  ' + a); });
   r.errores.forEach(function (e) { console.log('ERROR  ' + e); });
@@ -124,13 +135,13 @@ function modoGate() {
 function modoEditor(archivo) {
   if (!fs.existsSync(archivo)) { console.log('No existe: ' + archivo); process.exit(1); }
   const reg = JSON.parse(fs.readFileSync(archivo, 'utf8'));
-  const base = JSON.parse(fs.readFileSync('data/contenido.json', 'utf8'));
+  const base = cargarTodo();
   const errores = [], avisos = [];
   validarRegistro(reg, base.concat([reg]), errores, avisos);
   avisos.forEach(function (a) { console.log('AVISO  ' + a); });
   errores.forEach(function (e) { console.log('ERROR  ' + e); });
   if (errores.length) { console.log('No publiques: corregi primero.'); process.exit(1); }
-  console.log('Mensaje valido: sumalo a data/contenido.json.');
+  console.log('Mensaje valido: sumalo a data/categorias/.');
 }
 
 function modoAuditoria(archivo) {
