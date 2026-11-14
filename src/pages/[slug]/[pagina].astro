@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { contenido } from '../../lib/contenido.ts';
-const POR_PAGINA = 12;
+import { contenido, POR_PAGINA } from '../../lib/contenido.ts';
 export function getStaticPaths() {
   const paths = [];
   contenido.filter(function (r) { return r.tipo === 'hub'; }).forEach(function (h) {

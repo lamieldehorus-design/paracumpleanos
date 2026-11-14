@@ -8,3 +8,6 @@ Object.values(modulos as any).forEach(function (m: any) {
 });
 
 export const contenido: any[] = (base as any[]).concat(extras);
+
+// Mensajes por pagina en los hubs (lo usan [slug].astro y [slug]/[pagina].astro)
+export const POR_PAGINA = 12;
