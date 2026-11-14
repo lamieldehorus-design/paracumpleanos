@@ -97,6 +97,9 @@ function validarRegistro(reg, base, errores, avisos) {
         if (s > CONFIG.umbralSimilitud) errores.push('R2 ' + donde + ': similitud ' + s.toFixed(2) + ' con ' + r.slug + ' (umbral ' + CONFIG.umbralSimilitud + ')');
       }
     });
+    // R2b: titulo identico (normalizado) en cualquier otro mensaje del sitio
+    const clon = base.find(function (r) { return r !== reg && r.tipo === 'mensaje' && normalizar(r.titulo) === normalizar(reg.titulo); });
+    if (clon) errores.push('R2 ' + donde + ': titulo identico al de ' + clon.slug + ' (otra pagina)');
     // R7: sustancia del texto
     if (!reg.texto || normalizar(reg.texto).split(' ').length < CONFIG.textoMin) avisos.push('R7 ' + donde + ': texto demasiado corto (min ' + CONFIG.textoMin + ' palabras)');
   }

@@ -1,30 +1,24 @@
 ---
 import Base from '../layouts/Base.astro';
-import { contenido } from '../lib/contenido.ts';
-const hubs = contenido.filter(function (r) { return r.tipo === 'hub'; });
+import TarjetaMensaje from '../components/TarjetaMensaje.astro';
+import { contenido, hubs, SITIO, MARCA } from '../lib/contenido.ts';
 const destacados = contenido.filter(function (r) { return r.tipo === 'mensaje'; }).slice(0, 12);
+const jsonld = [{
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: MARCA,
+  url: SITIO + '/',
+  inLanguage: 'es-AR'
+}];
 ---
-<Base titulo="ParaCumpleanos - Felicitaciones de cumpleaños originales" descripcion="Felicitaciones de cumpleaños originales para mamá, papá, hermanas, pareja y más. Mensajes listos para copiar y enviar por WhatsApp.">
+<Base titulo="ParaCumpleanos - Felicitaciones de cumpleaños originales" descripcion="Felicitaciones de cumpleaños originales para mamá, papá, hermanas, pareja y más. Mensajes listos para copiar y enviar por WhatsApp." jsonld={jsonld}>
   <h1>Felicitaciones de cumpleaños para:</h1>
   <div class="chips">
     {hubs.map(function (h) { return <a class="chip" href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a>; })}
   </div>
   <h2>Felicitaciones destacadas</h2>
   <div class="grilla">
-    {destacados.map(function (m) {
-      const resumen = m.texto.split('\n\n')[0].slice(0, 120) + '…';
-      const paraEnviar = m.titulo + '. ' + m.texto;
-      return (
-        <article class="card">
-          <h3><a href={'/' + m.slug + '/'}>{m.titulo}</a></h3>
-          <p>{resumen}</p>
-          <div class="acciones">
-            <a class="btn btn-wa" href={'https://wa.me/?text=' + encodeURIComponent(paraEnviar)} target="_blank" rel="noopener">WhatsApp</a>
-            <button class="btn btn-copiar" data-text={paraEnviar}>Copiar</button>
-          </div>
-        </article>
-      );
-    })}
+    {destacados.map(function (m) { return <TarjetaMensaje m={m} />; })}
   </div>
   <p><a href="/categorias/">Ver todas las categorías</a></p>
 </Base>

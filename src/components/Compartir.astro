@@ -1,0 +1,10 @@
+---
+// Botones de compartir: WhatsApp, Facebook y copiar (sin JS critico; copiar usa el script del layout)
+interface Props { texto: string; url: string; }
+const { texto, url } = Astro.props;
+---
+<div class="acciones">
+  <a class="btn btn-wa" href={'https://wa.me/?text=' + encodeURIComponent(texto)} target="_blank" rel="noopener">WhatsApp</a>
+  <a class="btn btn-fb" href={'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url)} target="_blank" rel="noopener">Facebook</a>
+  <button class="btn btn-copiar" data-text={texto}>Copiar</button>
+</div>

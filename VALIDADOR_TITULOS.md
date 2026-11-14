@@ -6,7 +6,7 @@ Un script local que revisa TODO el contenido antes de que el sitio se construya.
 
 - R0: slugs únicos, en kebab-case, sin chocar con rutas fijas.
 - R1: una sola página por keyword de categoría.
-- R2: títulos de mensajes demasiado parecidos entre el mismo destinatario (más de 85% de similitud = error).
+- R2: títulos de mensajes demasiado parecidos entre el mismo destinatario (más de 85% de similitud = error), y títulos idénticos en cualquier parte del sitio.
 - R3: dentro de una categoría, dos mensajes no pueden arrancar con la misma palabra.
 - R4: en los hubs, no se repite la combinación cabecera + modificador para un mismo destinatario.
 - R5: los mensajes no deben contener la keyword exacta del hub (evita canibalización).

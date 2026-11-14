@@ -2,8 +2,8 @@
 import '../styles/global.css';
 import { contenido } from '../lib/contenido.ts';
 const hubs = contenido.filter(function (r) { return r.tipo === 'hub'; });
-interface Props { titulo: string; descripcion: string; }
-const { titulo, descripcion } = Astro.props;
+interface Props { titulo: string; descripcion: string; jsonld?: any[]; }
+const { titulo, descripcion, jsonld = [] } = Astro.props;
 const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 ---
 <!doctype html>
@@ -18,7 +18,10 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <meta property="og:description" content={descripcion} />
   <meta property="og:type" content="website" />
   <meta property="og:url" content={url} />
+  <meta property="og:site_name" content="ParaCumpleanos" />
+  <meta property="og:locale" content="es_AR" />
   <meta name="twitter:card" content="summary" />
+  {jsonld.map(function (d) { return <script type="application/ld+json" set:html={JSON.stringify(d)} />; })}
 </head>
 <body>
   <header class="cabecera">

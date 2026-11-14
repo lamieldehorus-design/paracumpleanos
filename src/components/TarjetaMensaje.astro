@@ -1,0 +1,12 @@
+---
+import Compartir from './Compartir.astro';
+import { SITIO } from '../lib/contenido.ts';
+interface Props { m: any; }
+const { m } = Astro.props;
+const resumen = m.texto.split('\n\n')[0].slice(0, 120) + '…';
+---
+<article class="card">
+  <h3><a href={'/' + m.slug + '/'}>{m.titulo}</a></h3>
+  <p>{resumen}</p>
+  <Compartir texto={m.titulo + '. ' + m.texto} url={SITIO + '/' + m.slug + '/'} />
+</article>

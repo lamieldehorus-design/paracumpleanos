@@ -1,6 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-import { contenido, POR_PAGINA } from '../lib/contenido.ts';
+import TarjetaMensaje from '../components/TarjetaMensaje.astro';
+import Compartir from '../components/Compartir.astro';
+import Hermanas from '../components/Hermanas.astro';
+import { contenido, POR_PAGINA, SITIO, MARCA, mensajesDe, hubDe, relacionadasDe, metaDe, nombreHub, migasLd } from '../lib/contenido.ts';
 export function getStaticPaths() {
   return contenido.map(function (r) {
     return { params: { slug: r.slug }, props: { registro: r } };
@@ -8,33 +11,32 @@ export function getStaticPaths() {
 }
 const { registro } = Astro.props;
 const esHub = registro.tipo === 'hub';
-const hub = esHub ? registro : contenido.find(function (r) { return r.tipo === 'hub' && r.slug === registro.categoria; });
-const mensajesCat = esHub ? contenido.filter(function (r) { return r.tipo === 'mensaje' && r.categoria === registro.slug; }) : [];
+const hub = hubDe(registro);
+const urlHub = SITIO + '/' + hub.slug + '/';
+const mensajesCat = esHub ? mensajesDe(hub.slug) : [];
 const totalPaginas = Math.ceil(mensajesCat.length / POR_PAGINA);
-const mensajesPagina = esHub ? mensajesCat.slice(0, POR_PAGINA) : [];
-const relacionadas = esHub ? [] : contenido.filter(function (r) { return r.tipo === 'mensaje' && r.categoria === registro.categoria && r.slug !== registro.slug; }).slice(0, 6);
-const titulo = esHub ? registro.titulo : registro.titulo + ' - ParaCumpleanos';
-const descripcion = esHub ? registro.meta : registro.texto.slice(0, 155);
-const itemListLd = esHub ? {
+const mensajesPagina = mensajesCat.slice(0, POR_PAGINA);
+const relacionadas = esHub ? [] : relacionadasDe(registro);
+const titulo = esHub ? registro.titulo : registro.titulo + ' - ' + MARCA;
+const descripcion = esHub ? registro.meta : metaDe(registro.texto);
+const migas = [{ name: 'Inicio', url: SITIO + '/' }, { name: nombreHub(hub), url: urlHub }]
+  .concat(esHub ? [] : [{ name: registro.titulo, url: SITIO + '/' + registro.slug + '/' }]);
+const jsonld: any[] = [migasLd(migas)];
+if (esHub) jsonld.push({
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: registro.titulo,
+  numberOfItems: mensajesCat.length,
   itemListElement: mensajesPagina.map(function (m, i) {
-    return { '@type': 'ListItem', position: i + 1, name: m.titulo, url: 'https://paracumpleanos.com/' + m.slug + '/' };
+    return { '@type': 'ListItem', position: i + 1, name: m.titulo, url: SITIO + '/' + m.slug + '/' };
   })
-} : null;
-const breadcrumbLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://paracumpleanos.com/' },
-    { '@type': 'ListItem', position: 2, name: hub.destinatario, item: 'https://paracumpleanos.com/' + hub.slug + '/' }
-  ].concat(esHub ? [] : [{ '@type': 'ListItem', position: 3, name: registro.titulo, item: 'https://paracumpleanos.com/' + registro.slug + '/' }])
-};
+});
+const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
 ---
-<Base titulo={titulo} descripcion={descripcion}>
-  <nav class="migas">
-    <a href="/">Inicio</a> › <a href={'/' + hub.slug + '/'}>{hub.destinatario}</a>
+<Base titulo={titulo} descripcion={descripcion} jsonld={jsonld}>
+  <nav class="migas" aria-label="Migas de pan">
+    <a href="/">Inicio</a> › {esHub ? <span>{nombreHub(hub)}</span> : <a href={'/' + hub.slug + '/'}>{nombreHub(hub)}</a>}
+    {esHub ? null : <span> › {registro.titulo}</span>}
   </nav>
   {esHub ? (
     <div>
@@ -42,20 +44,7 @@ const breadcrumbLd = {
       <p class="lead">{registro.lead}</p>
       <p class="contador">Encontradas {mensajesCat.length} felicitaciones</p>
       <div class="grilla">
-        {mensajesPagina.map(function (m) {
-          const resumen = m.texto.split('\n\n')[0].slice(0, 120) + '…';
-          const paraEnviar = m.titulo + '. ' + m.texto;
-          return (
-            <article class="card">
-              <h3><a href={'/' + m.slug + '/'}>{m.titulo}</a></h3>
-              <p>{resumen}</p>
-              <div class="acciones">
-                <a class="btn btn-wa" href={'https://wa.me/?text=' + encodeURIComponent(paraEnviar)} target="_blank" rel="noopener">WhatsApp</a>
-                <button class="btn btn-copiar" data-text={paraEnviar}>Copiar</button>
-              </div>
-            </article>
-          );
-        })}
+        {mensajesPagina.map(function (m) { return <TarjetaMensaje m={m} />; })}
       </div>
       {totalPaginas > 1 ? (
         <nav class="paginacion" aria-label="Paginación">
@@ -63,22 +52,22 @@ const breadcrumbLd = {
           <a href={'/' + registro.slug + '/2/'}>Siguiente ›</a>
         </nav>
       ) : null}
-      <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} />
+      <p class="firma">Escrito y revisado por el Equipo Editorial de {MARCA}. Todos los mensajes son originales.</p>
+      <Hermanas hub={hub} />
     </div>
   ) : (
     <div>
       <h1>{registro.titulo}</h1>
       {registro.texto.split('\n\n').map(function (p) { return <p class="mensaje">{p}</p>; })}
-      <div class="acciones">
-        <a class="btn btn-wa" href={'https://wa.me/?text=' + encodeURIComponent(registro.titulo + '. ' + registro.texto)} target="_blank" rel="noopener">WhatsApp</a>
-        <button class="btn btn-copiar" data-text={registro.titulo + '. ' + registro.texto}>Copiar</button>
-      </div>
-      <h2>Más felicitaciones para {hub.destinatario}</h2>
-      <ul>
-        {relacionadas.map(function (m) { return <li><a href={'/' + m.slug + '/'}>{m.titulo}</a></li>; })}
-      </ul>
-      <p><a href={'/' + hub.slug + '/'}>Ver también: {hub.titulo}</a></p>
-      <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+      <Compartir texto={textoEnviar} url={SITIO + '/' + registro.slug + '/'} />
+      <section class="relacionadas">
+        <h2>Felicitaciones relacionadas</h2>
+        <ul>
+          {relacionadas.map(function (m) { return <li><a href={'/' + m.slug + '/'}>{m.titulo}</a></li>; })}
+        </ul>
+      </section>
+      <p class="ver-tambien">Ver también: <a href={'/' + hub.slug + '/'}>{hub.titulo}</a></p>
+      <Hermanas hub={hub} />
     </div>
   )}
 </Base>

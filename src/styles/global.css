@@ -49,3 +49,16 @@ input, textarea, select { font-size:16px; }
 .paginacion a { background:var(--azul-claro); color:var(--azul-oscuro); text-decoration:none; padding:10px 18px; border-radius:10px; font-weight:600; }
 .paginacion a:hover { background:var(--amarillo-suave); color:var(--texto); }
 .paginacion span { color:var(--texto-suave); }
+.btn-fb { background:#1877f2; color:#fff; }
+.relacionadas ul { padding-left:1.1em; }
+.relacionadas li { margin:6px 0; }
+.ver-tambien { margin-top:18px; font-weight:600; }
+.firma { margin-top:22px; font-size:.9rem; color:var(--texto-suave); font-style:italic; }
+.hermanas { margin-top:28px; border-top:1px solid var(--borde); padding-top:12px; }
+.hermanas h2 { font-size:1.15rem; }
+/* Mobile: el mensaje primero; la lista de categorias va despues del contenido */
+@media (max-width:799px) {
+  .contenedor { display:flex; flex-direction:column; }
+  .sidebar { order:2; margin:28px 0 0; }
+  .card .btn { padding:10px 14px; }
+}
