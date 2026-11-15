@@ -1,15 +1,63 @@
 ---
 import Base from '../layouts/Base.astro';
-import { contenido } from '../lib/contenido.ts';
-const hubs = contenido.filter(function (r) { return r.tipo === 'hub'; });
+import { GRUPOS, hubs, todosMensajes, hubsPorGrupo, mensajesDe, nombreHub, SITIO, migasLd } from '../lib/contenido.ts';
+const jsonld = [migasLd([
+  { name: 'Inicio', url: SITIO + '/' },
+  { name: 'Categorías', url: SITIO + '/categorias/' }
+])];
 ---
-<Base titulo="Categorías de felicitaciones - ParaCumpleanos" descripcion="Todas las categorías de felicitaciones de cumpleaños: mamá, amiga, hijo, amor y más. Elegí el destinatario y encontrá el mensaje perfecto.">
-  <h1>Categorías</h1>
-  <p>Elegí para quién es la felicitación y encontrá mensajes originales listos para enviar.</p>
-  <ul>
-    {hubs.map(function (h) {
-      const cant = contenido.filter(function (r) { return r.tipo === 'mensaje' && r.categoria === h.slug; }).length;
-      return <li><a href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a> — {cant} felicitaciones</li>;
+<Base titulo="351 Categorías de felicitaciones - ParaCumpleanos" descripcion="Todas las 351 categorías de felicitaciones de cumpleaños: mamá, amiga, hijo, amor, cartas, edades, cristianos y más. Elegí el destinatario y encontrá el mensaje perfecto." jsonld={jsonld}>
+  <nav class="migas" aria-label="Migas de pan">
+    <a href="/">Inicio</a> › <span>Categorías</span>
+  </nav>
+  <h1>Todas las categorías ({hubs.length})</h1>
+  <p class="lead">Explorá las <strong>{hubs.length} categorías</strong> y sus <strong>{todosMensajes.length.toLocaleString('es-AR')} felicitaciones originales</strong> listas para copiar y enviar por WhatsApp.</p>
+  <label for="filtro-cats" style="display:block;font-weight:600;margin-top:12px;">Buscar categoría o destinatario:</label>
+  <input id="filtro-cats" class="buscador-cats" type="search" placeholder="Ej.: mamá, 15 años, carta, amigo lejos, cristianos…" autocomplete="off" />
+  <div class="chips">
+    {GRUPOS.map(function (g) {
+      const lista = hubsPorGrupo.get(g.id) || [];
+      return <a class="chip" href={'#' + g.id}>{g.emoji} {g.nombre} ({lista.length})</a>;
     })}
-  </ul>
+  </div>
+  <div id="lista-categorias">
+    {GRUPOS.map(function (g) {
+      const lista = hubsPorGrupo.get(g.id) || [];
+      if (!lista.length) return null;
+      return (
+        <section class="cat-grupo-bloque" id={g.id}>
+          <h2>{g.emoji} {g.nombre} ({lista.length})</h2>
+          <ul class="cat-lista">
+            {lista.map(function (h) {
+              const cant = mensajesDe(h.slug).length;
+              return (
+                <li data-cat={nombreHub(h).toLowerCase() + ' ' + (h.destinatario || '').toLowerCase()}>
+                  <a href={'/' + h.slug + '/'}>{h.emoji} {nombreHub(h)}</a> — {cant} felicitaciones
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      );
+    })}
+  </div>
+  <script is:inline>
+    (function () {
+      var input = document.getElementById('filtro-cats');
+      if (!input) return;
+      input.addEventListener('input', function () {
+        var q = input.value.toLowerCase().trim();
+        var items = document.querySelectorAll('#lista-categorias li');
+        for (var i = 0; i < items.length; i++) {
+          var txt = items[i].getAttribute('data-cat') || '';
+          items[i].style.display = !q || txt.indexOf(q) !== -1 ? '' : 'none';
+        }
+        var secs = document.querySelectorAll('.cat-grupo-bloque');
+        for (var j = 0; j < secs.length; j++) {
+          var visibles = secs[j].querySelectorAll('li:not([style*="display: none"])').length;
+          secs[j].style.display = visibles > 0 ? '' : 'none';
+        }
+      });
+    })();
+  </script>
 </Base>

@@ -1,8 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
 import TarjetaMensaje from '../components/TarjetaMensaje.astro';
-import { contenido, hubs, SITIO, MARCA } from '../lib/contenido.ts';
-const destacados = contenido.filter(function (r) { return r.tipo === 'mensaje'; }).slice(0, 12);
+import { GRUPOS, hubs, todosMensajes, hubsPrincipales, SITIO, MARCA } from '../lib/contenido.ts';
+const destacados = todosMensajes.slice(0, 12);
+const chipsPrincipales = hubsPrincipales.slice(0, 25);
 const jsonld = [{
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -11,14 +12,21 @@ const jsonld = [{
   inLanguage: 'es-AR'
 }];
 ---
-<Base titulo="ParaCumpleanos - Felicitaciones de cumpleaños originales" descripcion="Felicitaciones de cumpleaños originales para mamá, papá, hermanas, pareja y más. Mensajes listos para copiar y enviar por WhatsApp." jsonld={jsonld}>
+<Base titulo="ParaCumpleanos - Felicitaciones de cumpleaños originales" descripcion="Felicitaciones de cumpleaños originales en 351 categorías para mamá, papá, hermanas, pareja, amigos y más. Mensajes listos para copiar y enviar por WhatsApp." jsonld={jsonld}>
   <h1>Felicitaciones de cumpleaños para:</h1>
+  <p class="lead">Elegí el destinatario o la ocasión entre nuestras <strong>{hubs.length} categorías</strong> y más de <strong>{todosMensajes.length.toLocaleString('es-AR')} mensajes originales</strong> listos para copiar o enviar por WhatsApp.</p>
   <div class="chips">
-    {hubs.map(function (h) { return <a class="chip" href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a>; })}
+    {chipsPrincipales.map(function (h) { return <a class="chip" href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a>; })}
   </div>
+  <p><a href="/categorias/">Explorar las {hubs.length} categorías completas →</a></p>
   <h2>Felicitaciones destacadas</h2>
   <div class="grilla">
     {destacados.map(function (m) { return <TarjetaMensaje m={m} />; })}
   </div>
-  <p><a href="/categorias/">Ver todas las categorías</a></p>
+  <section class="hermanas">
+    <h2>Explorar por sección</h2>
+    <div class="chips">
+      {GRUPOS.map(function (g) { return <a class="chip" href={'/categorias/#' + g.id}>{g.emoji} {g.nombre}</a>; })}
+    </div>
+  </section>
 </Base>

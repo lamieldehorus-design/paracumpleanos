@@ -32,8 +32,18 @@ if (esHub) jsonld.push({
   })
 });
 const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
+const creado = hub.creado || '2026-11-15';
+const actualizado = hub.actualizado || '2026-11-15';
+const parrafosMsg = esHub ? [] : registro.texto.split('\n\n');
+const parrafoPrincipal = esHub ? '' : (
+  parrafosMsg.find(function (p) {
+    const t = p.trim();
+    return t.length >= 50 && !/^(Mensaje en inglés|Traducción al español):/i.test(t);
+  }) || parrafosMsg.find(function (p) { return p.trim().length >= 25; }) || parrafosMsg[0] || ''
+);
+const extractoCard = parrafoPrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
 ---
-<Base titulo={titulo} descripcion={descripcion} jsonld={jsonld}>
+<Base titulo={titulo} descripcion={descripcion} jsonld={jsonld} grupoActual={hub.grupo || 'destinatarios'} slugActual={hub.slug}>
   <nav class="migas" aria-label="Migas de pan">
     <a href="/">Inicio</a> › {esHub ? <span>{nombreHub(hub)}</span> : <a href={'/' + hub.slug + '/'}>{nombreHub(hub)}</a>}
     {esHub ? null : <span> › {registro.titulo}</span>}
@@ -43,6 +53,12 @@ const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
       <h1>{registro.h1}</h1>
       <p class="lead">{registro.lead}</p>
       <p class="contador">Encontradas {mensajesCat.length} felicitaciones</p>
+      <div class="tarjeta-visual" role="img" aria-label={'Tarjeta destacada de ' + (registro.keyword || registro.h1)}>
+        <div class="tarjeta-visual-emoji">{registro.emoji}</div>
+        <p class="tarjeta-visual-titulo">{nombreHub(registro)}</p>
+        <p class="tarjeta-visual-extracto">{mensajesCat.length} mensajes originales listos para copiar y compartir</p>
+        <p class="tarjeta-visual-marca">paracumpleanos.com</p>
+      </div>
       <div class="grilla">
         {mensajesPagina.map(function (m) { return <TarjetaMensaje m={m} />; })}
       </div>
@@ -52,14 +68,37 @@ const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
           <a href={'/' + registro.slug + '/2/'}>Siguiente ›</a>
         </nav>
       ) : null}
+      <p class="fechas-meta">Publicado: <time datetime={creado}>{creado}</time> · Última actualización: <time datetime={actualizado}>{actualizado}</time></p>
       <p class="firma">Escrito y revisado por el Equipo Editorial de {MARCA}. Todos los mensajes son originales.</p>
       <Hermanas hub={hub} />
     </div>
   ) : (
     <div>
       <h1>{registro.titulo}</h1>
-      {registro.texto.split('\n\n').map(function (p) { return <p class="mensaje">{p}</p>; })}
-      <Compartir texto={textoEnviar} url={SITIO + '/' + registro.slug + '/'} />
+      {parrafosMsg.map(function (p) {
+        const lineas = p.split('\n');
+        return (
+          <p class="mensaje">
+            {lineas.map(function (linea, idx) {
+              return idx === 0 ? linea : <><br />{linea}</>;
+            })}
+          </p>
+        );
+      })}
+      <div class="tarjeta-visual" role="img" aria-label={'Tarjeta lista para compartir: ' + registro.titulo}>
+        <div class="tarjeta-visual-emoji">{hub.emoji}</div>
+        <p class="tarjeta-visual-titulo">{registro.titulo}</p>
+        <p class="tarjeta-visual-extracto">{extractoCard}</p>
+        <p class="tarjeta-visual-marca">paracumpleanos.com</p>
+      </div>
+      <Compartir
+        texto={textoEnviar}
+        url={SITIO + '/' + registro.slug + '/'}
+        tituloCard={registro.titulo}
+        cuerpoCard={extractoCard}
+        emojiCard={hub.emoji}
+        mostrarDescarga={true}
+      />
       <section class="relacionadas">
         <h2>Felicitaciones relacionadas</h2>
         <ul>

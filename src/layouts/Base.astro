@@ -1,10 +1,16 @@
 ---
 import '../styles/global.css';
-import { contenido } from '../lib/contenido.ts';
-const hubs = contenido.filter(function (r) { return r.tipo === 'hub'; });
-interface Props { titulo: string; descripcion: string; jsonld?: any[]; }
-const { titulo, descripcion, jsonld = [] } = Astro.props;
+import { GRUPOS, hubs, hubsPorGrupo, hubsPrincipales, nombreHub } from '../lib/contenido.ts';
+interface Props {
+  titulo: string;
+  descripcion: string;
+  jsonld?: any[];
+  grupoActual?: string;
+  slugActual?: string;
+}
+const { titulo, descripcion, jsonld = [], grupoActual = 'destinatarios', slugActual = '' } = Astro.props;
 const url = 'https://paracumpleanos.com' + Astro.url.pathname;
+const navTop = hubsPrincipales.slice(0, 12);
 ---
 <!doctype html>
 <html lang="es">
@@ -25,25 +31,50 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 </head>
 <body>
   <header class="cabecera">
-    <a href="/" class="logo">ParaCumpleanos 🎂</a>
-    <nav class="nav-hubs">
-      {hubs.map(function (h) { return <a href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a>; })}
+    <div class="marca-bloque">
+      <a href="/" class="logo">ParaCumpleanos 🎂</a>
+      <p class="tagline">Felicitaciones originales listas para enviar</p>
+    </div>
+    <nav class="nav-hubs" aria-label="Destinatarios principales">
+      {navTop.map(function (h) { return <a href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a>; })}
+      <a class="nav-todas" href="/categorias/">Todas ({hubs.length})</a>
     </nav>
   </header>
   <div class="contenedor">
-    <aside class="sidebar">
-      <h2>Categorías</h2>
-      <ul>
-        {hubs.map(function (h) { return <li><a href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a></li>; })}
-      </ul>
+    <aside class="sidebar" aria-label="Todas las categorías">
+      <h2>Categorías ({hubs.length})</h2>
+      {GRUPOS.map(function (g) {
+        const lista = hubsPorGrupo.get(g.id) || [];
+        if (!lista.length) return null;
+        return (
+          <details class="sidebar-grupo" open={g.id === grupoActual}>
+            <summary>
+              <span>{g.emoji} {g.nombre}</span>
+              <span class="sidebar-count">{lista.length}</span>
+            </summary>
+            <ul>
+              {lista.map(function (h) {
+                return (
+                  <li>
+                    <a href={'/' + h.slug + '/'} aria-current={h.slug === slugActual ? 'page' : undefined}>
+                      {nombreHub(h)}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </details>
+        );
+      })}
     </aside>
     <main class="contenido">
       <slot />
     </main>
   </div>
   <footer class="pie">
-    <p>ParaCumpleanos — felicitaciones originales de cumpleaños.</p>
-    <nav>
+    <p>ParaCumpleanos — {hubs.length} categorías de felicitaciones originales de cumpleaños.</p>
+    <nav aria-label="Páginas institucionales">
+      <a href="/categorias/">Categorías</a>
       <a href="/sobre-nosotros/">Sobre nosotros</a>
       <a href="/privacidad/">Privacidad</a>
       <a href="/terminos-de-uso/">Términos de uso</a>
@@ -52,25 +83,110 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <script is:inline>
     document.addEventListener('click', function (e) {
       var btn = e.target.closest ? e.target.closest('.btn-copiar') : null;
-      if (!btn) return;
-      var texto = btn.getAttribute('data-text') || '';
-      function ok() {
-        var original = btn.textContent;
-        btn.textContent = '¡Copiado! ✓';
-        setTimeout(function () { btn.textContent = original; }, 2000);
+      if (btn) {
+        var texto = btn.getAttribute('data-text') || '';
+        function ok() {
+          var original = btn.textContent;
+          btn.textContent = '¡Copiado! ✓';
+          setTimeout(function () { btn.textContent = original; }, 2000);
+        }
+        function fallback() {
+          var ta = document.createElement('textarea');
+          ta.value = texto;
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); ok(); } catch (err) {}
+          document.body.removeChild(ta);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(texto).then(ok, fallback);
+        } else { fallback(); }
+        return;
       }
-      function fallback() {
-        var ta = document.createElement('textarea');
-        ta.value = texto;
-        document.body.appendChild(ta);
-        ta.select();
-        try { document.execCommand('copy'); ok(); } catch (err) {}
-        document.body.removeChild(ta);
+
+      var dl = e.target.closest ? e.target.closest('.btn-descargar') : null;
+      if (dl) {
+        var tituloCard = dl.getAttribute('data-title') || 'Feliz cumpleaños';
+        var textoCard = dl.getAttribute('data-body') || '';
+        var emojiCard = dl.getAttribute('data-emoji') || '🎂';
+        var canvas = document.createElement('canvas');
+        canvas.width = 1080;
+        canvas.height = 1080;
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        var grad = ctx.createLinearGradient(0, 0, 1080, 1080);
+        grad.addColorStop(0, '#fdf2f8');
+        grad.addColorStop(0.55, '#fff7ed');
+        grad.addColorStop(1, '#e0f2fe');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 1080, 1080);
+
+        ctx.strokeStyle = '#e91e8c';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(48, 48, 984, 984);
+
+        ctx.fillStyle = '#be185d';
+        ctx.textAlign = 'center';
+        ctx.font = '72px system-ui, sans-serif';
+        ctx.fillText(emojiCard, 540, 170);
+
+        ctx.font = 'bold 46px system-ui, sans-serif';
+        function wrapLines(text, maxW) {
+          var words = text.split(/\s+/);
+          var lines = [];
+          var line = '';
+          for (var i = 0; i < words.length; i++) {
+            var test = line ? line + ' ' + words[i] : words[i];
+            if (ctx.measureText(test).width > maxW && line) {
+              lines.push(line);
+              line = words[i];
+            } else {
+              line = test;
+            }
+          }
+          if (line) lines.push(line);
+          return lines;
+        }
+
+        var y = 260;
+        var tLines = wrapLines(tituloCard, 860);
+        for (var i = 0; i < tLines.length; i++) {
+          ctx.fillText(tLines[i], 540, y);
+          y += 58;
+        }
+
+        ctx.fillStyle = '#1f2937';
+        ctx.font = '32px system-ui, sans-serif';
+        y += 32;
+        var bLines = wrapLines(textoCard, 860).slice(0, 12);
+        for (var j = 0; j < bLines.length; j++) {
+          ctx.fillText(bLines[j], 540, y);
+          y += 46;
+        }
+
+        ctx.fillStyle = '#d97706';
+        ctx.font = 'bold 28px system-ui, sans-serif';
+        ctx.fillText('paracumpleanos.com', 540, 968);
+
+        var a = document.createElement('a');
+        a.download = 'tarjeta-cumpleanos.png';
+        a.href = canvas.toDataURL('image/png');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(texto).then(ok, fallback);
-      } else { fallback(); }
     });
   </script>
+  <!-- Default Statcounter code for ParaCumpleanos
+  https://paracumpleanos.com/ -->
+  <script is:inline type="text/javascript">
+  var sc_project=13334162;
+  var sc_invisible=1;
+  var sc_security="3e891d7b";
+  </script>
+  <script is:inline type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
+  <noscript><div class="statcounter"><a title="Web Analytics Made Easy - Statcounter" href="https://statcounter.com/" target="_blank" rel="noopener"><img class="statcounter" src="https://c.statcounter.com/13334162/0/3e891d7b/1/" alt="Web Analytics Made Easy - Statcounter" referrerpolicy="no-referrer-when-downgrade" /></a></div></noscript>
+  <!-- End of Statcounter Code -->
 </body>
 </html>

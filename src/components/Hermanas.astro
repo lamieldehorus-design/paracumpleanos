@@ -1,11 +1,11 @@
 ---
-import { hermanasDe } from '../lib/contenido.ts';
+import { hermanasDe, nombreHub } from '../lib/contenido.ts';
 interface Props { hub: any; }
 const lista = hermanasDe(Astro.props.hub);
 ---
 <section class="hermanas">
   <h2>Otras categorías que te pueden interesar</h2>
   <div class="chips">
-    {lista.map(function (h) { return <a class="chip" href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a>; })}
+    {lista.map(function (h) { return <a class="chip" href={'/' + h.slug + '/'}>{h.emoji} {nombreHub(h)}</a>; })}
   </div>
 </section>

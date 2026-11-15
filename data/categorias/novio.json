@@ -1,255 +1,258 @@
 [
-{
-"tipo": "hub",
-"slug": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"cabecera": "feliz cumpleaños",
-"modificador": "",
-"keyword": "feliz cumpleaños novio",
-"titulo": "Feliz Cumpleaños Novio - 30 Mensajes Románticos",
-"h1": "Feliz cumpleaños, novio 💙",
-"meta": "Feliz cumpleaños novio: 30 mensajes románticos y originales para dedicarle en su día. Textos listos para copiar y enviar por WhatsApp o escribir en su tarjeta.",
-"emoji": "💙",
-"lead": "¿Buscás cómo felicitar a tu novio en su cumpleaños sin caer en lo mismo de siempre? Acá vas a encontrar 30 felicitaciones románticas y originales para el hombre que te enamora todos los días. Hay textos tiernos, apasionados y con humor, todos listos para copiar y enviar por WhatsApp o escribir en su tarjeta. Elegí el que más se parezca a su historia, sumale un recuerdo propio y hacé que su día sea inolvidable."
-},
-{
-"tipo": "mensaje",
-"slug": "hoy-es-tu-dia-y-lo-celebro-yo-primero",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Hoy es tu día y lo celebro yo primero",
-"texto": "Hoy es tu día, mi vida, y me adelanto a todos para celebrarte. Sos el que me hace reír cuando no tengo ganas y el que me banca sin preguntar nada.\n\nQue este año te traiga todo lo que soñás y algo más. Feliz cumpleaños, amor. Te quiero más que ayer y menos que mañana."
-},
-{
-"tipo": "mensaje",
-"slug": "gracias-por-bancarme-en-todo",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Gracias por bancarme en todo",
-"texto": "Gracias por bancarme en todo, incluso en los días en que ni yo me banco. Esa paciencia tuya es de las cosas que más amo de vos.\n\nEn tu cumpleaños te deseo un año lleno de momentos juntos y proyectos cumplidos. ¡Feliz día, mi amor! Vos sos mi mejor casualidad y mi mejor decisión."
-},
-{
-"tipo": "mensaje",
-"slug": "que-este-nuevo-ciclo-nos-encuentre-juntos",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Que este nuevo ciclo nos encuentre juntos",
-"texto": "Que este nuevo ciclo nos encuentre juntos, más cómplices y con más planes que nunca. Lo que estamos armando vale oro y lo sé.\n\nHoy celebramos tu cumpleaños como se debe: vos de protagonista y yo de tu fan número uno. ¡Feliz cumpleaños, amor! Que se te cumpla todo."
-},
-{
-"tipo": "mensaje",
-"slug": "aunque-pasen-los-meses-me-vuelvo-a-enamorar",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Aunque pasen los meses, me vuelvo a enamorar",
-"texto": "Aunque pasen los meses, me vuelvo a enamorar de vos como la primera vez. Cada día descubro algo nuevo tuyo y me encanta.\n\nQue este cumpleaños te encuentre feliz y celebrado. Te deseo un año enorme, de esos que se recuerdan siempre. ¡Feliz día, mi amor! Gracias por ser como sos."
-},
-{
-"tipo": "mensaje",
-"slug": "sos-el-abrazo-que-me-arregla-todo",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Sos el abrazo que me arregla todo",
-"texto": "Sos el abrazo que me arregla todo: llegás, me abrazás y el día ya es otro. No sé cómo hacés, pero funciona siempre.\n\nQue este año te traiga salud, sueños cumplidos y mucho amor. ¡Feliz cumpleaños, novio del alma! Te quiero infinito."
-},
-{
-"tipo": "mensaje",
-"slug": "otro-cumple-juntos-y-van-mas",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Otro cumple juntos, y van más",
-"texto": "Otro cumpleaños juntos, y van más: ya perdí la cuenta de cuántas velitas tuyas festejé, y ojalá se me siga perdiendo para siempre.\n\nQue este nuevo año te traiga todo lo que merecés. ¡Feliz día, mi amor! Brindemos por nosotros y por lo que viene."
-},
-{
-"tipo": "mensaje",
-"slug": "tener-un-novio-como-vos-no-es-cualquier-cosa",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Tener un novio como vos no es cualquier cosa",
-"texto": "Tener un novio como vos no es cualquier cosa: sos atento, divertido y me tratás como si fuera la única persona del mundo.\n\nHoy el que te tiene que mimar soy yo. Que este cumpleaños te encuentre feliz y rodeado de amor. ¡Feliz cumpleaños, mi amor! Vos sos mi persona favorita."
-},
-{
-"tipo": "mensaje",
-"slug": "si-me-preguntan-con-que-sonrio-te-nombro",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Si me preguntan con qué sonrío, te nombro",
-"texto": "Si me preguntan con qué sonrío todos los días, te nombro a vos sin pensarlo. Vos sos mi respuesta a casi todo desde que llegaste.\n\nEn tu día te deseo un año lleno de amor, salud y planes juntos. ¡Feliz cumpleaños, novio hermoso! Que todos tus deseos se hagan realidad."
-},
-{
-"tipo": "mensaje",
-"slug": "nadie-hace-reir-como-vos",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Nadie hace reír como vos",
-"texto": "Nadie hace reír como vos, ni con tus chistes malos que igual me matan de risa. Esa es tu magia y no la cambio por nada.\n\nQue este año te traiga motivos de sobra para sonreír. Te quiero con locura, mi amor. ¡Feliz día! Disfrutá cada minuto de tu festejo."
-},
-{
-"tipo": "mensaje",
-"slug": "preparar-tu-cumple-me-entusiasma-el-doble",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Preparar tu cumple me entusiasma el doble",
-"texto": "Preparar tu cumpleaños me entusiasma el doble que el mío, y no es exageración: pienso en cada detalle semanas antes.\n\nQue este nuevo año te traiga todo lo que le pediste a las velitas y algo más. ¡Feliz cumpleaños, mi amor! Vos sos mi mejor regalo, todos los días."
-},
-{
-"tipo": "mensaje",
-"slug": "la-mejor-casualidad-de-mi-vida-fuiste-vos",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "La mejor casualidad de mi vida fuiste vos",
-"texto": "La mejor casualidad de mi vida fuiste vos, y la mejor decisión fue quedarme. Hoy celebro el día en que el mundo te trajo a mí.\n\nQue este año te encuentre feliz, sano y enamorado. ¡Feliz cumpleaños, novio del alma! Te quiero hoy y siempre, sin condiciones."
-},
-{
-"tipo": "mensaje",
-"slug": "mi-eleccion-favorita-sos-vos",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Mi elección favorita sos vos",
-"texto": "Mi elección favorita sos vos, y la haría otra vez mil veces sin dudarlo. En tu cumpleaños lo celebro más fuerte que nunca.\n\nQue este día te llene de amor y que el año que empieza sea enorme para vos. ¡Feliz día, mi amor! Vos sos mi mejor historia."
-},
-{
-"tipo": "mensaje",
-"slug": "todo-es-mejor-cuando-estas-vos",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Todo es mejor cuando estás vos",
-"texto": "Todo es mejor cuando estás vos: los domingos, los viajes, hasta hacer trámites. Con vos cualquier plan se convierte en algo lindo.\n\nQue este cumpleaños te traiga momentos juntos que valgan oro. ¡Feliz cumpleaños, amor! Te quiero más de lo que las palabras alcanzan."
-},
-{
-"tipo": "mensaje",
-"slug": "cada-velita-tuya-me-encuentra-mas-feliz",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Cada velita tuya me encuentra más feliz",
-"texto": "Cada velita tuya me encuentra más feliz que la anterior, porque celebrarte a vos es celebrar lo mejor que tengo.\n\nQue este nuevo ciclo te traiga salud, proyectos y mucho amor. ¡Feliz día, mi amor! Vos sos mi compañero favorito de aventuras."
-},
-{
-"tipo": "mensaje",
-"slug": "bendito-el-dia-en-que-llegaste-al-mundo",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Bendito el día en que llegaste al mundo",
-"texto": "Bendito el día en que llegaste al mundo, aunque yo todavía no sabía lo que me esperaba. Recién lo descubrí cuando te conocí, y mirá: acá estoy.\n\nEn tu cumpleaños te deseo un año espectacular, de esos que se recuerdan siempre. ¡Feliz cumpleaños, novio hermoso! Gracias por existir y por elegirme."
-},
-{
-"tipo": "mensaje",
-"slug": "entre-planes-y-risas-se-pasan-los-anos",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Entre planes y risas se pasan los años",
-"texto": "Entre planes y risas se pasan los años, y acá estamos: más enamorados que el primer día. Esa es la magia que tenemos, mi amor.\n\nQue este año te traiga todo lo que soñamos juntos y lo que todavía no imaginamos. ¡Feliz cumpleaños, mi amor! Vos y yo, siempre."
-},
-{
-"tipo": "mensaje",
-"slug": "desde-que-estas-vos-los-dias-pesan-menos",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Desde que estás vos, los días pesan menos",
-"texto": "Desde que estás vos, los días pesan menos y las alegrías pesan más. Vos sos mi mejor cambio y no lo digo solo hoy.\n\nQue este cumpleaños te encuentre feliz y celebrado como te lo merecés. ¡Feliz día, mi amor! Te quiero con todo lo que soy."
-},
-{
-"tipo": "mensaje",
-"slug": "brindemos-por-nosotros-en-tu-cumple",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Brindemos por nosotros en tu cumple",
-"texto": "Brindemos por nosotros en tu cumpleaños: por esta historia que ya es mi favorita y que va para largo, capítulo tras capítulo.\n\nQue este nuevo año te traiga salud, sueños cumplidos y muchos momentos juntos. ¡Feliz cumpleaños, novio del alma! Te quiero hoy y siempre."
-},
-{
-"tipo": "mensaje",
-"slug": "creo-que-el-destino-te-puso-en-mi-camino",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Creo que el destino te puso en mi camino",
-"texto": "Creo que el destino te puso en mi camino, y hoy, que es tu cumpleaños, le agradezco doble. Vos sos mi mejor casualidad hecha certeza.\n\nQue este año te traiga amor, salud y momentos inolvidables. ¡Feliz día, mi amor! Vos sos mi persona favorita en este mundo."
-},
-{
-"tipo": "mensaje",
-"slug": "con-vos-descubri-que-el-amor-es-calma",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Con vos descubrí que el amor es calma",
-"texto": "Con vos descubrí que el amor es calma: la risa fácil, el silencio cómodo y el que aparece cuando más falta hace. Gracias por enseñarme eso.\n\nQue este cumpleaños te encuentre tan feliz como me hacés vos a mí. ¡Feliz cumpleaños, mi amor! Te quiero enorme."
-},
-{
-"tipo": "mensaje",
-"slug": "tu-mensaje-es-el-que-mas-espero",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Tu mensaje es el que más espero",
-"texto": "Tu mensaje es el que más espero del día, tu llamada la que más me gusta y tu risa la que más extraño cuando no estás.\n\nQue este año te traiga sorpresas lindas y planes juntos. ¡Feliz día, novio hermoso! Que se te cumpla todo lo que le pediste a las velitas."
-},
-{
-"tipo": "mensaje",
-"slug": "soplas-las-velitas-y-pido-un-deseo-por-los-dos",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Soplás las velitas y pido un deseo por los dos",
-"texto": "Soplás las velitas, mi vida, y yo pido un deseo por los dos: que este año nos encuentre felices, sanos y juntos como hasta ahora.\n\nQue este día te sientas querido como sos. ¡Feliz cumpleaños, mi amor! Te quiero más de lo que imaginás."
-},
-{
-"tipo": "mensaje",
-"slug": "orgullosa-de-caminar-de-tu-brazo",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Orgullosa de caminar de tu brazo",
-"texto": "Orgullosa de caminar de tu brazo es lo que siento cada vez que te presento, cada vez que salimos y cada vez que te miro.\n\nQue este año te traiga todo lo que merecés. ¡Feliz cumpleaños, mi amor! Vos sos mi mejor carta de presentación."
-},
-{
-"tipo": "mensaje",
-"slug": "junto-a-vos-las-horas-vuelan-y-me-encanta",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Junto a vos las horas vuelan y me encanta",
-"texto": "Junto a vos las horas vuelan y me encanta, porque cualquier momento compartido con vos vale la pena, por rápido que pase.\n\nEn tu día te deseo un año lleno de momentos juntos. ¡Feliz cumpleaños, mi amor! Que este nuevo ciclo sea el mejor de todos."
-},
-{
-"tipo": "mensaje",
-"slug": "sona-en-grande-que-yo-te-banco",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Soñá en grande que yo te banco",
-"texto": "Soñá en grande que yo te banco: vos tenés todo para lograrlo y yo tengo todo para acompañarte. Ese es nuestro trato, mi amor.\n\nQue este año te traiga el sueño que estás esperando y muchos más. ¡Feliz cumpleaños, novio hermoso! Vos podés con todo lo que te propongas."
-},
-{
-"tipo": "mensaje",
-"slug": "en-tu-cumple-te-digo-lo-que-siento",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "En tu cumple te digo lo que siento",
-"texto": "En tu cumple te digo lo que a veces no digo lo suficiente: te quiero, te admiro y te elijo todos los días, mi amor.\n\nQue este nuevo año te traiga salud, amor y sueños cumplidos. ¡Feliz cumpleaños, mi vida! Brindemos por vos y por nosotros."
-},
-{
-"tipo": "mensaje",
-"slug": "quererte-es-lo-mas-facil-que-hago",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Quererte es lo más fácil que hago",
-"texto": "Quererte es lo más fácil que hago, todos los días, sin esfuerzo y sin condiciones. Hoy que es tu cumpleaños, lo digo con más ganas.\n\nQue este año te encuentre feliz, sano y enamorado. ¡Feliz día, mi amor! Vos sos mi mejor decisión y mi mejor suerte."
-},
-{
-"tipo": "mensaje",
-"slug": "para-este-ano-te-pido-salud-y-nosotros",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Para este año te pido salud y nosotros",
-"texto": "Para este año te pido salud, tiempo juntos y que nada nos falte. Lo demás se va armando solo, mi amor, como venimos haciendo.\n\nQue este cumpleaños te encuentre feliz y celebrado. ¡Feliz día, mi amor! Vos sos mi mejor presente, todos los días del año."
-},
-{
-"tipo": "mensaje",
-"slug": "los-detalles-que-das-sin-darte-cuenta",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Los detalles que das sin darte cuenta",
-"texto": "Los detalles que das sin darte cuenta son los que más me llegan: la pregunta de siempre, el café a mano, el abrazo justo. Hoy te lo devuelvo multiplicado.\n\nQue este año te traiga todo lo lindo que merecés. ¡Feliz cumpleaños, novio del alma! Te quiero con todo mi corazón."
-},
-{
-"tipo": "mensaje",
-"slug": "apenas-apareces-vos-mi-dia-cambia",
-"categoria": "feliz-cumpleanos-novio",
-"destinatario": "novio",
-"titulo": "Apenas aparecés vos, mi día cambia",
-"texto": "Apenas aparecés vos, mi día cambia: la risa, el plan improvisado, ese lugar tuyo que nadie más ocupa en mi vida.\n\nHoy es tu día y lo festejo como corresponde. Que este año te traiga todo lo que soñás. ¡Feliz cumpleaños, mi amor! Te quiero infinito, hoy y siempre."
-}
+  {
+    "tipo": "hub",
+    "slug": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "cabecera": "feliz cumpleaños",
+    "modificador": "",
+    "keyword": "feliz cumpleaños novio",
+    "titulo": "Feliz Cumpleaños Novio - 30 Mensajes Románticos",
+    "h1": "Feliz cumpleaños, novio 💙",
+    "meta": "Feliz cumpleaños novio: 30 mensajes románticos y originales para dedicarle en su día. Textos listos para copiar y enviar por WhatsApp o escribir en su tarjeta.",
+    "emoji": "💙",
+    "lead": "¿Buscás cómo felicitar a tu novio en su cumpleaños sin caer en lo mismo de siempre? Acá vas a encontrar 30 felicitaciones románticas y originales para el hombre que te enamora todos los días. Hay textos tiernos, apasionados y con humor, todos listos para copiar y enviar por WhatsApp o escribir en su tarjeta. Elegí el que más se parezca a su historia, sumale un recuerdo propio y hacé que su día sea inolvidable.",
+    "grupo": "destinatarios",
+    "creado": "2026-11-15",
+    "actualizado": "2026-11-15"
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "hoy-es-tu-dia-y-lo-celebro-yo-primero",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Hoy es tu día y lo celebro yo primero",
+    "texto": "Hoy es tu día, mi vida, y me adelanto a todos para celebrarte. Sos el que me hace reír cuando no tengo ganas y el que me banca sin preguntar nada.\n\nQue este año te traiga todo lo que soñás y algo más. Feliz cumpleaños, amor. Te quiero más que ayer y menos que mañana."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "gracias-por-bancarme-en-todo",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Gracias por bancarme en todo",
+    "texto": "Gracias por bancarme en todo, incluso en los días en que ni yo me banco. Esa paciencia tuya es de las cosas que más amo de vos.\n\nEn tu cumpleaños te deseo un año lleno de momentos juntos y proyectos cumplidos. ¡Feliz día, mi amor! Vos sos mi mejor casualidad y mi mejor decisión."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "que-este-nuevo-ciclo-nos-encuentre-juntos",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Que este nuevo ciclo nos encuentre juntos",
+    "texto": "Que este nuevo ciclo nos encuentre juntos, más cómplices y con más planes que nunca. Lo que estamos armando vale oro y lo sé.\n\nHoy celebramos tu cumpleaños como se debe: vos de protagonista y yo de tu fan número uno. ¡Feliz cumpleaños, amor! Que se te cumpla todo."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "aunque-pasen-los-meses-me-vuelvo-a-enamorar",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Aunque pasen los meses, me vuelvo a enamorar",
+    "texto": "Aunque pasen los meses, me vuelvo a enamorar de vos como la primera vez. Cada día descubro algo nuevo tuyo y me encanta.\n\nQue este cumpleaños te encuentre feliz y celebrado. Te deseo un año enorme, de esos que se recuerdan siempre. ¡Feliz día, mi amor! Gracias por ser como sos."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "sos-el-abrazo-que-me-arregla-todo",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Sos el abrazo que me arregla todo",
+    "texto": "Sos el abrazo que me arregla todo: llegás, me abrazás y el día ya es otro. No sé cómo hacés, pero funciona siempre.\n\nQue este año te traiga salud, sueños cumplidos y mucho amor. ¡Feliz cumpleaños, novio del alma! Te quiero infinito."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "otro-cumple-juntos-y-van-mas",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Otro cumple juntos, y van más",
+    "texto": "Otro cumpleaños juntos, y van más: ya perdí la cuenta de cuántas velitas tuyas festejé, y ojalá se me siga perdiendo para siempre.\n\nQue este nuevo año te traiga todo lo que merecés. ¡Feliz día, mi amor! Brindemos por nosotros y por lo que viene."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "tener-un-novio-como-vos-no-es-cualquier-cosa",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Tener un novio como vos no es cualquier cosa",
+    "texto": "Tener un novio como vos no es cualquier cosa: sos atento, divertido y me tratás como si fuera la única persona del mundo.\n\nHoy el que te tiene que mimar soy yo. Que este cumpleaños te encuentre feliz y rodeado de amor. ¡Feliz cumpleaños, mi amor! Vos sos mi persona favorita."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "si-me-preguntan-con-que-sonrio-te-nombro",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Si me preguntan con qué sonrío, te nombro",
+    "texto": "Si me preguntan con qué sonrío todos los días, te nombro a vos sin pensarlo. Vos sos mi respuesta a casi todo desde que llegaste.\n\nEn tu día te deseo un año lleno de amor, salud y planes juntos. ¡Feliz cumpleaños, novio hermoso! Que todos tus deseos se hagan realidad."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "nadie-hace-reir-como-vos",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Nadie hace reír como vos",
+    "texto": "Nadie hace reír como vos, ni con tus chistes malos que igual me matan de risa. Esa es tu magia y no la cambio por nada.\n\nQue este año te traiga motivos de sobra para sonreír. Te quiero con locura, mi amor. ¡Feliz día! Disfrutá cada minuto de tu festejo."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "preparar-tu-cumple-me-entusiasma-el-doble",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Preparar tu cumple me entusiasma el doble",
+    "texto": "Preparar tu cumpleaños me entusiasma el doble que el mío, y no es exageración: pienso en cada detalle semanas antes.\n\nQue este nuevo año te traiga todo lo que le pediste a las velitas y algo más. ¡Feliz cumpleaños, mi amor! Vos sos mi mejor regalo, todos los días."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "la-mejor-casualidad-de-mi-vida-fuiste-vos",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "La mejor casualidad de mi vida fuiste vos",
+    "texto": "La mejor casualidad de mi vida fuiste vos, y la mejor decisión fue quedarme. Hoy celebro el día en que el mundo te trajo a mí.\n\nQue este año te encuentre feliz, sano y enamorado. ¡Feliz cumpleaños, novio del alma! Te quiero hoy y siempre, sin condiciones."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "mi-eleccion-favorita-sos-vos",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Mi elección favorita sos vos",
+    "texto": "Mi elección favorita sos vos, y la haría otra vez mil veces sin dudarlo. En tu cumpleaños lo celebro más fuerte que nunca.\n\nQue este día te llene de amor y que el año que empieza sea enorme para vos. ¡Feliz día, mi amor! Vos sos mi mejor historia."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "todo-es-mejor-cuando-estas-vos",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Todo es mejor cuando estás vos",
+    "texto": "Todo es mejor cuando estás vos: los domingos, los viajes, hasta hacer trámites. Con vos cualquier plan se convierte en algo lindo.\n\nQue este cumpleaños te traiga momentos juntos que valgan oro. ¡Feliz cumpleaños, amor! Te quiero más de lo que las palabras alcanzan."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "cada-velita-tuya-me-encuentra-mas-feliz",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Cada velita tuya me encuentra más feliz",
+    "texto": "Cada velita tuya me encuentra más feliz que la anterior, porque celebrarte a vos es celebrar lo mejor que tengo.\n\nQue este nuevo ciclo te traiga salud, proyectos y mucho amor. ¡Feliz día, mi amor! Vos sos mi compañero favorito de aventuras."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "bendito-el-dia-en-que-llegaste-al-mundo",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Bendito el día en que llegaste al mundo",
+    "texto": "Bendito el día en que llegaste al mundo, aunque yo todavía no sabía lo que me esperaba. Recién lo descubrí cuando te conocí, y mirá: acá estoy.\n\nEn tu cumpleaños te deseo un año espectacular, de esos que se recuerdan siempre. ¡Feliz cumpleaños, novio hermoso! Gracias por existir y por elegirme."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "entre-planes-y-risas-se-pasan-los-anos",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Entre planes y risas se pasan los años",
+    "texto": "Entre planes y risas se pasan los años, y acá estamos: más enamorados que el primer día. Esa es la magia que tenemos, mi amor.\n\nQue este año te traiga todo lo que soñamos juntos y lo que todavía no imaginamos. ¡Feliz cumpleaños, mi amor! Vos y yo, siempre."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "desde-que-estas-vos-los-dias-pesan-menos",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Desde que estás vos, los días pesan menos",
+    "texto": "Desde que estás vos, los días pesan menos y las alegrías pesan más. Vos sos mi mejor cambio y no lo digo solo hoy.\n\nQue este cumpleaños te encuentre feliz y celebrado como te lo merecés. ¡Feliz día, mi amor! Te quiero con todo lo que soy."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "brindemos-por-nosotros-en-tu-cumple",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Brindemos por nosotros en tu cumple",
+    "texto": "Brindemos por nosotros en tu cumpleaños: por esta historia que ya es mi favorita y que va para largo, capítulo tras capítulo.\n\nQue este nuevo año te traiga salud, sueños cumplidos y muchos momentos juntos. ¡Feliz cumpleaños, novio del alma! Te quiero hoy y siempre."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "creo-que-el-destino-te-puso-en-mi-camino",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Creo que el destino te puso en mi camino",
+    "texto": "Creo que el destino te puso en mi camino, y hoy, que es tu cumpleaños, le agradezco doble. Vos sos mi mejor casualidad hecha certeza.\n\nQue este año te traiga amor, salud y momentos inolvidables. ¡Feliz día, mi amor! Vos sos mi persona favorita en este mundo."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "con-vos-descubri-que-el-amor-es-calma",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Con vos descubrí que el amor es calma",
+    "texto": "Con vos descubrí que el amor es calma: la risa fácil, el silencio cómodo y el que aparece cuando más falta hace. Gracias por enseñarme eso.\n\nQue este cumpleaños te encuentre tan feliz como me hacés vos a mí. ¡Feliz cumpleaños, mi amor! Te quiero enorme."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "tu-mensaje-es-el-que-mas-espero",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Tu mensaje es el que más espero",
+    "texto": "Tu mensaje es el que más espero del día, tu llamada la que más me gusta y tu risa la que más extraño cuando no estás.\n\nQue este año te traiga sorpresas lindas y planes juntos. ¡Feliz día, novio hermoso! Que se te cumpla todo lo que le pediste a las velitas."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "soplas-las-velitas-y-pido-un-deseo-por-los-dos",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Soplás las velitas y pido un deseo por los dos",
+    "texto": "Soplás las velitas, mi vida, y yo pido un deseo por los dos: que este año nos encuentre felices, sanos y juntos como hasta ahora.\n\nQue este día te sientas querido como sos. ¡Feliz cumpleaños, mi amor! Te quiero más de lo que imaginás."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "orgullosa-de-caminar-de-tu-brazo",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Orgullosa de caminar de tu brazo",
+    "texto": "Orgullosa de caminar de tu brazo es lo que siento cada vez que te presento, cada vez que salimos y cada vez que te miro.\n\nQue este año te traiga todo lo que merecés. ¡Feliz cumpleaños, mi amor! Vos sos mi mejor carta de presentación."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "junto-a-vos-las-horas-vuelan-y-me-encanta",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Junto a vos las horas vuelan y me encanta",
+    "texto": "Junto a vos las horas vuelan y me encanta, porque cualquier momento compartido con vos vale la pena, por rápido que pase.\n\nEn tu día te deseo un año lleno de momentos juntos. ¡Feliz cumpleaños, mi amor! Que este nuevo ciclo sea el mejor de todos."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "sona-en-grande-que-yo-te-banco",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Soñá en grande que yo te banco",
+    "texto": "Soñá en grande que yo te banco: vos tenés todo para lograrlo y yo tengo todo para acompañarte. Ese es nuestro trato, mi amor.\n\nQue este año te traiga el sueño que estás esperando y muchos más. ¡Feliz cumpleaños, novio hermoso! Vos podés con todo lo que te propongas."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "en-tu-cumple-te-digo-lo-que-siento",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "En tu cumple te digo lo que siento",
+    "texto": "En tu cumple te digo lo que a veces no digo lo suficiente: te quiero, te admiro y te elijo todos los días, mi amor.\n\nQue este nuevo año te traiga salud, amor y sueños cumplidos. ¡Feliz cumpleaños, mi vida! Brindemos por vos y por nosotros."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "quererte-es-lo-mas-facil-que-hago",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Quererte es lo más fácil que hago",
+    "texto": "Quererte es lo más fácil que hago, todos los días, sin esfuerzo y sin condiciones. Hoy que es tu cumpleaños, lo digo con más ganas.\n\nQue este año te encuentre feliz, sano y enamorado. ¡Feliz día, mi amor! Vos sos mi mejor decisión y mi mejor suerte."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "para-este-ano-te-pido-salud-y-nosotros",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Para este año te pido salud y nosotros",
+    "texto": "Para este año te pido salud, tiempo juntos y que nada nos falte. Lo demás se va armando solo, mi amor, como venimos haciendo.\n\nQue este cumpleaños te encuentre feliz y celebrado. ¡Feliz día, mi amor! Vos sos mi mejor presente, todos los días del año."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "los-detalles-que-das-sin-darte-cuenta",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Los detalles que das sin darte cuenta",
+    "texto": "Los detalles que das sin darte cuenta son los que más me llegan: la pregunta de siempre, el café a mano, el abrazo justo. Hoy te lo devuelvo multiplicado.\n\nQue este año te traiga todo lo lindo que merecés. ¡Feliz cumpleaños, novio del alma! Te quiero con todo mi corazón."
+  },
+  {
+    "tipo": "mensaje",
+    "slug": "apenas-apareces-vos-mi-dia-cambia",
+    "categoria": "feliz-cumpleanos-novio",
+    "destinatario": "novio",
+    "titulo": "Apenas aparecés vos, mi día cambia",
+    "texto": "Apenas aparecés vos, mi día cambia: la risa, el plan improvisado, ese lugar tuyo que nadie más ocupa en mi vida.\n\nHoy es tu día y lo festejo como corresponde. Que este año te traiga todo lo que soñás. ¡Feliz cumpleaños, mi amor! Te quiero infinito, hoy y siempre."
+  }
 ]
