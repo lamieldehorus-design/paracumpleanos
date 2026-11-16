@@ -147,7 +147,6 @@ const temas = Object.values(TEMAS_TARJETA);
       contenedor.innerHTML = '';
       parrafos.forEach(function (p) {
         var el = document.createElement('p');
-        el.className = 'mensaje';
         var lineas = p.split('\n');
         lineas.forEach(function (linea, idx) {
           if (idx > 0) el.appendChild(document.createElement('br'));

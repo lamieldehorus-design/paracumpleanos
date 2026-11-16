@@ -18,6 +18,13 @@ import {
 import { GUIAS_EDITORIALES } from '../data/guias';
 import { TEMAS_TARJETA, limpiarCampoTexto, personalizarTexto } from './personalizador';
 import {
+  clasificarMensaje,
+  extraerCitaDestacada,
+  guiaRelacionadaParaHub,
+  editorialHubCompleto,
+  guiaAdaptacionMensaje
+} from './editorial';
+import {
   INDEXNOW_HOST,
   INDEXNOW_KEY,
   INDEXNOW_KEY_LOCATION,
@@ -46,12 +53,17 @@ function cargarDatosCompletos() {
   return all;
 }
 
-test('catalogo contiene exactamente 351 categorias y 36 mensajes por categoria (12636 total)', () => {
+test('catalogo contiene exactamente 351 categorias y 36 mensajes por categoria (12636 todos unicos)', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
   assert.equal(cat.hubs.length, 351, `Se esperaban 351 hubs, hay ${cat.hubs.length}`);
   assert.equal(cat.todosMensajes.length, 351 * 36, `Se esperaban ${351 * 36} mensajes, hay ${cat.todosMensajes.length}`);
+  assert.equal(
+    new Set(cat.todosMensajes.map((m) => String(m.texto || '').trim())).size,
+    12636,
+    'Todos los 12636 mensajes deben tener cuerpo unico sin duplicados'
+  );
 
   for (const hub of cat.hubs) {
     const msgs = cat.mensajesDe(hub.slug);
@@ -121,6 +133,7 @@ test('descripciones lead, seoTitulo y seoTexto son unicos y ningun titulo queda 
   for (const m of cat.todosMensajes) {
     assert.ok(!cortePrep.test(m.titulo.trim()), `Mensaje ${m.slug} termina en preposicion/articulo: "${m.titulo}"`);
     assert.ok(!/\{[a-zA-Z0-9_]+\}/.test(m.titulo + ' ' + m.texto), `Mensaje ${m.slug} contiene token sin resolver`);
+    assert.ok(!/,\s*quien cumple\b|quien cumple\s+de\s+alma|\bpara quien cumple:/i.test(m.texto), `Mensaje ${m.slug} contiene vocativo literal "quien cumple"`);
   }
 });
 
@@ -161,17 +174,42 @@ test('cartas largas, poemas en estrofas, duelo respetuoso y aniversarios coheren
       assert.ok(!/cumpleaños/i.test(txt), `Mensaje de aniversario ${m.slug} (${m.categoria}) menciona cumpleaños`);
     }
     if (/hija|exnovia|hermana/.test(m.categoria) && cartasHubs.has(m.categoria)) {
-      assert.ok(!/\b(tan chico|más chico|rodeado|esperado|amado)\b/i.test(m.texto), `Carta femenina ${m.slug} (${m.categoria}) contiene concordancia masculina`);
+      const sinAnio = m.texto.replace(/\b(un|este)\s+año\s+rodeado\b/gi, '');
+      assert.ok(!/\b(tan chico|más chico|rodeado|esperado|amado)\b/i.test(sinAnio), `Carta femenina ${m.slug} (${m.categoria}) contiene concordancia masculina`);
     }
   }
 });
 
-test('construirSetIndexables filtra cartas unicas >=140 palabras y omite mensajes cortos/repetidos', () => {
+test('modulo editorial genera tablas comparativas, FAQs, citas y guias de adaptacion coherentes por grupo', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+
+  const hubDuelo = cat.hubsPorSlug.get('felicitaciones-a-madre-fallecida');
+  const msgsDuelo = cat.mensajesDe('felicitaciones-a-madre-fallecida');
+  const edDuelo = editorialHubCompleto(hubDuelo, msgsDuelo);
+  assert.equal(edDuelo.tabla.length, 3);
+  assert.equal(edDuelo.faqs.length, 3);
+  assert.ok(!/torta|fiesta|pastel/i.test(edDuelo.citaClave + edDuelo.claves.join(' ')));
+  assert.equal(guiaRelacionadaParaHub(hubDuelo).slug, 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido');
+
+  const hubAniv = cat.hubsPorSlug.get('feliz-aniversario-mi-amor');
+  const edAniv = editorialHubCompleto(hubAniv, cat.mensajesDe('feliz-aniversario-mi-amor'));
+  assert.ok(!/cumpleaños/i.test(edAniv.citaClave + edAniv.claves.join(' ')));
+
+  const msgMama = cat.mensajesDe('feliz-cumpleanos-mama')[0];
+  const adapt = guiaAdaptacionMensaje(msgMama, cat.hubDe(msgMama));
+  assert.ok(adapt.citaDestacada.length >= 25);
+  assert.equal(adapt.pasos.length, 3);
+  assert.equal(clasificarMensaje(msgMama, cat.hubDe(msgMama)).palabras > 30, true);
+  assert.ok(extraerCitaDestacada(msgMama).length > 15);
+});
+
+test('construirSetIndexables filtra todas las 1836 cartas unicas >=140 palabras y omite mensajes breves', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const indexables = construirSetIndexables(cat.todosMensajes);
 
-  assert.equal(indexables.size, 1724, `Se esperaban 1724 cartas unicas indexables, hay ${indexables.size}`);
+  assert.equal(indexables.size, 1836, `Se esperaban 1836 cartas unicas indexables, hay ${indexables.size}`);
   const cuerpos = new Set<string>();
   for (const m of cat.todosMensajes) {
     if (indexables.has(m.slug)) {
@@ -220,14 +258,14 @@ test('personalizador adapta nombre y firma sin duplicar saludo ni romper saltos 
   assert.equal(Object.keys(TEMAS_TARJETA).length, 4);
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren las 2794 URLs indexables sin duplicados ni paginas noindex', () => {
+test('generarUrlsSitio y generarSitemapXml cubren las 2906 URLs indexables sin duplicados ni paginas noindex', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
   const urls = generarUrlsSitio(cat, slugsGuias);
 
-  assert.equal(urls.length, 2794, `Se esperaban 2794 URLs indexables, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 2794, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(urls.length, 2906, `Se esperaban 2906 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 2906, 'Las URLs del sitemap deben ser todas unicas');
   assert.ok(urls.includes('https://paracumpleanos.com/'));
   assert.ok(urls.includes('https://paracumpleanos.com/categorias/'));
   assert.ok(urls.includes('https://paracumpleanos.com/guias/'));
@@ -249,10 +287,10 @@ test('generarUrlsSitio y generarSitemapXml cubren las 2794 URLs indexables sin d
   assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xml.match(/<loc>/g) || [];
-  assert.equal(locs.length, 2794);
+  assert.equal(locs.length, 2906);
 });
 
-test('Bing IndexNow cubre todas las 2794 URLs indexables en 1 lote <= 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre todas las 2906 URLs indexables en 1 lote <= 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -263,11 +301,11 @@ test('Bing IndexNow cubre todas las 2794 URLs indexables en 1 lote <= 10000 y ti
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
   const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias), '2026-11-16');
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 2794);
+  assert.equal(extraidas.length, 2906);
 
   const payloads = construirPayloadsIndexNow(extraidas);
   assert.equal(payloads.length, 1);
-  assert.equal(payloads[0].urlList.length, 2794);
+  assert.equal(payloads[0].urlList.length, 2906);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);

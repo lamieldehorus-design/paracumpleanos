@@ -14,7 +14,7 @@ const CONFIG = {
   metaMin: 120,
   metaMax: 165,
   textoMin: 40,
-  rutasEstaticas: ['categorias', 'sobre-nosotros', 'privacidad', 'terminos-de-uso']
+  rutasEstaticas: ['categorias', 'guias', 'contacto', 'sobre-nosotros', 'privacidad', 'terminos-de-uso']
 };
 
 function normalizar(s) {

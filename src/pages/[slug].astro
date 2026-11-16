@@ -17,6 +17,12 @@ import {
   migasLd,
   esMensajeIndexable
 } from '../lib/contenido.ts';
+import {
+  clasificarMensaje,
+  editorialHubCompleto,
+  guiaAdaptacionMensaje
+} from '../lib/editorial.ts';
+
 export function getStaticPaths() {
   return contenido.map(function (r) {
     return { params: { slug: r.slug }, props: { registro: r } };
@@ -33,18 +39,64 @@ const relacionadas = esHub ? [] : relacionadasDe(registro);
 const titulo = esHub ? registro.titulo : registro.titulo + ' - ' + MARCA;
 const descripcion = esHub ? registro.meta : metaDe(registro.texto);
 const noindexPagina = !esHub && !esMensajeIndexable(registro);
+
+const editorialHub = esHub ? editorialHubCompleto(registro, mensajesCat) : null;
+const guiaMsg = !esHub ? guiaAdaptacionMensaje(registro, hub) : null;
+
+const filtrosHub: { id: string; label: string; count: number }[] = [];
+if (esHub) {
+  const counts = new Map<string, number>();
+  mensajesPagina.forEach((m) => {
+    const c = clasificarMensaje(m, hub);
+    counts.set(c.claseTono, (counts.get(c.claseTono) || 0) + 1);
+    if (c.palabras <= 65 && c.claseTono !== 'corto') {
+      counts.set('corto', (counts.get('corto') || 0) + 1);
+    }
+  });
+  filtrosHub.push({ id: 'todos', label: 'Todos en esta página', count: mensajesPagina.length });
+  const etiquetas: Record<string, string> = {
+    corto: 'Breves WhatsApp',
+    emotivo: 'Emotivos',
+    divertido: 'Con humor',
+    formal: 'Formales',
+    fe: 'Con fe',
+    poema: 'En verso',
+    carta: 'Cartas largas',
+    duelo: 'Serenos'
+  };
+  for (const [k, v] of counts.entries()) {
+    if (v > 0 && v < mensajesPagina.length && etiquetas[k]) {
+      filtrosHub.push({ id: k, label: etiquetas[k], count: v });
+    }
+  }
+}
+
 const migas = [{ name: 'Inicio', url: SITIO + '/' }, { name: nombreHub(hub), url: urlHub }]
   .concat(esHub ? [] : [{ name: registro.titulo, url: SITIO + '/' + registro.slug + '/' }]);
 const jsonld: any[] = [migasLd(migas)];
-if (esHub) jsonld.push({
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  name: registro.titulo,
-  numberOfItems: mensajesCat.length,
-  itemListElement: mensajesPagina.map(function (m, i) {
-    return { '@type': 'ListItem', position: i + 1, name: m.titulo, url: SITIO + '/' + m.slug + '/' };
-  })
-});
+if (esHub && editorialHub) {
+  jsonld.push({
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: registro.titulo,
+    numberOfItems: mensajesCat.length,
+    itemListElement: mensajesPagina.map(function (m, i) {
+      return { '@type': 'ListItem', position: i + 1, name: m.titulo, url: SITIO + '/' + m.slug + '/' };
+    })
+  });
+  jsonld.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: editorialHub.faqs.map(function (f) {
+      return {
+        '@type': 'Question',
+        name: f.pregunta,
+        acceptedAnswer: { '@type': 'Answer', text: f.respuesta }
+      };
+    })
+  });
+}
+
 const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
 const creado = hub.creado || '2026-11-15';
 const actualizado = hub.actualizado || '2026-11-16';
@@ -56,29 +108,6 @@ const parrafoPrincipal = esHub ? '' : (
   }) || parrafosMsg.find(function (p) { return p.trim().length >= 25; }) || parrafosMsg[0] || ''
 );
 const extractoCard = parrafoPrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
-
-const esDuelo = /fallecid|hasta-el-cielo/.test(hub.slug);
-const esAniversario = /(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(hub.slug);
-const consejoGuia = esDuelo
-  ? {
-      titulo: 'Cómo adaptar estas palabras en una fecha sensible',
-      texto: `Si estás recordando a un ser querido en su fecha especial o acompañando a alguien cercano en su duelo, cambiá el nombre general por el apodo íntimo con el que lo llamaban en casa y sumá un recuerdo sencillo. Leé también nuestra guía sobre cómo escribir con respeto cuando falta alguien querido.`,
-      guiaSlug: 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido',
-      guiaTexto: 'Cómo escribir con respeto en un aniversario luctuoso →'
-    }
-  : esAniversario
-  ? {
-      titulo: 'Cómo personalizar este texto para su aniversario',
-      texto: `Sumá arriba el nombre de tu pareja y tu firma antes de copiarlo. Si querés darle un toque todavía más personal, agregá una fecha o un plan concreto que compartieron este tiempo juntos.`,
-      guiaSlug: 'como-celebrar-meses-de-novios-y-aniversarios-sin-caer-en-cliches',
-      guiaTexto: 'Ideas para celebrar meses de novios y aniversarios →'
-    }
-  : {
-      titulo: 'Cómo hacer que esta dedicatoria suene realmente tuya',
-      texto: `Usá el personalizador de arriba para sumar el apodo de quien cumple y tu firma: cambia al instante el texto, el botón de WhatsApp y la tarjeta descargable PNG. Si querés potenciarlo más, agregá un recuerdo breve de este último año.`,
-      guiaSlug: 'como-personalizar-tarjetas-y-dedicatorias-whatsapp',
-      guiaTexto: 'Trucos rápidos para adaptar dedicatorias de WhatsApp →'
-    };
 ---
 <Base
   titulo={titulo}
@@ -92,53 +121,146 @@ const consejoGuia = esDuelo
     <a href="/">Inicio</a> › {esHub ? <span>{nombreHub(hub)}</span> : <a href={'/' + hub.slug + '/'}>{nombreHub(hub)}</a>}
     {esHub ? null : <span> › {registro.titulo}</span>}
   </nav>
-  {esHub ? (
+  {esHub && editorialHub ? (
     <div>
       <h1>{registro.h1}</h1>
+      <p class="meta-linea-editorial">
+        <span>{mensajesCat.length} dedicatorias inéditas</span>
+        <span aria-hidden="true">·</span>
+        <span>Personalización en vivo</span>
+        <span aria-hidden="true">·</span>
+        <span>Actualizado el <time datetime={actualizado}>{actualizado}</time></span>
+      </p>
       <div class="lead-bloque">
         {String(registro.lead || '').split('\n\n').map(function (p) {
           return <p class="lead">{p}</p>;
         })}
       </div>
-      <p class="contador">Encontradas {mensajesCat.length} felicitaciones</p>
+
       <PersonalizadorTarjeta modo="hub" />
+
       <div class="tarjeta-visual" role="img" aria-label={'Tarjeta destacada de ' + (registro.keyword || registro.h1)}>
         <div class="tarjeta-visual-emoji">{registro.emoji}</div>
         <p class="tarjeta-visual-titulo">{nombreHub(registro)}</p>
-        <p class="tarjeta-visual-extracto">{mensajesCat.length} mensajes originales listos para copiar y compartir</p>
+        <p class="tarjeta-visual-extracto">{mensajesCat.length} textos originales listos para personalizar, copiar o descargar en PNG</p>
         <p class="tarjeta-visual-marca">paracumpleanos.com</p>
       </div>
-      <div class="grilla">
-        {mensajesPagina.map(function (m) { return <TarjetaMensaje m={m} />; })}
+
+      {filtrosHub.length > 1 ? (
+        <div class="filtros-tono" role="toolbar" aria-label="Filtrar dedicatorias visibles por tono o extensión">
+          {filtrosHub.map(function (f, idx) {
+            return (
+              <button
+                type="button"
+                class={'filtro-btn' + (idx === 0 ? ' activo' : '')}
+                data-filtro-tono={f.id}
+                aria-pressed={idx === 0 ? 'true' : 'false'}
+              >
+                {f.label} ({f.count})
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+
+      <div class="grilla" id="grilla-mensajes">
+        {mensajesPagina.map(function (m) { return <TarjetaMensaje m={m} hub={hub} />; })}
       </div>
+
       {totalPaginas > 1 ? (
         <nav class="paginacion" aria-label="Paginación">
           <span>Página 1 de {totalPaginas}</span>
           <a href={'/' + registro.slug + '/2/'}>Siguiente ›</a>
         </nav>
       ) : null}
-      {registro.seoTitulo && registro.seoTexto ? (
-        <section class="guia-categoria" aria-labelledby="guia-seo-titulo">
-          <h2 id="guia-seo-titulo">{registro.seoTitulo}</h2>
-          {String(registro.seoTexto).split('\n\n').map(function (p) {
-            return <p>{p}</p>;
+
+      <section class="bloque-tabla-hub" aria-labelledby="tabla-hub-titulo">
+        <h2 id="tabla-hub-titulo">Qué extensión elegir en {nombreHub(registro)}</h2>
+        <div class="tabla-responsive">
+          <table class="tabla-comparativa">
+            <thead>
+              <tr>
+                <th>Formato</th>
+                <th>En esta sección</th>
+                <th>Ideal para</th>
+                <th>Ajuste recomendado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {editorialHub.tabla.map(function (fila) {
+                return (
+                  <tr>
+                    <td><strong>{fila.formato}</strong></td>
+                    <td class="num-col">{fila.cantidad}</td>
+                    <td>{fila.idealPara}</td>
+                    <td>{fila.consejo}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="guia-categoria" aria-labelledby="guia-seo-titulo">
+        <h2 id="guia-seo-titulo">{registro.seoTitulo}</h2>
+        {String(registro.seoTexto || '').split('\n\n').map(function (p) {
+          return <p>{p}</p>;
+        })}
+
+        <blockquote class="cita-editorial">{editorialHub.citaClave}</blockquote>
+
+        <h3>{editorialHub.subtituloClaves}</h3>
+        <ol class="lista-editorial lista-numerada">
+          {editorialHub.claves.map(function (c) {
+            return <li>{c}</li>;
           })}
-        </section>
-      ) : null}
+        </ol>
+
+        <p class="ver-tambien">
+          Lectura complementaria: <a href={`/guias/${editorialHub.guia.slug}/`}>{editorialHub.guia.titulo} →</a>
+        </p>
+      </section>
+
+      <section class="faqs-hub" aria-labelledby="faq-hub-titulo">
+        <h2 id="faq-hub-titulo">Preguntas frecuentes sobre {nombreHub(registro)}</h2>
+        <div class="faq-lista">
+          {editorialHub.faqs.map(function (f, i) {
+            return (
+              <details class="faq-item" open={i === 0}>
+                <summary>{f.pregunta}</summary>
+                <p>{f.respuesta}</p>
+              </details>
+            );
+          })}
+        </div>
+      </section>
+
       <p class="fechas-meta">Publicado: <time datetime={creado}>{creado}</time> · Última actualización: <time datetime={actualizado}>{actualizado}</time></p>
-      <p class="firma">Escrito y revisado por el Equipo Editorial de {MARCA}. Todos los mensajes son originales.</p>
+      <p class="firma">Escrito y revisado por el <a href="/sobre-nosotros/">Equipo Editorial de {MARCA}</a>. Textos inéditos listos para personalizar.</p>
       <Hermanas hub={hub} />
     </div>
-  ) : (
+  ) : guiaMsg ? (
     <div>
       <h1>{registro.titulo}</h1>
+      <p class="meta-linea-editorial">
+        <a href={'/' + hub.slug + '/'}>{guiaMsg.destinatarioNombre}</a>
+        <span aria-hidden="true">·</span>
+        <span>{guiaMsg.clasificacion.tonoLabel}</span>
+        <span aria-hidden="true">·</span>
+        <span>{guiaMsg.clasificacion.canalLabel}</span>
+        <span aria-hidden="true">·</span>
+        <span>{guiaMsg.clasificacion.palabras} palabras ({guiaMsg.clasificacion.tiempoLectura})</span>
+      </p>
+
       <PersonalizadorTarjeta modo="mensaje" />
+
       <div id="mensaje-detalle-bloque" data-orig-extracto={extractoCard}>
-        <div id="mensaje-cuerpo" data-orig-texto={registro.texto} data-orig-titulo={registro.titulo}>
+        <div id="mensaje-cuerpo" class="mensaje" data-orig-texto={registro.texto} data-orig-titulo={registro.titulo}>
           {parrafosMsg.map(function (p) {
             const lineas = p.split('\n');
             return (
-              <p class="mensaje">
+              <p>
                 {lineas.map(function (linea, idx) {
                   return idx === 0 ? linea : <><br />{linea}</>;
                 })}
@@ -161,19 +283,69 @@ const consejoGuia = esDuelo
           mostrarDescarga={true}
         />
       </div>
+
+      <blockquote class="cita-editorial">{guiaMsg.citaDestacada}</blockquote>
+
       <section class="consejo-mensaje" aria-labelledby="consejo-adaptar-titulo">
-        <h2 id="consejo-adaptar-titulo">{consejoGuia.titulo}</h2>
-        <p>{consejoGuia.texto}</p>
-        <p class="ver-tambien"><a href={`/guias/${consejoGuia.guiaSlug}/`}>{consejoGuia.guiaTexto}</a></p>
+        <h2 id="consejo-adaptar-titulo">Cómo adaptar este texto en 30 segundos para que suene tuyo</h2>
+        <div class="comparacion-concreta">
+          <div class="comp-item comp-evitar">
+            <span class="comp-etiqueta">Evitá enviar genérico</span>
+            <p>«{guiaMsg.ejemploGenerico}»</p>
+          </div>
+          <div class="comp-item comp-mejor">
+            <span class="comp-etiqueta">Sumá un detalle real</span>
+            <p>«{guiaMsg.ejemploConcreto}»</p>
+          </div>
+        </div>
+        <p class="consejo-horario"><strong>Mejor momento sugerido:</strong> {guiaMsg.mejorHorario}</p>
+        <ol class="lista-editorial lista-numerada">
+          {guiaMsg.pasos.map(function (paso) {
+            return <li>{paso}</li>;
+          })}
+        </ol>
+        <p class="ver-tambien">
+          Guía recomendada: <a href={`/guias/${guiaMsg.guia.slug}/`}>{guiaMsg.guia.titulo} →</a>
+        </p>
       </section>
+
       <section class="relacionadas">
-        <h2>Felicitaciones relacionadas</h2>
+        <h2>Otras dedicatorias únicas de {guiaMsg.destinatarioNombre}</h2>
         <ul>
           {relacionadas.map(function (m) { return <li><a href={'/' + m.slug + '/'}>{m.titulo}</a></li>; })}
         </ul>
       </section>
-      <p class="ver-tambien">Ver también: <a href={'/' + hub.slug + '/'}>{hub.titulo}</a></p>
+      <p class="ver-tambien">Ver las 36 opciones completas en <a href={'/' + hub.slug + '/'}>{hub.titulo} →</a></p>
       <Hermanas hub={hub} />
     </div>
-  )}
+  ) : null}
 </Base>
+
+<script is:inline>
+  (function () {
+    var btns = document.querySelectorAll('[data-filtro-tono]');
+    var grilla = document.getElementById('grilla-mensajes');
+    if (!btns.length || !grilla) return;
+
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var filtro = btn.getAttribute('data-filtro-tono') || 'todos';
+        btns.forEach(function (b) {
+          var activo = b === btn;
+          b.classList.toggle('activo', activo);
+          b.setAttribute('aria-pressed', activo ? 'true' : 'false');
+        });
+        var cards = grilla.querySelectorAll('[data-card-personalizable]');
+        cards.forEach(function (card) {
+          var tono = card.getAttribute('data-tono') || '';
+          var palabras = Number(card.getAttribute('data-palabras') || '0');
+          var visible =
+            filtro === 'todos' ||
+            tono === filtro ||
+            (filtro === 'corto' && palabras <= 65);
+          card.style.display = visible ? '' : 'none';
+        });
+      });
+    });
+  })();
+</script>

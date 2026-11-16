@@ -1,20 +1,35 @@
 ---
 import Compartir from './Compartir.astro';
-import { SITIO } from '../lib/contenido.ts';
-interface Props { m: any; }
-const { m } = Astro.props;
+import { SITIO, hubDe } from '../lib/contenido.ts';
+import { clasificarMensaje } from '../lib/editorial.ts';
+interface Props {
+  m: any;
+  hub?: any;
+}
+const { m, hub } = Astro.props;
+const hubRef = hub || hubDe(m);
+const clasif = clasificarMensaje(m, hubRef);
 const bloques = (m.texto || '').split('\n\n').map((b: string) => b.trim()).filter(Boolean);
 const bloquePrincipal = bloques.find((b: string) => !(b.length < 55 && /[:,]$/.test(b))) || bloques[0] || '';
 const plano = bloquePrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
-const resumen = plano.length <= 120 ? plano : plano.slice(0, 120).replace(/\s+\S*$/, '') + '…';
+const resumen = plano.length <= 130 ? plano : plano.slice(0, 130).replace(/\s+\S*$/, '') + '…';
 ---
 <article
   class="card"
   data-card-personalizable="1"
+  data-tono={clasif.claseTono}
+  data-palabras={clasif.palabras}
   data-orig-titulo={m.titulo}
   data-orig-texto={m.texto}
   data-orig-resumen={resumen}
 >
+  <p class="card-meta">
+    <span>{clasif.tonoLabel}</span>
+    <span aria-hidden="true">·</span>
+    <span>{clasif.canalLabel}</span>
+    <span aria-hidden="true">·</span>
+    <span>{clasif.palabras} palabras</span>
+  </p>
   <h3><a href={'/' + m.slug + '/'}>{m.titulo}</a></h3>
   <p class="card-resumen">{resumen}</p>
   <Compartir texto={m.titulo + '. ' + m.texto} url={SITIO + '/' + m.slug + '/'} />

@@ -1,53 +1,382 @@
 ---
 import Base from '../layouts/Base.astro';
 import TarjetaMensaje from '../components/TarjetaMensaje.astro';
-import { GRUPOS, hubs, todosMensajes, hubsPrincipales, SITIO, MARCA } from '../lib/contenido.ts';
+import { GRUPOS, hubs, todosMensajes, hubsPorGrupo, mensajesDe, nombreHub, SITIO, MARCA } from '../lib/contenido.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
-const destacados = todosMensajes.slice(0, 12);
-const chipsPrincipales = hubsPrincipales.slice(0, 25);
-const guiasInicio = GUIAS_EDITORIALES.slice(0, 4);
-const jsonld = [{
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: MARCA,
-  url: SITIO + '/',
-  inLanguage: 'es-AR'
-}];
+import { TEMAS_TARJETA } from '../lib/personalizador.ts';
+import { clasificarMensaje } from '../lib/editorial.ts';
+
+// Muestras representativas de distintas secciones para que la portada refleje todo el portal
+const muestraSlugsCats = [
+  'feliz-cumpleanos-mama',
+  'feliz-cumpleanos-papa',
+  'feliz-cumpleanos-amiga',
+  'feliz-cumpleanos-hermana',
+  'feliz-cumpleanos-jefe',
+  'feliz-cumpleanos-cristiano',
+  'feliz-cumpleanos-a-distancia',
+  'feliz-aniversario-mi-amor',
+  'feliz-cumpleanos-15-anos',
+  'feliz-cumpleanos-50-anos',
+  'carta-para-mi-hija',
+  'feliz-cumpleanos-gracioso'
+];
+const muestraMensajes = muestraSlugsCats
+  .map((s) => (mensajesDe(s) || [])[0])
+  .filter(Boolean);
+
+const guiasLead = GUIAS_EDITORIALES[0];
+const guiasSecundarias = GUIAS_EDITORIALES.slice(1, 5);
+
+// Indice liviano de todas las 351 categorias + 10 guias para el buscador universal del portal
+const indiceBuscador = hubs
+  .map((h) => ({
+    titulo: nombreHub(h),
+    slug: '/' + h.slug + '/',
+    tipo: GRUPOS.find((g) => g.id === (h.grupo || 'destinatarios'))?.nombre || 'Categoría',
+    emoji: h.emoji || '🎂',
+    q: `${nombreHub(h)} ${h.destinatario || ''} ${h.keyword || ''} ${h.slug}`.toLowerCase()
+  }))
+  .concat(
+    GUIAS_EDITORIALES.map((g) => ({
+      titulo: g.titulo,
+      slug: `/guias/${g.slug}/`,
+      tipo: 'Guía práctica',
+      emoji: g.emoji,
+      q: `${g.titulo} ${g.resumen} ${g.slug}`.toLowerCase()
+    }))
+  );
+
+const temas = Object.values(TEMAS_TARJETA);
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: MARCA,
+    url: SITIO + '/',
+    inLanguage: 'es-AR'
+  }
+];
 ---
-<Base titulo="ParaCumpleanos - Felicitaciones de cumpleaños originales" descripcion="Felicitaciones de cumpleaños originales en 351 categorías para mamá, papá, hermanas, pareja, amigos y más. Mensajes listos para copiar y enviar por WhatsApp." jsonld={jsonld}>
-  <h1>Felicitaciones de cumpleaños para:</h1>
-  <p class="lead">Elegí el destinatario o la ocasión entre nuestras <strong>{hubs.length} categorías</strong> y más de <strong>{todosMensajes.length.toLocaleString('es-AR')} mensajes originales</strong> listos para copiar o enviar por WhatsApp.</p>
-  <div class="chips">
-    {chipsPrincipales.map(function (h) { return <a class="chip" href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a>; })}
-  </div>
-  <p><a href="/categorias/">Explorar las {hubs.length} categorías completas →</a></p>
-  <h2>Felicitaciones destacadas</h2>
-  <div class="grilla">
-    {destacados.map(function (m) { return <TarjetaMensaje m={m} />; })}
-  </div>
-  <section class="hermanas" aria-labelledby="guias-home-titulo">
-    <h2 id="guias-home-titulo">Guías prácticas para escribir y elegir regalo</h2>
-    <p class="lead">Artículos originales de nuestro Equipo Editorial para redactar cartas emotivas, saludar en el trabajo y adaptar dedicatorias sin clichés.</p>
-    <div class="guias-grid">
-      {guiasInicio.map(function (guia) {
+<Base
+  titulo="ParaCumpleanos — Portal de felicitaciones, cartas y guías originales"
+  descripcion="Buscá entre 351 colecciones y 12.636 dedicatorias inéditas en español para mamá, papá, amigos, pareja, trabajo, aniversario o duelo. Personalizá y descargá tarjetas al instante."
+  jsonld={jsonld}
+  esPortal={true}
+>
+  <section class="portal-hero" aria-labelledby="portal-h1">
+    <div class="portal-hero-texto">
+      <p class="portal-kicker">
+        Portal editorial en español · {hubs.length} colecciones · {todosMensajes.length.toLocaleString('es-AR')} textos únicos
+      </p>
+      <h1 id="portal-h1">Palabras reales para celebrar a quien más querés</h1>
+      <p class="portal-sub">
+        Elegí entre 351 destinatarios y momentos reales, personalizá el saludo con nombre y firma en segundos, y mandalo directo por WhatsApp o en tarjeta PNG sin registrarte.
+      </p>
+
+      <div class="portal-buscador-caja">
+        <label for="portal-buscador" class="portal-buscador-label">Buscá destinatario, edad o ocasión en toda la web</label>
+        <div class="portal-buscador-fila">
+          <input
+            id="portal-buscador"
+            type="search"
+            placeholder="Ej.: mamá, 15 años, jefe, carta, aniversario…"
+            autocomplete="off"
+          />
+          <a class="btn btn-copiar" href="#secciones-portal">Explorar secciones</a>
+        </div>
+        <ul id="portal-resultados" class="portal-resultados" hidden></ul>
+      </div>
+
+      <div class="portal-accesos-rapidos" aria-label="Accesos directos frecuentes">
+        <span class="accesos-titulo">Más buscados hoy:</span>
+        <a href="/feliz-cumpleanos-mama/">Mamá</a>
+        <span aria-hidden="true">·</span>
+        <a href="/feliz-cumpleanos-papa/">Papá</a>
+        <span aria-hidden="true">·</span>
+        <a href="/feliz-cumpleanos-amiga/">Amiga</a>
+        <span aria-hidden="true">·</span>
+        <a href="/carta-para-mi-hija/">Carta para hija</a>
+        <span aria-hidden="true">·</span>
+        <a href="/feliz-aniversario-mi-amor/">Aniversario</a>
+        <span aria-hidden="true">·</span>
+        <a href="/felicitaciones-a-madre-fallecida/">En el cielo</a>
+      </div>
+    </div>
+
+    <div class="portal-hero-studio" aria-label="Vista previa del personalizador de tarjetas">
+      <p class="studio-etiqueta">Estudio rápido · Probá personalizar acá mismo</p>
+      <div class="tarjeta-visual studio-card" id="portal-preview-card">
+        <div class="tarjeta-visual-emoji" aria-hidden="true">🎂</div>
+        <p class="tarjeta-visual-titulo" id="studio-titulo">Para alguien que hace la diferencia</p>
+        <p class="tarjeta-visual-extracto" id="studio-cuerpo">
+          Que este nuevo año te traiga sobremesas tranquilas, salud firme y motivos reales para festejar cerca de los tuyos.
+        </p>
+        <p class="tarjeta-visual-marca" id="studio-firma">paracumpleanos.com</p>
+      </div>
+      <div class="studio-controles">
+        <div class="studio-inputs">
+          <input id="studio-nombre" type="text" maxlength="32" placeholder="Nombre (ej.: Laura)" aria-label="Nombre de quien cumple años" />
+          <input id="studio-mi-firma" type="text" maxlength="32" placeholder="Tu firma (ej.: Sofi)" aria-label="Tu firma" />
+        </div>
+        <div class="studio-temas" role="group" aria-label="Estilo de tarjeta">
+          {temas.map(function (t, i) {
+            return (
+              <button
+                type="button"
+                class={'pers-tema-btn' + (i === 0 ? ' activo' : '')}
+                data-studio-tema={t.id}
+                data-fondo={t.fondoCss}
+                data-borde={t.borde}
+                data-acento={t.acento}
+              >
+                <span class="pers-swatch" style={`background:${t.fondoCss};border-color:${t.borde}`}></span>
+                <span>{t.nombre}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="secciones-portal" class="portal-banda" aria-labelledby="titulo-secciones-portal">
+    <div class="banda-cabecera">
+      <div>
+        <p class="banda-kicker">Mapa completo del portal</p>
+        <h2 id="titulo-secciones-portal">Navegá las 10 secciones temáticas ({hubs.length} colecciones)</h2>
+      </div>
+      <a class="enlace-directorio" href="/categorias/">Ver listado alfabético completo →</a>
+    </div>
+
+    <div class="portal-secciones-grid">
+      {GRUPOS.map(function (g) {
+        const lista = hubsPorGrupo.get(g.id) || [];
+        if (!lista.length) return null;
+        const destacadas = lista.slice(0, 6);
+        const totalMsgsGrupo = lista.reduce((acc, h) => acc + mensajesDe(h.slug).length, 0);
         return (
-          <article class="card guia-card">
-            <p class="guia-meta">
-              <span aria-hidden="true">{guia.emoji}</span>
-              <span>{guia.tiempoLectura}</span>
+          <article class="portal-seccion-card">
+            <div class="portal-seccion-top">
+              <h3><a href={`/categorias/#${g.id}`}>{g.emoji} {g.nombre}</a></h3>
+              <p class="card-meta">
+                <span>{lista.length} colecciones</span>
+                <span aria-hidden="true">·</span>
+                <span>{totalMsgsGrupo.toLocaleString('es-AR')} textos</span>
+              </p>
+            </div>
+            <ul class="portal-seccion-links">
+              {destacadas.map(function (h) {
+                return (
+                  <li>
+                    <a href={'/' + h.slug + '/'}>{nombreHub(h)}</a>
+                  </li>
+                );
+              })}
+            </ul>
+            <p class="portal-seccion-pie">
+              <a href={`/categorias/#${g.id}`}>Explorar todas en {g.nombre} ({lista.length}) →</a>
             </p>
-            <h3><a href={`/guias/${guia.slug}/`}>{guia.titulo}</a></h3>
-            <p>{guia.resumen}</p>
           </article>
         );
       })}
     </div>
-    <p class="ver-tambien"><a href="/guias/">Ver las {GUIAS_EDITORIALES.length} guías editoriales completas →</a></p>
   </section>
-  <section class="hermanas">
-    <h2>Explorar por sección</h2>
-    <div class="chips">
-      {GRUPOS.map(function (g) { return <a class="chip" href={'/categorias/#' + g.id}>{g.emoji} {g.nombre}</a>; })}
+
+  <section class="portal-banda portal-banda-guias" aria-labelledby="titulo-guias-portal">
+    <div class="banda-cabecera">
+      <div>
+        <p class="banda-kicker">Redacción con método propio</p>
+        <h2 id="titulo-guias-portal">Guías prácticas para escribir mejor y regalar con criterio</h2>
+      </div>
+      <a class="enlace-directorio" href="/guias/">Leer las {GUIAS_EDITORIALES.length} guías →</a>
+    </div>
+
+    <div class="portal-guias-salience">
+      <article class="card guia-destacada">
+        <p class="card-meta">
+          <span>{guiasLead.emoji} Guía principal</span>
+          <span aria-hidden="true">·</span>
+          <span>{guiasLead.tiempoLectura}</span>
+          <span aria-hidden="true">·</span>
+          <time datetime={guiasLead.fechaPublicacion}>{guiasLead.fechaPublicacion}</time>
+        </p>
+        <h3><a href={`/guias/${guiasLead.slug}/`}>{guiasLead.h1}</a></h3>
+        <p>{guiasLead.descripcion}</p>
+        <blockquote class="cita-editorial">
+          Las dedicatorias que se releen años después no usan palabras difíciles: nombran una escena real compartida y hablan como hablás vos.
+        </blockquote>
+        <p class="guia-leer"><a href={`/guias/${guiasLead.slug}/`}>Abrir guía completa paso a paso →</a></p>
+      </article>
+
+      <div class="guias-secundarias-lista">
+        {guiasSecundarias.map(function (g) {
+          return (
+            <article class="guia-fila">
+              <p class="card-meta">
+                <span>{g.emoji} {g.tiempoLectura}</span>
+                <span aria-hidden="true">·</span>
+                <time datetime={g.fechaPublicacion}>{g.fechaPublicacion}</time>
+              </p>
+              <h3><a href={`/guias/${g.slug}/`}>{g.titulo}</a></h3>
+              <p>{g.resumen}</p>
+            </article>
+          );
+        })}
+      </div>
     </div>
   </section>
+
+  <section class="portal-banda" aria-labelledby="titulo-muestra-portal">
+    <div class="banda-cabecera">
+      <div>
+        <p class="banda-kicker">Muestra curada de todo el catálogo</p>
+        <h2 id="titulo-muestra-portal">Textos listos para copiar según el momento</h2>
+      </div>
+    </div>
+
+    <div class="filtros-tono" role="toolbar" aria-label="Filtrar muestra por tono">
+      <button type="button" class="filtro-btn activo" data-home-filtro="todos" aria-pressed="true">Todos (12)</button>
+      <button type="button" class="filtro-btn" data-home-filtro="emotivo" aria-pressed="false">Emotivos</button>
+      <button type="button" class="filtro-btn" data-home-filtro="carta" aria-pressed="false">Carta larga</button>
+      <button type="button" class="filtro-btn" data-home-filtro="formal" aria-pressed="false">Trabajo / Formal</button>
+      <button type="button" class="filtro-btn" data-home-filtro="fe" aria-pressed="false">Con fe</button>
+      <button type="button" class="filtro-btn" data-home-filtro="divertido" aria-pressed="false">Con humor</button>
+    </div>
+
+    <div class="grilla" id="home-muestra-grilla">
+      {muestraMensajes.map(function (m) { return <TarjetaMensaje m={m} />; })}
+    </div>
+  </section>
+
+  <section class="portal-estandares" aria-labelledby="titulo-criterio-portal">
+    <h2 id="titulo-criterio-portal">Por qué miles de lectores eligen ParaCumpleanos</h2>
+    <div class="estandares-grid">
+      <div class="estandar-item">
+        <h3>01. 12.636 textos únicos sin copias</h3>
+        <p>Cada publicación tiene redacción original en voseo cercano o trato formal según el vínculo, evitando repetir párrafos entre categorías.</p>
+      </div>
+      <div class="estandar-item">
+        <h3>02. Contexto respetado al detalle</h3>
+        <p>Separamos fechas sensibles de duelo, aniversarios de pareja, entornos laborales y edades hito para no mezclar jamás tonos inadecuados.</p>
+      </div>
+      <div class="estandar-item">
+        <h3>03. Personalización y tarjeta sin registros</h3>
+        <p>Adaptá nombres, firmá, copiá para WhatsApp o descargá tarjetas 1080×1080 al instante. Conocé más en <a href="/sobre-nosotros/">Sobre nosotros</a> o escribinos en <a href="/contacto/">Contacto</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <script id="portal-indice-json" type="application/json" set:html={JSON.stringify(indiceBuscador)} />
+  <script is:inline>
+    (function () {
+      var inputBusq = document.getElementById('portal-buscador');
+      var listaRes = document.getElementById('portal-resultados');
+      var dataEl = document.getElementById('portal-indice-json');
+      var indice = [];
+      try {
+        indice = JSON.parse((dataEl && dataEl.textContent) || '[]');
+      } catch (e) {}
+
+      function norm(s) {
+        return String(s || '')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+      }
+
+      var indiceNorm = indice.map(function (item) {
+        return {
+          titulo: item.titulo,
+          slug: item.slug,
+          tipo: item.tipo,
+          emoji: item.emoji,
+          q: norm(item.q)
+        };
+      });
+
+      if (inputBusq && listaRes) {
+        inputBusq.addEventListener('input', function () {
+          var q = norm(inputBusq.value.trim());
+          listaRes.innerHTML = '';
+          if (q.length < 2) {
+            listaRes.hidden = true;
+            return;
+          }
+          var hits = [];
+          for (var i = 0; i < indiceNorm.length && hits.length < 8; i++) {
+            if (indiceNorm[i].q.indexOf(q) !== -1) hits.push(indiceNorm[i]);
+          }
+          listaRes.hidden = false;
+          if (!hits.length) {
+            var liVacio = document.createElement('li');
+            liVacio.className = 'portal-res-vacio';
+            liVacio.innerHTML = 'No encontramos coincidencias directas. <a href="/categorias/">Explorá las 351 categorías →</a>';
+            listaRes.appendChild(liVacio);
+            return;
+          }
+          hits.forEach(function (h) {
+            var li = document.createElement('li');
+            var a = document.createElement('a');
+            a.href = h.slug;
+            a.innerHTML = '<span>' + h.emoji + ' ' + h.titulo + '</span><span class="portal-res-tipo">' + h.tipo + '</span>';
+            li.appendChild(a);
+            listaRes.appendChild(li);
+          });
+        });
+      }
+
+      // Estudio rapido en el Hero
+      var studioNom = document.getElementById('studio-nombre');
+      var studioFir = document.getElementById('studio-mi-firma');
+      var studioTit = document.getElementById('studio-titulo');
+      var studioCue = document.getElementById('studio-cuerpo');
+      var studioMar = document.getElementById('studio-firma');
+      var previewCard = document.getElementById('portal-preview-card');
+      var baseCuerpo = 'Que este nuevo año te traiga sobremesas tranquilas, salud firme y motivos reales para festejar cerca de los tuyos.';
+
+      function actualizarStudio() {
+        var nom = (studioNom && studioNom.value || '').trim();
+        var fir = (studioFir && studioFir.value || '').trim();
+        if (studioTit) studioTit.textContent = nom ? '¡Feliz cumpleaños, ' + nom + '!' : 'Para alguien que hace la diferencia';
+        if (studioCue) studioCue.textContent = nom ? nom + ', ' + baseCuerpo.charAt(0).toLowerCase() + baseCuerpo.slice(1) : baseCuerpo;
+        if (studioMar) studioMar.textContent = fir ? '— ' + fir + ' · paracumpleanos.com' : 'paracumpleanos.com';
+      }
+      if (studioNom) studioNom.addEventListener('input', actualizarStudio);
+      if (studioFir) studioFir.addEventListener('input', actualizarStudio);
+
+      document.querySelectorAll('[data-studio-tema]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('[data-studio-tema]').forEach(function (b) { b.classList.remove('activo'); });
+          btn.classList.add('activo');
+          if (previewCard) {
+            previewCard.style.background = btn.getAttribute('data-fondo');
+            previewCard.style.borderColor = btn.getAttribute('data-borde');
+          }
+          if (studioTit) studioTit.style.color = btn.getAttribute('data-acento');
+        });
+      });
+
+      // Filtros de la muestra curada
+      var homeBtns = document.querySelectorAll('[data-home-filtro]');
+      var homeGrilla = document.getElementById('home-muestra-grilla');
+      if (homeBtns.length && homeGrilla) {
+        homeBtns.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var f = btn.getAttribute('data-home-filtro') || 'todos';
+            homeBtns.forEach(function (b) {
+              var ac = b === btn;
+              b.classList.toggle('activo', ac);
+              b.setAttribute('aria-pressed', ac ? 'true' : 'false');
+            });
+            homeGrilla.querySelectorAll('[data-card-personalizable]').forEach(function (card) {
+              var tono = card.getAttribute('data-tono') || '';
+              card.style.display = f === 'todos' || tono === f ? '' : 'none';
+            });
+          });
+        });
+      }
+    })();
+  </script>
 </Base>

@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { GRUPOS, hubs, hubsPorGrupo, hubsPrincipales, nombreHub } from '../lib/contenido.ts';
+import { GRUPOS, hubs, hubsPorGrupo, nombreHub } from '../lib/contenido.ts';
 interface Props {
   titulo: string;
   descripcion: string;
@@ -8,6 +8,7 @@ interface Props {
   grupoActual?: string;
   slugActual?: string;
   noindex?: boolean;
+  esPortal?: boolean;
 }
 const {
   titulo,
@@ -15,10 +16,10 @@ const {
   jsonld = [],
   grupoActual = 'destinatarios',
   slugActual = '',
-  noindex = false
+  noindex = false,
+  esPortal = false
 } = Astro.props;
 const url = 'https://paracumpleanos.com' + Astro.url.pathname;
-const navTop = hubsPrincipales.slice(0, 11);
 ---
 <!doctype html>
 <html lang="es">
@@ -31,6 +32,9 @@ const navTop = hubsPrincipales.slice(0, 11);
   <meta name="description" content={descripcion} />
   <link rel="canonical" href={url} />
   <link rel="alternate" type="application/rss+xml" title="ParaCumpleanos RSS" href="https://paracumpleanos.com/rss.xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <meta property="og:title" content={titulo} />
   <meta property="og:description" content={descripcion} />
   <meta property="og:type" content="website" />
@@ -42,50 +46,64 @@ const navTop = hubsPrincipales.slice(0, 11);
 </head>
 <body>
   <header class="cabecera">
-    <div class="marca-bloque">
+    <div class="cabecera-inner">
       <a href="/" class="logo">ParaCumpleanos 🎂</a>
-      <p class="tagline">Felicitaciones originales listas para enviar</p>
+      <nav class="nav-principal" aria-label="Navegación principal">
+        <a href="/feliz-cumpleanos-mama/">Mamá</a>
+        <a href="/feliz-cumpleanos-amiga/">Amiga</a>
+        <a href="/categorias/#cartas">Cartas</a>
+        <a href="/guias/">Guías</a>
+        <a href="/sobre-nosotros/">Nosotros</a>
+        <a href="/contacto/">Contacto</a>
+      </nav>
+      <a class="nav-cta" href="/categorias/">{hubs.length} categorías</a>
     </div>
-    <nav class="nav-hubs" aria-label="Destinatarios principales">
-      {navTop.map(function (h) { return <a href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a>; })}
-      <a class="nav-guias" href="/guias/">📖 Guías</a>
-      <a class="nav-todas" href="/categorias/">Todas ({hubs.length})</a>
-    </nav>
   </header>
-  <div class="contenedor">
-    <aside class="sidebar" aria-label="Todas las categorías">
-      <h2>Categorías ({hubs.length})</h2>
-      {GRUPOS.map(function (g) {
-        const lista = hubsPorGrupo.get(g.id) || [];
-        if (!lista.length) return null;
-        return (
-          <details class="sidebar-grupo" open={g.id === grupoActual}>
-            <summary>
-              <span>{g.emoji} {g.nombre}</span>
-              <span class="sidebar-count">{lista.length}</span>
-            </summary>
-            <ul>
-              {lista.map(function (h) {
-                return (
-                  <li>
-                    <a href={'/' + h.slug + '/'} aria-current={h.slug === slugActual ? 'page' : undefined}>
-                      {nombreHub(h)}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </details>
-        );
-      })}
-    </aside>
-    <main class="contenido">
-      <slot />
-    </main>
-  </div>
+
+  {esPortal ? (
+    <div class="contenedor-portal">
+      <main class="contenido contenido-portal">
+        <slot />
+      </main>
+    </div>
+  ) : (
+    <div class="contenedor">
+      <aside class="sidebar" aria-label="Todas las categorías">
+        <h2>Categorías ({hubs.length})</h2>
+        {GRUPOS.map(function (g) {
+          const lista = hubsPorGrupo.get(g.id) || [];
+          if (!lista.length) return null;
+          return (
+            <details class="sidebar-grupo" open={g.id === grupoActual}>
+              <summary>
+                <span>{g.emoji} {g.nombre}</span>
+                <span class="sidebar-count">{lista.length}</span>
+              </summary>
+              <ul>
+                {lista.map(function (h) {
+                  return (
+                    <li>
+                      <a href={'/' + h.slug + '/'} aria-current={h.slug === slugActual ? 'page' : undefined}>
+                        {nombreHub(h)}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </details>
+          );
+        })}
+      </aside>
+      <main class="contenido">
+        <slot />
+      </main>
+    </div>
+  )}
+
   <footer class="pie">
-    <p>ParaCumpleanos — {hubs.length} categorías de felicitaciones originales de cumpleaños.</p>
+    <p>ParaCumpleanos — {hubs.length} colecciones de felicitaciones y cartas originales en español.</p>
     <nav aria-label="Páginas institucionales">
+      <a href="/">Inicio</a>
       <a href="/categorias/">Categorías</a>
       <a href="/guias/">Guías</a>
       <a href="/sobre-nosotros/">Sobre nosotros</a>
@@ -152,7 +170,7 @@ const navTop = hubsPrincipales.slice(0, 11);
         ctx.font = '72px system-ui, sans-serif';
         ctx.fillText(emojiCard, 540, 170);
 
-        ctx.font = 'bold 46px system-ui, sans-serif';
+        ctx.font = 'bold 46px Georgia, serif';
         function wrapLines(text, maxW) {
           var words = text.split(/\s+/);
           var lines = [];
@@ -186,7 +204,7 @@ const navTop = hubsPrincipales.slice(0, 11);
           y += 46;
         }
 
-        ctx.fillStyle = '#d97706';
+        ctx.fillStyle = '#b45309';
         ctx.font = 'bold 28px system-ui, sans-serif';
         ctx.fillText('paracumpleanos.com', 540, 968);
 
