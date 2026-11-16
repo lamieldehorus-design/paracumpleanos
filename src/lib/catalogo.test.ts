@@ -2,7 +2,25 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { crearCatalogo, metaDe, nombreHub, migasLd, POR_PAGINA, RELACIONADAS, HERMANAS } from './catalogo';
+import {
+  crearCatalogo,
+  metaDe,
+  nombreHub,
+  migasLd,
+  generarUrlsSitio,
+  generarSitemapXml,
+  POR_PAGINA,
+  RELACIONADAS,
+  HERMANAS
+} from './catalogo';
+import {
+  INDEXNOW_HOST,
+  INDEXNOW_KEY,
+  INDEXNOW_KEY_LOCATION,
+  INDEXNOW_MAX_BATCH,
+  extraerUrlsDeSitemap,
+  construirPayloadsIndexNow
+} from './indexnow';
 
 function cargarDatosCompletos() {
   const base = JSON.parse(fs.readFileSync(path.resolve('data/contenido.json'), 'utf8'));
@@ -120,4 +138,54 @@ test('cartas largas, poemas en estrofas, duelo respetuoso y aniversarios coheren
     }
   }
 });
+
+test('generarUrlsSitio y generarSitemapXml cubren todas las 11588 URLs del sitio sin duplicados', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+  const urls = generarUrlsSitio(cat);
+
+  assert.equal(urls.length, 11588, `Se esperaban 11588 URLs, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 11588, 'Las URLs del sitemap deben ser todas unicas');
+  assert.ok(urls.includes('https://paracumpleanos.com/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/categorias/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/sobre-nosotros/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/privacidad/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/terminos-de-uso/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/2/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/3/'));
+
+  const xml = generarSitemapXml(urls, '2026-11-16');
+  assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
+  assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
+  const locs = xml.match(/<loc>/g) || [];
+  assert.equal(locs.length, 11588);
+});
+
+test('Bing IndexNow cubre todas las 11588 URLs en lotes <= 10000 y tiene archivo de clave valido', () => {
+  const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
+  assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
+  assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
+  assert.match(INDEXNOW_KEY, /^[a-f0-9]{32}$/);
+
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+  const xml = generarSitemapXml(generarUrlsSitio(cat), '2026-11-16');
+  const extraidas = extraerUrlsDeSitemap(xml);
+  assert.equal(extraidas.length, 11588);
+
+  const payloads = construirPayloadsIndexNow(extraidas);
+  assert.equal(payloads.length, 2);
+  assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
+  assert.equal(payloads[1].urlList.length, 1588);
+  for (const p of payloads) {
+    assert.equal(p.host, INDEXNOW_HOST);
+    assert.equal(p.key, INDEXNOW_KEY);
+    assert.equal(p.keyLocation, INDEXNOW_KEY_LOCATION);
+    assert.ok(p.urlList.length <= INDEXNOW_MAX_BATCH);
+  }
+  assert.equal(payloads.reduce((acc, p) => acc + p.urlList.length, 0), 11588);
+});
+
+
 

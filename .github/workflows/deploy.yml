@@ -43,3 +43,18 @@ jobs:
       - name: Desplegar en GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  indexnow:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Notificar todas las URLs a Bing IndexNow
+        continue-on-error: true
+        run: node scripts/enviar-indexnow.mjs --wait-key=60 --from-catalog
+

@@ -155,3 +155,50 @@ export function migasLd(items: { name: string; url: string }[]): any {
     itemListElement: items.map(function (it, i) { return { '@type': 'ListItem', position: i + 1, name: it.name, item: it.url }; })
   };
 }
+
+export function generarUrlsSitio(catalogo: ReturnType<typeof crearCatalogo>): string[] {
+  const urls: string[] = [
+    `${SITIO}/`,
+    `${SITIO}/categorias/`,
+    `${SITIO}/sobre-nosotros/`,
+    `${SITIO}/privacidad/`,
+    `${SITIO}/terminos-de-uso/`
+  ];
+
+  for (const h of catalogo.hubs) {
+    urls.push(`${SITIO}/${h.slug}/`);
+    const total = Math.ceil(catalogo.mensajesDe(h.slug).length / POR_PAGINA);
+    for (let p = 2; p <= total; p++) {
+      urls.push(`${SITIO}/${h.slug}/${p}/`);
+    }
+  }
+
+  for (const m of catalogo.todosMensajes) {
+    urls.push(`${SITIO}/${m.slug}/`);
+  }
+
+  return urls;
+}
+
+function escaparXml(valor: string): string {
+  return valor
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+export function generarSitemapXml(urls: string[], lastmod: string = '2026-11-16'): string {
+  const fecha = escaparXml(lastmod);
+  const bloques = urls.map(
+    (u) => `  <url><loc>${escaparXml(u)}</loc><lastmod>${fecha}</lastmod></url>`
+  );
+  return (
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    bloques.join('\n') +
+    '\n</urlset>\n'
+  );
+}
+
