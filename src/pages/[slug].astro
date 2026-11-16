@@ -3,7 +3,20 @@ import Base from '../layouts/Base.astro';
 import TarjetaMensaje from '../components/TarjetaMensaje.astro';
 import Compartir from '../components/Compartir.astro';
 import Hermanas from '../components/Hermanas.astro';
-import { contenido, POR_PAGINA, SITIO, MARCA, mensajesDe, hubDe, relacionadasDe, metaDe, nombreHub, migasLd } from '../lib/contenido.ts';
+import PersonalizadorTarjeta from '../components/PersonalizadorTarjeta.astro';
+import {
+  contenido,
+  POR_PAGINA,
+  SITIO,
+  MARCA,
+  mensajesDe,
+  hubDe,
+  relacionadasDe,
+  metaDe,
+  nombreHub,
+  migasLd,
+  esMensajeIndexable
+} from '../lib/contenido.ts';
 export function getStaticPaths() {
   return contenido.map(function (r) {
     return { params: { slug: r.slug }, props: { registro: r } };
@@ -19,6 +32,7 @@ const mensajesPagina = mensajesCat.slice(0, POR_PAGINA);
 const relacionadas = esHub ? [] : relacionadasDe(registro);
 const titulo = esHub ? registro.titulo : registro.titulo + ' - ' + MARCA;
 const descripcion = esHub ? registro.meta : metaDe(registro.texto);
+const noindexPagina = !esHub && !esMensajeIndexable(registro);
 const migas = [{ name: 'Inicio', url: SITIO + '/' }, { name: nombreHub(hub), url: urlHub }]
   .concat(esHub ? [] : [{ name: registro.titulo, url: SITIO + '/' + registro.slug + '/' }]);
 const jsonld: any[] = [migasLd(migas)];
@@ -33,7 +47,7 @@ if (esHub) jsonld.push({
 });
 const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
 const creado = hub.creado || '2026-11-15';
-const actualizado = hub.actualizado || '2026-11-15';
+const actualizado = hub.actualizado || '2026-11-16';
 const parrafosMsg = esHub ? [] : registro.texto.split('\n\n');
 const parrafoPrincipal = esHub ? '' : (
   parrafosMsg.find(function (p) {
@@ -42,8 +56,38 @@ const parrafoPrincipal = esHub ? '' : (
   }) || parrafosMsg.find(function (p) { return p.trim().length >= 25; }) || parrafosMsg[0] || ''
 );
 const extractoCard = parrafoPrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
+
+const esDuelo = /fallecid|hasta-el-cielo/.test(hub.slug);
+const esAniversario = /(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(hub.slug);
+const consejoGuia = esDuelo
+  ? {
+      titulo: 'Cómo adaptar estas palabras en una fecha sensible',
+      texto: `Si estás recordando a un ser querido en su fecha especial o acompañando a alguien cercano en su duelo, cambiá el nombre general por el apodo íntimo con el que lo llamaban en casa y sumá un recuerdo sencillo. Leé también nuestra guía sobre cómo escribir con respeto cuando falta alguien querido.`,
+      guiaSlug: 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido',
+      guiaTexto: 'Cómo escribir con respeto en un aniversario luctuoso →'
+    }
+  : esAniversario
+  ? {
+      titulo: 'Cómo personalizar este texto para su aniversario',
+      texto: `Sumá arriba el nombre de tu pareja y tu firma antes de copiarlo. Si querés darle un toque todavía más personal, agregá una fecha o un plan concreto que compartieron este tiempo juntos.`,
+      guiaSlug: 'como-celebrar-meses-de-novios-y-aniversarios-sin-caer-en-cliches',
+      guiaTexto: 'Ideas para celebrar meses de novios y aniversarios →'
+    }
+  : {
+      titulo: 'Cómo hacer que esta dedicatoria suene realmente tuya',
+      texto: `Usá el personalizador de arriba para sumar el apodo de quien cumple y tu firma: cambia al instante el texto, el botón de WhatsApp y la tarjeta descargable PNG. Si querés potenciarlo más, agregá un recuerdo breve de este último año.`,
+      guiaSlug: 'como-personalizar-tarjetas-y-dedicatorias-whatsapp',
+      guiaTexto: 'Trucos rápidos para adaptar dedicatorias de WhatsApp →'
+    };
 ---
-<Base titulo={titulo} descripcion={descripcion} jsonld={jsonld} grupoActual={hub.grupo || 'destinatarios'} slugActual={hub.slug}>
+<Base
+  titulo={titulo}
+  descripcion={descripcion}
+  jsonld={jsonld}
+  grupoActual={hub.grupo || 'destinatarios'}
+  slugActual={hub.slug}
+  noindex={noindexPagina}
+>
   <nav class="migas" aria-label="Migas de pan">
     <a href="/">Inicio</a> › {esHub ? <span>{nombreHub(hub)}</span> : <a href={'/' + hub.slug + '/'}>{nombreHub(hub)}</a>}
     {esHub ? null : <span> › {registro.titulo}</span>}
@@ -57,6 +101,7 @@ const extractoCard = parrafoPrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, 
         })}
       </div>
       <p class="contador">Encontradas {mensajesCat.length} felicitaciones</p>
+      <PersonalizadorTarjeta modo="hub" />
       <div class="tarjeta-visual" role="img" aria-label={'Tarjeta destacada de ' + (registro.keyword || registro.h1)}>
         <div class="tarjeta-visual-emoji">{registro.emoji}</div>
         <p class="tarjeta-visual-titulo">{nombreHub(registro)}</p>
@@ -87,30 +132,40 @@ const extractoCard = parrafoPrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, 
   ) : (
     <div>
       <h1>{registro.titulo}</h1>
-      {parrafosMsg.map(function (p) {
-        const lineas = p.split('\n');
-        return (
-          <p class="mensaje">
-            {lineas.map(function (linea, idx) {
-              return idx === 0 ? linea : <><br />{linea}</>;
-            })}
-          </p>
-        );
-      })}
-      <div class="tarjeta-visual" role="img" aria-label={'Tarjeta lista para compartir: ' + registro.titulo}>
-        <div class="tarjeta-visual-emoji">{hub.emoji}</div>
-        <p class="tarjeta-visual-titulo">{registro.titulo}</p>
-        <p class="tarjeta-visual-extracto">{extractoCard}</p>
-        <p class="tarjeta-visual-marca">paracumpleanos.com</p>
+      <PersonalizadorTarjeta modo="mensaje" />
+      <div id="mensaje-detalle-bloque" data-orig-extracto={extractoCard}>
+        <div id="mensaje-cuerpo" data-orig-texto={registro.texto} data-orig-titulo={registro.titulo}>
+          {parrafosMsg.map(function (p) {
+            const lineas = p.split('\n');
+            return (
+              <p class="mensaje">
+                {lineas.map(function (linea, idx) {
+                  return idx === 0 ? linea : <><br />{linea}</>;
+                })}
+              </p>
+            );
+          })}
+        </div>
+        <div class="tarjeta-visual" role="img" aria-label={'Tarjeta lista para compartir: ' + registro.titulo}>
+          <div class="tarjeta-visual-emoji">{hub.emoji}</div>
+          <p class="tarjeta-visual-titulo">{registro.titulo}</p>
+          <p class="tarjeta-visual-extracto">{extractoCard}</p>
+          <p class="tarjeta-visual-marca">paracumpleanos.com</p>
+        </div>
+        <Compartir
+          texto={textoEnviar}
+          url={SITIO + '/' + registro.slug + '/'}
+          tituloCard={registro.titulo}
+          cuerpoCard={extractoCard}
+          emojiCard={hub.emoji}
+          mostrarDescarga={true}
+        />
       </div>
-      <Compartir
-        texto={textoEnviar}
-        url={SITIO + '/' + registro.slug + '/'}
-        tituloCard={registro.titulo}
-        cuerpoCard={extractoCard}
-        emojiCard={hub.emoji}
-        mostrarDescarga={true}
-      />
+      <section class="consejo-mensaje" aria-labelledby="consejo-adaptar-titulo">
+        <h2 id="consejo-adaptar-titulo">{consejoGuia.titulo}</h2>
+        <p>{consejoGuia.texto}</p>
+        <p class="ver-tambien"><a href={`/guias/${consejoGuia.guiaSlug}/`}>{consejoGuia.guiaTexto}</a></p>
+      </section>
       <section class="relacionadas">
         <h2>Felicitaciones relacionadas</h2>
         <ul>

@@ -2,8 +2,10 @@
 import Base from '../layouts/Base.astro';
 import TarjetaMensaje from '../components/TarjetaMensaje.astro';
 import { GRUPOS, hubs, todosMensajes, hubsPrincipales, SITIO, MARCA } from '../lib/contenido.ts';
+import { GUIAS_EDITORIALES } from '../data/guias.ts';
 const destacados = todosMensajes.slice(0, 12);
 const chipsPrincipales = hubsPrincipales.slice(0, 25);
+const guiasInicio = GUIAS_EDITORIALES.slice(0, 4);
 const jsonld = [{
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -23,6 +25,25 @@ const jsonld = [{
   <div class="grilla">
     {destacados.map(function (m) { return <TarjetaMensaje m={m} />; })}
   </div>
+  <section class="hermanas" aria-labelledby="guias-home-titulo">
+    <h2 id="guias-home-titulo">Guías prácticas para escribir y elegir regalo</h2>
+    <p class="lead">Artículos originales de nuestro Equipo Editorial para redactar cartas emotivas, saludar en el trabajo y adaptar dedicatorias sin clichés.</p>
+    <div class="guias-grid">
+      {guiasInicio.map(function (guia) {
+        return (
+          <article class="card guia-card">
+            <p class="guia-meta">
+              <span aria-hidden="true">{guia.emoji}</span>
+              <span>{guia.tiempoLectura}</span>
+            </p>
+            <h3><a href={`/guias/${guia.slug}/`}>{guia.titulo}</a></h3>
+            <p>{guia.resumen}</p>
+          </article>
+        );
+      })}
+    </div>
+    <p class="ver-tambien"><a href="/guias/">Ver las {GUIAS_EDITORIALES.length} guías editoriales completas →</a></p>
+  </section>
   <section class="hermanas">
     <h2>Explorar por sección</h2>
     <div class="chips">

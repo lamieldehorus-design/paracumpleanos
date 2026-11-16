@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+import { GUIAS_EDITORIALES } from '../../data/guias.ts';
+import { MARCA, SITIO, migasLd } from '../../lib/contenido.ts';
+
+const jsonld = [
+  migasLd([
+    { name: 'Inicio', url: `${SITIO}/` },
+    { name: 'Guías editoriales', url: `${SITIO}/guias/` }
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `Guías prácticas para escribir y celebrar cumpleaños - ${MARCA}`,
+    url: `${SITIO}/guias/`,
+    inLanguage: 'es-AR'
+  }
+];
+---
+<Base
+  titulo={`Guías para escribir felicitaciones y celebrar mejor - ${MARCA}`}
+  descripcion={`Artículos y guías prácticas escritas por el Equipo Editorial de ${MARCA}: cómo redactar cartas emotivas, qué regalar según la edad, etiqueta laboral y más.`}
+  jsonld={jsonld}
+>
+  <nav class="migas" aria-label="Migas de pan">
+    <a href="/">Inicio</a> › <span>Guías editoriales</span>
+  </nav>
+  <h1>Guías prácticas para escribir y celebrar mejor</h1>
+  <p class="lead">Además de miles de mensajes listos para personalizar, acá reunimos artículos originales escritos por nuestro equipo editorial para ayudarte a encontrar el tono justo, elegir un regalo con criterio o redactar una carta sin quedarte en blanco.</p>
+
+  <div class="guias-grid">
+    {GUIAS_EDITORIALES.map(function (guia) {
+      return (
+        <article class="card guia-card">
+          <p class="guia-meta">
+            <span aria-hidden="true">{guia.emoji}</span>
+            <span>{guia.tiempoLectura}</span>
+            <span>·</span>
+            <time datetime={guia.fechaPublicacion}>{guia.fechaPublicacion}</time>
+          </p>
+          <h2><a href={`/guias/${guia.slug}/`}>{guia.titulo}</a></h2>
+          <p>{guia.resumen}</p>
+          <p class="guia-leer"><a href={`/guias/${guia.slug}/`}>Leer guía completa →</a></p>
+        </article>
+      );
+    })}
+  </div>
+
+  <section class="hermanas">
+    <h2>¿Buscás un mensaje directo para copiar ahora?</h2>
+    <p>Visitá nuestro <a href="/categorias/">directorio con las 351 categorías completas</a> o probá el personalizador en vivo dentro de cada sección.</p>
+  </section>
+</Base>

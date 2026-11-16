@@ -33,33 +33,49 @@ function base64UrlEncode(input: string | Buffer): string {
 export function generarRssXml(
   hubs: any[],
   mensajesDe: (slug: string) => any[],
-  fechaBuild: Date = new Date()
+  fechaBuild: Date = new Date(),
+  guias: any[] = []
 ): string {
   const pubDate = fechaBuild.toUTCString();
   const destacados = hubs.slice(0, 60);
 
-  const items = destacados
-    .map((h) => {
-      const msgs = mensajesDe(h.slug) || [];
-      const ultimo = msgs[msgs.length - 1];
-      const enlace = `${SITIO}/${h.slug}/`;
-      const titulo = h.titulo || nombreHub(h);
-      const resumen = ultimo
-        ? `${h.meta || h.lead || ''} — Ejemplo destacado: "${ultimo.titulo}"`
-        : h.meta || h.lead || '';
-      const fechaItem = h.actualizado ? new Date(`${h.actualizado}T12:00:00Z`) : fechaBuild;
-      const pubItem = Number.isNaN(fechaItem.getTime()) ? pubDate : fechaItem.toUTCString();
-      return (
-        '    <item>\n' +
-        `      <title>${escaparXml(titulo)}</title>\n` +
-        `      <link>${escaparXml(enlace)}</link>\n` +
-        `      <guid isPermaLink="true">${escaparXml(enlace)}</guid>\n` +
-        `      <pubDate>${escaparXml(pubItem)}</pubDate>\n` +
-        `      <description>${escaparXml(resumen)}</description>\n` +
-        '    </item>'
-      );
-    })
-    .join('\n');
+  const itemsGuias = guias.slice(0, 10).map((g) => {
+    const enlace = `${SITIO}/guias/${g.slug}/`;
+    const fechaItem = g.fechaPublicacion ? new Date(`${g.fechaPublicacion}T12:00:00Z`) : fechaBuild;
+    const pubItem = Number.isNaN(fechaItem.getTime()) ? pubDate : fechaItem.toUTCString();
+    return (
+      '    <item>\n' +
+      `      <title>${escaparXml(g.titulo || g.h1)}</title>\n` +
+      `      <link>${escaparXml(enlace)}</link>\n` +
+      `      <guid isPermaLink="true">${escaparXml(enlace)}</guid>\n` +
+      `      <pubDate>${escaparXml(pubItem)}</pubDate>\n` +
+      `      <description>${escaparXml(g.descripcion || g.resumen || '')}</description>\n` +
+      '    </item>'
+    );
+  });
+
+  const itemsHubs = destacados.map((h) => {
+    const msgs = mensajesDe(h.slug) || [];
+    const ultimo = msgs[msgs.length - 1];
+    const enlace = `${SITIO}/${h.slug}/`;
+    const titulo = h.titulo || nombreHub(h);
+    const resumen = ultimo
+      ? `${h.meta || h.lead || ''} — Ejemplo destacado: "${ultimo.titulo}"`
+      : h.meta || h.lead || '';
+    const fechaItem = h.actualizado ? new Date(`${h.actualizado}T12:00:00Z`) : fechaBuild;
+    const pubItem = Number.isNaN(fechaItem.getTime()) ? pubDate : fechaItem.toUTCString();
+    return (
+      '    <item>\n' +
+      `      <title>${escaparXml(titulo)}</title>\n` +
+      `      <link>${escaparXml(enlace)}</link>\n` +
+      `      <guid isPermaLink="true">${escaparXml(enlace)}</guid>\n` +
+      `      <pubDate>${escaparXml(pubItem)}</pubDate>\n` +
+      `      <description>${escaparXml(resumen)}</description>\n` +
+      '    </item>'
+    );
+  });
+
+  const items = itemsGuias.concat(itemsHubs).join('\n');
 
   return (
     '<?xml version="1.0" encoding="UTF-8"?>\n' +

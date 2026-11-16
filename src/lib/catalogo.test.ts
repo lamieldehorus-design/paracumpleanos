@@ -8,12 +8,15 @@ import {
   metaDe,
   nombreHub,
   migasLd,
+  construirSetIndexables,
   generarUrlsSitio,
   generarSitemapXml,
   POR_PAGINA,
   RELACIONADAS,
   HERMANAS
 } from './catalogo';
+import { GUIAS_EDITORIALES } from '../data/guias';
+import { TEMAS_TARJETA, limpiarCampoTexto, personalizarTexto } from './personalizador';
 import {
   INDEXNOW_HOST,
   INDEXNOW_KEY,
@@ -163,30 +166,93 @@ test('cartas largas, poemas en estrofas, duelo respetuoso y aniversarios coheren
   }
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren todas las 13694 URLs del sitio sin duplicados', () => {
+test('construirSetIndexables filtra cartas unicas >=140 palabras y omite mensajes cortos/repetidos', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
-  const urls = generarUrlsSitio(cat);
+  const indexables = construirSetIndexables(cat.todosMensajes);
 
-  assert.equal(urls.length, 13694, `Se esperaban 13694 URLs, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 13694, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(indexables.size, 1724, `Se esperaban 1724 cartas unicas indexables, hay ${indexables.size}`);
+  const cuerpos = new Set<string>();
+  for (const m of cat.todosMensajes) {
+    if (indexables.has(m.slug)) {
+      const palabras = String(m.texto || '').trim().split(/\s+/).length;
+      assert.ok(palabras >= 140, `Mensaje indexable ${m.slug} tiene menos de 140 palabras: ${palabras}`);
+      assert.ok(!cuerpos.has(m.texto.trim()), `Mensaje indexable duplicado en texto: ${m.slug}`);
+      cuerpos.add(m.texto.trim());
+    }
+  }
+});
+
+test('guias editoriales tienen 10 articulos profundos con categorias relacionadas existentes en el catalogo', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+
+  assert.equal(GUIAS_EDITORIALES.length, 10);
+  const slugsGuias = new Set<string>();
+  for (const g of GUIAS_EDITORIALES) {
+    assert.ok(!slugsGuias.has(g.slug), `Slug de guia duplicado: ${g.slug}`);
+    slugsGuias.add(g.slug);
+    assert.ok(g.secciones.length >= 2, `Guia ${g.slug} requiere al menos 2 secciones`);
+    const palabras = g.secciones
+      .map((s) => `${s.subtitulo} ${s.parrafos.join(' ')} ${(s.lista || []).join(' ')}`)
+      .join(' ')
+      .split(/\s+/).length;
+    assert.ok(palabras >= 160, `Guia ${g.slug} es demasiado corta (${palabras} palabras)`);
+    for (const rel of g.categoriasRelacionadas) {
+      assert.ok(cat.hubsPorSlug.has(rel.slug), `Guia ${g.slug} enlaza a categoria inexistente: ${rel.slug}`);
+    }
+  }
+});
+
+test('personalizador adapta nombre y firma sin duplicar saludo ni romper saltos de linea', () => {
+  assert.equal(limpiarCampoTexto('  Laura \n Perez  '), 'Laura Perez');
+  const salida = personalizarTexto('Hoy celebramos tu vida con enorme alegría.', {
+    nombre: 'Laura',
+    firma: 'Sofi'
+  });
+  assert.equal(salida, 'Laura, hoy celebramos tu vida con enorme alegría.\n\n— Sofi');
+
+  const conNombreYaPresente = personalizarTexto('Laura, hoy te deseamos lo mejor del mundo.', {
+    nombre: 'Laura',
+    firma: 'Tus amigos'
+  });
+  assert.equal(conNombreYaPresente, 'Laura, hoy te deseamos lo mejor del mundo.\n\n— Tus amigos');
+  assert.equal(Object.keys(TEMAS_TARJETA).length, 4);
+});
+
+test('generarUrlsSitio y generarSitemapXml cubren las 2794 URLs indexables sin duplicados ni paginas noindex', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+  const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
+  const urls = generarUrlsSitio(cat, slugsGuias);
+
+  assert.equal(urls.length, 2794, `Se esperaban 2794 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 2794, 'Las URLs del sitemap deben ser todas unicas');
   assert.ok(urls.includes('https://paracumpleanos.com/'));
   assert.ok(urls.includes('https://paracumpleanos.com/categorias/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/guias/'));
   assert.ok(urls.includes('https://paracumpleanos.com/sobre-nosotros/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/contacto/'));
   assert.ok(urls.includes('https://paracumpleanos.com/privacidad/'));
   assert.ok(urls.includes('https://paracumpleanos.com/terminos-de-uso/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/guias/como-escribir-una-carta-de-cumpleanos-que-emocione/'));
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/'));
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/2/'));
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/3/'));
+
+  const indexables = construirSetIndexables(cat.todosMensajes);
+  const ejemploCorto = cat.todosMensajes.find((m) => !indexables.has(m.slug));
+  assert.ok(ejemploCorto);
+  assert.ok(!urls.includes(`https://paracumpleanos.com/${ejemploCorto.slug}/`), 'Una pagina noindex no debe entrar en sitemap.xml');
 
   const xml = generarSitemapXml(urls, '2026-11-16');
   assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xml.match(/<loc>/g) || [];
-  assert.equal(locs.length, 13694);
+  assert.equal(locs.length, 2794);
 });
 
-test('Bing IndexNow cubre todas las 13694 URLs en lotes <= 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre todas las 2794 URLs indexables en 1 lote <= 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -194,33 +260,34 @@ test('Bing IndexNow cubre todas las 13694 URLs en lotes <= 10000 y tiene archivo
 
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
-  const xml = generarSitemapXml(generarUrlsSitio(cat), '2026-11-16');
+  const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
+  const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias), '2026-11-16');
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 13694);
+  assert.equal(extraidas.length, 2794);
 
   const payloads = construirPayloadsIndexNow(extraidas);
-  assert.equal(payloads.length, 2);
-  assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
-  assert.equal(payloads[1].urlList.length, 3694);
+  assert.equal(payloads.length, 1);
+  assert.equal(payloads[0].urlList.length, 2794);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);
     assert.equal(p.keyLocation, INDEXNOW_KEY_LOCATION);
     assert.ok(p.urlList.length <= INDEXNOW_MAX_BATCH);
   }
-  assert.equal(payloads.reduce((acc, p) => acc + p.urlList.length, 0), 13694);
 });
 
 test('Google RSS + WebSub y Search Console Sitemaps API generan feed y JWT validos y Pages incluye CNAME/.nojekyll', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
-  const rss = generarRssXml(cat.hubs, cat.mensajesDe, new Date('2026-11-16T18:00:00Z'));
+  const rssDefault = generarRssXml(cat.hubs, cat.mensajesDe, new Date('2026-11-16T18:00:00Z'));
+  assert.equal((rssDefault.match(/<item>/g) || []).length, 60);
 
-  assert.ok(rss.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
-  assert.ok(rss.includes('<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'));
-  assert.ok(rss.includes(`<atom:link rel="hub" href="${WEBSUB_HUB}" />`));
-  assert.ok(rss.includes(`<atom:link rel="self" type="application/rss+xml" href="${FEED_URL}" />`));
-  assert.equal((rss.match(/<item>/g) || []).length, 60);
+  const rssConGuias = generarRssXml(cat.hubs, cat.mensajesDe, new Date('2026-11-16T18:00:00Z'), GUIAS_EDITORIALES);
+  assert.ok(rssConGuias.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
+  assert.ok(rssConGuias.includes('<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'));
+  assert.ok(rssConGuias.includes(`<atom:link rel="hub" href="${WEBSUB_HUB}" />`));
+  assert.ok(rssConGuias.includes(`<atom:link rel="self" type="application/rss+xml" href="${FEED_URL}" />`));
+  assert.equal((rssConGuias.match(/<item>/g) || []).length, 70);
 
   const { privateKey } = crypto.generateKeyPairSync('rsa', {
     modulusLength: 2048,

@@ -7,16 +7,25 @@ interface Props {
   jsonld?: any[];
   grupoActual?: string;
   slugActual?: string;
+  noindex?: boolean;
 }
-const { titulo, descripcion, jsonld = [], grupoActual = 'destinatarios', slugActual = '' } = Astro.props;
+const {
+  titulo,
+  descripcion,
+  jsonld = [],
+  grupoActual = 'destinatarios',
+  slugActual = '',
+  noindex = false
+} = Astro.props;
 const url = 'https://paracumpleanos.com' + Astro.url.pathname;
-const navTop = hubsPrincipales.slice(0, 12);
+const navTop = hubsPrincipales.slice(0, 11);
 ---
 <!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
   <meta name="yandex-verification" content="3c0fa054dfa66068" />
   <title>{titulo}</title>
   <meta name="description" content={descripcion} />
@@ -39,6 +48,7 @@ const navTop = hubsPrincipales.slice(0, 12);
     </div>
     <nav class="nav-hubs" aria-label="Destinatarios principales">
       {navTop.map(function (h) { return <a href={'/' + h.slug + '/'}>{h.emoji} {h.destinatario}</a>; })}
+      <a class="nav-guias" href="/guias/">📖 Guías</a>
       <a class="nav-todas" href="/categorias/">Todas ({hubs.length})</a>
     </nav>
   </header>
@@ -77,7 +87,9 @@ const navTop = hubsPrincipales.slice(0, 12);
     <p>ParaCumpleanos — {hubs.length} categorías de felicitaciones originales de cumpleaños.</p>
     <nav aria-label="Páginas institucionales">
       <a href="/categorias/">Categorías</a>
+      <a href="/guias/">Guías</a>
       <a href="/sobre-nosotros/">Sobre nosotros</a>
+      <a href="/contacto/">Contacto</a>
       <a href="/privacidad/">Privacidad</a>
       <a href="/terminos-de-uso/">Términos de uso</a>
     </nav>
@@ -117,18 +129,25 @@ const navTop = hubsPrincipales.slice(0, 12);
         var ctx = canvas.getContext('2d');
         if (!ctx) return;
 
+        var visualRef = document.querySelector('.tarjeta-visual');
+        var cInicio = (visualRef && visualRef.getAttribute('data-tema-inicio')) || '#fdf2f8';
+        var cMedio = (visualRef && visualRef.getAttribute('data-tema-medio')) || '#fff7ed';
+        var cFin = (visualRef && visualRef.getAttribute('data-tema-fin')) || '#e0f2fe';
+        var cBorde = (visualRef && visualRef.getAttribute('data-tema-borde')) || '#e91e8c';
+        var cAcento = (visualRef && visualRef.getAttribute('data-tema-acento')) || '#be185d';
+
         var grad = ctx.createLinearGradient(0, 0, 1080, 1080);
-        grad.addColorStop(0, '#fdf2f8');
-        grad.addColorStop(0.55, '#fff7ed');
-        grad.addColorStop(1, '#e0f2fe');
+        grad.addColorStop(0, cInicio);
+        grad.addColorStop(0.55, cMedio);
+        grad.addColorStop(1, cFin);
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 1080, 1080);
 
-        ctx.strokeStyle = '#e91e8c';
+        ctx.strokeStyle = cBorde;
         ctx.lineWidth = 10;
         ctx.strokeRect(48, 48, 984, 984);
 
-        ctx.fillStyle = '#be185d';
+        ctx.fillStyle = cAcento;
         ctx.textAlign = 'center';
         ctx.font = '72px system-ui, sans-serif';
         ctx.fillText(emojiCard, 540, 170);

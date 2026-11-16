@@ -156,14 +156,40 @@ export function migasLd(items: { name: string; url: string }[]): any {
   };
 }
 
-export function generarUrlsSitio(catalogo: ReturnType<typeof crearCatalogo>): string[] {
+export const MIN_PALABRAS_INDEXABLE = 140;
+
+export function construirSetIndexables(todosMensajes: any[]): Set<string> {
+  const indexables = new Set<string>();
+  const cuerposVistos = new Set<string>();
+  for (let i = 0; i < todosMensajes.length; i++) {
+    const m = todosMensajes[i];
+    const texto = String(m.texto || '').trim();
+    const palabras = texto ? texto.split(/\s+/).length : 0;
+    if (palabras >= MIN_PALABRAS_INDEXABLE && !cuerposVistos.has(texto)) {
+      cuerposVistos.add(texto);
+      indexables.add(m.slug);
+    }
+  }
+  return indexables;
+}
+
+export function generarUrlsSitio(
+  catalogo: ReturnType<typeof crearCatalogo>,
+  slugsGuias: string[] = []
+): string[] {
   const urls: string[] = [
     `${SITIO}/`,
     `${SITIO}/categorias/`,
+    `${SITIO}/guias/`,
     `${SITIO}/sobre-nosotros/`,
+    `${SITIO}/contacto/`,
     `${SITIO}/privacidad/`,
     `${SITIO}/terminos-de-uso/`
   ];
+
+  for (const slugGuia of slugsGuias) {
+    urls.push(`${SITIO}/guias/${slugGuia}/`);
+  }
 
   for (const h of catalogo.hubs) {
     urls.push(`${SITIO}/${h.slug}/`);
@@ -173,8 +199,11 @@ export function generarUrlsSitio(catalogo: ReturnType<typeof crearCatalogo>): st
     }
   }
 
+  const indexables = construirSetIndexables(catalogo.todosMensajes);
   for (const m of catalogo.todosMensajes) {
-    urls.push(`${SITIO}/${m.slug}/`);
+    if (indexables.has(m.slug)) {
+      urls.push(`${SITIO}/${m.slug}/`);
+    }
   }
 
   return urls;

@@ -1,10 +1,41 @@
 ---
 import Base from '../layouts/Base.astro';
-import { hubs, todosMensajes } from '../lib/contenido.ts';
+import { MARCA, SITIO, GRUPOS, hubs, todosMensajes, migasLd } from '../lib/contenido.ts';
+import { GUIAS_EDITORIALES } from '../data/guias.ts';
+
+const jsonld = [
+  migasLd([
+    { name: 'Inicio', url: `${SITIO}/` },
+    { name: 'Sobre nosotros', url: `${SITIO}/sobre-nosotros/` }
+  ])
+];
 ---
-<Base titulo="Sobre nosotros - ParaCumpleanos" descripcion={`Conocé ParaCumpleanos: ${hubs.length} categorías con ${todosMensajes.length.toLocaleString('es-AR')} felicitaciones de cumpleaños originales, escritas por personas, para hacer más lindo el día de quien más querés.`}>
+<Base
+  titulo={`Sobre nosotros - ${MARCA}`}
+  descripcion={`Conocé cómo trabaja el Equipo Editorial de ${MARCA}: ${hubs.length} categorías, guías prácticas y textos originales escritos y revisados para celebrar cada vínculo.`}
+  jsonld={jsonld}
+>
+  <nav class="migas" aria-label="Migas de pan">
+    <a href="/">Inicio</a> › <span>Sobre nosotros</span>
+  </nav>
   <h1>Sobre nosotros</h1>
-  <p>ParaCumpleanos nació de una idea simple: nadie debería quedarse sin palabras en el cumpleaños de alguien importante. Acá reunimos {todosMensajes.length.toLocaleString('es-AR')} felicitaciones originales organizadas en {hubs.length} categorías pensadas para cada destinatario, edad, tono y ocasión especial.</p>
-  <p>Todos los mensajes de este sitio son de creación propia. No copiamos frases de otros sitios: nuestro Equipo Editorial escribe, revisa y valida cada texto para que suene natural, cálido y listo para compartir por WhatsApp, redes sociales o tarjeta descargable.</p>
-  <p>Nuestro objetivo es que encuentres la felicitación perfecta en menos de tres clics, la copies o descargues como tarjeta y la envíes. Así de fácil.</p>
+  <p class="lead"><strong>{MARCA}</strong> nació de una idea simple: nadie debería quedarse sin palabras o mandar una frase fría de apuro en el cumpleaños o aniversario de alguien que quiere.</p>
+
+  <h2>Qué hacemos y cómo redactamos</h2>
+  <p>Reunimos <strong>{hubs.length} categorías especializadas</strong> organizadas en {GRUPOS.length} secciones temáticas —desde familia cercana y amistad hasta cartas largas, cumpleaños cristianos, edades hito, aniversarios y homenajes respetuosos— junto con <a href="/guias/">guías prácticas de redacción y celebración</a>.</p>
+  <p>Todo el material es editado y revisado por nuestro Equipo Editorial en español rioplatense y neutro cercano, buscando un tono humano, cálido y fácil de adaptar con nuestro personalizador en vivo.</p>
+
+  <h2>Nuestro estándar editorial</h2>
+  <ul class="lista-editorial">
+    <li><strong>Cuidado real del contexto:</strong> separamos estrictamente cada vínculo y situación. Nunca mezclamos tonos festivos en fechas de recuerdo a seres queridos fallecidos, ni confundimos aniversarios de pareja con cumpleaños.</li>
+    <li><strong>Variedad útil:</strong> distinguimos textos breves pensados para WhatsApp o estados de textos extensos en formato carta para quienes buscan escribir con calma.</li>
+    <li><strong>Personalización antes de copiar:</strong> creemos que una buena base solo brilla cuando le sumás el nombre de quien cumple y tu firma real, por eso sumamos herramientas interactivas gratuitas en cada categoría y tarjeta.</li>
+    <li><strong>Revisión continua:</strong> revisamos ortografía, concordancia y claridad periódicamente gracias a las sugerencias que llegan por nuestra sección de <a href="/contacto/">Contacto</a>.</li>
+  </ul>
+
+  <h2>Transparencia y sostenimiento</h2>
+  <p>{MARCA} es un proyecto independiente y gratuito. Para sostener el alojamiento, la edición de nuevas guías y las mejoras técnicas del sitio, podemos mostrar publicidad mediante plataformas como Google AdSense, siempre bajo nuestras pautas detalladas en la <a href="/privacidad/">Política de privacidad</a>.</p>
+
+  <h2>Cómo ponerte en contacto</h2>
+  <p>Si querés sugerir una nueva categoría, avisarnos de un error o enviarnos una consulta editorial, escribinos directamente a <a href="mailto:contacto@paracumpleanos.com">contacto@paracumpleanos.com</a> o pasá por nuestra <a href="/contacto/">página de contacto</a>.</p>
 </Base>

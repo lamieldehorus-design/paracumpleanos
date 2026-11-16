@@ -40,6 +40,17 @@ function cargarUrlsDesdeSitemap(sitemapPath) {
   return urls;
 }
 
+function cargarSlugsGuias() {
+  const guiasPath = path.resolve('src/data/guias.ts');
+  if (!fs.existsSync(guiasPath)) return [];
+  const src = fs.readFileSync(guiasPath, 'utf8');
+  const slugs = [];
+  for (const m of src.matchAll(/\n  \{\n    slug: '([^']+)'/g)) {
+    slugs.push(m[1]);
+  }
+  return slugs;
+}
+
 function cargarUrlsDesdeCatalogo() {
   const base = JSON.parse(fs.readFileSync(path.resolve('data/contenido.json'), 'utf8'));
   const catDir = path.resolve('data/categorias');
@@ -66,10 +77,16 @@ function cargarUrlsDesdeCatalogo() {
   const urls = [
     `https://${HOST}/`,
     `https://${HOST}/categorias/`,
+    `https://${HOST}/guias/`,
     `https://${HOST}/sobre-nosotros/`,
+    `https://${HOST}/contacto/`,
     `https://${HOST}/privacidad/`,
     `https://${HOST}/terminos-de-uso/`
   ];
+
+  for (const slugGuia of cargarSlugsGuias()) {
+    urls.push(`https://${HOST}/guias/${slugGuia}/`);
+  }
 
   for (const h of hubs) {
     urls.push(`https://${HOST}/${h.slug}/`);
@@ -79,8 +96,14 @@ function cargarUrlsDesdeCatalogo() {
     }
   }
 
+  const cuerposVistos = new Set();
   for (const m of mensajes) {
-    urls.push(`https://${HOST}/${m.slug}/`);
+    const texto = String(m.texto || '').trim();
+    const palabras = texto ? texto.split(/\s+/).length : 0;
+    if (palabras >= 140 && !cuerposVistos.has(texto)) {
+      cuerposVistos.add(texto);
+      urls.push(`https://${HOST}/${m.slug}/`);
+    }
   }
 
   return Array.from(new Set(urls));

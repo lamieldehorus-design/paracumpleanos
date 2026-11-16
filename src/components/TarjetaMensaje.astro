@@ -8,8 +8,14 @@ const bloquePrincipal = bloques.find((b: string) => !(b.length < 55 && /[:,]$/.t
 const plano = bloquePrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
 const resumen = plano.length <= 120 ? plano : plano.slice(0, 120).replace(/\s+\S*$/, '') + '…';
 ---
-<article class="card">
+<article
+  class="card"
+  data-card-personalizable="1"
+  data-orig-titulo={m.titulo}
+  data-orig-texto={m.texto}
+  data-orig-resumen={resumen}
+>
   <h3><a href={'/' + m.slug + '/'}>{m.titulo}</a></h3>
-  <p>{resumen}</p>
+  <p class="card-resumen">{resumen}</p>
   <Compartir texto={m.titulo + '. ' + m.texto} url={SITIO + '/' + m.slug + '/'} />
 </article>

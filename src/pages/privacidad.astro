@@ -1,13 +1,51 @@
 ---
 import Base from '../layouts/Base.astro';
+import { MARCA, SITIO, migasLd } from '../lib/contenido.ts';
+
+const jsonld = [
+  migasLd([
+    { name: 'Inicio', url: `${SITIO}/` },
+    { name: 'Política de privacidad', url: `${SITIO}/privacidad/` }
+  ])
+];
 ---
-<Base titulo="Política de privacidad - ParaCumpleanos" descripcion="Política de privacidad de ParaCumpleanos: qué datos tratamos, cómo usamos las cookies y cómo ejercer tus derechos.">
-  <h1>Política de privacidad</h1>
-  <p>En ParaCumpleanos respetamos tu privacidad. Este sitio es informativo: podés leer, copiar y compartir las felicitaciones sin registrarte ni dar ningún dato personal.</p>
-  <h2>Datos que tratamos</h2>
-  <p>No solicitamos datos personales. Usamos servicios de terceros (como el alojamiento y la analítica) que pueden registrar datos técnicos de navegación de forma anónima, conforme a sus propias políticas.</p>
-  <h2>Cookies</h2>
-  <p>Podemos usar cookies técnicas y de analítica para mejorar la experiencia. Podés borrarlas o bloquearlas desde la configuración de tu navegador.</p>
-  <h2>Tus derechos</h2>
-  <p>Si tenés preguntas sobre esta política, escribinos desde la página de contacto. Nos comprometemos a responder a la brevedad.</p>
+<Base
+  titulo={`Política de privacidad y cookies - ${MARCA}`}
+  descripcion={`Política de privacidad y cookies de ${MARCA}: tratamiento de datos, uso de cookies de terceros y Google AdSense, analítica y derechos del usuario.`}
+  jsonld={jsonld}
+>
+  <nav class="migas" aria-label="Migas de pan">
+    <a href="/">Inicio</a> › <span>Política de privacidad</span>
+  </nav>
+  <h1>Política de privacidad y cookies</h1>
+  <p class="fechas-meta">Última actualización: <time datetime="2026-11-16">16 de noviembre de 2026</time></p>
+  <p>En <strong>{MARCA}</strong> (<code>https://paracumpleanos.com</code>) respetamos tu privacidad. El sitio es de acceso libre e informativo: podés navegar, leer, personalizar mensajes, copiar textos y descargar tarjetas sin registrarte ni entregar datos personales.</p>
+
+  <h2>1. Datos que recopilamos</h2>
+  <p>No contamos con formularios de registro, perfiles de usuario ni bases de datos con información identificable. La función de personalización de tarjetas (nombre y firma dentro de la vista previa) se ejecuta íntegramente en tu navegador y utiliza almacenamiento temporal de sesión (<code>sessionStorage</code>), sin enviarse a servidores propios.</p>
+  <p>Si elegís escribirnos mediante nuestro correo electrónico oficial desde <a href="/contacto/">la página de contacto</a>, trataremos únicamente tu dirección de correo y el mensaje enviado con el único fin de responder tu consulta.</p>
+
+  <h2>2. Publicidad de terceros y Google AdSense</h2>
+  <p>{MARCA} participa o puede participar en el programa publicitario de <strong>Google AdSense</strong> para financiar la creación y el mantenimiento gratuito de nuestras guías y categorías.</p>
+  <ul class="lista-editorial">
+    <li>Los proveedores externos, incluido <strong>Google</strong>, utilizan cookies para mostrar anuncios en función de las visitas anteriores del usuario a este sitio web o a otros sitios de internet.</li>
+    <li>El uso de cookies de publicidad por parte de Google le permite a Google y a sus socios mostrar anuncios basados en tu navegación en este y otros sitios web.</li>
+    <li>Podés inhabilitar la publicidad personalizada en cualquier momento desde la página oficial de <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer">Configuración de anuncios de Google</a>.</li>
+    <li>También podés gestionar o rechazar cookies de proveedores externos participantes visitando <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">aboutads.info/choices</a> (o <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener noreferrer">Your Online Choices</a> en Europa).</li>
+  </ul>
+
+  <h2>3. Medición y analítica web (Statcounter)</h2>
+  <p>Utilizamos Statcounter para obtener estadísticas agregadas y anónimas de tráfico (páginas vistas, país aproximado y tipo de dispositivo) que nos ayudan a mejorar el contenido del sitio. Estas mediciones no buscan identificarte personalmente.</p>
+
+  <h2>4. Cómo controlar o desactivar cookies</h2>
+  <p>Podés bloquear, restringir o eliminar las cookies desde las preferencias de tu navegador web (Chrome, Firefox, Safari, Edge u otros). Tené en cuenta que algunas opciones publicitarias o preferencias locales pueden restablecerse si borrás todas las cookies del navegador.</p>
+
+  <h2>5. Usuarios en el Espacio Económico Europeo (EEE) y Reino Unido</h2>
+  <p>En caso de mostrarse publicidad personalizada a visitantes del Espacio Económico Europeo, el Reino Unido o Suiza, solicitamos el consentimiento previo conforme a las políticas de consentimiento de usuarios de la Unión Europea y las normativas de protección de datos aplicables.</p>
+
+  <h2>6. Enlaces externos</h2>
+  <p>Algunas herramientas para compartir enlaces (como WhatsApp o Facebook) abren servicios de terceros que se rigen por sus propias políticas de privacidad y condiciones de uso.</p>
+
+  <h2>7. Contacto y ejercicio de derechos</h2>
+  <p>Si tenés dudas sobre esta política, querés consultar sobre el tratamiento de datos o solicitar información adicional, podés escribirnos a <a href="mailto:contacto@paracumpleanos.com">contacto@paracumpleanos.com</a> o visitar nuestra <a href="/contacto/">página de contacto</a>.</p>
 </Base>

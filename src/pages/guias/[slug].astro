@@ -1,0 +1,113 @@
+---
+import Base from '../../layouts/Base.astro';
+import { GUIAS_EDITORIALES } from '../../data/guias.ts';
+import { MARCA, SITIO, migasLd } from '../../lib/contenido.ts';
+
+export function getStaticPaths() {
+  return GUIAS_EDITORIALES.map(function (guia, idx) {
+    const otras = GUIAS_EDITORIALES.filter(function (_, i) { return i !== idx; }).slice(0, 4);
+    return {
+      params: { slug: guia.slug },
+      props: { guia, otras }
+    };
+  });
+}
+
+const { guia, otras } = Astro.props;
+const urlGuia = `${SITIO}/guias/${guia.slug}/`;
+const jsonld = [
+  migasLd([
+    { name: 'Inicio', url: `${SITIO}/` },
+    { name: 'Guías editoriales', url: `${SITIO}/guias/` },
+    { name: guia.titulo, url: urlGuia }
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: guia.h1,
+    description: guia.descripcion,
+    datePublished: guia.fechaPublicacion,
+    dateModified: guia.fechaPublicacion,
+    inLanguage: 'es-AR',
+    author: {
+      '@type': 'Organization',
+      name: guia.autor,
+      url: `${SITIO}/sobre-nosotros/`
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: MARCA,
+      url: `${SITIO}/`
+    },
+    mainEntityOfPage: urlGuia
+  }
+];
+---
+<Base
+  titulo={`${guia.titulo} - ${MARCA}`}
+  descripcion={guia.descripcion}
+  jsonld={jsonld}
+>
+  <nav class="migas" aria-label="Migas de pan">
+    <a href="/">Inicio</a> › <a href="/guias/">Guías editoriales</a> › <span>{guia.titulo}</span>
+  </nav>
+
+  <article class="articulo-guia">
+    <header class="articulo-cabecera">
+      <p class="guia-meta">
+        <span aria-hidden="true">{guia.emoji}</span>
+        <span>{guia.tiempoLectura}</span>
+        <span>·</span>
+        <span>Por <a href="/sobre-nosotros/">{guia.autor}</a></span>
+        <span>·</span>
+        <time datetime={guia.fechaPublicacion}>{guia.fechaPublicacion}</time>
+      </p>
+      <h1>{guia.h1}</h1>
+      <p class="lead">{guia.resumen}</p>
+    </header>
+
+    {guia.secciones.map(function (sec) {
+      return (
+        <section class="articulo-seccion">
+          <h2>{sec.subtitulo}</h2>
+          {sec.parrafos.map(function (p) {
+            return <p>{p}</p>;
+          })}
+          {sec.lista && sec.lista.length ? (
+            <ul class="lista-editorial">
+              {sec.lista.map(function (item) {
+                return <li>{item}</li>;
+              })}
+            </ul>
+          ) : null}
+        </section>
+      );
+    })}
+
+    <section class="guia-categoria" aria-labelledby="cats-guia">
+      <h2 id="cats-guia">Categorías recomendadas para poner esto en práctica</h2>
+      <p>Abrí cualquiera de estas colecciones y usá el personalizador en vivo para agregar el nombre y tu firma antes de copiar o descargar la tarjeta:</p>
+      <div class="chips">
+        {guia.categoriasRelacionadas.map(function (c) {
+          return <a class="chip" href={`/${c.slug}/`}>{c.nombre}</a>;
+        })}
+      </div>
+    </section>
+  </article>
+
+  <section class="hermanas" aria-labelledby="otras-guias-titulo">
+    <h2 id="otras-guias-titulo">Seguí leyendo otras guías</h2>
+    <div class="guias-grid">
+      {otras.map(function (o) {
+        return (
+          <article class="card guia-card">
+            <p class="guia-meta"><span>{o.emoji}</span> <span>{o.tiempoLectura}</span></p>
+            <h3><a href={`/guias/${o.slug}/`}>{o.titulo}</a></h3>
+            <p>{o.resumen}</p>
+          </article>
+        );
+      })}
+    </div>
+    <p class="ver-tambien"><a href="/guias/">Ver las {GUIAS_EDITORIALES.length} guías completas →</a></p>
+  </section>
+</Base>

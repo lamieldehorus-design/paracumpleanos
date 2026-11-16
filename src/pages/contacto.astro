@@ -1,0 +1,120 @@
+---
+import Base from '../layouts/Base.astro';
+import { MARCA, SITIO, migasLd } from '../lib/contenido.ts';
+
+const jsonld = [
+  migasLd([
+    { name: 'Inicio', url: `${SITIO}/` },
+    { name: 'Contacto', url: `${SITIO}/contacto/` }
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: `Contacto - ${MARCA}`,
+    url: `${SITIO}/contacto/`,
+    inLanguage: 'es-AR'
+  }
+];
+---
+<Base
+  titulo={`Contacto - ${MARCA}`}
+  descripcion={`Escribile al Equipo Editorial de ${MARCA} para sugerir nuevas categorías, reportar correcciones o hacer consultas sobre privacidad y uso del sitio.`}
+  jsonld={jsonld}
+>
+  <nav class="migas" aria-label="Migas de pan">
+    <a href="/">Inicio</a> › <span>Contacto</span>
+  </nav>
+  <h1>Contacto</h1>
+  <p class="lead">¿Querés sugerir una nueva categoría, corregir algún detalle en un texto o hacernos una consulta editorial o de privacidad? Escribinos directamente y te respondemos a la brevedad.</p>
+
+  <div class="contacto-tarjetas">
+    <div class="card">
+      <h2>Correo editorial y soporte</h2>
+      <p>Podés escribirnos de forma directa a nuestra casilla principal:</p>
+      <p class="contacto-email">
+        <a href="mailto:contacto@paracumpleanos.com">contacto@paracumpleanos.com</a>
+      </p>
+      <p class="texto-ayuda">Respondemos consultas editoriales, sugerencias de categorías nuevas y solicitudes vinculadas a nuestra <a href="/privacidad/">Política de privacidad</a> de lunes a viernes dentro de las 48 horas hábiles.</p>
+    </div>
+
+    <div class="card">
+      <h2>Para qué podés escribirnos</h2>
+      <ul class="lista-editorial">
+        <li>Pedir una categoría nueva para un destinatario u ocasión específica.</li>
+        <li>Proponer mejoras de redacción o señalar algún error tipográfico.</li>
+        <li>Consultas sobre derechos de uso, atribuciones o avisos legales.</li>
+        <li>Consultas relacionadas con privacidad, cookies o publicidad en el sitio.</li>
+      </ul>
+    </div>
+  </div>
+
+  <section class="form-contacto-bloque" aria-labelledby="titulo-form-contacto">
+    <h2 id="titulo-form-contacto">Preparar mensaje rápido para enviar por correo</h2>
+    <p>Completá estos campos para armar tu mensaje listo y abrirlo en tu aplicación de correo (sin registros ni bases de datos externas).</p>
+    <form id="form-contacto" class="form-contacto" novalidate>
+      <div class="form-fila">
+        <label for="c-nombre">Tu nombre</label>
+        <input id="c-nombre" name="nombre" type="text" maxlength="80" placeholder="Ej.: Martín" required />
+      </div>
+      <div class="form-fila">
+        <label for="c-asunto">Motivo de consulta</label>
+        <select id="c-asunto" name="asunto">
+          <option value="Sugerencia de categoría o frase">Sugerencia de categoría o frase</option>
+          <option value="Corrección editorial">Corrección editorial</option>
+          <option value="Privacidad y datos">Privacidad y cookies</option>
+          <option value="Consulta general">Consulta general</option>
+        </select>
+      </div>
+      <div class="form-fila">
+        <label for="c-mensaje">Mensaje</label>
+        <textarea id="c-mensaje" name="mensaje" rows="5" maxlength="1200" placeholder="Contanos en qué te podemos ayudar..." required></textarea>
+      </div>
+      <div class="form-acciones">
+        <button type="submit" class="btn btn-copiar">Preparar correo</button>
+      </div>
+      <div id="c-resultado" class="contacto-resultado" aria-live="polite" hidden></div>
+    </form>
+  </section>
+</Base>
+
+<script is:inline>
+  (function () {
+    var form = document.getElementById('form-contacto');
+    var res = document.getElementById('c-resultado');
+    if (!form || !res) return;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var nombre = (document.getElementById('c-nombre').value || '').trim();
+      var asunto = (document.getElementById('c-asunto').value || 'Consulta').trim();
+      var mensaje = (document.getElementById('c-mensaje').value || '').trim();
+
+      res.innerHTML = '';
+      res.hidden = false;
+
+      if (!nombre || !mensaje) {
+        res.className = 'contacto-resultado error';
+        res.textContent = 'Por favor completá tu nombre y el mensaje antes de continuar.';
+        return;
+      }
+
+      var cuerpo = 'Hola Equipo Editorial de ParaCumpleanos,\n\n' + mensaje + '\n\nSaludos,\n' + nombre;
+      var hrefMail =
+        'mailto:contacto@paracumpleanos.com?subject=' +
+        encodeURIComponent('[ParaCumpleanos] ' + asunto) +
+        '&body=' +
+        encodeURIComponent(cuerpo);
+
+      res.className = 'contacto-resultado ok';
+      var p = document.createElement('p');
+      p.textContent = 'Tu mensaje quedó listo para enviar desde tu cliente de correo:';
+      res.appendChild(p);
+
+      var a = document.createElement('a');
+      a.className = 'btn btn-wa';
+      a.href = hrefMail;
+      a.textContent = 'Abrir en tu app de correo';
+      res.appendChild(a);
+    });
+  })();
+</script>

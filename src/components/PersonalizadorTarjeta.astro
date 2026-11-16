@@ -1,0 +1,250 @@
+---
+import { TEMAS_TARJETA } from '../lib/personalizador.ts';
+
+interface Props {
+  modo?: 'hub' | 'mensaje';
+}
+const { modo = 'hub' } = Astro.props;
+const temas = Object.values(TEMAS_TARJETA);
+---
+<section class="personalizador" aria-label="Personalizar felicitación en vivo" data-modo={modo}>
+  <div class="personalizador-cabecera">
+    <h2 class="personalizador-titulo">✨ Personalizá esta felicitación al instante</h2>
+    <p class="personalizador-desc">
+      {modo === 'mensaje'
+        ? 'Escribí el nombre de quien cumple y tu firma: el texto, el enlace de WhatsApp, la copia y la tarjeta descargable se actualizan en vivo.'
+        : 'Escribí el nombre de quien cumple años y tu firma para adaptar en vivo todas las tarjetas de esta página y elegir el estilo visual.'}
+    </p>
+  </div>
+  <div class="personalizador-controles">
+    <div class="pers-campo">
+      <label for="pers-nombre">Nombre o apodo</label>
+      <input id="pers-nombre" type="text" maxlength="40" placeholder="Ej.: Laura, Mamá, Juampi" autocomplete="off" />
+    </div>
+    <div class="pers-campo">
+      <label for="pers-firma">Tu firma</label>
+      <input id="pers-firma" type="text" maxlength="40" placeholder="Ej.: Tu hija Sofi, Los chicos" autocomplete="off" />
+    </div>
+    <div class="pers-campo pers-campo-temas">
+      <span class="pers-etiqueta">Estilo de tarjeta</span>
+      <div class="pers-temas" role="radiogroup" aria-label="Color de la tarjeta visual">
+        {temas.map(function (t, idx) {
+          return (
+            <button
+              type="button"
+              class={'pers-tema-btn' + (idx === 0 ? ' activo' : '')}
+              data-tema={t.id}
+              data-fondo={t.fondoCss}
+              data-inicio={t.gradInicio}
+              data-medio={t.gradMedio}
+              data-fin={t.gradFin}
+              data-borde={t.borde}
+              data-acento={t.acento}
+              aria-pressed={idx === 0 ? 'true' : 'false'}
+            >
+              <span class="pers-swatch" style={`background:${t.fondoCss};border-color:${t.borde}`}></span>
+              <span>{t.nombre}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+    <div class="pers-acciones">
+      <button type="button" id="pers-limpiar" class="pers-limpiar">Limpiar</button>
+    </div>
+  </div>
+  <p class="personalizador-estado" id="pers-estado" aria-live="polite"></p>
+</section>
+
+<script is:inline>
+  (function () {
+    var inputNombre = document.getElementById('pers-nombre');
+    var inputFirma = document.getElementById('pers-firma');
+    var btnLimpiar = document.getElementById('pers-limpiar');
+    var estadoEl = document.getElementById('pers-estado');
+    var temaBtns = document.querySelectorAll('.pers-tema-btn');
+    if (!inputNombre || !inputFirma) return;
+
+    function limpiarCampo(val) {
+      return String(val || '')
+        .replace(/[\r\n\t]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 40);
+    }
+
+    function personalizar(baseTexto, nombre, firma) {
+      var base = String(baseTexto || '').trim();
+      if (!base) return '';
+      var n = limpiarCampo(nombre);
+      var f = limpiarCampo(firma);
+      var res = base;
+      if (n) {
+        var esc = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        var reg = new RegExp('(^|\\s|[¡¿])' + esc + '([,:!.]|\\s|$)', 'i');
+        if (!reg.test(res)) {
+          res = n + ', ' + res.charAt(0).toLowerCase() + res.slice(1);
+        }
+      }
+      if (f) {
+        res = res + '\n\n— ' + f;
+      }
+      return res;
+    }
+
+    function resumirTexto(texto) {
+      var bloques = String(texto || '').split('\n\n').map(function (b) { return b.trim(); }).filter(Boolean);
+      var principal = bloques[0] || '';
+      var plano = principal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
+      if (plano.length <= 135) return plano;
+      return plano.slice(0, 135).replace(/\s+\S*$/, '') + '…';
+    }
+
+    var temaActual = temaBtns.length ? temaBtns[0].getAttribute('data-tema') || 'rosa' : 'rosa';
+
+    function aplicarTema(temaId) {
+      var elegido = null;
+      temaBtns.forEach(function (b) {
+        var es = b.getAttribute('data-tema') === temaId;
+        b.classList.toggle('activo', es);
+        b.setAttribute('aria-pressed', es ? 'true' : 'false');
+        if (es) elegido = b;
+      });
+      if (!elegido && temaBtns.length) {
+        elegido = temaBtns[0];
+        temaId = elegido.getAttribute('data-tema') || 'rosa';
+      }
+      if (!elegido) return;
+      temaActual = temaId;
+      var fondo = elegido.getAttribute('data-fondo');
+      var inicio = elegido.getAttribute('data-inicio');
+      var medio = elegido.getAttribute('data-medio');
+      var fin = elegido.getAttribute('data-fin');
+      var borde = elegido.getAttribute('data-borde');
+      var acento = elegido.getAttribute('data-acento');
+
+      document.querySelectorAll('.tarjeta-visual').forEach(function (card) {
+        card.style.background = fondo;
+        card.style.borderColor = borde;
+        card.setAttribute('data-tema-inicio', inicio);
+        card.setAttribute('data-tema-medio', medio);
+        card.setAttribute('data-tema-fin', fin);
+        card.setAttribute('data-tema-borde', borde);
+        card.setAttribute('data-tema-acento', acento);
+        var tit = card.querySelector('.tarjeta-visual-titulo');
+        if (tit) tit.style.color = acento;
+      });
+    }
+
+    function renderizarMensajeUnico(nombre, firma) {
+      var contenedor = document.getElementById('mensaje-cuerpo');
+      if (!contenedor) return;
+      var origTexto = contenedor.getAttribute('data-orig-texto') || '';
+      var origTitulo = contenedor.getAttribute('data-orig-titulo') || '';
+      var textoPers = personalizar(origTexto, nombre, firma);
+      var parrafos = textoPers.split('\n\n').filter(Boolean);
+
+      contenedor.innerHTML = '';
+      parrafos.forEach(function (p) {
+        var el = document.createElement('p');
+        el.className = 'mensaje';
+        var lineas = p.split('\n');
+        lineas.forEach(function (linea, idx) {
+          if (idx > 0) el.appendChild(document.createElement('br'));
+          el.appendChild(document.createTextNode(linea));
+        });
+        contenedor.appendChild(el);
+      });
+
+      var completo = (origTitulo ? origTitulo + '. ' : '') + textoPers;
+      var root = document.getElementById('mensaje-detalle-bloque');
+      if (root) {
+        var btnCop = root.querySelector('.btn-copiar');
+        if (btnCop) btnCop.setAttribute('data-text', completo);
+        var btnWa = root.querySelector('.btn-wa');
+        if (btnWa) btnWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(completo));
+        var btnDl = root.querySelector('.btn-descargar');
+        var visualExt = root.querySelector('.tarjeta-visual-extracto');
+        var extOrig = root.getAttribute('data-orig-extracto') || '';
+        var extFinal = (limpiarCampo(nombre) || limpiarCampo(firma)) ? resumirTexto(textoPers) : extOrig;
+        if (visualExt) visualExt.textContent = extFinal;
+        if (btnDl) btnDl.setAttribute('data-body', extFinal);
+      }
+    }
+
+    function renderizarTarjetasListado(nombre, firma) {
+      var hayPers = Boolean(limpiarCampo(nombre) || limpiarCampo(firma));
+      document.querySelectorAll('[data-card-personalizable]').forEach(function (card) {
+        var origTit = card.getAttribute('data-orig-titulo') || '';
+        var origTxt = card.getAttribute('data-orig-texto') || '';
+        var origRes = card.getAttribute('data-orig-resumen') || '';
+        var persTxt = personalizar(origTxt, nombre, firma);
+        var completo = (origTit ? origTit + '. ' : '') + persTxt;
+
+        var resEl = card.querySelector('.card-resumen');
+        if (resEl) {
+          resEl.textContent = hayPers ? resumirTexto(persTxt) : origRes;
+        }
+        var btnCop = card.querySelector('.btn-copiar');
+        if (btnCop) btnCop.setAttribute('data-text', completo);
+        var btnWa = card.querySelector('.btn-wa');
+        if (btnWa) btnWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(completo));
+      });
+    }
+
+    function aplicarTodo(guardar) {
+      var nombre = inputNombre.value;
+      var firma = inputFirma.value;
+      renderizarTarjetasListado(nombre, firma);
+      renderizarMensajeUnico(nombre, firma);
+
+      var nLimpio = limpiarCampo(nombre);
+      var fLimpia = limpiarCampo(firma);
+      if (estadoEl) {
+        if (nLimpio || fLimpia) {
+          var partes = [];
+          if (nLimpio) partes.push('para ' + nLimpio);
+          if (fLimpia) partes.push('firmado por ' + fLimpia);
+          estadoEl.textContent = 'Vista previa personalizada activa (' + partes.join(' · ') + ').';
+        } else {
+          estadoEl.textContent = '';
+        }
+      }
+      if (guardar) {
+        try {
+          sessionStorage.setItem('pc_pers_nombre', nLimpio);
+          sessionStorage.setItem('pc_pers_firma', fLimpia);
+          sessionStorage.setItem('pc_pers_tema', temaActual);
+        } catch (err) {}
+      }
+    }
+
+    inputNombre.addEventListener('input', function () { aplicarTodo(true); });
+    inputFirma.addEventListener('input', function () { aplicarTodo(true); });
+    temaBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        aplicarTema(btn.getAttribute('data-tema') || 'rosa');
+        aplicarTodo(true);
+      });
+    });
+
+    if (btnLimpiar) {
+      btnLimpiar.addEventListener('click', function () {
+        inputNombre.value = '';
+        inputFirma.value = '';
+        aplicarTema('rosa');
+        aplicarTodo(true);
+      });
+    }
+
+    try {
+      var sNom = sessionStorage.getItem('pc_pers_nombre') || '';
+      var sFir = sessionStorage.getItem('pc_pers_firma') || '';
+      var sTem = sessionStorage.getItem('pc_pers_tema') || 'rosa';
+      if (sNom) inputNombre.value = sNom;
+      if (sFir) inputFirma.value = sFir;
+      if (sTem && sTem !== 'rosa') aplicarTema(sTem);
+      if (sNom || sFir) aplicarTodo(false);
+    } catch (err) {}
+  })();
+</script>

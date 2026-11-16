@@ -10,7 +10,9 @@ import {
   GRUPOS,
   metaDe,
   nombreHub,
-  migasLd
+  migasLd,
+  MIN_PALABRAS_INDEXABLE,
+  construirSetIndexables
 } from './catalogo';
 
 const modulos = import.meta.glob('../../data/categorias/*.json', { eager: true });
@@ -20,6 +22,12 @@ Object.values(modulos as any).forEach(function (m: any) {
 });
 
 const catalogo = crearCatalogo((base as any[]).concat(extras));
+
+export const indexablesSet = construirSetIndexables(catalogo.todosMensajes);
+
+export function esMensajeIndexable(registro: any): boolean {
+  return Boolean(registro && registro.tipo === 'mensaje' && indexablesSet.has(registro.slug));
+}
 
 export const {
   contenido,
@@ -45,5 +53,6 @@ export {
   GRUPOS,
   metaDe,
   nombreHub,
-  migasLd
+  migasLd,
+  MIN_PALABRAS_INDEXABLE
 };

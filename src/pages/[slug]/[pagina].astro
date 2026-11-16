@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import TarjetaMensaje from '../../components/TarjetaMensaje.astro';
 import Hermanas from '../../components/Hermanas.astro';
+import PersonalizadorTarjeta from '../../components/PersonalizadorTarjeta.astro';
 import { hubs, POR_PAGINA, SITIO, MARCA, mensajesDe, nombreHub, migasLd } from '../../lib/contenido.ts';
 export function getStaticPaths() {
   const paths: any[] = [];
@@ -34,6 +35,7 @@ const jsonld = [migasLd([
   <h1>{hub.h1} (página {pagina})</h1>
   <p class="lead">{hub.meta}</p>
   <p class="contador">Página {pagina} de {total} · {msj.length} felicitaciones</p>
+  <PersonalizadorTarjeta modo="hub" />
   <div class="grilla">
     {lote.map(function (m) { return <TarjetaMensaje m={m} />; })}
   </div>
