@@ -32,6 +32,7 @@ const jsonld = [migasLd([
     <a href="/">Inicio</a> › <a href={'/' + hub.slug + '/'}>{nombreHub(hub)}</a> › <span>Página {pagina}</span>
   </nav>
   <h1>{hub.h1} (página {pagina})</h1>
+  <p class="lead">{hub.meta}</p>
   <p class="contador">Página {pagina} de {total} · {msj.length} felicitaciones</p>
   <div class="grilla">
     {lote.map(function (m) { return <TarjetaMensaje m={m} />; })}
@@ -40,5 +41,12 @@ const jsonld = [migasLd([
     {prev >= 1 ? <a href={urlPrev}>‹ Anterior</a> : null}
     {next <= total ? <a href={'/' + hub.slug + '/' + next + '/'}>Siguiente ›</a> : null}
   </nav>
+  {hub.seoTitulo && hub.seoTexto ? (
+    <section class="guia-categoria" aria-labelledby="guia-pag-titulo">
+      <h2 id="guia-pag-titulo">{hub.seoTitulo}</h2>
+      <p>{String(hub.seoTexto).split('\n\n')[0]}</p>
+      <p class="ver-tambien"><a href={'/' + hub.slug + '/'}>Ver la guía completa y todas las {msj.length} opciones de {nombreHub(hub)} →</a></p>
+    </section>
+  ) : null}
   <Hermanas hub={hub} />
 </Base>

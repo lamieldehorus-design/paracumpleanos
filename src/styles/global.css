@@ -97,6 +97,19 @@ img { max-width: 100%; }
 
 .contenido h1 { font-size: 1.7rem; margin: .2em 0 .4em; }
 .lead { color: var(--texto-suave); }
+.lead-bloque { margin: 8px 0 14px; }
+.lead-bloque .lead { margin: 0 0 10px; }
+.lead-bloque .lead:last-child { margin-bottom: 0; }
+.guia-categoria {
+  margin-top: 26px;
+  padding: 20px 22px;
+  background: var(--rosa-claro);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+}
+.guia-categoria h2 { margin: 0 0 10px; font-size: 1.18rem; color: var(--rosa-oscuro); }
+.guia-categoria p { margin: 0 0 10px; color: var(--texto); font-size: .98rem; }
+.guia-categoria p:last-child { margin-bottom: 0; }
 .contador {
   display: inline-block;
   background: var(--dorado-suave);

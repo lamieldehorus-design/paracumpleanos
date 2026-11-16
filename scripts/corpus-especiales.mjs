@@ -34,7 +34,9 @@ export const POEMAS_BANCO = {
     ['Poema para celebrar una nueva vuelta al sol', 'Un año cierra su puerta serena\ny otro horizonte se abre ante vos,\nlleno de historias, de gracia plena\ny de esperanzas que nacen de dos.\n\nHoy celebramos tu paso valiente,\ntodo lo hermoso que sabes sembrar,\ny ese cariño sincero y presente\nque a tanta gente suele alegrar.\n\nQue la salud y la calma florezcan\nen cada mes que esté por venir,\nque tus proyectos hermosos crezcan\ny nunca falte por qué sonreír.'],
     ['Versos luminosos en el día de tu cumpleaños', 'Cada mañana es regalo nuevo,\npero la tuya brilla aún más,\nporque celebra todo el relevo\nde lo vivido con fuerza y paz.\n\nSoplá las velas con fe encendida\ny agradecé lo que ya llegó,\nque lo mejor de toda la vida\ntodavía guarda su esplendor.\n\nFeliz cumpleaños, alma generosa,\nque este capítulo sea un jardín,\ndonde la dicha crezca dichosa\nde enero mismo hasta su fin.'],
     ['Rimas de afecto para este día tan tuyo', 'Pasan los meses como río claro,\npero el cariño permanece igual,\ny hoy que cumplís un año más raro\nlo celebramos con gozo total.\n\nQue no te falte mesa compartida,\nni voz amiga al atardecer,\nni esa ilusión que empuja la vida\nhacia las cosas por conocer.\n\nBrindamos hoy por tu caminar,\npor cada risa y cada lección,\nque nunca cese tu dulce soñar\ny reine siempre la paz en tu corazón.'],
-    ['Brindis sereno por este año nuevo de vida', 'Cuando se juntan quienes te quieren\nel tiempo toma dulce sabor,\ny hasta los días simples prefieren\nvestirse hoy con tono mayor.\n\nQue la alegría cuide tu puerta\ny nunca falte abrazo leal,\nque cada ruta quede abierta\nhacia un futuro claro y cabal.']
+    ['Brindis sereno por este año nuevo de vida', 'Cuando se juntan quienes te quieren\nel tiempo toma dulce sabor,\ny hasta los días simples prefieren\nvestirse hoy con tono mayor.\n\nQue la alegría cuide tu puerta\ny nunca falte abrazo leal,\nque cada ruta quede abierta\nhacia un futuro claro y cabal.'],
+    ['Versos cercanos para este nuevo cumpleaños', 'No hacen falta discursos largos\npara decirte lo que valés,\nbasta un abrazo que dure un rato\ny el deseo limpio de verte bien.\n\nQue este año traiga días tranquilos,\nproyectos nobles por concretar,\ny mucha gente de alma sincera\njunto a tu mesa para brindar.'],
+    ['Poema sencillo por otro año compartido', 'Hoy sumás pasos en tu historia\ncon calma firme y buen corazón,\ny quienes vamos a tu costado\nbrindamos juntos en tu canción.\n\nQue no te falte salud ni risa,\nni manos firmes para apoyar,\nfeliz cumpleaños, que cada puerta\nse abra con brillo al caminar.']
   ]
 };
 
@@ -72,7 +74,13 @@ export const FRASES_BILINGUES = [
   { en: 'Live each day with joy and grateful eyes on this bright birthday celebration.', es: 'Viví cada día con alegría y mirada agradecida en esta luminosa celebración.', t: 'Live with joy and gratitude' },
   { en: 'Open your heart to new blessings waiting silently along your joyful path.', es: 'Abrí tu corazón a nuevas bendiciones que esperan en tu camino alegre.', t: 'Open your heart to blessings' },
   { en: 'Forever grateful for every shared memory, loyal laugh and honest birthday toast.', es: 'Por siempre agradecido por cada recuerdo compartido, risa leal y brindis sincero.', t: 'Forever grateful for shared memories' },
-  { en: 'Shine brighter than yesterday while welcoming another year full of hope.', es: 'Brillá más fuerte que ayer al recibir otro año lleno de esperanza.', t: 'Shine brighter with new hope' }
+  { en: 'Shine brighter than yesterday while welcoming another year full of hope.', es: 'Brillá más fuerte que ayer al recibir otro año lleno de esperanza.', t: 'Shine brighter with new hope' },
+  { en: 'May your coffee stay warm, your heart stay light and your birthday bring sweet surprises.', es: 'Que tu café siga tibio, tu corazón liviano y tu cumpleaños traiga lindas sorpresas.', t: 'Warm coffee and sweet surprises' },
+  { en: 'Wishing you quiet mornings, loud laughter with friends and peace in everything you do.', es: 'Te deseo mañanas tranquilas, risas fuertes con amigos y paz en todo lo que hagas.', t: 'Quiet mornings and loud laughter' },
+  { en: 'Thank you for being someone people genuinely feel safe around. Happy birthday!', es: 'Gracias por ser esa clase de persona con la que la gente se siente segura de verdad. ¡Feliz cumpleaños!', t: 'Safe company on your birthday' },
+  { en: 'May this new chapter feel lighter, kinder and closer to everything you hoped for.', es: 'Que este nuevo capítulo se sienta más liviano, más amable y más cerca de todo lo que soñaste.', t: 'Lighter kinder chapter ahead' },
+  { en: 'Sending a big birthday hug and wishing you good health, calm nights and real joy.', es: 'Te mando un abrazo enorme de cumpleaños y te deseo buena salud, noches calmas y alegría de verdad.', t: 'Good health and calm nights' },
+  { en: 'Celebrate yourself today just as generously as you celebrate everyone else all year.', es: 'Celebrate hoy con la misma generosidad con la que celebrás a los demás todo el año.', t: 'Celebrate yourself generously today' }
 ];
 
 export const MASCOTAS_CONTENIDO = {
@@ -90,13 +98,14 @@ export const MASCOTAS_CONTENIDO = {
       'Hoy hay premio extra, paseo más largo y muchas caricias detrás de las orejas para festejar al compañero más fiel de esta casa.',
       'Desde tu primer día acá llenaste los pisos de patitas alegres, juguetes mordidos y un cariño que no entiende de palabras pero lo dice todo.',
       'No sabés contar velas ni mirar calendarios, pero entendés perfecto cuando todos te miramos con sonrisa y te preparamos una sorpresa rica.',
-      'Sos guardián de siestas, socio de caminatas y el primer saludo entusiasta apenas gira la llave en la cerradura.'
+      'Guardamos tus juguetes mordidos y tus corridas por el patio como parte de lo mejor que pasa en casa cada semana.'
     ],
     cierres: [
       '¡Feliz cumpleaños, peludo hermoso! Que nunca te falten juegos, salud ni carreras al sol.',
       'Brindamos por muchos años más de paseos largos, siestas tibias y cola feliz.',
       '¡Feliz vuelta al sol, fiel amigo de cuatro patas! Gracias por hacernos tan felices.',
-      'Que sigas sano, juguetón y mimado por toda tu familia humana hoy y siempre.'
+      'Que sigas sano, juguetón y mimado por toda tu familia humana hoy y siempre.',
+      'Hoy hay doble ración de mimos y paseo sin apuro porque vos te ganaste todo el cariño de esta casa.'
     ]
   },
   gatos: {
@@ -107,19 +116,22 @@ export const MASCOTAS_CONTENIDO = {
       'mirar todo con curiosidad felina y regalarme caricias cuando menos espero',
       'convertir cualquier caja olvidada en tu castillo favorito de juegos',
       'acompañar cada lectura nocturna con tu presencia elegante y serena',
-      'darle vida al hogar con tus saltos ágiles y bigotes inquietos'
+      'darle vida al hogar con tus saltos ágiles y bigotes inquietos',
+      'aparecer justo en silencio cuando el día viene pesado y hace falta compañía'
     ],
     escenas: [
       'Hoy celebramos al dueño oficial del sofá, de los rayos de sol de la tarde y de nuestros corazones desde el primer maullido.',
       'Con tu mezcla perfecta de independencia elegante y ternura inesperada, lograste que cada rincón de la casa lleve tu huella suave.',
       'Hoy toca lata especial, mimos sin apuro y permiso absoluto para dormir donde más te guste sin que nadie te corra.',
-      'Tus ojos atentos y tu andar sigiloso nos regalan compañía diaria y momentos divertidos que alegran toda la semana.'
+      'Tus ojos atentos y tu andar sigiloso nos regalan compañía diaria y momentos divertidos que alegran toda la semana.',
+      'Entre estiramientos largos y miradas cómplices desde la silla, nos recordás que disfrutar lo simple es la mejor costumbre.'
     ],
     cierres: [
       '¡Feliz cumpleaños, michi querido! Que nunca falten rayos de sol ni bocaditos ricos.',
       'Por muchos años más de ronroneos, juegos suaves y siestas interminables en casa.',
       '¡Feliz día, pequeño felino! Gracias por elegirnos cada mañana con tu compañía tranquila.',
-      'Que sigas sano, curioso y rodeado de caricias suaves en este nuevo año.'
+      'Que sigas sano, curioso y rodeado de caricias suaves en este nuevo año.',
+      'Hoy mandás vos más que nunca: que disfrutes tu día entre almohadones y mimos.'
     ]
   }
 };
@@ -131,20 +143,23 @@ export const DUELO_CONTENIDO = {
     'Aunque tu silla esté vacía en la mesa, tu risa, tus consejos y tu forma de querer permanecen intactos dentro de quienes tuvimos la dicha de conocerte.',
     'En esta fecha tan sensible elegimos la memoria serena y la gratitud por cada instante compartido y por la huella imborrable de tu vida.',
     'El tiempo sigue avanzando en el reloj, pero hay amores que no conocen despedida definitiva; hoy te recordamos con el mismo cariño de siempre hasta el cielo.',
-    'Cada recuerdo tuyo funciona como una luz suave que acompaña nuestros pasos: hoy te pensamos, te nombramos con ternura y agradecemos haberte tenido.'
+    'Cada recuerdo tuyo funciona como una luz suave que acompaña nuestros pasos: hoy te pensamos, te nombramos con ternura y agradecemos haberte tenido.',
+    'Aunque pasen las temporadas y cambien las rutinas de casa, tu nombre sigue teniendo un lugar tibio en cada charla sincera y en cada foto que miramos con cariño.'
   ],
   desarrollos: [
     'Quienes te amamos seguimos encontrando tu voz en las pequeñas costumbres cotidianas, en una canción que sonaba en casa o en esa enseñanza tuya que nos ayuda a seguir adelante.',
     'No existe ausencia capaz de borrar lo sembrado con tanta bondad; tu ejemplo de entrega y ternura sigue guiando nuestras decisiones cuando más lo necesitamos.',
     'Hoy el cielo recibe nuestros abrazos silenciosos y nuestras oraciones agradecidas, sabiendo que descansás en paz eterna lejos de todo dolor.',
     'Guardamos como un tesoro cada charla, cada sobremesa y cada gesto generoso tuyo; recordar tu vida es también seguir cuidando el amor que construiste entre nosotros.',
-    'Aunque nos falte tu abrazo físico, aprendimos a sentirte cerca en la calma de la mañana y en la unión de quienes seguimos honrando tu nombre.'
+    'Aunque nos falte tu abrazo físico, aprendimos a sentirte cerca en la calma de la mañana y en la unión de quienes seguimos honrando tu nombre.',
+    'Cada vez que elegimos actuar con nobleza o tender una mano a tiempo, sabemos que algo tuyo sigue caminando con nosotros sin hacer ruido.'
   ],
   cierres: [
     'Feliz cumpleaños hasta el cielo; seguí descansando en paz mientras acá te recordamos con amor eterno.',
     'Elevamos un abrazo lleno de luz hasta donde estés. Tu memoria vive para siempre en nuestro corazón.',
     'Gracias por todo lo que fuiste en esta tierra; hoy honramos tu vida con gratitud, fe y ternura infinita.',
-    'Que la paz divina abrace tu alma hoy y siempre; jamás dejaremos de agradecer el regalo de tu historia.'
+    'Que la paz divina abrace tu alma hoy y siempre; jamás dejaremos de agradecer el regalo de tu historia.',
+    'Te abrazamos en silencio con la certeza de que el amor verdadero no se apaga nunca.'
   ]
 };
 
@@ -154,19 +169,22 @@ export const INVITACION_CONTENIDO = {
     'Se acerca una fecha muy especial para mí y quiero compartirla con quienes caminaron a mi lado durante todo este año. ¡Guardate la fecha!',
     'Prepará tu mejor sonrisa porque se viene un cumpleaños para disfrutar sin apuros, entre buena música, charla linda y brindis compartidos.',
     'La vida se celebra mejor alrededor de una mesa llena de gente querida. Por eso te invito con muchísima alegría a festejar mi cumpleaños conmigo.',
-    'No hace falta excusa enorme para reunirnos, pero cumplir un año más es el motivo perfecto para vernos, ponernos al día y reír un rato largo.'
+    'No hace falta excusa enorme para reunirnos, pero cumplir un año más es el motivo perfecto para vernos, ponernos al día y reír un rato largo.',
+    'Armé una reunión sencilla y con mucha onda para celebrar mi cumple rodeado de la gente que quiero de verdad, y vos no podés faltar.'
   ],
   desarrollos: [
     'Va a haber comida rica, algo fresco para brindar, música alegre y, sobre todo, las ganas inmensas de darte un abrazo en persona.',
     'Tu presencia es el mejor regalo que puedo pedir en este nuevo capítulo; traé buena onda y ganas de pasar una noche inolvidable.',
     'Organizamos este encuentro con todo cariño para agradecerte tu compañía, celebrar lo vivido y dar la bienvenida a lo que viene.',
-    'Queremos que sea una reunión cálida, relajada y llena de anécdotas lindas junto a familiares y amigos de verdad.'
+    'Queremos que sea una reunión cálida, relajada y llena de anécdotas lindas junto a familiares y amigos de verdad.',
+    'No te preocupes por nada: con que vengas con ganas de charlar, comer algo rico y compartir un buen momento ya alcanza y sobra.'
   ],
   cierres: [
     '¡Te espero para soplar las velas juntos! Confirmame cuando puedas así guardo tu lugar en la mesa.',
     'Agendalo desde ahora porque sin vos la fiesta no está completa. ¡Nos vemos muy pronto para brindar!',
     'Va a ser un lujo contar con vos en este festejo. ¡No faltes, te esperamos con los brazos abiertos!',
-    'Venite con ganas de reír y celebrar hasta tarde. ¡Será un cumpleaños hermoso contigo ahí!'
+    'Venite con ganas de reír y celebrar hasta tarde. ¡Será un cumpleaños hermoso contigo ahí!',
+    'Avisame apenas puedas si venís así vamos preparando todo. ¡Qué ganas de vernos!'
   ]
 };
 
@@ -256,20 +274,24 @@ export const CARTAS_ESRUCTURA = {
     'En este nuevo capítulo quiero recordarte una verdad simple pero poderosa: no necesitás demostrar nada extraordinario para merecer cariño. Tu sola autenticidad, con tus luces, tus dudas y tus ganas de avanzar, ya te vuelve invaluable.',
     'Ojalá te regales permiso para disfrutar tus propios logros sin apuro, para descansar cuando el cuerpo lo pida y para decir que sí únicamente a aquello que haga bien a tu paz interior.',
     'Al mirar todo lo que superaste hasta hoy, sobran razones para caminar con la frente en alto. Llevás en tu carácter herramientas valiosas para transformar cualquier desafío futuro en aprendizaje real.',
-    'Nunca subestimes el impacto positivo que dejás a tu alrededor: una palabra amable tuya o una escucha atenta pueden cambiar por completo el día difícil de otra persona.'
+    'Nunca subestimes el impacto positivo que dejás a tu alrededor: una palabra amable tuya o una escucha atenta pueden cambiar por completo el día difícil de otra persona.',
+    'Ojalá sigas animándote a cuidar lo que te hace bien, a rodearte de gente sincera y a celebrar incluso los avances chiquitos de cada semana.'
   ],
   cuerpoDeseos: {
     novios_tiempo: [
       'Deseo que estos {duracion} sean apenas el prólogo de una historia larguísima llena de viajes pendientes, domingos tranquilos, metas cumplidas y abrazos que sigan arreglando cualquier tormenta. Prometo cuidar lo nuestro con paciencia, respeto y alegría todos los días.',
-      'Brindo por todo lo que ya vivimos en estos {duracion} y por cada sueño nuevo que todavía nos espera por construir juntos. Gracias por elegirme y por dejarme amarte sin miedo.'
+      'Brindo por todo lo que ya vivimos en estos {duracion} y por cada sueño nuevo que todavía nos espera por construir juntos. Gracias por elegirme y por dejarme amarte sin miedo.',
+      'Ojalá miremos atrás dentro de muchos años y sonriamos viendo cómo estos {duracion} fueron la base linda de una vida entera compartida con calma y ternura.'
     ],
     ex: [
       'En este nuevo año de vida te deseo salud firme, calma en tus decisiones cotidianas, trabajo que te ilusione y personas buenas que sumen luz a tu alrededor. Que disfrutes tu cumpleaños con serenidad, buenas charlas y alegría verdadera.',
-      'Ojalá los próximos doce meses te traigan respuestas claras, puertas abiertas, proyectos cumplidos y mucha paz interior en cada mañana. ¡Feliz cumpleaños y lo mejor de corazón para esta nueva etapa de tu vida!'
+      'Ojalá los próximos doce meses te traigan respuestas claras, puertas abiertas, proyectos cumplidos y mucha paz interior en cada mañana. ¡Feliz cumpleaños y lo mejor de corazón para esta nueva etapa de tu vida!',
+      'Que esta vuelta al sol te regale bienestar sincero, equilibrio y motivos lindos para agradecer cada día. ¡Muy feliz cumpleaños!'
     ],
     general: [
       'Para este nuevo año que inaugurás hoy, te deseo salud abundante para concretar tus planes, calma en los días agitados y la compañía fiel de quienes te valoran sin condiciones. ¡Feliz cumpleaños de todo corazón!',
-      'Que nunca te falten motivos genuinos para sonreír al despertar, proyectos que enciendan tu entusiasmo ni mesas alegres donde brindar por cada paso cumplido. ¡Muy feliz cumpleaños y lo mejor para todo lo que viene!'
+      'Que nunca te falten motivos genuinos para sonreír al despertar, proyectos que enciendan tu entusiasmo ni mesas alegres donde brindar por cada paso cumplido. ¡Muy feliz cumpleaños y lo mejor para todo lo que viene!',
+      'Ojalá estos próximos doce meses te abracen con buenas noticias, descansos merecidos y mucha gente linda cerca. ¡Feliz cumpleaños y gracias por todo lo que sos!'
     ]
   },
   despedidas: [
@@ -277,7 +299,8 @@ export const CARTAS_ESRUCTURA = {
     'Te mando el abrazo más largo y sincero del mundo.\n¡Feliz día!',
     'Con el corazón lleno de cariño,\nquien nunca deja de celebrar tu vida.',
     'Guardá estas letras cerca.\nCon afecto infinito, hoy y siempre.',
-    'Brindo por vos desde lo más hondo.\nCon inmenso cariño.'
+    'Brindo por vos desde lo más hondo.\nCon inmenso cariño.',
+    'Con todo mi cariño y gratitud de siempre,\nhoy y cada día.'
   ],
   despedidasEx: [
     'Con mis mejores deseos de paz y bienestar,\nun saludo sincero.',

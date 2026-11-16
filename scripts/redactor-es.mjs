@@ -646,6 +646,200 @@ export function construirHubProfesional(keyword, dest, cab, mod, grupo, slugOver
   };
 }
 
+// ---------------------------------------------------------------------------
+// 2b. Enriquecimiento humanizado de descripcion (lead) y texto SEO alternativo
+// ---------------------------------------------------------------------------
+const APERTURAS_HUMANAS = [
+  (kw, n) => `Cuando llega una fecha especial y te sentás frente al teléfono buscando ${kw}, lo último que querés es mandar una frase fría de compromiso. Por eso acá armamos ${n} ideas reales, pensadas para sonar como vos cuando querés decir algo lindo de verdad.`,
+  (kw, n) => `Pasa siempre: tenés mil sentimientos dando vueltas sobre ${kw}, pero a la hora de escribirlos te quedás mirando la pantalla en blanco. Acá juntamos ${n} mensajes con tono cercano, directo y sin vueltas para que elijas el que más va con tu historia.`,
+  (kw, n) => `No hace falta ser escritor ni rebuscar palabras raras para emocionar con ${kw}. En esta selección vas a encontrar ${n} textos escritos como se habla de verdad, listos para copiar, ajustar un detalle tuyo y mandar al toque.`,
+  (kw, n) => `A veces unas palabras justas cambian el día entero. Pensando en quienes buscan ${kw} con alma y cercanía, reunimos ${n} propuestas honestas que esquivan los clichés repetidos y suenan genuinas desde la primera línea.`,
+  (kw, n) => `Si querés salir del típico mensaje automático al pensar en ${kw}, llegaste al lugar indicado. Tenés ${n} textos variados —algunos más tiernos, otros más serenos y otros bien profundos— para que ninguno te suene ajeno.`,
+  (kw, n) => `Decir lo que uno siente sobre ${kw} no debería ser difícil ni sonar artificial. Por eso preparamos ${n} dedicatorias cuidadas, humanas y fáciles de adaptar para expresar lo que llevás adentro.`,
+  (kw, n) => `Entre tanta frase repetida dando vueltas por internet, quisimos armar algo distinto para ${kw}: ${n} mensajes con calidez real, ritmo natural y espacio para que les sumes ese guiño personal que solo vos conocés.`,
+  (kw, n) => `Ya sea que mandes un mensaje apenas arranca la mañana o escribas una nota a mano para ${kw}, acá tenés ${n} opciones pensadas con corazón para hacer sentir especial a quien está del otro lado.`
+];
+
+const CIERRES_HUMANOS = [
+  'Elegí la que más te represente, cambiale o sumale una anécdota chica de ustedes y mandásela por WhatsApp, o descargala directo como tarjeta para compartir.',
+  'Copiá el texto que mejor encaje con tu vínculo, dale tu toque personal si tenés ganas y envialo por mensaje o guardalo en tarjeta con un clic.',
+  'Recorré tranquilo todas las páginas de esta categoría: podés copiar cualquier dedicatoria al instante, retocarla a tu manera o bajarla lista para publicar.',
+  'Quedate con la que diga justo eso que querías expresar hoy, sumale algún recuerdo compartido y regalá palabras que de verdad se sienten cerca.'
+];
+
+const TITULOS_SEO_PLANTILLAS = [
+  (kw) => `Cómo elegir y personalizar tus palabras de ${kw}`,
+  (kw) => `Ideas reales para adaptar cada mensaje sobre ${kw}`,
+  (kw) => `Qué tener en cuenta al dedicar ${kw} sin sonar frío`,
+  (kw) => `Guía práctica para mandar ${kw} por WhatsApp o en tarjeta`,
+  (kw) => `Cómo darle tu propio sello a estas dedicatorias de ${kw}`,
+  (kw) => `Consejos simples para acertar con ${kw} en cualquier momento`,
+  (kw) => `De la pantalla al corazón: cómo aprovechar estas ideas de ${kw}`,
+  (kw) => `Variantes y tonos para compartir ${kw} con naturalidad`
+];
+
+function limpiarKwParaSeo(hub, corr) {
+  let base = (corr && corr.kwLead)
+    ? corr.kwLead
+    : corr
+      ? corr.h1.charAt(0).toLowerCase() + corr.h1.slice(1)
+      : (hub.keyword || '').replace(/\s+whatsapp$/i, ' por WhatsApp').replace(/\bdios\b/g, 'Dios');
+  base = base.replace(/\s+/g, ' ').trim();
+  return base;
+}
+
+export function actualizarTituloYMetaHub(hub, totalMensajes) {
+  const nStr = String(totalMensajes);
+  let titulo = (hub.titulo || '')
+    .replace(/\b30\b/, nStr)
+    .replace(/\b8\b/, nStr);
+  if (!titulo.includes(nStr) && (titulo + ` (${nStr})`).length <= 60) {
+    // Mantiene titulos sin numero intactos si ya superan 54 chars, o suma conteo si entra limpio
+    if (titulo.length <= 53 && !/\(\d+\)$/.test(titulo)) {
+      titulo = `${titulo} (${nStr})`;
+    }
+  }
+  if (titulo.length > 60) titulo = titulo.slice(0, 59).replace(/\s+\S*$/, '').trim();
+
+  let meta = (hub.meta || '')
+    .replace(/\b30\b/g, nStr)
+    .replace(/\b8\b/g, nStr);
+  if (meta.length < 120) meta += ' Textos listos para copiar y enviar.';
+  if (meta.length > 165) meta = meta.slice(0, 162).replace(/\s+\S*$/, '') + '.';
+
+  return { titulo, meta };
+}
+
+export function construirDescripcionYSeoHub(hub, totalMensajes, hubIdx) {
+  const perfil = obtenerPerfilHub(hub);
+  const corr = DISPLAY_CORRECCIONES[hub.keyword];
+  const kwLimpia = limpiarKwParaSeo(hub, corr);
+  const n = totalMensajes;
+  const i = Math.abs(hubIdx || 0);
+
+  // Parrafo 1 del lead: voz humana directa
+  const apLead = APERTURAS_HUMANAS[i % APERTURAS_HUMANAS.length](kwLimpia, n);
+
+  // Parrafo 2 del lead: detalle especifico segun el tema real de la categoria
+  let detalleTema = '';
+  if (perfil.esDuelo) {
+    detalleTema = `Sabemos lo delicado que es escribir cuando alguien falta en la mesa. Por eso cada uno de estos ${n} textos está pensado desde el respeto, la memoria serena y el cariño que sigue vivo, evitando frases huecas o fuera de tono.`;
+  } else if (perfil.esAniversario) {
+    detalleTema = `Celebrar ${perfil.duracionStr || 'un aniversario'} tiene su propio peso y su propia historia. Vas a leer mensajes que hablan de lo cotidiano compartido, la complicidad de los meses juntos y las ganas reales de seguir eligiéndose.`;
+  } else if (perfil.esCarta) {
+    detalleTema = `Como acá hablamos de cartas de verdad y no de renglones sueltos, cada una de las ${n} publicaciones tiene desarrollo largo en varios párrafos: saludo inicial, memoria compartida, presente y despedida con corazón.`;
+  } else if (perfil.esPoema) {
+    detalleTema = `Cada poema de esta página viene armado en estrofas y versos reales para que lo puedas leer en voz alta, copiar en una dedicatoria bonita o compartir acompañado de una imagen especial.`;
+  } else if (perfil.esMascota) {
+    detalleTema = `Quienes convivimos con animales sabemos que son parte real de la familia. Estas ${n} ideas mezclan ternura y humor para acompañar una foto linda o guardar un recuerdo simpático de su día.`;
+  } else if (perfil.esBilingue) {
+    detalleTema = `Las ${n} opciones traen la frase natural en inglés acompañada de su traducción fiel al español, pensadas para que entiendas el matiz exacto antes de mandarla o subirla a tus redes.`;
+  } else if (perfil.esCristiano) {
+    detalleTema = `En estas ${n} dedicatorias se mezcla el afecto cotidiano con palabras de fe, oración y gratitud a Dios, manteniendo un tono cercano que transmite paz sin sonar rígido.`;
+  } else if (perfil.esDistancia) {
+    detalleTema = `Cuando los kilómetros no dejan dar el abrazo en persona, las palabras pesan el doble. Cada mensaje cruza la distancia con calidez real para que tu saludo llegue puntual desde temprano.`;
+  } else if (perfil.esInvitacion) {
+    detalleTema = `Tenés ${n} invitaciones distintas —más relajadas, familiares o emotivas— pensadas para que solo completes horario, dirección y confirmes rápido por WhatsApp.`;
+  } else if (perfil.edadStr) {
+    detalleTema = `Cumplir ${perfil.edadStr} es un momento particular que merece algo a la altura. Por eso estos ${n} mensajes acompañan esa etapa exacta con naturalidad, sin bromas repetidas ni sermones.`;
+  } else if (perfil.esAutoMensaje) {
+    detalleTema = `Dedicarte unas palabras sinceras también vale: estas ${n} reflexiones en primera persona ayudan a agradecer lo vivido, valorar lo aprendido y arrancar el ciclo nuevo con buena energía.`;
+  } else if (perfil.tratamiento === 'usted') {
+    detalleTema = `Cuando corresponde mantener trato respetuoso de usted, cuesta encontrar saludos que no queden fríos. Acá tenés ${n} textos equilibrados entre la cordialidad profesional y el aprecio genuino.`;
+  } else {
+    detalleTema = `En estas ${n} publicaciones vas a encontrar tonos variados para elegir según el momento: dedicatorias cortas para mandar rápido, textos emotivos para decir cuánto te importa y opciones cálidas para acompañar un regalo.`;
+  }
+
+  const cierreLead = CIERRES_HUMANOS[(i * 3) % CIERRES_HUMANOS.length];
+  const lead = `${apLead}\n\n${detalleTema} ${cierreLead}`.replace(/[ \t]+/g, ' ').trim();
+
+  // Titulo SEO H2 unico por categoria (anclado siempre a kwLimpia)
+  const tituloTpl = TITULOS_SEO_PLANTILLAS[(i * 5 + 1) % TITULOS_SEO_PLANTILLAS.length];
+  const seoTitulo = tituloTpl(kwLimpia);
+
+  // Texto SEO alternativo humanizado (3 parrafos ricos, cero stuffing, coherente con tema)
+  const tipoPieza = perfil.esCarta
+    ? 'cartas largas y dedicatorias extensas'
+    : perfil.esPoema
+      ? 'poemas en verso y rimas sentidas'
+      : perfil.esInvitacion
+        ? 'textos de invitación claros y cordiales'
+        : perfil.esDuelo
+          ? 'mensajes respetuosos de homenaje y recuerdo'
+          : 'frases originales, dedicatorias cálidas y saludos listos para enviar';
+
+  const seoP1Options = perfil.esDuelo
+    ? [
+        `Escribir sobre ${kwLimpia} siempre pide tacto y honestidad. Muchas veces alcanza con nombrar un recuerdo compartido, agradecer una enseñanza que quedó en casa y acompañar en silencio con palabras que den abrigo.`,
+        `Quienes buscan ${kwLimpia} suelen necesitar algo sencillo pero verdadero. No hace falta explicar todo el dolor en un texto largo: un mensaje sereno que honre su memoria ya dice muchísimo.`,
+        `Cuando se acerca una fecha sensible y pensás en ${kwLimpia}, lo que más reconforta es hablar sin poses, recordando su calidez diaria y todo el bien que sembró en la familia.`
+      ]
+    : perfil.esAniversario
+      ? [
+          `Cuando buscás ${kwLimpia}, lo que más suma es mencionar lo real de ustedes: una costumbre diaria, una risa compartida o lo bien que se siente caminar juntos incluso en las semanas complicadas.`,
+          `Las mejores palabras para ${kwLimpia} no prometen cuentos irreales; agradecen la paciencia mutua, las charlas honestas y esa complicidad que vuelve especial cada etapa en pareja.`,
+          `Al escribir sobre ${kwLimpia}, funciona muchísimo recordar una escena chiquita de su historia —ese primer mate, un viaje improvisado o una charla nocturna— antes de cerrar con un deseo lindo para lo que viene.`
+        ]
+      : perfil.esCarta
+        ? [
+            `A la hora de preparar ${kwLimpia}, la clave para emocionar es no apurarse: mencioná un recuerdo concreto de ustedes, agradecé lo aprendido juntos y cerrá con un deseo sincero para la etapa que sigue.`,
+            `Por eso armamos ${n} ${tipoPieza} con verdadero desarrollo epistolar: apertura cálida, cuerpo lleno de recuerdos compartidos y despedida con firma afectuosa para leer sin prisas.`,
+            `Si te sentás a buscar ${kwLimpia} porque un mensaje suelto no alcanza, cualquiera de estas cartas extensas te sirve como base fiel para copiar o reescribir con tu propia historia.`
+          ]
+        : [
+            `A la hora de buscar ${kwLimpia}, el mejor truco para que nadie sienta un texto copiado de internet es agregar un detalle chiquito de verdad: el apodo de siempre, el nombre de esa comida que comparten o un recuerdo corto de este año.`,
+            `No todas las personas reciben igual los saludos de cumpleaños, y ahí está la ventaja de tener ${n} ${tipoPieza} en un mismo lugar: podés elegir un texto sereno y medido o abrir el corazón de par en par con todo lo que sentís.`,
+            `Si estás buscando ${kwLimpia} y te cuesta arrancar, pensá primero qué querés hacer sentir del otro lado: una sonrisa rápida apenas agarra el celular, un abrazo largo de familia o ese guiño cómplice que solo ustedes entienden.`
+          ];
+
+  const seoP2Options = perfil.esDuelo
+    ? [
+        `Si querés personalizar cualquiera de estas ${n} opciones, podés sumar el nombre propio al comienzo, recordar una canción o una sobremesa familiar y compartirla con tus seres queridos como un pequeño homenaje.`,
+        `Estas palabras están pensadas tanto para publicar junto a una foto querida como para enviar en privado a alguien de la familia que hoy también extraña su presencia.`,
+        `También podés tomar una idea de aquí y sumarle una frase corta tuya o una oración serena para acompañar a quienes comparten este recuerdo.`
+      ]
+    : perfil.esAniversario
+      ? [
+          `Podés mandar tu elegida por WhatsApp a primera hora, dejarla escrita en una nota junto al desayuno o acompañarla con una foto linda de los dos sin tener que pensar qué poner desde cero.`,
+          `Con estas ${n} propuestas sobre ${kwLimpia} tenés variedad de sobra para sorprender hoy y guardar ideas distintas cuando quieras recordar cuánto valorás lo construido juntos.`,
+          `Si preferís algo más personal, usá cualquiera de estos textos como base y agregale la fecha exacta o algún plan que tengan pendiente para celebrar tranquilos.`
+        ]
+      : perfil.esCarta
+        ? [
+            `Podés copiar la carta completa para mandarla en un mensaje largo por WhatsApp, pasarla a un papel lindo junto al regalo o grabarla en un audio leído con calma.`,
+            `Si querés personalizar todavía más tu ${kwLimpia}, intercalá el nombre de una ciudad, una canción que los una o una anécdota chiquita entre los párrafos del medio.`,
+            `Cada una de estas ${n} opciones está pensada para tomarse unos minutos de lectura tranquila y dejar un recuerdo escrito que no se borra al día siguiente.`
+          ]
+        : [
+            `Si lo vas a mandar por WhatsApp o redes, conviene elegir algo ágil que se lea bien de una sola mirada en la pantalla; en cambio, si va en tarjeta impresa o junto a un regalo, animate con uno de los textos más largos para que se lo guarde de recuerdo.`,
+            `También podés combinar el arranque de una felicitación con el cierre de otra hasta armar tu versión ideal de ${kwLimpia}. La idea es ahorrarte el bloqueo frente a la hoja en blanco sin perder tu voz propia.`,
+            `Para que llegue con más fuerza, probá mandarlo temprano con un audio corto o descargarlo directo como tarjeta visual desde el botón de cada publicación.`
+          ];
+
+  const seoP3Options = perfil.esDuelo
+    ? [
+        `En ParaCumpleanos revisamos cada una de las ${n} publicaciones de ${kwLimpia} para cuidar el tono respetuoso, la buena redacción en español y el consuelo sincero en fechas sensibles.`,
+        `Cada texto sobre ${kwLimpia} fue pensado con delicadeza y respeto en nuestro idioma para acompañarte cuando más cuesta encontrar las palabras justas.`
+      ]
+    : perfil.esAniversario
+      ? [
+          `Todo este repertorio de ${n} mensajes dedicados a ${kwLimpia} fue redactado con lenguaje natural y cercano, cuidando la ortografía y listo para copiar o descargar como tarjeta en segundos.`,
+          `Revisamos cada publicación de ${kwLimpia} para que suene humana, actual y coherente con esta etapa en pareja, sin frases acartonadas ni errores.`
+        ]
+      : [
+          `Cada una de las ${n} publicaciones sobre ${kwLimpia} fue escrita en español claro, natural y cercano, sin errores ni frases robóticas, lista para copiar gratis o descargar en tarjeta personalizada.`,
+          `Todo el contenido de ${kwLimpia} está curado y revisado línea por línea para ofrecerte textos cálidos, originales y fáciles de compartir en segundos desde el celular o la compu.`,
+          `Recorré las páginas de ${kwLimpia} tranquilo y quedate con los mensajes que mejor reflejen tu cariño: son ${n} ideas reales hechas para personas reales.`
+        ];
+
+  const seoP1 = seoP1Options[i % seoP1Options.length];
+  const seoP2 = seoP2Options[(i * 3) % seoP2Options.length];
+  const seoP3 = seoP3Options[(i * 7) % seoP3Options.length];
+  const seoTexto = `${seoP1}\n\n${seoP2}\n\n${seoP3}`.replace(/[ \t]+/g, ' ').trim();
+
+  return { lead, seoTitulo, seoTexto };
+}
+
 const EMOJI_POR_DEST = {
   'mamá': '💐', 'papá': '🎩', 'amiga': '🥂', 'mejor amiga': '👯', 'amigo': '🍻', 'mejor amigo': '🤝',
   'hermana': '💜', 'hermano': '💙', 'hija': '🌸', 'hijo': '🌟', 'novia': '💖', 'novio': '❤️',
@@ -1877,6 +2071,305 @@ function crearGeneradorDeTitulos(hub, p, seedOffset) {
       : pick([
           `Vivamos este festejo con abrazos honestos y mucha gratitud`,
           `Vivamos otro año compartido con ilusión y buen humor`
+        ], k),
+    // 48 constructores adicionales con palabras iniciales frescas y voz humana (total = 127, primo)
+    (k) => esDuelo
+      ? `Tenerte en la memoria nos regala calma en días grises`
+      : es1p
+        ? `Tenerme paciencia este año me enseñó a disfrutar más`
+        : pick([
+            `Tenerte cerca en esta vida es un regalo enorme${vc}`,
+            `Tenerte en nuestra mesa vuelve linda cualquier reunión`
+          ], k),
+    (k) => esDuelo
+      ? `Guardá nuestra gratitud eterna en la paz del cielo`
+      : pick([
+          `Guardá estas líneas sinceras para cuando quieras sonreír`,
+          `Guardá este abrazo largo en el bolsillo para todo el año`
+        ], k),
+    (k) => esDuelo
+      ? `Notar tu huella buena nos acompaña en cada mesa familiar`
+      : pick([
+          `Notar cuánto creciste nos llena el corazón de orgullo`,
+          `Notar tu calma alegre vuelve hermoso este festejo de hoy`
+        ], k),
+    (k) => esDuelo
+      ? `Sumás recuerdos luminosos que siguen abrigando nuestro hogar`
+      : es1p
+        ? `Sumo un año nuevo mirando adelante con paz`
+        : pick([
+            `${esUd ? 'Suma' : esPl ? 'Suman' : 'Sumás'} otro capítulo lindo lleno de proyectos y salud`,
+            `${esUd ? 'Suma' : esPl ? 'Suman' : 'Sumás'} historias reales que vale muchísimo la pena brindar`
+          ], k),
+    (k) => esDuelo
+      ? `Armé estas líneas serenas honrando todo lo que dejaste`
+      : pick([
+          `Armé estas palabras pensando en lo bien que nos hace verte feliz`,
+          `Armé este saludo sencillo porque merecés leer algo lindo hoy`
+        ], k),
+    (k) => esDuelo
+      ? `Pensé en tu sonrisa tranquila apenas empezó esta mañana`
+      : pick([
+          `Pensé en vos apenas desperté para mandarte un abrazo enorme`,
+          `Pensé en todo lo compartido y solo pude agradecerte hoy`
+        ], k),
+    (k) => esDuelo
+      ? `Dejo una oración serena y flores blancas por tu vida`
+      : pick([
+          `Dejo estas palabras con cariño para alegrarte el día entero`,
+          `Dejo acá un brindis sincero por tu salud y calma`
+        ], k),
+    (k) => esDuelo
+      ? `Traigo en silencio todo el cariño que sembraste aquí`
+      : pick([
+          `Traigo buenos deseos de salud, paz y proyectos cumplidos hoy`,
+          `Traigo un abrazo gigante para arrancar bien esta etapa nueva`
+        ], k),
+    (k) => esDuelo
+      ? `Pido paz eterna para tu alma y alivio en casa`
+      : pick([
+          `Pido para vos doce meses livianos llenos de buenas noticias`,
+          `Pido salud abundante, calma diaria y mesa siempre rodeada`
+        ], k),
+    (k) => esDuelo
+      ? `Arranca otra fecha recordando tu ejemplo con inmenso respeto`
+      : esAniv
+        ? `Arranca otra etapa linda caminando juntos con ilusión`
+        : pick([
+            `Arranca un año nuevo hecho a medida de tus ganas`,
+            `Arranca otra vuelta al sol cargada de salud y alegría`
+          ], k),
+    (k) => esDuelo
+      ? `Florece tu recuerdo en cada enseñanza buena que dejamos viva`
+      : pick([
+          `Florece otro año lindo para disfrutar sin apuros ni ruido`,
+          `Florece tu sonrisa hoy mientras celebramos cuánto te queremos`
+        ], k),
+    (k) => esDuelo
+      ? `Va nuestro abrazo hasta el cielo lleno de memoria fiel`
+      : pick([
+          `Va este saludo directo y sincero para acompañarte todo el día`,
+          `Va un deseo gigante de calma, risas y buenos caminos`
+        ], k),
+    (k) => esDuelo
+      ? `Cuántas enseñanzas tuyas siguen iluminando nuestra rutina diaria`
+      : pick([
+          `Cuántas razones lindas nos diste para celebrar hoy tu vida`,
+          `Cuántas anécdotas hermosas quedan por vivir durante este año`
+        ], k),
+    (k) => esDuelo
+      ? `Vienen recuerdos dulces a consolar nuestro corazón en tu fecha`
+      : pick([
+          `Vienen meses hermosos llenos de calma, logros y abrazos sinceros`,
+          `Vienen días luminosos para disfrutar en buena compañía siempre`
+        ], k),
+    (k) => esDuelo
+      ? `Siguen vivos tus consejos en cada paso de nuestra familia`
+      : pick([
+          `Siguen multiplicándose los motivos lindos para agradecer tu compañía`,
+          `Siguen creciendo las ganas de verte feliz y tranquilo`
+        ], k),
+    (k) => esDuelo
+      ? `Llegó este día sensible para nombrarte con ternura infinita`
+      : esAniv
+        ? `Llegó un aniversario lindo para brindar por nuestra historia`
+        : pick([
+            `Llegó tu día especial para llenarte de mimos y abrazos`,
+            `Llegó el momento justo de celebrar todo lo que sos`
+          ], k),
+    (k) => esDuelo
+      ? `Acá seguimos honrando tu huella con gratitud y paz`
+      : pick([
+          `Acá tenés un abrazo enorme y deseos lindos sin medida`,
+          `Acá estamos celebrando tu vida con orgullo y sonrisa sincera`
+        ], k),
+    (k) => esDuelo
+      ? `Sabés cuánto amor dejaste sembrado en cada uno aquí`
+      : es1p
+        ? `Sé mejor que nadie cuánto valió cada paso dado`
+        : pick([
+            `${esUd ? 'Sabe' : esPl ? 'Saben' : 'Sabés'} de sobra cuánto valoramos tu presencia tan cálida`,
+            `${esUd ? 'Sabe' : esPl ? 'Saben' : 'Sabés'} que siempre contás con nosotros en cualquier camino`
+          ], k),
+    (k) => esDuelo
+      ? `Soñamos con el día en que volvamos a abrazarnos en paz`
+      : pick([
+          `Soñamos verte cumplir cada meta con sonrisa tranquila y firme`,
+          `Soñamos compartir mil tardes lindas más durante este nuevo año`
+        ], k),
+    (k) => esDuelo
+      ? `Elegimos recordar tu bondad antes que el silencio de hoy`
+      : pick([
+          `Elegimos brindar bien alto por tu salud y proyectos nuevos`,
+          `Elegimos celebrar tu historia con palabras simples y verdaderas`
+        ], k),
+    (k) => esDuelo
+      ? `Cuidamos con ternura cada historia linda que vivimos juntos`
+      : pick([
+          `Cuidamos con alegría el regalo hermoso de caminar junto a vos`,
+          `Cuidamos tu sonrisa deseándote días tranquilos y mucha salud`
+        ], k),
+    (k) => esDuelo
+      ? `Abrazarte con oración limpia alivia la nostalgia de hoy`
+      : pick([
+          `Abrazarte fuerte hoy es la forma más linda de festejar`,
+          `Abrazarte en tu día confirma cuánto valoramos tu presencia`
+        ], k),
+    (k) => esDuelo
+      ? `Regalar una oración limpia abraza tu memoria hasta el cielo`
+      : pick([
+          `Regalarte palabras honestas vale mucho más que cualquier envoltorio`,
+          `Regalarte un día tranquilo y alegre es nuestro mejor deseo`
+        ], k),
+    (k) => esDuelo
+      ? `Mandarte luz serena al cielo nos da paz en casa`
+      : pick([
+          `Mandarte este saludo temprano busca sacarte una linda sonrisa`,
+          `Mandarte buenos deseos nace directo desde el cariño real`
+        ], k),
+    (k) => esDuelo
+      ? `Encontrar consuelo en tu ejemplo alivia el alma hoy`
+      : pick([
+          `Encontrar gente tan noble como vos cambia la vida entera`,
+          `Encontrar motivos reales para brindar resulta fácil cuando estás`
+        ], k),
+    (k) => esDuelo
+      ? `Recordarte serenos honra el cariño enorme que nos diste`
+      : pick([
+          `Brindarte cariño honesto hoy nace directo desde el corazón`,
+          `Desearte un año lleno de calma nace con enorme alegría`
+        ], k),
+    (k) => esDuelo
+      ? `Construir memoria fiel mantiene vivo todo tu afecto`
+      : pick([
+          `Construir sueños nuevos te espera en este capítulo distinto`,
+          `Construir días tranquilos junto a los tuyos vale muchísimo`
+        ], k),
+    (k) => esDuelo
+      ? `Despertar agradeciendo tu legado trae serenidad a la mesa`
+      : pick([
+          `Despertar celebrando tu vida llena de sentido esta mañana`,
+          `Despertar con buenas noticias inaugura hermoso este año nuevo`
+        ], k),
+    (k) => esDuelo
+      ? `Cosechar el cariño que sembraste une a toda la familia`
+      : pick([
+          `Cosechar alegría sincera premia todo tu esfuerzo cotidiano`,
+          `Cosechar abrazos honestos confirma lo bien que hacés alrededor`
+        ], k),
+    (k) => esDuelo
+      ? `Imaginar tu sonrisa tranquila consuela nuestro hogar en paz`
+      : pick([
+          `Imaginar todo lo bueno que viene multiplica nuestra alegría`,
+          `Imaginar este año nuevo contigo nos llena de ilusión`
+        ], k),
+    (k) => esDuelo
+      ? `Creer en la paz eterna abraza tu nombre con ternura`
+      : pick([
+          `Creer en tus propios pasos abre caminos firmes y alegres`,
+          esAniv ? `Creer en proyectos lindos vuelve luminoso este aniversario` : `Creer en proyectos lindos vuelve luminoso este cumpleaños`
+        ], k),
+    (k) => esDuelo
+      ? `Decirte cuánto te extrañamos honra tu memoria luminosa`
+      : pick([
+          `Decirte todo lo que valés empieza con este abrazo fuerte`,
+          `Decirte gracias hoy suena corto frente a tanto afecto`
+        ], k),
+    (k) => esDuelo
+      ? `Sentir tu guía cercana calma el corazón en silencio`
+      : pick([
+          `Sentir tu risa cerca convierte el encuentro en fiesta`,
+          `Sentir orgullo por tu camino nos alegra hoy muchísimo`
+        ], k),
+    (k) => esDuelo
+      ? `Trazar puentes de oración nos acerca a tu recuerdo`
+      : pick([
+          `Trazar metas claras hace más liviano cada mes que viene`,
+          `Trazar planes alegres inaugura con calma este ciclo nuevo`
+        ], k),
+    (k) => esDuelo
+      ? `Sembrar paz en tu nombre honra tu corazón bueno`
+      : pick([
+          `Sembrar palabras honestas deja huella linda todo el año`,
+          `Sembrar afecto verdadero vuelve abundante cualquier celebración`
+        ], k),
+    (k) => esDuelo
+      ? `Buscar serenidad en tus recuerdos abriga toda la casa`
+      : pick([
+          `Buscar motivos para sonreír resulta sencillo celebrando tu vida`,
+          `Buscar calma y buena salud guía nuestro brindis de hoy`
+        ], k),
+    (k) => esDuelo
+      ? `Juntar historias tuyas en familia nos devuelve ternura`
+      : pick([
+          `Juntar abrazos reales hoy celebra todo lo que sos`,
+          `Juntar buenos deseos arma este regalo escrito con alma`
+        ], k),
+    (k) => esDuelo
+      ? `Iluminar la memoria con gratitud honra tu ejemplo fiel`
+      : pick([
+          `Iluminar esta jornada con risas alegra toda la reunión`,
+          `Iluminar tu camino nuevo pide salud, calma y compañía`
+        ], k),
+    (k) => esDuelo
+      ? `Contar anécdotas tuyas mantiene viva tu voz en casa`
+      : pick([
+          `Contar con tu amistad leal mejora cualquier semana difícil`,
+          `Contar historias nuevas juntos promete otro año inolvidable`
+        ], k),
+    (k) => esDuelo
+      ? `Esperar el reencuentro sereno fortalece nuestra fe diaria`
+      : pick([
+          `Esperar doce meses lindos arranca con este deseo sincero`,
+          `Esperar buenas sorpresas cobra fuerza en esta linda etapa`
+        ], k),
+    (k) => esDuelo
+      ? `Mimar tu recuerdo con flores blancas nos trae alivio`
+      : pick([
+          `Mimar a quien queremos bien hoy pide abrazo largo`,
+          `Mimar tu corazón hoy empieza leyendo estas palabras`
+        ], k),
+    (k) => esDuelo
+      ? `Sobra gratitud sincera por cada huella buena que dejaste`
+      : pick([
+          `Sobra cariño honesto para celebrar hoy esta fecha especial`,
+          `Sobran ganas reales de verte tranquilo, sano y feliz`
+        ], k),
+    (k) => esDuelo
+      ? `Vale recordar con calma cuánto amor supiste entregar`
+      : pick([
+          `Vale brindar sin apuros por otro año tan tuyo`,
+          `Vale celebrar cada logro simple de este lindo presente`
+        ], k),
+    (k) => esDuelo
+      ? `Lograr paz pensando en vos reconforta a toda la mesa`
+      : pick([
+          `Lograr metas sanas y tranquilas distingue tu hermoso camino`,
+          `Lograr días serenos corona este festejo lleno de afecto`
+        ], k),
+    (k) => esDuelo
+      ? `Alzar una plegaria limpia acompaña tu descanso en paz`
+      : pick([
+          `Alzar la copa por vos celebra tu enorme corazón`,
+          `Alzar este brindis sincero abre un ciclo muy prometedor`
+        ], k),
+    (k) => esDuelo
+      ? `Cantar bajo el cielo claro abraza tu memoria querida`
+      : pick([
+          `Cantar rodeados de afecto llena de chispa este día`,
+          `Cantar por tu vida celebra otra vuelta llena de luz`
+        ], k),
+    (k) => esDuelo
+      ? `Aprender de tu nobleza sigue guiando nuestras decisiones`
+      : pick([
+          `Aprender junto a vos hace más valioso cada paso`,
+          `Aprender a disfrutar lo simple ilumina este año nuevo`
+        ], k),
+    (k) => esDuelo
+      ? `Respirar calma mirando al cielo honra tu recuerdo vivo`
+      : pick([
+          `Respirar alegría tranquila inaugura tu mejor temporada hasta hoy`,
+          `Respirar aire nuevo abre caminos hermosos para vos`
         ], k)
   ];
 
@@ -2438,9 +2931,27 @@ export function redactarTextoMensaje(titulo, hub, perfil, msgIndex, seed) {
 
   const temaKey = BANCO_TEXTOS_POR_TEMA[perfil.tema] ? perfil.tema : 'general';
   const b = BANCO_TEXTOS_POR_TEMA[temaKey];
-  const p1 = b.ap[(msgIndex + seed) % b.ap.length];
+  // Cuando generamos nuevas publicaciones (msgIndex >= 30), combinamos con aperturas y cierres frescos humanizados
+  const apHumanoExtra = !perfil.esDuelo && !perfil.esAniversario && !perfil.esAutoMensaje && !perfil.esEx && !perfil.esCristiano && perfil.tratamiento === 'vos'
+    ? [
+        'Quería mandarte algo distinto hoy porque un simple saludo corto se quedaba re corto para todo lo que representás. A veces en el apuro de todos los días no frenamos a decirnos cuánto bien nos hace tenernos cerca.',
+        'Me puse a pensar en vos apenas arranqué el día y quise dejarte unas líneas reales, sin vueltas ni palabras acartonadas, para que sepas lo mucho que valoro cada momento compartido.',
+        'Hay personas que hacen más liviana la semana con solo mandar un audio o sentarse a charlar un rato, y vos sos exactamente de esas. Hoy que celebrás un año más, tocaba devolverte un poquito de todo ese cariño.'
+      ]
+    : [];
+  const cieHumanoExtra = !perfil.esDuelo && !perfil.esAniversario && !perfil.esAutoMensaje && !perfil.esEx && !perfil.esCristiano && perfil.tratamiento === 'vos'
+    ? [
+        '¡Muy feliz cumpleaños! Ojalá este año nuevo venga liviano, con salud firme, mates o cafés tranquilos y muchísimos motivos para reírte con ganas.',
+        'Mandame cómo la estás pasando hoy y guardame un pedacito de alegría para brindar pronto juntos. ¡Te mando un abrazo enorme de corazón!'
+      ]
+    : [];
+
+  const poolAp = msgIndex >= 30 && apHumanoExtra.length ? [...apHumanoExtra, ...b.ap] : b.ap;
+  const poolCie = msgIndex >= 30 && cieHumanoExtra.length ? [...cieHumanoExtra, ...b.cie] : b.cie;
+
+  const p1 = poolAp[(msgIndex + seed) % poolAp.length];
   const p2 = b.dev[(msgIndex * 3 + seed) % b.dev.length];
-  const p3 = b.cie[(msgIndex * 5 + seed) % b.cie.length];
+  const p3 = poolCie[(msgIndex * 5 + seed) % poolCie.length];
 
   const rolesComo = new Set([
     'mamá', 'papá', 'amiga', 'mejor amiga', 'amigo', 'mejor amigo',
@@ -2583,7 +3094,7 @@ const ADORNOS_DUELO = [
   'de todo corazón'
 ];
 
-export function generarMensajesProfesionales(hub, cantidadFaltante, usadosSlugs, usadosTitulosNorm, usadosPorDest, palabrasInicioUsadas, seedOffset) {
+export function generarMensajesProfesionales(hub, cantidadFaltante, usadosSlugs, usadosTitulosNorm, usadosPorDest, palabrasInicioUsadas, seedOffset, inicioIndice = 0) {
   const perfil = obtenerPerfilHub(hub);
   const kwNorm = normalizar(hub.keyword);
   const dest = hub.destinatario;
@@ -2727,7 +3238,7 @@ export function generarMensajesProfesionales(hub, cantidadFaltante, usadosSlugs,
     usadosTitulosNorm.add(nt);
     listaDest.push({ big: bigA, wordSet: setA });
 
-    const texto = redactarTextoMensaje(titulo, hub, perfil, mensajes.length, seedOffset);
+    const texto = redactarTextoMensaje(titulo, hub, perfil, inicioIndice + mensajes.length, seedOffset);
     mensajes.push({
       tipo: 'mensaje',
       slug,

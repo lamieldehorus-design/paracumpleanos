@@ -51,7 +51,11 @@ const extractoCard = parrafoPrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, 
   {esHub ? (
     <div>
       <h1>{registro.h1}</h1>
-      <p class="lead">{registro.lead}</p>
+      <div class="lead-bloque">
+        {String(registro.lead || '').split('\n\n').map(function (p) {
+          return <p class="lead">{p}</p>;
+        })}
+      </div>
       <p class="contador">Encontradas {mensajesCat.length} felicitaciones</p>
       <div class="tarjeta-visual" role="img" aria-label={'Tarjeta destacada de ' + (registro.keyword || registro.h1)}>
         <div class="tarjeta-visual-emoji">{registro.emoji}</div>
@@ -67,6 +71,14 @@ const extractoCard = parrafoPrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, 
           <span>Página 1 de {totalPaginas}</span>
           <a href={'/' + registro.slug + '/2/'}>Siguiente ›</a>
         </nav>
+      ) : null}
+      {registro.seoTitulo && registro.seoTexto ? (
+        <section class="guia-categoria" aria-labelledby="guia-seo-titulo">
+          <h2 id="guia-seo-titulo">{registro.seoTitulo}</h2>
+          {String(registro.seoTexto).split('\n\n').map(function (p) {
+            return <p>{p}</p>;
+          })}
+        </section>
       ) : null}
       <p class="fechas-meta">Publicado: <time datetime={creado}>{creado}</time> · Última actualización: <time datetime={actualizado}>{actualizado}</time></p>
       <p class="firma">Escrito y revisado por el Equipo Editorial de {MARCA}. Todos los mensajes son originales.</p>

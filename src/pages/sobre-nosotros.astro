@@ -1,9 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
+import { hubs, todosMensajes } from '../lib/contenido.ts';
 ---
-<Base titulo="Sobre nosotros - ParaCumpleanos" descripcion="Conocé ParaCumpleanos: 351 categorías de felicitaciones de cumpleaños originales, escritas por personas, para hacer más lindo el día de quien más querés.">
+<Base titulo="Sobre nosotros - ParaCumpleanos" descripcion={`Conocé ParaCumpleanos: ${hubs.length} categorías con ${todosMensajes.length.toLocaleString('es-AR')} felicitaciones de cumpleaños originales, escritas por personas, para hacer más lindo el día de quien más querés.`}>
   <h1>Sobre nosotros</h1>
-  <p>ParaCumpleanos nació de una idea simple: nadie debería quedarse sin palabras en el cumpleaños de alguien importante. Acá reunimos más de 10.500 felicitaciones originales organizadas en 351 categorías pensadas para cada destinatario, edad, tono y ocasión especial.</p>
+  <p>ParaCumpleanos nació de una idea simple: nadie debería quedarse sin palabras en el cumpleaños de alguien importante. Acá reunimos {todosMensajes.length.toLocaleString('es-AR')} felicitaciones originales organizadas en {hubs.length} categorías pensadas para cada destinatario, edad, tono y ocasión especial.</p>
   <p>Todos los mensajes de este sitio son de creación propia. No copiamos frases de otros sitios: nuestro Equipo Editorial escribe, revisa y valida cada texto para que suene natural, cálido y listo para compartir por WhatsApp, redes sociales o tarjeta descargable.</p>
   <p>Nuestro objetivo es que encuentres la felicitación perfecta en menos de tres clics, la copies o descargues como tarjeta y la envíes. Así de fácil.</p>
 </Base>
