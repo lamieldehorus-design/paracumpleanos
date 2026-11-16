@@ -1,14 +1,7 @@
 import { defineConfig } from 'astro/config';
-import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://paracumpleanos.com',
-  integrations: [
-    sitemap({
-      entryLimit: 1000,
-      lastmod: new Date('2026-11-15')
-    })
-  ],
   trailingSlash: 'always',
   server: {
     host: '0.0.0.0',

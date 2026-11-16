@@ -31,7 +31,8 @@ export const GET: APIRoute = () => {
     hermanasDe
   });
 
-  const xml = generarSitemapXml(urls, '2026-11-16');
+  const fechaHoy = new Date().toISOString().slice(0, 10);
+  const xml = generarSitemapXml(urls, fechaHoy);
 
   return new Response(xml, {
     headers: {

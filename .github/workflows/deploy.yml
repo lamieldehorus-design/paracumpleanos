@@ -2,7 +2,7 @@ name: Deploy a GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   workflow_dispatch:
 
 permissions:
@@ -24,8 +24,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Cache de npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('package.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-
       - name: Instalar dependencias
-        run: npm install
+        run: npm install --no-audit --no-fund
       - name: Construir sitio (ejecuta el validador de titulos en prebuild)
         run: npm run build
       - name: Subir artefacto de Pages
@@ -58,3 +65,18 @@ jobs:
         continue-on-error: true
         run: node scripts/enviar-indexnow.mjs --wait-key=60 --from-catalog
 
+  google-notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Notificar actualizacion a Google (WebSub + Search Console API)
+        continue-on-error: true
+        env:
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+        run: node scripts/notificar-google.mjs --wait-live=60

@@ -4,4 +4,3 @@ Disallow: /admin/
 Disallow: /data/
 
 Sitemap: https://paracumpleanos.com/sitemap.xml
-Sitemap: https://paracumpleanos.com/sitemap-index.xml

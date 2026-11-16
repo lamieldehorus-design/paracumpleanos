@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import {
   crearCatalogo,
   metaDe,
@@ -21,6 +22,15 @@ import {
   extraerUrlsDeSitemap,
   construirPayloadsIndexNow
 } from './indexnow';
+import {
+  WEBSUB_HUB,
+  SITEMAP_URL,
+  FEED_URL,
+  generarRssXml,
+  parsearCredencialesGsc,
+  construirJwtGsc,
+  construirEndpointsGsc
+} from './google-notify';
 
 function cargarDatosCompletos() {
   const base = JSON.parse(fs.readFileSync(path.resolve('data/contenido.json'), 'utf8'));
@@ -199,6 +209,46 @@ test('Bing IndexNow cubre todas las 13694 URLs en lotes <= 10000 y tiene archivo
     assert.ok(p.urlList.length <= INDEXNOW_MAX_BATCH);
   }
   assert.equal(payloads.reduce((acc, p) => acc + p.urlList.length, 0), 13694);
+});
+
+test('Google RSS + WebSub y Search Console Sitemaps API generan feed y JWT validos y Pages incluye CNAME/.nojekyll', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+  const rss = generarRssXml(cat.hubs, cat.mensajesDe, new Date('2026-11-16T18:00:00Z'));
+
+  assert.ok(rss.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
+  assert.ok(rss.includes('<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'));
+  assert.ok(rss.includes(`<atom:link rel="hub" href="${WEBSUB_HUB}" />`));
+  assert.ok(rss.includes(`<atom:link rel="self" type="application/rss+xml" href="${FEED_URL}" />`));
+  assert.equal((rss.match(/<item>/g) || []).length, 60);
+
+  const { privateKey } = crypto.generateKeyPairSync('rsa', {
+    modulusLength: 2048,
+    privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+    publicKeyEncoding: { type: 'spki', format: 'pem' }
+  });
+  const creds = parsearCredencialesGsc(
+    JSON.stringify({
+      client_email: 'bot@test-project.iam.gserviceaccount.com',
+      private_key: privateKey
+    })
+  );
+  const jwt = construirJwtGsc(creds, 1700000000);
+  const partes = jwt.split('.');
+  assert.equal(partes.length, 3);
+  const claims = JSON.parse(Buffer.from(partes[1], 'base64url').toString('utf8'));
+  assert.equal(claims.iss, 'bot@test-project.iam.gserviceaccount.com');
+  assert.equal(claims.exp, 1700003600);
+
+  const endpoints = construirEndpointsGsc(SITEMAP_URL);
+  assert.equal(endpoints.length, 2);
+  assert.ok(endpoints[0].includes(encodeURIComponent(SITEMAP_URL)));
+
+  assert.equal(fs.readFileSync(path.resolve('public/CNAME'), 'utf8').trim(), 'paracumpleanos.com');
+  assert.ok(fs.existsSync(path.resolve('public/.nojekyll')));
+  const robots = fs.readFileSync(path.resolve('public/robots.txt'), 'utf8');
+  assert.ok(robots.includes('Sitemap: https://paracumpleanos.com/sitemap.xml'));
+  assert.ok(!robots.includes('sitemap-index.xml'));
 });
 
 
