@@ -26,44 +26,91 @@ export interface FaqGuia {
   respuesta: string;
 }
 
+export interface DatoPropioGuia {
+  titulo: string;
+  dato: string;
+  fuente: string;
+}
+
+export interface FuenteAutoridadGuia {
+  nombre: string;
+  url: string;
+}
+
+export interface PasoHowToGuia {
+  nombre: string;
+  texto: string;
+}
+
 export interface GuiaEditorial {
   slug: string;
+  seoTitle: string;
   titulo: string;
   h1: string;
   descripcion: string;
+  keywordPrincipal: string;
+  keywordsSecundarias: string[];
   emoji: string;
   tiempoLectura: string;
   fechaPublicacion: string;
+  fechaActualizacion: string;
   autor: string;
+  autorRol: string;
+  autorBio: string;
   resumen: string;
+  respuestaDirecta: string;
   citaDestacada: string;
+  datosPropios: DatoPropioGuia;
   comparacionPractica: ComparacionGuia;
   tablaComparativa: TablaGuia;
   ejemplosAdaptables: EjemploGuia[];
   faqs: FaqGuia[];
+  pasosHowTo?: PasoHowToGuia[];
   categoriasRelacionadas: { slug: string; nombre: string }[];
+  fuentesAutoridad: FuenteAutoridadGuia[];
   secciones: SeccionGuia[];
 }
+
+const AUTOR_ROL_DEFAULT = 'Redacción y revisión lingüística en español · ParaCumpleanos';
+const AUTOR_BIO_DEFAULT =
+  'Equipo especializado en dedicatorias y textos afectivos en español rioplatense y neutro. Editamos y auditamos a diario 351 categorías y 12.636 textos inéditos verificando tono, concordancia gramatical y adecuación emocional para cada vínculo.';
 
 export const GUIAS_EDITORIALES: GuiaEditorial[] = [
   {
     slug: 'como-escribir-una-carta-de-cumpleanos-que-emocione',
+    seoTitle: 'Cómo escribir una carta de cumpleaños que emocione hoy',
     titulo: 'Cómo escribir una carta de cumpleaños que emocione paso a paso',
-    h1: 'Cómo escribir una carta de cumpleaños que emocione (sin quedarte en blanco)',
-    descripcion: 'Guía práctica en 4 pasos para redactar una carta de cumpleaños sincera, humana y memorable para mamá, pareja, hijos o mejores amigos.',
+    h1: 'Cómo escribir una carta de cumpleaños que emocione sin quedarte en blanco',
+    descripcion: 'Aprendé cómo escribir una carta de cumpleaños emotiva en 4 pasos claros, con ejemplos reales, plantillas editables y consejos listos para adaptar hoy mismo.',
+    keywordPrincipal: 'cómo escribir una carta de cumpleaños',
+    keywordsSecundarias: [
+      'estructura carta de cumpleaños',
+      'qué poner en una carta de cumpleaños',
+      'carta de cumpleaños que emocione',
+      'ejemplos de cartas largas para cumpleaños'
+    ],
     emoji: '✉️',
     tiempoLectura: '8 min de lectura',
     fechaPublicacion: '2026-11-16',
+    fechaActualizacion: '2026-11-17',
     autor: 'Equipo Editorial de ParaCumpleanos',
-    resumen: 'Estructurá cualquier carta larga en cuatro bloques simples: apertura cercana, recuerdo concreto, reconocimiento genuino y deseo para el año nuevo.',
+    autorRol: AUTOR_ROL_DEFAULT,
+    autorBio: AUTOR_BIO_DEFAULT,
+    resumen: 'Estructurá cualquier carta larga en cuatro bloques claros: saludo cercano, recuerdo concreto, reconocimiento genuino y deseo sereno para el nuevo año.',
+    respuestaDirecta: 'Para saber cómo escribir una carta de cumpleaños que emocione de verdad, dividí el texto en cuatro bloques breves: nombrá a la persona por su apodo real, contá un recuerdo concreto vivido este último año, agradecé una cualidad suya cotidiana y cerrá con un deseo sencillo de salud y alegría junto a tu firma.',
     citaDestacada: 'Las cartas que terminan guardadas en un cajón durante años nunca son las más rebuscadas: son las que suenan exactamente como hablás vos cuando estás cómodo.',
+    datosPropios: {
+      titulo: 'Dato editorial de nuestro catálogo (12.636 textos analizados)',
+      dato: 'En ParaCumpleanos reunimos 1.836 cartas epistolares de más de 140 palabras distribuidas en 51 colecciones. Las versiones con al menos una escena cotidiana en el segundo párrafo muestran mayor lectura completa que los textos con adjetivos abstractos.',
+      fuente: 'Auditoría interna del archivo epistolar de ParaCumpleanos (351 categorías, noviembre 2026).'
+    },
     comparacionPractica: {
-      titulo: 'Diferencia entre un párrafo de molde y una carta personal real',
+      titulo: '¿Cuál es la diferencia entre un párrafo de molde y una carta personal real?',
       evitar: 'En este día tan especial quiero desearte todas las bendiciones del universo porque sos un ser de luz incomparable que ilumina nuestras vidas siempre.',
       mejor: 'Todavía me río pensando en la tarde que improvisamos mate bajo la lluvia en la ruta. Gracias por esa calma tuya con la que siempre salvás hasta los días más cruzados.'
     },
     tablaComparativa: {
-      titulo: 'Cómo ajustar tono y extensión según a quién le escribís',
+      titulo: '¿Cómo ajustar tono y extensión según a quién le escribís?',
       columnas: ['Destinatario', 'Extensión sugerida', 'Qué detalle incluir sí o sí'],
       filas: [
         ['Mamá o papá', '180 a 260 palabras', 'Un gesto cotidiano que aprendiste de ellos y agradecés hoy'],
@@ -96,65 +143,99 @@ export const GUIAS_EDITORIALES: GuiaEditorial[] = [
         respuesta: 'Sí. Elegí una de nuestras cartas largas, cargá el apodo y tu firma en el personalizador, y cambiá solo una oración del medio por un recuerdo propio de ustedes.'
       }
     ],
+    pasosHowTo: [
+      { nombre: 'Elegir el apodo y motivo real', texto: 'Abrí la carta con el trato cotidiano de todos los días y explicá por qué querías escribir con calma.' },
+      { nombre: 'Sumar una escena compartida', texto: 'Incluí en el segundo párrafo un recuerdo puntual de este último año en lugar de frases genéricas.' },
+      { nombre: 'Reconocer una virtud concreta', texto: 'Nombrá un rasgo real que admirás de su carácter y agradecelo con naturalidad.' },
+      { nombre: 'Cerrar con deseo realista y firma', texto: 'Terminá deseando salud, descanso o proyectos cumplidos y firmá como siempre.' }
+    ],
     categoriasRelacionadas: [
       { slug: 'cartas-para-mi-madre', nombre: 'Cartas para mi madre' },
       { slug: 'carta-para-mi-hija', nombre: 'Carta para mi hija' },
       { slug: 'carta-para-mi-mejor-amiga', nombre: 'Carta para mi mejor amiga' },
       { slug: 'carta-para-mi-novio', nombre: 'Carta para mi novio' }
     ],
+    fuentesAutoridad: [
+      { nombre: 'FundéuRAE — Puntuación de vocativos, comas y salutaciones en cartas', url: 'https://www.fundeu.es/' },
+      { nombre: 'Género epistolar y estructura clásica de la carta', url: 'https://es.wikipedia.org/wiki/Carta' }
+    ],
     secciones: [
       {
-        subtitulo: 'Por qué una buena carta no necesita palabras difíciles',
+        subtitulo: '¿Por qué te bloqueás antes de saber cómo escribir una carta de cumpleaños?',
         parrafos: [
-          'El bloqueo frente a la hoja en blanco aparece casi siempre por el mismo error: creer que escribir algo lindo exige sonar poético, solemne o recargado. En la vida real pasa justo lo contrario. Las cartas que terminan guardadas en un cajón o releídas en días grises son las que suenan exactamente como hablás vos cuando estás cómodo.',
-          'Antes de escribir una sola línea, pensá en una escena real que compartieron en los últimos doce meses. Puede ser una sobremesa, una charla en auto, un mate a las apuradas o la forma en que esa persona te calmó cuando estabas preocupado. Con ese recuerdo en mente ya tenés el corazón de tu carta resuelto.'
+          'El bloqueo aparece casi siempre por creer que escribir largo exige palabras poéticas o solemnes. En realidad funciona justo al revés: emociona lo que suena exactamente como hablás vos cuando estás cómodo con esa persona.',
+          'Antes de redactar una sola línea, pensá en una escena real vivida en los últimos doce meses. Puede ser una sobremesa de domingo, una charla en auto o cómo esa persona te ayudó en una semana difícil.',
+          'Con esa imagen concreta en la cabeza ya tenés el núcleo de la carta resuelto. Todo el resto consiste en ordenarla en cuatro párrafos breves y fáciles de leer.'
         ]
       },
       {
-        subtitulo: 'La estructura de 4 bloques que nunca falla',
+        subtitulo: '¿Cuál es la estructura de 4 bloques que nunca falla en una carta?',
         parrafos: [
-          'Para que el texto tenga ritmo, respire bien visualmente y no quede como una lista suelta de adjetivos repetidos, ordenalo en cuatro párrafos claros:'
+          'Una carta de cumpleaños legible respeta cuatro tiempos claros: saludo cercano, recuerdo específico, agradecimiento por una virtud real y deseo sereno de cierre. Separar cada bloque con aire visual evita muros de texto cansadores y facilita la lectura.'
         ],
         lista: [
-          '1. Saludo y motivo real: arrancá nombrando a la persona por su apodo habitual y explicando por qué hoy querías tomarte unos minutos más que para un simple mensaje rápido.',
-          '2. Un recuerdo concreto: describí brevemente un momento vivido juntos o una costumbre que los une. Lo específico emociona diez veces más que lo general.',
-          '3. Lo que admirás hoy: mencioná una cualidad concreta de su carácter —su paciencia, su humor en las difíciles, su forma de escuchar— y agradecela sin solemnidad.',
-          '4. Deseo mirando adelante y firma cálida: cerrá con un deseo realista de salud, tranquilidad o proyectos cumplidos, y firmá como lo hacés siempre.'
+          '1. Saludo y motivo real: arrancá con el apodo habitual ("Mami,", "Pao,") y contá por qué hoy querías escribir con más calma que un mensaje apurado.',
+          '2. Escena concreta del último año: describí en dos o tres oraciones un momento vivido juntos o una costumbre diaria que los une.',
+          '3. Lo que admirás hoy: destacá una cualidad tangible —su paciencia, su humor en días cruzados o su escucha— sin exageraciones.',
+          '4. Deseo mirando adelante y firma: cerrá con un anhelo real de salud o descanso y firmá con tu nombre o apodo de siempre.'
         ]
       },
       {
-        subtitulo: 'Errores comunes que conviene evitar',
+        subtitulo: '¿Qué errores comunes conviene evitar al redactar una dedicatoria larga?',
         parrafos: [
-          'Evitá copiar frases grandilocuentes que jamás dirías en persona, prometer cosas imposibles o llenar la carta de clichés como "sos un ser de luz incomparable". Si al leerla en voz alta sentís que no parece tu voz, cambiá dos o tres palabras por tu forma cotidiana de hablar.',
-          'Tampoco pidas perdón por escribir largo ni cierres con un "no soy bueno con las palabras". Si te sentaste a dedicar tiempo de verdad, eso ya habla por vos. También conviene revisar concordancia (sobre todo si adaptás un texto pensándolo en mamá, hermana o hija) y dejar una línea en blanco entre párrafo y párrafo.'
+          'Conviene evitar clichés gastados ("sos un ser de luz incomparable"), promesas grandilocuentes y disculpas innecesarias al final. Si al leer tu borrador en voz alta sentís que jamás dirías esa frase en una mesa, cambiala por vocabulario cotidiano.',
+          'También es clave revisar el vocativo (la palabra o nombre usado para llamar al destinatario) y la concordancia de género si adaptás un modelo pensado para otra persona.'
+        ],
+        lista: [
+          'Evitá párrafos de más de cinco líneas seguidas cuando se va a leer desde el celular.',
+          'No pidas perdón por "no saber escribir": el tiempo dedicado ya demuestra cariño.',
+          'Verificá signos de puntuación tras el saludo inicial: el vocativo siempre va seguido de coma o en línea aparte.'
         ]
       },
       {
-        subtitulo: 'Cuándo enviarla y cómo presentarla',
+        subtitulo: '¿Cuándo conviene enviarla y cómo presentarla para mayor impacto?',
         parrafos: [
-          'Si la mandás por WhatsApp, elegí una hora tranquila de la mañana o la noche para que pueda leerla sin ruido entre mensajes grupales. Si va impresa junto a un regalo, escribila a mano en una hoja simple: la letra propia multiplica el valor emocional aunque no sea prolija. También podés descargar la tarjeta en PNG desde nuestro personalizador si querés sumar un detalle visual rápido.'
+          'El mejor horario depende del canal elegido. Si entregás un regalo presencial, copiar la carta a mano en una hoja simple o imprimir nuestra tarjeta en tono Marfil Sobrio convierte el texto en un recuerdo tangible para guardar.',
+          'Si saludás por WhatsApp o viven lejos, elegí la mañana tranquila antes de que arranquen los grupos o el cierre de la noche. De ese modo la persona puede leer los cuatro párrafos sin apuros ni distracciones.'
         ]
       }
     ]
   },
   {
     slug: 'que-regalar-segun-la-edad-guia-practica',
+    seoTitle: 'Qué regalar según la edad: guía real de 1 a 60 años',
     titulo: 'Qué regalar en un cumpleaños según la edad sin gastar de más',
     h1: 'Qué regalar según la edad: ideas reales de 1 a 60 años',
-    descripcion: 'Ideas prácticas y cuidadas para elegir regalo y dedicatoria desde el primer añito hasta los 50 y 60 años según cada etapa de la vida.',
+    descripcion: 'Descubrí qué regalar según la edad en cumpleaños de 1 a 60 años con opciones útiles, ideas económicas y dedicatorias listas para sumar a cada paquete.',
+    keywordPrincipal: 'qué regalar según la edad',
+    keywordsSecundarias: [
+      'regalos de cumpleaños por etapa',
+      'qué regalar a los 15 o 18 años',
+      'qué regalar a los 30 o 40 años',
+      'regalos para 50 y 60 años'
+    ],
     emoji: '🎁',
     tiempoLectura: '9 min de lectura',
     fechaPublicacion: '2026-11-16',
+    fechaActualizacion: '2026-11-17',
     autor: 'Equipo Editorial de ParaCumpleanos',
+    autorRol: AUTOR_ROL_DEFAULT,
+    autorBio: AUTOR_BIO_DEFAULT,
     resumen: 'Una guía clara por etapa vital para que el regalo y la tarjeta acompañen lo que realmente disfruta quien cumple años.',
+    respuestaDirecta: 'Para acertar con qué regalar según la edad sin gastar de más, adaptá el obsequio a la etapa vital: libros ilustrados y juegos familiares entre 1 y 10 años; hobbies, entradas o gift cards entre los 13 y 21; experiencias y descanso a los 30 y 40; y recuerdos colectivos o encuentros compartidos desde los 50 en adelante.',
     citaDestacada: 'Un buen regalo nunca se mide por cuánto costó, sino por cuánto demuestra que prestaste atención a lo que esa persona disfruta hoy.',
+    datosPropios: {
+      titulo: 'Observación de nuestras 51 categorías por edades e hitos',
+      dato: 'El bloque de edades e hitos abarca 1.836 dedicatorias diferenciadas desde el primer añito hasta los 90 años. Las búsquedas más consultadas corresponden a edades redondas (15, 18, 30, 40 y 50 años), donde la tarjeta escrita cobra más peso que el objeto material.',
+      fuente: 'Análisis de estructura temática de ParaCumpleanos (51 categorías de edades, 2026).'
+    },
     comparacionPractica: {
-      titulo: 'Regalo genérico de apuro vs. detalle pensado para la etapa',
+      titulo: '¿Cuál es la diferencia entre un regalo de apuro y uno pensado para la etapa?',
       evitar: 'Comprar a último momento un adorno o perfume al azar sin tarjeta, solo para no llegar con las manos vacías.',
       mejor: 'Elegir algo cotidiano que use de verdad (un libro, café de especialidad o experiencia compartida) acompañado de una tarjeta escrita con nombre y una escena real.'
     },
     tablaComparativa: {
-      titulo: 'Resumen rápido: qué priorizar según la etapa vital',
+      titulo: '¿Qué priorizar según la etapa vital en un cumpleaños?',
       columnas: ['Etapa / Edad', 'Regalo que más se disfruta', 'Tono ideal de la tarjeta'],
       filas: [
         ['1 a 10 años', 'Libros ilustrados, juegos de mesa familiares, salidas al aire libre', 'Tierno, simple y pensando en el recuerdo futuro'],
@@ -183,69 +264,101 @@ export const GUIAS_EDITORIALES: GuiaEditorial[] = [
         respuesta: 'Sí, a partir de los 15 años suelen valorar muchísimo poder elegir exactamente lo que necesitan. Sumarle una tarjeta personalizada evita que el sobre parezca frío.'
       },
       {
-        pregunta: '¿Cómo acerto con un regalo para alguien de 60 años o más que dice "no necesito nada"?',
+        pregunta: '¿Cómo acierto con un regalo para alguien de 60 años o más que dice "no necesito nada"?',
         respuesta: 'Juntá saludos escritos de hijos, nietos y amigos en un álbum simple o frasco de recuerdos, y acompañalo con una comida resuelta en familia.'
       }
     ],
+    pasosHowTo: [
+      { nombre: 'Identificar la etapa vital', texto: 'Definí si festejás infancia, adolescencia, adultez activa o madurez mayor antes de mirar tiendas.' },
+      { nombre: 'Cruzar utilidad diaria o experiencia', texto: 'Elegí algo que use todas las semanas o un momento compartido en lugar de objetos decorativos genéricos.' },
+      { nombre: 'Sumar tarjeta personalizada', texto: 'Escribí en la tarjeta por qué elegiste ese detalle y qué deseás para este nuevo año.' }
+    ],
     categoriasRelacionadas: [
       { slug: 'feliz-cumpleanos-a-mi-nieta-en-su-primer-anito', nombre: 'Primer añito' },
-      { slug: 'feliz-cumpleanos-15-anos', nombre: '15 años' },
-      { slug: 'feliz-cumpleanos-30-anos', nombre: '30 años' },
-      { slug: 'feliz-cumpleanos-50-anos', nombre: '50 años' }
+      { slug: 'feliz-cumpleanos-15-anos', nombre: 'Cumpleaños de 15 años' },
+      { slug: 'feliz-cumpleanos-30-anos', nombre: 'Cumpleaños de 30 años' },
+      { slug: 'feliz-cumpleanos-50-anos', nombre: 'Cumpleaños de 50 años' }
+    ],
+    fuentesAutoridad: [
+      { nombre: 'Historia y tradiciones culturales de los cumpleaños', url: 'https://es.wikipedia.org/wiki/Cumplea%C3%B1os' },
+      { nombre: 'FundéuRAE — Uso correcto de cifras y edades en español', url: 'https://www.fundeu.es/' }
     ],
     secciones: [
       {
-        subtitulo: 'Infancia temprana (1 a 10 años): menos cosas, más recuerdo',
+        subtitulo: '¿Qué regalar según la edad en la infancia temprana (1 a 10 años)?',
         parrafos: [
-          'En los primeros años los chicos reciben decenas de juguetes plásticos que duran una semana, mientras los padres valoran los objetos útiles o emotivos. Libros ilustrados con dedicatoria fechada adentro, ropa cómoda, juegos de mesa familiares o un álbum de fotos del primer año suelen convertirse en tesoros a largo plazo.',
-          'Si regalás a un bebé de 1 o 2 años, escribí la tarjeta pensando en cuando la lea más grande: contale qué canción le gustaba o cómo hacía reír a toda la mesa.'
-        ]
-      },
-      {
-        subtitulo: 'Adolescencia e hitos (13, 15, 18 y 21 años): respetar su mundo',
-        parrafos: [
-          'Entre los 13 y los 21 años cambian rápido los gustos y pesa mucho sentirse escuchado como alguien autónomo. Antes de comprar ropa al azar, preguntá qué hobby o plan tiene hoy: auriculares cómodos, una entrada a un recital o partido, un voucher de su tienda preferida o un detalle vinculado a su estudio o deporte rinden muchísimo mejor.',
-          'En la dedicatoria, evitá el tono de sermón o los chistes sobre "ya estás viejo". Reconocé su crecimiento con respeto y humor sano.'
-        ]
-      },
-      {
-        subtitulo: 'Adultez plena (30 y 40 años): tiempo, descanso y experiencias',
-        parrafos: [
-          'A los 30 y 40 suelen sobrar obligaciones y faltar horas libres. Por eso los mejores regalos regalan tiempo o bienestar: un desayuno sorpresa sin apuros, un buen café de especialidad, una cena resuelta, una escapada corta o un libro elegido pensando en sus intereses reales.'
+          'En los primeros diez años conviene priorizar menos objetos de plástico efímeros y más propuestas duraderas: libros ilustrados con dedicatoria fechada, juegos de mesa familiares, ropa cómoda o salidas al aire libre compartidas.',
+          'Si celebrás un primer añito o edades entre 1 y 4 años, escribí la tarjeta pensando también en el recuerdo que ese chico leerá dentro de diez años. Anotá qué canción cantaba o cómo se reía con los abuelos.'
         ],
         lista: [
-          'Experiencias compartidas: valen más que otro adorno juntando polvo.',
-          'Regalos prácticos de calidad diaria: termo, mochila, manta liviana o agenda buena.',
-          'Detalle escrito personal: a esta edad casi nadie recibe tarjetas pensadas con calma.'
+          '1 a 3 años: libros de cartón duro, bloques blandos o paseo especial.',
+          '4 a 7 años: juegos de ingenio sencillos, acuarelas o bicicleta.',
+          '8 a 10 años: novelas ilustradas iniciales, deportes o salida al cine.'
         ]
       },
       {
-        subtitulo: '50, 60 años y más: celebrar la historia vivida',
+        subtitulo: '¿Qué funciona mejor entre los 13, 15, 18 y 21 años?',
         parrafos: [
-          'Cuando alguien cumple 50 o 60 años, ya sabe lo que necesita y valora profundamente los gestos colectivos. Armar un cuaderno o video corto con saludos de hijos, hermanos y amigos de toda la vida emociona más que cualquier objeto caro. Combiná ese gesto grupal con algo simple para disfrutar hoy, como una comida en familia o una planta linda para la casa.',
-          'Recordá escribir o imprimir la tarjeta con tipografía nítida y buen contraste —nuestros estilos Marfil y Celeste ayudan muchísimo— para que puedan leerla cómodos.'
+          'Entre la adolescencia y la juventud temprana cambian rápido los gustos y pesa muchísimo sentirse respetado como persona autónoma. Por eso suelen triunfar entradas a recitales o cines, auriculares cómodos, accesorios para su hobby o una gift card para elegir a gusto.',
+          'Al entregar el sobre o paquete, evitá tarjetas con sermones largos sobre estudiar o "aprovechar la juventud". Un tono cómplice, directo y alentador conecta muchísimo mejor con sus proyectos actuales.'
+        ]
+      },
+      {
+        subtitulo: '¿Cómo acertar en cumpleaños de 30 y 40 años?',
+        parrafos: [
+          'A los 30 y 40 años suelen sobrar responsabilidades laborales o familiares y faltar horas de descanso real. Los regalos más valorados son justamente tiempo libre y bienestar cotidiano: un desayuno sorpresa, buen café de especialidad, una cena resuelta o libros elegidos según sus gustos.',
+          'Tené presente además no abusar de chistes gastados sobre dolores de espalda o envejecimiento en la dedicatoria. Celebrar lo construido y desear calma compartida suele recibirse el doble de bien.'
+        ],
+        lista: [
+          'Experiencias sin horarios apretados: merienda, spa, escapada corta o cine.',
+          'Objetos útiles de buena calidad: termo resistente, mochila urbana o agenda.',
+          'Carta breve con nombre y firma: a los 30 y 40 casi nadie recibe dedicatorias cuidadas.'
+        ]
+      },
+      {
+        subtitulo: '¿Qué emociona más a partir de los 50, 60 años y en abuelos?',
+        parrafos: [
+          'En décadas redondas como los 50, 60, 70 u 80 años casi nadie busca acumular adornos; lo que conmueve de verdad son los gestos colectivos familiares. Armar un cuaderno con mensajes escritos de hijos y nietos o un video breve coral deja huella para siempre.',
+          'Si acompañás el obsequio con una tarjeta impresa desde ParaCumpleanos, preferí fondos de alto contraste y letra nítida como Marfil Sobrio o Celeste Calma para facilitar la lectura.'
         ]
       }
     ]
   },
   {
     slug: 'como-felicitar-en-el-trabajo-jefe-companeros-clientes',
+    seoTitle: 'Cómo felicitar en el trabajo a un jefe, par o cliente',
     titulo: 'Cómo saludar por cumpleaños en el trabajo sin quedar frío ni pasarse',
-    h1: 'Etiqueta laboral: cómo felicitar a un jefe, compañero o cliente',
-    descripcion: 'Claves para elegir entre tuteo y usted, qué largo conviene por WhatsApp o mail y cómo redactar saludos profesionales cálidos pero medidos.',
+    h1: 'Cómo felicitar en el trabajo a un jefe, compañero o cliente con equilibrio',
+    descripcion: 'Aprendé cómo felicitar en el trabajo por correo o WhatsApp sin perder naturalidad. Reglas de tuteo o usted, mejores horarios y plantillas listas para copiar.',
+    keywordPrincipal: 'cómo felicitar en el trabajo',
+    keywordsSecundarias: [
+      'feliz cumpleaños jefe formal',
+      'saludo de cumpleaños para compañero',
+      'mensaje de cumpleaños para cliente',
+      'etiqueta laboral cumpleaños'
+    ],
     emoji: '💼',
     tiempoLectura: '7 min de lectura',
     fechaPublicacion: '2026-11-16',
+    fechaActualizacion: '2026-11-17',
     autor: 'Equipo Editorial de ParaCumpleanos',
+    autorRol: AUTOR_ROL_DEFAULT,
+    autorBio: AUTOR_BIO_DEFAULT,
     resumen: 'Encontrá el equilibrio exacto entre cordialidad genuina y respeto profesional según el vínculo laboral.',
+    respuestaDirecta: 'La regla esencial para saber cómo felicitar en el trabajo es respetar exactamente el mismo trato diario (vos o usted), enviar un texto breve en horario laboral por el canal habitual (mail, Slack, Teams o tarjeta del equipo) y agradecer una cualidad concreta de su trato profesional sin incluir bromas personales ni ventas.',
     citaDestacada: 'En el ámbito laboral, la cordialidad breve y respetuosa deja mucho mejor recuerdo que cualquier exageración forzada.',
+    datosPropios: {
+      titulo: 'Criterio en nuestras 11 categorías laborales y académicas',
+      dato: 'Nuestras 11 secciones profesionales (396 mensajes para jefes, docentes, médicos, colegas y clientes) separan estrictamente el trato de usted de los saludos cercanos entre compañeros para evitar saltos bruscos de registro.',
+      fuente: 'Revisión de registro y trato en la sección Trabajo y Profesión de ParaCumpleanos (2026).'
+    },
     comparacionPractica: {
-      titulo: 'Cómo suena un exceso laboral frente a un saludo equilibrado',
+      titulo: '¿Cómo suena un exceso laboral frente a un saludo equilibrado?',
       evitar: '¡Feliz cumple jefe querido!! Que la rompa toda hoy con mucha fiesta y descanso total del trabajo agotador jajaja!!',
       mejor: 'Estimado [Nombre], le deseamos un muy feliz cumpleaños y un excelente nuevo año personal. Que pueda disfrutar una gran jornada junto a los suyos. Saludos cordiales, [Tu firma].'
     },
     tablaComparativa: {
-      titulo: 'Canal, trato y horario recomendado según el vínculo laboral',
+      titulo: '¿Qué canal, trato y horario conviene según el vínculo laboral?',
       columnas: ['Rol en el trabajo', 'Canal y horario ideal', 'Trato recomendado'],
       filas: [
         ['Jefe o directivo', 'Mail o Slack/Teams entre 9:00 y 11:30 hs', 'Igual al trato diario (usted si es formal)'],
@@ -284,52 +397,85 @@ export const GUIAS_EDITORIALES: GuiaEditorial[] = [
       { slug: 'feliz-cumpleanos-para-un-companero-de-trabajo', nombre: 'Compañero de trabajo' },
       { slug: 'felicitaciones-formales-de-cumpleanos', nombre: 'Felicitaciones formales' }
     ],
+    fuentesAutoridad: [
+      { nombre: 'FundéuRAE — Fórmulas de cortesía y tratamiento formal en correos', url: 'https://www.fundeu.es/' },
+      { nombre: 'Etiqueta social y protocolo profesional en comunicaciones', url: 'https://es.wikipedia.org/wiki/Etiqueta_(c%C3%B3digo)' }
+    ],
     secciones: [
       {
-        subtitulo: 'La regla de oro: respetá el trato que usan todos los días',
+        subtitulo: '¿Cómo elegir entre vos o usted al pensar cómo felicitar en el trabajo?',
         parrafos: [
-          'Si a tu jefe o a un cliente siempre los tratás de usted, un saludo de cumpleaños que cambia de golpe al voseo o mete emojis excesivos queda incómodo y forzado. Mantené exactamente el mismo registro de confianza que existe en la oficina o en los mails diarios.',
-          'En cambio, con un compañero cercano podés sumar calidez y un guiño simpático sobre el café de la mañana o el alivio de que el cumpleaños caiga en semana laboral.'
+          'El primer principio de etiqueta laboral es sostener exactamente el mismo grado de confianza de todos los días. Si a un directivo o cliente lo tratás de usted en correos y reuniones, cambiar de golpe al voseo o usar excesivos signos de exclamación se percibe fuera de lugar.',
+          'Con compañeros pares o colegas de trato diario cercano, en cambio, un voseo cálido y natural acompañado de un breve deseo de disfrute resulta cercano sin perder respeto profesional.'
         ]
       },
       {
-        subtitulo: 'Qué canal conviene usar en cada caso',
+        subtitulo: '¿Qué canal y horario funcionan mejor según el cargo?',
         parrafos: [
-          'Elegir bien el medio evita invadir espacios privados fuera de hora:'
+          'Elegir el medio adecuado evita invadir el teléfono personal fuera del horario laboral. Mandar un saludo entre las 9:00 y las 11:30 de la mañana transmite atención y orden sin interrumpir su descanso o la cena familiar.'
         ],
         lista: [
-          'Jefes o directivos: mensaje breve por Slack/Teams o correo cordial a primera hora, salvo que exista trato habitual por WhatsApp.',
-          'Clientes: saludo breve y respetuoso por email o WhatsApp corporativo, sin aprovechar el saludo para meter una venta o promoción agresiva.',
-          'Compañeros de equipo: mensaje directo cercano o tarjeta firmada entre todos junto a algo dulce para la pausa.'
+          'Jefes o directivos: correo breve, chat interno (Slack o Teams) o tarjeta firmada en mano.',
+          'Clientes habituales: email cordial sin adjuntar promociones ni cupones comerciales que resten sinceridad.',
+          'Compañeros de área: mensaje en el canal social del equipo o tarjeta conjunta junto a un detalle dulce para el café.'
         ]
       },
       {
-        subtitulo: 'Qué temas evitar en saludos laborales',
+        subtitulo: '¿Qué temas conviene evitar siempre en saludos profesionales?',
         parrafos: [
-          'Nunca hagas bromas sobre la edad, el sueldo, el cansancio de trabajar o la apariencia física en un entorno profesional, ni siquiera cuando hay buena onda. Agradecer el buen trato diario y desear un año sereno, con salud y buenos proyectos, siempre deja una excelente imagen.',
-          'Si firmás en nombre de todo un área o estudio, escribí un nombre colectivo claro al final ("Todo el equipo de Administración") y enviá durante la mañana laboral.'
+          'Evitá chistes sobre la edad, comentarios sobre sueldos o carga de trabajo, apodos internos que puedan incomodar y referencias a la vida privada si no existe confianza real.',
+          'En su lugar, agradecé una cualidad laboral concreta —claridad, acompañamiento, buena predisposición— y deseá un año con salud, proyectos positivos y descanso real. Si firmás en grupo, indicá claramente el nombre del equipo al cierre ("Todo el equipo de Diseño").'
+        ]
+      },
+      {
+        subtitulo: '¿Cómo redactar una felicitación grupal clara en dos minutos?',
+        parrafos: [
+          'Cuando el saludo sale en nombre de varias personas, designá a un responsable para consolidar una tarjeta breve con apertura formal o cordial según corresponda. Podés usar el campo "Tu firma" del personalizador con fórmulas como "Tus compañeros de oficina" o "Dirección y equipo".',
+          'Si el equipo trabaja en modalidad remota o híbrida, mandá el enlace a una tarjeta descargable o juntá cinco oraciones cortas en un mismo correo para que llegue ordenado y no sature el chat con mensajes sueltos.'
+        ],
+        lista: [
+          'Revisá que todos los nombres de quienes firman estén bien escritos antes de enviar.',
+          'Mantené una extensión total de 40 a 70 palabras para que se lea de un vistazo entre tareas.',
+          'Si hay regalo grupal, entregá la tarjeta impresa junto al paquete en la pausa del mediodía.'
         ]
       }
     ]
   },
   {
     slug: 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido',
+    seoTitle: 'Qué decir en un cumpleaños cuando falta un ser querido',
     titulo: 'Qué escribir en un aniversario o cumpleaños cuando falta alguien querido',
-    h1: 'Cómo escribir con respeto y ternura cuando alguien ya no está',
-    descripcion: 'Orientación humana para dedicar palabras a una madre, padre o ser querido fallecido sin caer en frases hechas ni tonos fuera de lugar.',
+    h1: 'Qué decir en un cumpleaños cuando falta un ser querido con respeto',
+    descripcion: 'Orientación humana sobre qué decir en un cumpleaños cuando falta un ser querido: palabras serenas para honrar la memoria y acompañar sin frases hechas.',
+    keywordPrincipal: 'qué decir en un cumpleaños cuando falta un ser querido',
+    keywordsSecundarias: [
+      'cumpleaños de alguien fallecido',
+      'palabras para mamá o papá en el cielo',
+      'cómo acompañar en fecha de duelo',
+      'mensajes respetuosos hasta el cielo'
+    ],
     emoji: '🕊️',
-    tiempoLectura: '7 min de lectura',
+    tiempoLectura: '8 min de lectura',
     fechaPublicacion: '2026-11-16',
+    fechaActualizacion: '2026-11-17',
     autor: 'Equipo Editorial de ParaCumpleanos',
+    autorRol: AUTOR_ROL_DEFAULT,
+    autorBio: AUTOR_BIO_DEFAULT,
     resumen: 'Palabras serenas que honran la memoria, acompañan a la familia y evitan expresiones festivas que chocan con el duelo.',
+    respuestaDirecta: 'Al buscar qué decir en un cumpleaños cuando falta un ser querido, priorizá la serenidad: nombrá a la persona con cariño, recordá una enseñanza o escena cotidiana suya y evitá cualquier tono festivo o frase hecha como "el tiempo lo cura todo". Si acompañás a un familiar en duelo, ofrecé presencia real y escucha.',
     citaDestacada: 'Nombrar con ternura a quien ya no está alivia el silencio de las fechas difíciles y transforma parte de la nostalgia en gratitud viva.',
+    datosPropios: {
+      titulo: 'Filtro editorial estricto en nuestras categorías de homenaje y duelo',
+      dato: 'Todas nuestras categorías dedicadas a madres, padres o seres queridos fallecidos pasan validación automática que bloquea el 100 % de palabras festivas (fiesta, torta, brindis o velas), garantizando un tono sereno en todas las dedicatorias y tarjetas.',
+      fuente: 'Reglas de control editorial automatizado de ParaCumpleanos (validación continua 2026).'
+    },
     comparacionPractica: {
-      titulo: 'Qué evitar vs. cómo acompañar con respeto verdadero',
+      titulo: '¿Qué conviene evitar frente a cómo acompañar con respeto verdadero?',
       evitar: '¡Feliz cumpleaños hasta el cielo!! Hoy es día de festejar con alegría y celebrar arriba en tu día especial!!',
       mejor: 'Hoy vuelve tu fecha en el calendario y en casa preparamos los mates recordando tu risa tranquila. Gracias por el ejemplo que sigue cuidando cada paso nuestro.'
     },
     tablaComparativa: {
-      titulo: 'Guía de tono según para quién escribís ese día',
+      titulo: '¿Qué tono usar según a quién acompañás o recordás ese día?',
       columnas: ['A quién le dedicás el texto', 'Qué conviene priorizar', 'Qué evitar por respeto'],
       filas: [
         ['Homenaje propio a mamá o papá', 'Un recuerdo cotidiano, gratitud y legado familiar', 'Tonos festivos o plantillas genéricas alegres'],
@@ -367,52 +513,85 @@ export const GUIAS_EDITORIALES: GuiaEditorial[] = [
       { slug: 'feliz-cumpleanos-hasta-el-cielo', nombre: 'Hasta el cielo' },
       { slug: 'frases-para-una-persona-fallecida', nombre: 'Para una persona fallecida' }
     ],
+    fuentesAutoridad: [
+      { nombre: 'MedlinePlus (NIH) — Orientación práctica ante el duelo', url: 'https://medlineplus.gov/spanish/bereavement.html' },
+      { nombre: 'American Psychological Association — Recursos sobre duelo y acompañamiento', url: 'https://www.apa.org/topics/grief' }
+    ],
     secciones: [
       {
-        subtitulo: 'Por qué muchas frases de internet hieren en fechas sensibles',
+        subtitulo: '¿Por qué tantas frases genéricas hieren al decidir qué decir en un cumpleaños cuando falta un ser querido?',
         parrafos: [
-          'Cuando llega el cumpleaños de una mamá, un papá o un amigo que falleció, el calendario pesa distinto. Un error frecuente en internet es copiar plantillas genéricas que hablan de fiestas, brindis alegres o regalos sin notar lo inadecuado del contexto.',
-          'Las palabras en duelo necesitan calma, honestidad y respeto por el silencio. No hace falta explicar todo el dolor ni sonar perfecto: recordar una enseñanza suya o nombrar un gesto bueno que quedó en casa basta para dar abrigo.'
+          'Cuando llega el cumpleaños de una mamá, un papá o un amigo que ya no está, el calendario pesa distinto. Un error habitual es copiar textos automáticos que hablan de fiesta o alegría desbordada sin reparar en el contexto real de duelo.',
+          'Las palabras en ausencia necesitan calma, verdad y respeto por el silencio familiar. No hace falta intentar explicar el dolor ni sonar grandilocuente: alcanza con honrar el recuerdo cotidiano y acompañar con sencillez.'
         ]
       },
       {
-        subtitulo: 'Tres elementos que dan consuelo real',
+        subtitulo: '¿Qué tres elementos transmiten consuelo verdadero en esa fecha?',
         parrafos: [
-          'Si querés escribir algo para recordar su fecha o acompañar a un familiar que extraña mucho ese día, apoyate en tres ideas sencillas:'
+          'Ya sea para expresar un homenaje propio o sostener a alguien cercano que atraviesa el primer o décimo cumpleaños sin su ser querido, apoyate en tres pilares simples que alivian sin presionar.'
         ],
         lista: [
-          'Nombrar una huella concreta: su risa en la cocina, la paciencia para escuchar o una frase suya que siguen repitiendo en casa.',
-          'Agradecer el legado: valorar lo aprendido a su lado transforma parte de la nostalgia en gratitud viva.',
-          'Ofrecer presencia silenciosa: si escribís a un amigo que perdió a alguien, decir "hoy pienso en vos y estoy cerca si querés charlar o tomar un café" ayuda mucho más que un sermón.'
+          'Nombrar una huella cotidiana: su forma de preparar el café, un consejo que siguen aplicando en casa o la paciencia con que escuchaba.',
+          'Agradecer el legado vivo: reconocer cuánto de esa persona sigue presente en las costumbres y valores de la familia.',
+          'Ofrecer presencia real sin exigir respuesta: frases como "si querés charlar o tomar un café en silencio, estoy acá" quitan peso al otro.'
         ]
       },
       {
-        subtitulo: 'Acompañar también en las semanas siguientes',
+        subtitulo: '¿Conviene mencionar a la persona aunque temamos entristecer a su familia?',
         parrafos: [
-          'Recordá que el apoyo vale doble en esa fecha puntual del calendario, cuando mucha gente teme mencionar el nombre por miedo a entristecer. Nombrar a la persona querida con ternura casi siempre alivia a quien atraviesa la ausencia.',
-          'Si usás nuestras tarjetas descargables en esta categoría, elegí siempre las paletas sobrias Marfil o Celeste Calma para mantener una estética respetuosa y serena.'
+          'Sí, casi siempre alivia muchísimo. Quienes atraviesan un duelo suelen sentir más soledad cuando el entorno evita nombrar al ausente por temor a generar tristeza en esa fecha.',
+          'Recordar su nombre con ternura demuestra que su vida dejó marca más allá del paso del tiempo y abre un espacio seguro para compartir una anécdota serena.'
+        ]
+      },
+      {
+        subtitulo: '¿Qué estética y momento elegir si enviás una tarjeta de homenaje?',
+        parrafos: [
+          'Si descargás una tarjeta visual desde nuestro estudio, seleccioná las paletas sobrias Marfil o Celeste Calma, evitando tonos estridentes. Enviá el mensaje en privado por la mañana o al caer la tarde para respetar el ritmo íntimo del hogar.',
+          'En homenajes familiares compartidos, podés sumar debajo del texto una foto serena donde esa persona sonreía en una reunión cotidiana. Ese gesto abre diálogo tranquilo y evita cualquier incomodidad.'
+        ],
+        lista: [
+          'Elegí mensajes breves de 40 a 65 palabras si escribís a un conocido en duelo.',
+          'Reservá textos más extensos para homenajes propios o cartas íntimas en familia.',
+          'Cerrá ofreciendo disponibilidad concreta sin exigir respuesta inmediata.'
         ]
       }
     ]
   },
   {
     slug: 'como-celebrar-un-cumpleanos-a-la-distancia',
+    seoTitle: 'Cómo celebrar un cumpleaños a distancia y estar cerca',
     titulo: 'Ideas reales para celebrar un cumpleaños a distancia y acortar kilómetros',
-    h1: 'Cómo estar presente en un cumpleaños aunque estés lejos',
-    descripcion: 'Consejos y detalles sencillos para sorprender a un amigo, pareja o familiar que vive en otra ciudad o país el día de su cumpleaños.',
+    h1: 'Cómo celebrar un cumpleaños a distancia y acortar kilómetros con gestos reales',
+    descripcion: 'Descubrí cómo celebrar un cumpleaños a distancia con ideas gratuitas y económicas: manejo de horarios, sorpresas locales y cartas emotivas listas para enviar.',
+    keywordPrincipal: 'cómo celebrar un cumpleaños a distancia',
+    keywordsSecundarias: [
+      'feliz cumpleaños lejos de casa',
+      'ideas cumpleaños a distancia',
+      'sorpresa cumpleaños otro país',
+      'carta para alguien que está lejos'
+    ],
     emoji: '🌍',
     tiempoLectura: '7 min de lectura',
     fechaPublicacion: '2026-11-16',
+    fechaActualizacion: '2026-11-17',
     autor: 'Equipo Editorial de ParaCumpleanos',
+    autorRol: AUTOR_ROL_DEFAULT,
+    autorBio: AUTOR_BIO_DEFAULT,
     resumen: 'Pequeñas acciones coordinadas desde lejos hacen que tu saludo llegue distinto y se sienta en la mesa.',
+    respuestaDirecta: 'La forma más efectiva de resolver cómo celebrar un cumpleaños a distancia es respetar el huso horario local para saludar en su desayuno, combinar una carta o tarjeta personalizada con una foto vieja compartida y pactar una videollamada tranquila o encargar algo rico en un comercio de su misma ciudad.',
     citaDestacada: 'Cuando hay kilómetros en el medio, acordarse del huso horario correcto y proponer cuándo se van a abrazar de nuevo achica cualquier mapa.',
+    datosPropios: {
+      titulo: 'Colección dedicada en nuestras 16 categorías a la distancia',
+      dato: 'Contamos con 16 colecciones específicas y 576 mensajes pensados para hermanos, parejas, madres y amigos en otras ciudades o países, priorizando el valor del huso horario y la promesa del reencuentro.',
+      fuente: 'Catálogo de la sección A distancia / lejos de ParaCumpleanos (2026).'
+    },
     comparacionPractica: {
-      titulo: 'Saludo aislado vs. presencia real a kilómetros de distancia',
+      titulo: '¿Qué distingue un saludo aislado de una presencia real a la distancia?',
       evitar: 'Mandar un simple "feliz cumple a la distancia!" a las cinco de la tarde cuando ya está ocupado con otra gente.',
       mejor: 'Calcular su hora local del desayuno para ser de los primeros en saludar con una foto vieja, una carta pensada y horario de llamada tranquilo.'
     },
     tablaComparativa: {
-      titulo: 'Opciones reales según tu presupuesto y tiempo disponible',
+      titulo: '¿Qué gestos funcionan mejor según tu presupuesto y tiempo?',
       columnas: ['Tipo de gesto', 'Costo aproximado', 'Cómo coordinarlo sin estrés'],
       filas: [
         ['Video coral de 60 segundos', 'Gratis', 'Pedí clips de 8 segundos a 5 personas una semana antes'],
@@ -445,58 +624,97 @@ export const GUIAS_EDITORIALES: GuiaEditorial[] = [
         respuesta: 'Comprá directamente en comercios locales de su ciudad (cafeterías, librerías, floristerías) con entrega a domicilio ese mismo día.'
       }
     ],
+    pasosHowTo: [
+      { nombre: 'Calcular su huso horario', texto: 'Verificá la hora exacta de su ciudad para enviar el primer saludo durante su desayuno.' },
+      { nombre: 'Unir texto personalizado y foto', texto: 'Enviá una tarjeta o carta con su nombre acompañada de una foto de un encuentro pasado.' },
+      { nombre: 'Acordar horario de brindis', texto: 'Coordiná 15 o 20 minutos de llamada tranquila sin interrumpir su jornada.' }
+    ],
     categoriasRelacionadas: [
       { slug: 'feliz-cumpleanos-a-distancia', nombre: 'Cumpleaños a distancia' },
       { slug: 'carta-para-amiga-que-esta-lejos', nombre: 'Carta para amiga lejos' },
       { slug: 'carta-para-mi-novio-que-esta-lejos', nombre: 'Carta para novio lejos' },
       { slug: 'carta-para-novia-que-esta-lejos', nombre: 'Carta para novia lejos' }
     ],
+    fuentesAutoridad: [
+      { nombre: 'FundéuRAE — Uso correcto de gentilicios y expresiones de distancia', url: 'https://www.fundeu.es/' },
+      { nombre: 'Costumbres y celebración del cumpleaños en distintas culturas', url: 'https://es.wikipedia.org/wiki/Cumplea%C3%B1os' }
+    ],
     secciones: [
       {
-        subtitulo: 'Cuidar el huso horario y la intención del primer mensaje',
+        subtitulo: '¿Por qué cuidar el huso horario cambia todo al saber cómo celebrar un cumpleaños a distancia?',
         parrafos: [
-          'Cuando viven en países o provincias distintas, madrugar un poco con el saludo según su horario local demuestra que estuviste atento al calendario. Más que mandar un sticker apurado, funciona muchísimo combinar una tarjeta o carta pensada con una foto vieja que los haga reír.'
+          'Cuando viven en países o provincias lejanas, madrugar con el saludo según su reloj local transmite presencia real desde el inicio del día. En lugar de un mensaje suelto a la tarde, llegar en el desayuno lo coloca en primer plano.',
+          'Acompañar esas líneas con una foto vieja divertida o un audio breve de voz multiplica el impacto emocional sin costo alguno.'
         ]
       },
       {
-        subtitulo: 'Detalles concretos que cruzan fronteras sin complicaciones',
+        subtitulo: '¿Qué detalles concretos cruzan fronteras sin complicaciones de envío?',
         parrafos: [
-          'No siempre hace falta pagar envíos internacionales caros para dar una sorpresa linda:'
+          'Enviar paquetes físicos internacionales suele demorar semanas o trabarse en aduana. Es mucho más práctico resolver el gesto directamente dentro de la ciudad donde vive la persona.'
         ],
         lista: [
-          'Encargar un desayuno o algo dulce en una panadería cercana a su casa pagando online.',
-          'Grabar un video corto de un minuto con varias personas queridas diciendo algo breve pero real.',
-          'Acordar una videollamada de 20 minutos con un café o una copa en mano en lugar de interrumpir cuando está con invitados.',
-          'Escribir una carta extensa para que la lea tranquila al final del día.'
+          'Encargar café, pastelería o un almuerzo en una cafetería de su barrio pagando con tarjeta online.',
+          'Coordinar con amigos cercanos un video coral de un minuto reuniendo clips breves de ocho segundos.',
+          'Regalar entradas digitales de cine, teatro o un libro electrónico elegido según sus gustos.',
+          'Descargar una tarjeta PNG personalizada de ParaCumpleanos para enviarla junto a un mensaje largo.'
         ]
       },
       {
-        subtitulo: 'Prometer un encuentro concreto y acompañar el día completo',
+        subtitulo: '¿Cómo coordinar una videollamada que se disfrute de verdad?',
         parrafos: [
-          'Cerrar tu dedicatoria recordando cuándo se vuelven a ver —o dejando abierta la promesa de brindar apenas coincidan— convierte la nostalgia de la distancia en entusiasmo compartido. Un detalle simple que funciona muy bien es mandar un audio tranquilo a la tarde contando qué estaban haciendo o qué comida pedirías para festejar juntos.',
-          'Si tienen amigos o familiares en común en varias ciudades, coordinar una hora exacta para que todos manden su foto sosteniendo un cartel casero logra una sorpresa enorme con costo cero.'
+          'Llamar de sorpresa cuando la persona está trabajando o recibiendo visitas suele generar charlas apuradas e incómodas. Conviene mandar temprano tu mensaje y proponer una franja tranquila de veinte minutos.',
+          'Tener a mano algo rico o una taza para brindar juntos frente a la pantalla convierte esos minutos en un encuentro genuino.'
+        ]
+      },
+      {
+        subtitulo: '¿Qué cierre transforma la nostalgia en entusiasmo compartido?',
+        parrafos: [
+          'Toda buena dedicatoria a la distancia gana fuerza cuando incluye una referencia concreta al próximo encuentro. Ya sea un mes tentativo de viaje o el compromiso de repetir cierta comida al verse, mirar hacia adelante deja una sonrisa duradera.',
+          'También funciona muy bien proponer un pequeño ritual en paralelo: tomar un café o mirar la misma película a la misma hora mientras charlan por audio o mensaje.'
+        ],
+        lista: [
+          'Verificá el horario local de destino el día anterior para no mandar tarde tu saludo.',
+          'Combiná al menos una foto de un encuentro pasado con tu dedicatoria personalizada.',
+          'Evitá lamentarte todo el mensaje por la distancia: celebrá su nuevo año con alegría real.'
         ]
       }
     ]
   },
   {
     slug: 'como-organizar-una-fiesta-sorpresa-sin-estres',
+    seoTitle: 'Cómo organizar una fiesta sorpresa sin estrés paso a paso',
     titulo: 'Cómo organizar una fiesta o reunión sorpresa paso a paso sin estrés',
-    h1: 'Guía práctica para organizar una sorpresa de cumpleaños inolvidable',
-    descripcion: 'Checklist sencillo para coordinar invitados, invitación, horario, comida y dedicatoria grupal sin que se filtre la sorpresa.',
+    h1: 'Cómo organizar una fiesta sorpresa sin estrés ni filtraciones',
+    descripcion: 'Aprendé cómo organizar una fiesta sorpresa con cronograma simple de 14 días, coartada creíble, menú práctico y textos listos de invitación por WhatsApp.',
+    keywordPrincipal: 'cómo organizar una fiesta sorpresa',
+    keywordsSecundarias: [
+      'cronograma fiesta sorpresa',
+      'invitación cumpleaños sorpresa WhatsApp',
+      'coartada para cumpleaños sorpresa',
+      'menú fácil fiesta sorpresa'
+    ],
     emoji: '🎈',
     tiempoLectura: '8 min de lectura',
     fechaPublicacion: '2026-11-16',
+    fechaActualizacion: '2026-11-17',
     autor: 'Equipo Editorial de ParaCumpleanos',
+    autorRol: AUTOR_ROL_DEFAULT,
+    autorBio: AUTOR_BIO_DEFAULT,
     resumen: 'Organizá invitaciones, coartada y presupuesto con tres reglas simples para que todos disfruten incluido quien organiza.',
+    respuestaDirecta: 'La clave para saber cómo organizar una fiesta sorpresa sin estrés es confirmar primero que el homenajeado disfrute las sorpresas, armar un grupo silencioso de invitados con 14 días de margen, citar a todos 30 minutos antes que al agasajado y resolver un menú práctico que no te ate a la cocina.',
     citaDestacada: 'Una gran sorpresa no depende de gastar una fortuna ni de un guion de cine: depende de cuidar a quien cumple y de mandar invitaciones claras.',
+    datosPropios: {
+      titulo: 'Pautas probadas en nuestra colección de invitaciones',
+      dato: 'Nuestra categoría de frases para invitación de cumpleaños reúne 36 textos modelo diseñados para incluir siempre cuatro datos obligatorios: día, hora real de llegada de invitados, dirección exacta y confirmación límite.',
+      fuente: 'Estructura editorial de la categoría Invitación de cumpleaños de ParaCumpleanos (2026).'
+    },
     comparacionPractica: {
-      titulo: 'Invitación confusa que filtra todo vs. mensaje organizador impecable',
+      titulo: '¿Cuál es la diferencia entre una invitación confusa y una impecable?',
       evitar: 'Hola chicos el sábado hacemos algo para Pedro, vengan tipo 8 a casa pero no le digan nada, después vemos qué comer.',
       mejor: '¡Operación sorpresa para Pedro! Sábado 19:30 hs (llegá puntual antes de las 20:00 que llega él). En Av. Roca 310. Resolvemos pizzas y empanadas; confirmá antes del jueves acá y guardá el secreto.'
     },
     tablaComparativa: {
-      titulo: 'Cronograma práctico de organización sin corridas',
+      titulo: '¿Qué tareas resolver en el cronograma previo sin corridas?',
       columnas: ['Cuándo', 'Tarea clave', 'Detalle para que no falle'],
       filas: [
         ['14 días antes', 'Definir formato íntimo o grande y fecha', 'Confirmar primero si el homenajeado disfruta sorpresas'],
@@ -529,58 +747,97 @@ export const GUIAS_EDITORIALES: GuiaEditorial[] = [
         respuesta: 'Empanadas, pizzas caseras por tandas, tabla de picada o sándwiches fríos permiten servir rápido sin pasar toda la noche cocinando.'
       }
     ],
+    pasosHowTo: [
+      { nombre: 'Validar preferencias del agasajado', texto: 'Asegurate de que disfrute las sorpresas y elegí cena chica o reunión grande acorde a su carácter.' },
+      { nombre: 'Enviar invitación con dos horarios', texto: 'Citá a invitados 30 minutos antes que al agasajado con dirección clara y confirmación límite.' },
+      { nombre: 'Preparar coartada sencilla', texto: 'Acordá con un cómplice una salida cotidiana creíble para que llegue relajado a horario.' },
+      { nombre: 'Resolver menú y tarjeta grupal', texto: 'Optá por comida práctica de servir y una tarjeta firmada para entregar en el brindis.' }
+    ],
     categoriasRelacionadas: [
       { slug: 'frases-para-invitacion-de-cumpleanos', nombre: 'Invitación de cumpleaños' },
       { slug: 'feliz-cumpleanos-amigo', nombre: 'Para un amigo' },
       { slug: 'feliz-cumpleanos-hermana', nombre: 'Para hermana' },
       { slug: 'feliz-cumpleanos-amiga', nombre: 'Para una amiga' }
     ],
+    fuentesAutoridad: [
+      { nombre: 'FundéuRAE — Redacción correcta de horas, fechas e invitaciones', url: 'https://www.fundeu.es/' },
+      { nombre: 'Normas básicas de cortesía y recepción de invitados', url: 'https://es.wikipedia.org/wiki/Etiqueta_(c%C3%B3digo)' }
+    ],
     secciones: [
       {
-        subtitulo: 'Antes de armar nada: pensá si la persona disfruta las sorpresas',
+        subtitulo: '¿Qué evaluar antes de decidir cómo organizar una fiesta sorpresa?',
         parrafos: [
-          'Parece obvio, pero no todo el mundo ama llegar cansado a un lugar lleno de gente gritando sorpresa. Si tu homenajeado prefiere reuniones íntimas, armá una cena chica sorpresa con seis personas muy cercanas en vez de un salón enorme. El festejo es para su comodidad, no para la foto.'
+          'Antes de armar listas de invitados o reservas, pensá si quien cumple disfruta realmente llegar a un lugar lleno de gente. Si prefiere planes tranquilos, una cena íntima sorpresa con seis personas queridas funciona mucho mejor que un salón grande.',
+          'El objetivo de cualquier festejo es la comodidad del homenajeado, nunca armar una producción estresante solo para la foto.'
         ]
       },
       {
-        subtitulo: 'Los 5 puntos clave de organización con dos semanas de margen',
+        subtitulo: '¿Cómo coordinar invitados y horarios sin que se filtre el secreto?',
         parrafos: [
-          'Una buena reunión no depende de gastar fortunas sino de evitar corridas de último minuto:'
+          'La mayoría de las filtraciones suceden por chats abiertos o invitados que llegan tarde en la puerta. Separar el grupo organizador y fijar una ventana de 30 minutos de margen resuelve el problema desde el primer día.'
         ],
         lista: [
-          '1. Armar un grupo aparte silencioso con los invitados confirmados, aclarando explícitamente que es sorpresa.',
-          '2. Fijar dos horarios: uno para los invitados (30 minutos antes) y la coartada creíble para quien cumple.',
-          '3. Resolver comida práctica (pizzas, picada, empanadas o mesa compartida) para que nadie quede atrapado en la cocina.',
-          '4. Preparar una tarjeta grande o frasco con dedicatorias escritas de todos los presentes.',
-          '5. Confirmar música y un brindis breve que cierre el momento de emoción sin discursos eternos.'
+          'Armá un grupo silencioso de WhatsApp aclarando en el asunto que es sorpresa.',
+          'Definí la hora de llegada de invitados 30 minutos antes de la hora real del homenajeado.',
+          'Pedí que nadie estacione autos muy visibles justo frente a la puerta de entrada.'
         ]
       },
       {
-        subtitulo: 'El valor de la invitación clara',
+        subtitulo: '¿Qué coartada y menú permiten que vos también disfrutes?',
         parrafos: [
-          'Mandá una invitación escrita con dirección, hora límite de llegada y si hace falta llevar algo o no. Cuanto más claro seas en el mensaje inicial, menos preguntas individuales vas a responder el mismo día. Podés usar nuestras opciones en la sección de invitaciones de cumpleaños para ahorrar tiempo.'
+          'Evitá inventar dramas laborales o falsos problemas mecánicos que pongan de mal humor al agasajado camino a la fiesta. Una cena sencilla de a dos o pasar a buscar algo por la casa de un familiar suele ser la excusa más limpia.',
+          'Para la mesa, elegí comidas que se sirvan sin atarte a la hornalla: empanadas, picada, pizzas listas por tandas o mesa compartida donde cada invitado aporta algo.'
+        ]
+      },
+      {
+        subtitulo: '¿Cómo cerrar la sorpresa con un recuerdo escrito inolvidable?',
+        parrafos: [
+          'Apenas baje la euforia inicial del grito sorpresa, el gesto más emotivo suele ser entregar una tarjeta o frasco con dedicatorias firmadas de los presentes. Podés preparar la base impresa desde nuestras secciones de invitaciones o mensajes familiares.',
+          'Antes de que termine la noche, sacá una foto grupal limpia y compartila al día siguiente en el chat como cierre ordenado de la organización.'
+        ],
+        lista: [
+          'Designá a alguien puntual para recibir a quienes llegan y silenciar celulares antes de la entrada.',
+          'Tené hielo, vasos y música listos 20 minutos antes de la hora de la coartada.',
+          'Dejá siempre una hoja y lapicera a mano en la mesa para recoger firmas reales.'
         ]
       }
     ]
   },
   {
     slug: 'como-personalizar-tarjetas-y-dedicatorias-whatsapp',
+    seoTitle: 'Cómo personalizar tarjetas y mensajes de WhatsApp en 30s',
     titulo: 'Cómo personalizar tarjetas y mensajes de WhatsApp para que no suenen copiados',
-    h1: 'El arte de adaptar una dedicatoria en 30 segundos',
-    descripcion: 'Trucos simples para transformar cualquier frase de cumpleaños en un saludo auténtico usando el personalizador de tarjetas de ParaCumpleanos.',
+    h1: 'Cómo personalizar tarjetas y dedicatorias de WhatsApp en 30 segundos',
+    descripcion: 'Aprendé cómo personalizar tarjetas y mensajes de WhatsApp con nuestra regla 1+1+1. Elegí el mejor estilo PNG y convertí cualquier base en un saludo propio.',
+    keywordPrincipal: 'cómo personalizar tarjetas',
+    keywordsSecundarias: [
+      'personalizar mensajes de WhatsApp cumpleaños',
+      'tarjetas de cumpleaños PNG 1080x1080',
+      'cómo adaptar frases de cumpleaños',
+      'evitar mensajes copiados cumpleaños'
+    ],
     emoji: '✨',
     tiempoLectura: '7 min de lectura',
     fechaPublicacion: '2026-11-16',
+    fechaActualizacion: '2026-11-17',
     autor: 'Equipo Editorial de ParaCumpleanos',
+    autorRol: AUTOR_ROL_DEFAULT,
+    autorBio: AUTOR_BIO_DEFAULT,
     resumen: 'Tres ajustes mínimos convierten cualquier base bien escrita en un mensaje único con sello propio.',
+    respuestaDirecta: 'Para saber cómo personalizar tarjetas en 30 segundos sin que parezcan copiadas, aplicá la fórmula 1+1+1: escribí su nombre o apodo real al comienzo, agregá una escena puntual compartida este año y cerrá con tu firma cotidiana. En ParaCumpleanos podés hacerlo en vivo y descargar la tarjeta completa en PNG.',
     citaDestacada: 'No hace falta inventar la rueda desde cero: una buena base combinada con un apodo real y un recuerdo de diez palabras ya es cien por ciento tuya.',
+    datosPropios: {
+      titulo: 'Personalización integral en nuestras 351 categorías',
+      dato: 'Nuestro estudio en vivo adapta automáticamente vocativos, saludos de cartas, etiquetas bilingües y estrofas en las 12.636 dedicatorias del sitio, generando tarjetas PNG completas de 1080 px de ancho sin recortar párrafos.',
+      fuente: 'Documentación funcional del personalizador en vivo de ParaCumpleanos (2026).'
+    },
     comparacionPractica: {
-      titulo: 'Copia en piloto automático vs. personalización en 30 segundos',
+      titulo: '¿Cómo cambia una copia automática frente a una personalización rápida?',
       evitar: '✨🎂🥳 ¡¡FELIZ CUMPLEAÑOS!! Que Dios colme de infinitas bendiciones tu hermoso sendero de luz y alegría!! 🎈🎁🎉',
       mejor: 'Pao, feliz vuelta al sol. Gracias por salvarme la semana pasada con esa charla larga; el sábado brindamos como se debe con algo rico. — Sofi.'
     },
     tablaComparativa: {
-      titulo: 'Qué formato visual y canal elegir según cómo saludás',
+      titulo: '¿Qué formato visual y canal conviene elegir según cómo saludás?',
       columnas: ['Formato de envío', 'Cuándo usarlo', 'Color sugerido en el estudio'],
       filas: [
         ['Texto directo en WhatsApp', 'Para abrir charla cercana a la mañana', 'N/A — copiá con nombre y firma'],
@@ -606,70 +863,104 @@ export const GUIAS_EDITORIALES: GuiaEditorial[] = [
       },
       {
         pregunta: '¿En qué tamaño y formato se descarga la tarjeta imagen?',
-        respuesta: 'Se genera al instante en tu dispositivo en formato PNG cuadrado de alta definición (1080×1080 píxeles), sin marcas molestas ni registros.'
+        respuesta: 'Se genera al instante en tu dispositivo en formato PNG de alta definición (1080 px de ancho, y alto flexible si es una carta larga), sin marcas molestas ni registros.'
       },
       {
         pregunta: '¿Qué hago si la frase ya empieza con el nombre de alguien?',
         respuesta: 'Nuestro personalizador detecta automáticamente si el nombre ya está al principio para no repetir saludos duplicados ni romper los saltos de línea.'
       }
     ],
+    pasosHowTo: [
+      { nombre: 'Ingresar nombre o apodo real', texto: 'Escribí en el primer campo cómo llamás en persona al cumpleañero (ej. Mami, Pao, Juampi).' },
+      { nombre: 'Sumar tu firma habitual', texto: 'Agregá en Tu firma cómo firmás siempre ("Sofi", "Los chicos", "Tu hija").' },
+      { nombre: 'Elegir paleta y copiar o descargar', texto: 'Seleccioná Rosa, Dorado, Celeste o Marfil y tocá Copiar, WhatsApp o Descargar tarjeta.' }
+    ],
     categoriasRelacionadas: [
-      { slug: 'feliz-cumpleanos-mama', nombre: 'Para mamá' },
-      { slug: 'feliz-cumpleanos-papa', nombre: 'Para papá' },
-      { slug: 'frases-cortas-las-mas-bonitas', nombre: 'Frases cortas' },
+      { slug: 'feliz-cumpleanos-mama', nombre: 'Feliz cumpleaños mamá' },
+      { slug: 'feliz-cumpleanos-papa', nombre: 'Feliz cumpleaños papá' },
+      { slug: 'frases-cortas-las-mas-bonitas', nombre: 'Frases cortas bonitas' },
       { slug: 'tarjetas-bonitas-para-felicitar-en-un-cumpleanos', nombre: 'Tarjetas bonitas' }
+    ],
+    fuentesAutoridad: [
+      { nombre: 'Wikilengua — Uso correcto de mayúsculas tras signos de exclamación y vocativos', url: 'https://www.wikilengua.org/index.php/Portada' },
+      { nombre: 'FundéuRAE — Estilo claro en mensajes digitales', url: 'https://www.fundeu.es/' }
     ],
     secciones: [
       {
-        subtitulo: 'Por qué se nota enseguida cuando un mensaje es copia directa',
+        subtitulo: '¿Por qué se nota enseguida cuando un saludo no fue adaptado?',
         parrafos: [
-          'Todos recibimos alguna vez una cadena genérica llena de adornos o signos que jamás usaría quien la manda. En cambio, cuando partís de un buen texto base pero le sumás tres señales de cercanía, el mensaje se vuelve completamente tuyo.'
+          'Cualquier persona distingue al instante una cadena genérica llena de adornos repetidos frente a un texto pensado para ella. La diferencia rara vez está en la longitud: está en incluir al menos un rasgo real que solo aplica a esa relación.',
+          'Partir de una base bien redactada ahorra tiempo frente a la hoja en blanco, pero el toque final siempre lo da tu propia voz.'
         ]
       },
       {
-        subtitulo: 'La regla del 1 + 1 + 1',
+        subtitulo: '¿Cómo funciona la regla del 1 + 1 + 1 al aplicar cómo personalizar tarjetas?',
         parrafos: [
-          'Antes de tocar enviar o descargar tu tarjeta:'
+          'Esta regla resume tres microajustes de diez segundos que convierten cualquier plantilla sólida en un mensaje completamente personal antes de tocar enviar o descargar la imagen.'
         ],
         lista: [
-          '1 nombre o apodo real al comienzo (ej.: "Pao", "Viejo", "Cami").',
-          '1 guiño o recuerdo compartido en el medio (una comida, una serie, un viaje o una charla pendiente).',
-          '1 firma tuya al final que suene natural.'
+          '1 nombre o apodo real al comienzo ("Pao,", "Viejo,", "Cami,").',
+          '1 recuerdo breve en el medio (una comida, una serie, un viaje o una charla pendiente).',
+          '1 firma natural al cierre con tu nombre o grupo.'
         ]
       },
       {
-        subtitulo: 'Texto directo vs. tarjeta PNG para estados y regalo',
+        subtitulo: '¿Cuándo conviene texto por WhatsApp y cuándo tarjeta PNG descargable?',
         parrafos: [
-          'Usá texto directo cuando querés iniciar una charla linda por chat, y descargá la tarjeta en formato imagen cuando vayas a subirla a una historia, mandarla junto a una foto familiar o imprimirla para acompañar un paquete.',
-          'Con nuestro personalizador podés elegir además entre cuatro paletas visuales —rosa clásica, dorado festivo, celeste calma o marfil sobria— según el carácter de la persona: tonos suaves y marfil funcionan excelente para adultos mayores, jefes o cartas emotivas, mientras que rosa o dorado levantan enseguida cualquier saludo festivo para amigos o hermanos.'
+          'El texto directo por WhatsApp brilla cuando querés abrir conversación rápida temprano y seguir charlando. En cambio, la tarjeta imagen en PNG funciona excelente para historias de Instagram, estados, envíos familiares o impresión sobre un regalo.',
+          'Podés elegir además entre cuatro paletas visuales —Rosa clásica, Dorado festivo, Celeste calma o Marfil sobria— según la edad y el tono del vínculo. Esta flexibilidad evita mandar el mismo formato a un amigo de la facultad y a una abuela.'
         ]
       },
       {
-        subtitulo: 'El horario también comunica afecto',
+        subtitulo: '¿Cómo cuidar el formato de poemas y cartas largas en tu tarjeta?',
         parrafos: [
-          'Si buscás destacar entre docenas de notificaciones iguales, elegí saludar bien temprano con el desayuno o al caer la tarde cuando baja el ruido del día. Un mensaje personalizado con nombre y firma enviado en un momento tranquilo casi siempre genera una respuesta larga y sincera del otro lado.'
+          'Al personalizar versos o textos extensos, respetá los saltos de estrofa y párrafo para facilitar la lectura. Nuestro generador de tarjetas ajusta automáticamente el tamaño tipográfico y expande el alto del lienzo PNG si elegís una carta de varios párrafos, sin cortar palabras.',
+          'Además, si alternás entre distintas tarjetas de una misma categoría, el personalizador recuerda temporalmente el nombre y tu firma en la sesión para que compares opciones sin reescribir nada. Incluso con dedicatorias bilingües o cartas extensas para mamá y papá, toda la descarga conserva márgenes limpios y lectura cómoda en cualquier pantalla.'
+        ],
+        lista: [
+          'Usá frases cortas en estados o historias para que se lean en menos de cinco segundos.',
+          'Reservá la paleta Marfil Sobria cuando vayas a imprimir la tarjeta en papel.',
+          'Leé en voz alta la versión personalizada antes de enviar para chequear naturalidad.',
+          'Evitá mezclar diminutivos distintos en el primer párrafo y la despedida.'
         ]
       }
     ]
   },
   {
     slug: 'frases-de-fe-y-agradecimiento-para-cumpleanos-cristianos',
+    seoTitle: 'Frases de fe y bendiciones cristianas para cumpleaños',
     titulo: 'Cómo redactar bendiciones y mensajes cristianos sinceros en un cumpleaños',
-    h1: 'Cómo compartir fe, gratitud y cariño en un cumpleaños cristiano',
-    descripcion: 'Ideas equilibradas para escribir bendiciones bíblicas y oraciones cercanas para amigos, hermanos, hijos o pastores sin sonar acartonado.',
+    h1: 'Frases de fe y bendiciones cristianas sinceras para un cumpleaños',
+    descripcion: 'Aprendé a redactar frases de fe y bendiciones cristianas para cumpleaños de mamá, amigos o pastores combinando gratitud cotidiana y versículos con calidez.',
+    keywordPrincipal: 'frases de fe y bendiciones cristianas',
+    keywordsSecundarias: [
+      'feliz cumpleaños cristiano',
+      'bendiciones de cumpleaños para mamá',
+      'versículos de cumpleaños cortos',
+      'mensaje cristiano para pastor'
+    ],
     emoji: '🙏',
     tiempoLectura: '7 min de lectura',
     fechaPublicacion: '2026-11-16',
+    fechaActualizacion: '2026-11-17',
     autor: 'Equipo Editorial de ParaCumpleanos',
+    autorRol: AUTOR_ROL_DEFAULT,
+    autorBio: AUTOR_BIO_DEFAULT,
     resumen: 'Uní el afecto cotidiano con la acción de gracias sincera para celebrar otro año caminando con fe.',
+    respuestaDirecta: 'Para escribir frases de fe y bendiciones cristianas que emocionen sin sonar a cadena repetida, abrí nombrando a la persona, agradecé a Dios una cualidad real de su vida durante este año y sumá una oración breve de salud y paz o un versículo cercano como Números 6:24-26.',
     citaDestacada: 'Una bendición de cumpleaños conmueve de verdad cuando agradece cómo la vida de esa persona reflejó el amor de Dios durante el año.',
+    datosPropios: {
+      titulo: 'Repertorio especializado en nuestras 18 categorías cristianas',
+      dato: 'ParaCumpleanos reúne 18 colecciones cristianas y 648 mensajes únicos que diferencian saludos para mamá, papá, hijos, amigos, pastores y agradecimientos propios por un año más de vida.',
+      fuente: 'Auditoría de la sección Cristiano y bendiciones de ParaCumpleanos (2026).'
+    },
     comparacionPractica: {
-      titulo: 'Cadena impersonal vs. oración cercana con nombre y gratitud',
+      titulo: '¿Cómo cambia una cadena impersonal frente a una oración cercana?',
       evitar: 'Dios te bendiga feliz cumpleaños muchas felicidades salmos y bendiciones mil.',
       mejor: 'Mauri, damos gracias a Dios por tu vida y por esa calma con la que siempre servís y escuchás a los tuyos. Que este nuevo año multiplique tu paz y fuerza en casa.'
     },
     tablaComparativa: {
-      titulo: 'Cómo adaptar el mensaje cristiano según el vínculo',
+      titulo: '¿Cómo adaptar el mensaje cristiano según el vínculo?',
       columnas: ['Destinatario', 'Enfoque de la bendición', 'Detalle personal clave'],
       filas: [
         ['Mamá, papá o abuelos', 'Gratitud por su testimonio y salud tranquila', 'Agradecer oraciones o ejemplos de hogar'],
@@ -708,51 +999,86 @@ export const GUIAS_EDITORIALES: GuiaEditorial[] = [
       { slug: 'palabras-cristianas-para-una-madre-en-su-cumpleanos', nombre: 'Cristianas para mamá' },
       { slug: 'gracias-dios-por-un-ano-mas-de-vida', nombre: 'Gracias Dios por un año más' }
     ],
+    fuentesAutoridad: [
+      { nombre: 'BibleGateway — Consulta de salmos y bendiciones en español', url: 'https://www.biblegateway.com/' },
+      { nombre: 'FundéuRAE — Uso de mayúsculas en textos religiosos y salutaciones', url: 'https://www.fundeu.es/' }
+    ],
     secciones: [
       {
-        subtitulo: 'Cercanía humana y espiritualidad en el mismo mensaje',
+        subtitulo: '¿Cómo equilibrar cercanía humana y espiritualidad en el mismo texto?',
         parrafos: [
-          'Una buena bendición de cumpleaños no reemplaza al cariño personal, lo abraza. Cuando felicitás a un hermano en la fe, un amigo o una mamá creyente, agradecé primero lo concreto que valorás de su vida —su servicio, su alegría, su escucha— y luego pedí paz, sabiduría y salud bajo el cuidado de Dios.',
-          'Nombrar a la persona por su nombre y recordar cómo su ejemplo bendijo a otros durante el último año vuelve la oración mucho más auténtica que cualquier fórmula repetida.'
+          'Una bendición sincera nunca reemplaza al cariño cotidiano: lo abraza y le da sentido. Antes de pedir salud o paz, agradecé concretamente cómo esa persona bendijo a los demás durante el año con su escucha, entrega o alegría.',
+          'Nombrar a quien cumple en la primera oración marca de inmediato la diferencia frente a los mensajes reenviados en cadena.'
         ]
       },
       {
-        subtitulo: 'Cómo equilibrar versículo, oración y trato cotidiano',
+        subtitulo: '¿Cómo combinar versículo, oración y trato cotidiano sin acartonarse?',
         parrafos: [
-          'Pegar únicamente un versículo suelto sin nombrar a la persona puede sentirse distante. Acompañá esa palabra de fe con dos líneas tuyas reconociendo lo que Dios viene haciendo en su hogar durante el último año:'
+          'Copiar un versículo bíblico aislado sin contexto personal suele sentirse frío. Unirlo a dos oraciones propias vinculadas a la etapa actual del destinatario crea una dedicatoria memorable.'
         ],
         lista: [
-          'Para mamá, papá o abuelos: agradecé su fe constante, su ejemplo en casa y pedí fuerza renovada para esta etapa.',
-          'Para jóvenes y amigos: uní deseos de propósito claro, alegría diaria y compañía cercana en cada proyecto.',
-          'Para pastores o líderes: reconocé su entrega silenciosa y rogá descanso, discernimiento y paz para toda su familia.'
+          'Mamá, papá o abuelos: agradecé su fe constante en casa y pedí descanso, paz y salud firme.',
+          'Amigos y jóvenes: combiná gratitud por su amistad con deseos de propósito claro en estudios o trabajo.',
+          'Pastores y líderes: reconocé su servicio silencioso y orá también por su propia familia.'
         ]
       },
       {
-        subtitulo: 'Cuándo mandar una bendición corta y cuándo una carta de gratitud',
+        subtitulo: '¿Qué versículos breves funcionan mejor para acompañar frases de fe y bendiciones cristianas?',
         parrafos: [
-          'Por la mañana temprano funciona excelente una oración breve por WhatsApp que marque un inicio sereno del día. Si se trata de un cumpleaños redondo de mamá, papá o un pastor muy querido, pasá una carta más extensa a papel o descargá nuestra tarjeta PNG para entregarla junto a un detalle.'
+          'En tarjetas cortas de WhatsApp lucen especialmente bien citas breves como Números 6:24-26 ("El Señor te bendiga y te guarde") o Salmos 20:4 ("Que te conceda lo que tu corazón desea"). También podés usar Salmos 118:24 cuando celebran en comunidad un nuevo año lleno de gratitud.',
+          'Siempre citá la referencia de manera limpia al final del saludo para que quien recibe la tarjeta pueda releerla tranquila en su Biblia o compartirla en familia.'
+        ]
+      },
+      {
+        subtitulo: '¿Cuándo enviar oración breve y cuándo preparar carta o tarjeta impresa?',
+        parrafos: [
+          'Por la mañana temprana funciona muy bien una oración breve por WhatsApp que acompañe su comienzo de jornada. Para cumpleaños redondos de padres, abuelos o referentes de la comunidad, imprimí una carta o elegí nuestra tarjeta PNG en tono Marfil o Celeste.',
+          'Si celebran en familia, leer en voz alta una bendición corta antes de cortar la torta crea un momento sereno de gratitud que todos recuerdan. Incluso podés sumar el nombre de tus hijos o hermanos al firmar para convertir el saludo en un gesto colectivo de hogar.'
+        ],
+        lista: [
+          'Nombrá siempre a la persona en la primera oración para darle cercanía real.',
+          'Elegí un versículo breve y claro en vez de copiar capítulos extensos sin contexto.',
+          'Agradecé un fruto concreto de su vida durante este año antes de formular el deseo.',
+          'Reservá los diseños Marfil o Celeste si vas a imprimir la tarjeta para regalar en mano.'
         ]
       }
     ]
   },
   {
     slug: 'como-celebrar-meses-de-novios-y-aniversarios-sin-caer-en-cliches',
+    seoTitle: 'Cómo celebrar meses de novios y aniversarios con amor',
     titulo: 'Cómo celebrar meses de novios y aniversarios con palabras verdaderas',
-    h1: 'Mensajes y detalles para meses de novios y aniversarios reales',
-    descripcion: 'Consejos para escribir dedicatorias de 1 mes, 6 meses, 1 año o bodas de oro hablando de lo cotidiano sin frases exageradas.',
+    h1: 'Cómo celebrar meses de novios y aniversarios sin caer en clichés',
+    descripcion: 'Ideas reales sobre cómo celebrar meses de novios y aniversarios con palabras genuinas. Ejemplos por etapa de pareja, cartas listas y detalles sin exagerar.',
+    keywordPrincipal: 'cómo celebrar meses de novios y aniversarios',
+    keywordsSecundarias: [
+      'cartas de meses de novios',
+      'mensajes de aniversario de pareja',
+      'qué escribir en primer aniversario',
+      'bodas de plata y de oro frases'
+    ],
     emoji: '💑',
     tiempoLectura: '7 min de lectura',
     fechaPublicacion: '2026-11-16',
+    fechaActualizacion: '2026-11-17',
     autor: 'Equipo Editorial de ParaCumpleanos',
+    autorRol: AUTOR_ROL_DEFAULT,
+    autorBio: AUTOR_BIO_DEFAULT,
     resumen: 'Las relaciones reales se celebran mejor hablando de lo diario compartido que repitiendo promesas de película.',
+    respuestaDirecta: 'Para saber cómo celebrar meses de novios y aniversarios sin clichés de telenovela, enfocá tu mensaje en lo cotidiano compartido: nombrá una costumbre linda de ustedes, valorá el equipo que formaron en días difíciles y elegí nota corta para los primeros meses o carta larga para el primer año y aniversarios.',
     citaDestacada: 'El amor duradero se nota menos en los grandes discursos y mucho más en quien recuerda cómo te gusta el café y banca tus días grises.',
+    datosPropios: {
+      titulo: 'Separación estricta entre cumpleaños y aniversarios en nuestro archivo',
+      dato: 'Las categorías de aniversario, meses de novios y bodas en ParaCumpleanos superan auditoría automática para no mezclar nunca la palabra "cumpleaños", garantizando textos dedicados 100 % a la historia de pareja.',
+      fuente: 'Reglas de coherencia editorial de ParaCumpleanos sobre secciones de pareja (2026).'
+    },
     comparacionPractica: {
-      titulo: 'Frase de telenovela vs. dedicatoria real de pareja',
+      titulo: '¿Cómo suena una frase de telenovela frente a una dedicatoria real?',
       evitar: 'Sos la única razón de mi existir, sin vos no respiro, feliz fecha especial mi media naranja eterna.',
       mejor: 'Gracias por estos meses juntos: por las charlas largas en el colectivo, por cómo hacés livianos los miércoles pesados y por seguir eligiéndonos todos los días.'
     },
     tablaComparativa: {
-      titulo: 'Cómo cambia la dedicatoria según el tiempo juntos',
+      titulo: '¿Cómo cambia la dedicatoria según el tiempo de relación?',
       columnas: ['Etapa de la pareja', 'Qué conviene destacar', 'Gesto sencillo que acompaña'],
       filas: [
         ['1 a 6 meses de novios', 'La ilusión, las charlas interminables y lo lindo de conocerse', 'Nota breve junto al desayuno o foto de la primera salida'],
@@ -786,56 +1112,90 @@ export const GUIAS_EDITORIALES: GuiaEditorial[] = [
       }
     ],
     categoriasRelacionadas: [
-      { slug: 'carta-de-6-meses-de-novios', nombre: '6 meses de novios' },
+      { slug: 'carta-de-6-meses-de-novios', nombre: 'Carta de 6 meses de novios' },
       { slug: 'carta-por-primer-aniversario-de-novios', nombre: 'Primer aniversario' },
       { slug: 'carta-de-aniversario-para-mi-novio', nombre: 'Aniversario para mi novio' },
       { slug: 'frases-de-bodas-de-oro-para-50-anos-de-amor', nombre: 'Bodas de oro' }
     ],
+    fuentesAutoridad: [
+      { nombre: 'Tradiciones de aniversarios y bodas de plata u oro', url: 'https://es.wikipedia.org/wiki/Aniversario' },
+      { nombre: 'FundéuRAE — Uso correcto de los nombres de aniversarios de boda', url: 'https://www.fundeu.es/' }
+    ],
     secciones: [
       {
-        subtitulo: 'Cada etapa pide un tono distinto',
+        subtitulo: '¿Por qué cada etapa pide un tono distinto al pensar cómo celebrar meses de novios y aniversarios?',
         parrafos: [
-          'No se escribe igual en el primer mes de novios que al cumplir cinco años o unas bodas de oro. En los primeros meses alcanza con celebrar la ilusión, las charlas interminables y lo lindo de ir conociéndose. Con el paso de los años cobra más fuerza agradecer la paciencia mutua, el equipo en los días complicados y las costumbres chiquitas de casa.',
-          'También conviene adaptar la extensión al momento: una nota breve en la mesita de luz antes de salir a trabajar puede emocionar tanto como una carta larga escrita con calma para leer juntos a la noche.'
+          'No se redacta igual al cumplir dos meses saliendo que al festejar cinco años o unas bodas de oro. Al inicio brilla la ilusión del descubrimiento mutuo; con los años toma fuerza la complicidad cotidiana y el apoyo en las etapas difíciles.',
+          'Ajustar la extensión al momento evita presiones innecesarias: una nota breve en los primeros meses emociona mucho más que una promesa solemne prematura.'
         ]
       },
       {
-        subtitulo: 'Tres ideas concretas para acompañar tu dedicatoria',
+        subtitulo: '¿Qué detalles concretos reemplazan con ventaja a las frases de molde?',
         parrafos: [
-          'Si querés que el texto brille sin gastar de más, sumalo a un gesto chico cargado de memoria:'
+          'El secreto para que una tarjeta romántica suene verdadera está en lo pequeño de todos los días. Cualquier gesto sencillo multiplicado por memoria compartida supera a los clichés repetidos.'
         ],
         lista: [
-          'Imprimir una foto de un viaje o salida reciente y escribir detrás tres agradecimientos reales de este tiempo.',
-          'Preparar su comida o merienda favorita dejando la tarjeta personalizada al lado de la taza.',
-          'Revisar siempre que el texto hable de su historia en pareja y nunca repita frases genéricas ajenas a la relación.'
+          'Imprimir una foto de una salida reciente y escribir detrás tres agradecimientos reales de estos meses.',
+          'Preparar su desayuno o merienda favorita dejando la tarjeta personalizada al lado de la taza.',
+          'Revisar siempre que el texto hable del tiempo en pareja sin copiar términos de otros festejos.'
         ]
       },
       {
-        subtitulo: 'Recordar sin confundir fechas ni contextos',
+        subtitulo: '¿Cómo personalizar cartas de meses y años sin sonar robótico?',
         parrafos: [
-          'Por eso en ParaCumpleanos separamos cuidadosamente cada categoría de aniversario con redacción dedicada: desde cartas de un mes o seis meses hasta mensajes sobrios y emotivos para bodas de plata y de oro. Además podés elegir el tema visual de la tarjeta descargable antes de guardarla en tu celular.'
+          'En nuestras cartas de aniversario y meses de novios, las aperturas naturales como "Mi amor," se transforman automáticamente al escribir su nombre en el personalizador ("Laura, mi amor,").',
+          'Sumar una sola oración propia mencionando una anécdota de la última semana deja la carta completamente única.'
+        ]
+      },
+      {
+        subtitulo: '¿Cómo saludar a padres o amigos que cumplen bodas de plata o de oro?',
+        parrafos: [
+          'Cuando felicitás a una pareja querida desde afuera —por ejemplo a tus padres o abuelos en sus 25 o 50 años—, destacá el ejemplo de respeto mutuo que construyeron y lo lindo de verlos compartir la mesa familiar.',
+          'Si participás de una reunión por aniversario de bodas, llevar una tarjeta impresa firmada por hijos y nietos funciona excelente como recuerdo durable junto a una foto actual.'
+        ],
+        lista: [
+          'Evitá comparar el vínculo con historias ajenas: celebrá su recorrido propio.',
+          'Mencioná una enseñanza concreta de convivencia que admirás en ellos.',
+          'Preferí tonos sobrios como Marfil o Dorado suave al descargar tarjetas de bodas.'
         ]
       }
     ]
   },
   {
     slug: 'etiqueta-digital-cuando-saludar-atrasado-o-por-redes',
+    seoTitle: 'Cómo mandar un feliz cumpleaños atrasado sin excusas',
     titulo: 'Qué decir cuando saludás tarde por cumpleaños (y cómo quedar bien igual)',
     h1: 'Cómo mandar un feliz cumpleaños atrasado con gracia y sinceridad',
-    descripcion: 'Ideas concretas para disculparte con humor o calidez si se te pasó la fecha, sin excusas largas ni incomodidad.',
+    descripcion: 'Aprendé cómo mandar un feliz cumpleaños atrasado sin excusas largas. Mejores textos por chat o llamada, plazos oportunos y consejos para quedar bien hoy.',
+    keywordPrincipal: 'feliz cumpleaños atrasado',
+    keywordsSecundarias: [
+      'saludar tarde por cumpleaños',
+      'disculpa por olvidar cumpleaños',
+      'mensajes atrasados con humor',
+      'etiqueta digital cumpleaños'
+    ],
     emoji: '⏰',
     tiempoLectura: '7 min de lectura',
     fechaPublicacion: '2026-11-16',
+    fechaActualizacion: '2026-11-17',
     autor: 'Equipo Editorial de ParaCumpleanos',
+    autorRol: AUTOR_ROL_DEFAULT,
+    autorBio: AUTOR_BIO_DEFAULT,
     resumen: 'Un saludo genuino al día siguiente vale muchísimo más que callarse por vergüenza.',
+    respuestaDirecta: 'Para enviar un feliz cumpleaños atrasado y quedar bien igual, asumí el despiste en media línea con sinceridad o humor liviano, evitá excusas largas poco creíbles y cerrá proponiendo un gesto concreto —un café, llamado o brindis esta semana— para compensar con calidez real.',
     citaDestacada: 'Cuando ya pasaron las cien notificaciones del mismo día, tu mensaje atrasado pero sincero es el que realmente se lee despacio y abre charla.',
+    datosPropios: {
+      titulo: '36 opciones dedicadas en nuestra sección de cumpleaños atrasado',
+      dato: 'Dentro del catálogo de tonos y formatos reunimos 36 mensajes específicos para saludos tardíos, calibrados en versiones breves con humor para amigos y fórmulas respetuosas para familiares o contactos laborales.',
+      fuente: 'Catálogo editorial de la categoría Feliz cumpleaños atrasado de ParaCumpleanos (2026).'
+    },
     comparacionPractica: {
-      titulo: 'Excusa larga incómoda vs. saludo atrasado que suma buena onda',
+      titulo: '¿Qué cambia entre una excusa incómoda y un saludo atrasado con buena onda?',
       evitar: 'Perdón mil millones de disculpas es que tuve un problema enorme en el trabajo, el celular se quedó sin batería y no dormí nada por eso recién te escribo.',
       mejor: '¡Llegué tarde a las velas pero puntual para desearte un año enorme! Perdón por el despiste de ayer; ¿qué tarde de esta semana nos vemos y te invito un café para compensar?'
     },
     tablaComparativa: {
-      titulo: 'Cómo encarar el atraso según quién cumple años',
+      titulo: '¿Cómo encarar el atraso según quién cumple años?',
       columnas: ['Vínculo', 'Mejor enfoque', 'Cierre que siempre funciona'],
       filas: [
         ['Amigo cercano o hermano', 'Humor liviano asumiendo el despiste en 1 línea', 'Invitar café, cerveza o merienda en la semana'],
@@ -873,30 +1233,48 @@ export const GUIAS_EDITORIALES: GuiaEditorial[] = [
       { slug: 'feliz-cumpleanos-gracioso', nombre: 'Cumpleaños gracioso' },
       { slug: 'feliz-cumpleanos-mejor-amiga', nombre: 'Mejor amiga' }
     ],
+    fuentesAutoridad: [
+      { nombre: 'FundéuRAE — Uso de fórmulas de disculpa y cortesía en español', url: 'https://www.fundeu.es/' },
+      { nombre: 'Normas de cortesía digital y comunicación interpersonal', url: 'https://es.wikipedia.org/wiki/Etiqueta_(c%C3%B3digo)' }
+    ],
     secciones: [
       {
-        subtitulo: 'Nunca dejes de saludar solo porque pasó el día',
+        subtitulo: '¿Por qué nunca conviene callarse cuando ya pasó la fecha?',
         parrafos: [
-          'Muchísima gente no escribe por vergüenza cuando se da cuenta 24 o 48 horas después. Error total: a casi todo el mundo le alegra recibir un saludo real incluso tarde, especialmente cuando ya pasó la avalancha de mensajes automáticos del mismo día.',
-          'De hecho, un mensaje escrito al día siguiente o dos días después suele leerse con mucha más calma y da pie a ponerse al día de verdad, algo imposible en medio del aluvión de notificaciones de la fecha exacta.'
+          'Muchas personas evitan escribir por vergüenza cuando descubren el olvido uno o dos días después. Sin embargo, el silencio duele mucho más que reconocer el despiste con afecto sincero.',
+          'Al día siguiente ya bajó la avalancha de mensajes automáticos y tu saludo atrasado suele leerse con más atención, abriendo incluso una charla real para ponerse al día.'
         ]
       },
       {
-        subtitulo: 'Cuatro reglas simples para salir airoso',
+        subtitulo: '¿Qué cuatro reglas resuelven un feliz cumpleaños atrasado con gracia?',
         parrafos: [
-          'Aplicá estas ideas simples al escribir tarde para que el saludo sume buena energía en lugar de excusas pesadas:'
+          'Aplicar estas cuatro pautas breves convierte una situación incómoda en un gesto cálido que se recuerda para bien.'
         ],
         lista: [
-          'Reconocelo breve y con buena onda, sin inventar excusas enrevesadas ni historias poco creíbles.',
-          'Sumale un toque simpático ("llegué tarde a la torta, pero puntual para desear lo mejor de tu nuevo año").',
-          'Si es un familiar mayor o alguien muy cercano, elegí llamar por teléfono cinco minutos en vez de mandar solo dos palabras.',
-          'Acompañalo con una propuesta real para enmendar el atraso: invitar un café, llevar algo rico o armar un brindis en la semana.'
+          'Asumí el olvido en una sola oración clara sin inventar excusas largas ni dramas.',
+          'Con amigos, sumá un guiño simpático ("llegué tarde a la torta pero a tiempo para brindar").',
+          'Con familiares mayores, priorizá una llamada breve de cinco minutos por encima de un texto.',
+          'Cerrá con un plan concreto en la semana: café, mate o visita corta.'
         ]
       },
       {
-        subtitulo: 'Cómo evitar que se repita el año que viene',
+        subtitulo: '¿Es mejor escribir por privado o comentar en redes sociales fuera de fecha?',
         parrafos: [
-          'Apenas termines de mandar tu mensaje, agendá la fecha en el calendario del celular con dos recordatorios —uno tres días antes por si querés preparar regalo o tarjeta impresa, y otro a la mañana del mismo día— para llegar tranquilo el próximo año.'
+          'Enviá siempre mensaje privado por WhatsApp o llamá directamente. Comentar dos días tarde en una publicación abierta suele sentirse impersonal y solo deja visible el retraso sin abrir diálogo real ni generar cercanía.',
+          'En privado podés sumar una tarjeta personalizada limpia o un audio cálido de veinte segundos. Esa dedicación pequeña demuestra que realmente te importaba saludar aunque el reloj te haya jugado en contra el día anterior.'
+        ]
+      },
+      {
+        subtitulo: '¿Cómo evitar que el olvido vuelva a repetirse el próximo año?',
+        parrafos: [
+          'Apenas termines de enviar el saludo, agendá la fecha como evento anual recurrente en tu calendario del teléfono. Programá dos avisos: uno tres días antes para pensar algún detalle o encargar una tarjeta impresa, y otro a las 8:30 de la mañana del día exacto.',
+          'También conviene revisar cada domingo a la noche los cumpleaños de la semana siguiente para llegar siempre con tiempo. Si se trata de familiares mayores o amigos muy cercanos, anotar junto a la fecha qué merienda o música disfrutan convierte un futuro saludo en un regalo pensado con calma.'
+        ],
+        lista: [
+          'Configurá repetición anual automática apenas mandás el mensaje atrasado.',
+          'Guardá en la nota del contacto qué comida o regalo disfruta para no improvisar.',
+          'Si pasaron más de diez días, cambiá la disculpa por una invitación directa a charlar.',
+          'No justifiques el atraso con cadenas largas ni excusas técnicas que suenan frías.'
         ]
       }
     ]

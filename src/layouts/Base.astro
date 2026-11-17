@@ -49,7 +49,19 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 <body>
   <header class="cabecera">
     <div class="cabecera-inner">
-      <a href="/" class="logo">ParaCumpleanos 🎂</a>
+      <a href="/" class="logo" aria-label="ParaCumpleanos — Inicio">
+        <img
+          src="/logopc.png"
+          alt="ParaCumpleanos"
+          class="logo-img"
+          width="210"
+          height="48"
+          decoding="async"
+          fetchpriority="high"
+          onerror="this.style.display='none';var f=this.nextElementSibling;if(f)f.style.display='inline-flex';"
+        />
+        <span class="logo-fallback" style="display:none">ParaCumpleanos 🎂</span>
+      </a>
       <nav class="nav-principal" aria-label="Navegación principal">
         <a href="/feliz-cumpleanos-mama/">Mamá</a>
         <a href="/feliz-cumpleanos-amiga/">Amiga</a>

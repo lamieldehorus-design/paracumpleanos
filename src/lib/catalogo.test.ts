@@ -270,16 +270,38 @@ test('construirSetIndexables prioriza contenido real y unicidad sin minimo artif
   assert.ok(indexables.has(breve.slug), 'Un mensaje breve y unico no se excluye solo por su extension');
 });
 
-test('guias editoriales tienen 10 articulos pilar profundos con tabla, comparacion, plantillas y FAQs', () => {
+test('guias editoriales cumplen checklist completo SEO y GEO 2026 para guias actuales y futuras', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
+  const norm = (s: string) =>
+    String(s || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
 
-  assert.equal(GUIAS_EDITORIALES.length, 10);
+  assert.ok(GUIAS_EDITORIALES.length >= 10);
   const slugsGuias = new Set<string>();
   for (const g of GUIAS_EDITORIALES) {
     assert.ok(!slugsGuias.has(g.slug), `Slug de guia duplicado: ${g.slug}`);
+    assert.match(g.slug, /^[a-z0-9-]+$/, `Slug invalido en guia: ${g.slug}`);
     slugsGuias.add(g.slug);
+
+    assert.ok(g.seoTitle.length >= 50 && g.seoTitle.length <= 60, `Guia ${g.slug} seoTitle fuera de 50-60 chars: ${g.seoTitle.length}`);
+    assert.ok(g.descripcion.length >= 150 && g.descripcion.length <= 160, `Guia ${g.slug} meta description fuera de 150-160 chars: ${g.descripcion.length}`);
+    assert.ok(g.keywordPrincipal.trim().length >= 5, `Guia ${g.slug} requiere keywordPrincipal`);
+    assert.ok(g.keywordsSecundarias.length >= 3 && g.keywordsSecundarias.length <= 6, `Guia ${g.slug} requiere 3-6 keywordsSecundarias`);
+
+    const kw = norm(g.keywordPrincipal);
+    assert.ok(norm(g.seoTitle).includes(kw), `Guia ${g.slug} debe incluir keywordPrincipal en seoTitle`);
+    assert.ok(norm(g.h1).includes(kw), `Guia ${g.slug} debe incluir keywordPrincipal en h1`);
+    assert.ok(norm(g.respuestaDirecta).includes(kw), `Guia ${g.slug} debe incluir keywordPrincipal en respuestaDirecta`);
+    assert.ok(g.secciones.some((s) => norm(s.subtitulo).includes(kw)), `Guia ${g.slug} debe incluir keywordPrincipal en al menos un H2`);
+
+    const rdWords = g.respuestaDirecta.trim().split(/\s+/).filter(Boolean).length;
+    assert.ok(rdWords >= 40 && rdWords <= 100, `Guia ${g.slug} respuestaDirecta fuera de 40-100 palabras: ${rdWords}`);
+
     assert.ok(g.secciones.length >= 3, `Guia ${g.slug} requiere al menos 3 secciones`);
+    assert.ok(g.secciones.every((s) => /^¿.+\?$/.test(s.subtitulo.trim())), `Guia ${g.slug} debe tener todos los H2 de secciones en forma de pregunta`);
     assert.ok(g.citaDestacada.length >= 40, `Guia ${g.slug} requiere citaDestacada`);
     assert.ok(g.comparacionPractica.evitar.length >= 30 && g.comparacionPractica.mejor.length >= 30);
     assert.equal(g.tablaComparativa.columnas.length, 3);
@@ -287,10 +309,20 @@ test('guias editoriales tienen 10 articulos pilar profundos con tabla, comparaci
     assert.ok(g.ejemplosAdaptables.length >= 2, `Guia ${g.slug} requiere al menos 2 plantillas adaptables`);
     assert.equal(g.faqs.length, 3, `Guia ${g.slug} requiere 3 FAQs`);
 
+    assert.match(g.fechaPublicacion, /^\d{4}-\d{2}-\d{2}$/);
+    assert.match(g.fechaActualizacion, /^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(g.autor.length >= 5 && g.autorRol.length >= 10 && g.autorBio.length >= 40, `Guia ${g.slug} requiere autor con rol y bio E-E-A-T`);
+    assert.ok(g.datosPropios.dato.length >= 40 && g.datosPropios.fuente.length >= 15, `Guia ${g.slug} requiere datosPropios con fuente`);
+    assert.ok(g.fuentesAutoridad.length >= 2 && g.fuentesAutoridad.length <= 3, `Guia ${g.slug} requiere 2-3 fuentes externas de autoridad`);
+    assert.ok(g.fuentesAutoridad.every((f) => /^https:\/\//.test(f.url)), `Guia ${g.slug} tiene fuente externa sin https`);
+    assert.ok(g.categoriasRelacionadas.length >= 3 && g.categoriasRelacionadas.length <= 5, `Guia ${g.slug} requiere 3-5 enlaces internos`);
+
     const textoTotal = [
       g.h1,
       g.resumen,
+      g.respuestaDirecta,
       g.citaDestacada,
+      g.datosPropios.dato,
       g.comparacionPractica.evitar,
       g.comparacionPractica.mejor,
       g.tablaComparativa.titulo,
@@ -301,11 +333,16 @@ test('guias editoriales tienen 10 articulos pilar profundos con tabla, comparaci
     ]
       .join(' ')
       .split(/\s+/).length;
-    assert.ok(textoTotal >= 550, `Guia ${g.slug} demasiado corta para articulo pilar (${textoTotal} palabras)`);
+    assert.ok(textoTotal >= 800, `Guia ${g.slug} demasiado corta (${textoTotal} palabras; minimo 800 en articulo informativo)`);
 
     for (const rel of g.categoriasRelacionadas) {
       assert.ok(cat.hubsPorSlug.has(rel.slug), `Guia ${g.slug} enlaza a categoria inexistente: ${rel.slug}`);
     }
+  }
+
+  const robots = fs.readFileSync(path.resolve('public/robots.txt'), 'utf8');
+  for (const bot of ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'Google-Extended']) {
+    assert.ok(robots.includes(bot), `Falta crawler IA ${bot} en public/robots.txt`);
   }
 });
 

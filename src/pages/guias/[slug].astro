@@ -15,7 +15,7 @@ export function getStaticPaths() {
 
 const { guia, otras } = Astro.props;
 const urlGuia = `${SITIO}/guias/${guia.slug}/`;
-const jsonld = [
+const jsonld: any[] = [
   migasLd([
     { name: 'Inicio', url: `${SITIO}/` },
     { name: 'Guías editoriales', url: `${SITIO}/guias/` },
@@ -26,13 +26,15 @@ const jsonld = [
     '@type': 'Article',
     headline: guia.h1,
     description: guia.descripcion,
+    keywords: [guia.keywordPrincipal, ...guia.keywordsSecundarias].join(', '),
     datePublished: guia.fechaPublicacion,
-    dateModified: guia.fechaPublicacion,
+    dateModified: guia.fechaActualizacion,
     inLanguage: 'es-AR',
     author: {
       '@type': 'Organization',
       name: guia.autor,
-      url: `${SITIO}/sobre-nosotros/`
+      description: guia.autorBio,
+      url: `${SITIO}/sobre-nosotros/#criterio-editorial`
     },
     publisher: {
       '@type': 'Organization',
@@ -53,9 +55,36 @@ const jsonld = [
     })
   }
 ];
+
+if (guia.pasosHowTo && guia.pasosHowTo.length) {
+  jsonld.push({
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: guia.h1,
+    description: guia.respuestaDirecta,
+    step: guia.pasosHowTo.map(function (p, i) {
+      return {
+        '@type': 'HowToStep',
+        position: i + 1,
+        name: p.nombre,
+        text: p.texto
+      };
+    })
+  });
+}
+
+const indiceItems = [
+  ...guia.secciones.map(function (s, i) {
+    return { id: `sec-${i + 1}`, texto: s.subtitulo };
+  }),
+  { id: 'guia-comparacion-titulo', texto: guia.comparacionPractica.titulo },
+  { id: 'guia-tabla-titulo', texto: guia.tablaComparativa.titulo },
+  { id: 'guia-ejemplos-titulo', texto: 'Plantillas rápidas listas para adaptar' },
+  { id: 'guia-faq-titulo', texto: 'Preguntas frecuentes' }
+];
 ---
 <Base
-  titulo={`${guia.titulo} - ${MARCA}`}
+  titulo={guia.seoTitle}
   descripcion={guia.descripcion}
   jsonld={jsonld}
 >
@@ -69,20 +98,44 @@ const jsonld = [
         <span aria-hidden="true">{guia.emoji}</span>
         <span>{guia.tiempoLectura}</span>
         <span>·</span>
-        <span>Por <a href="/sobre-nosotros/#criterio-editorial">{guia.autor}</a></span>
+        <span>Por <a href="#autor-guia">{guia.autor}</a></span>
         <span>·</span>
-        <time datetime={guia.fechaPublicacion}>{guia.fechaPublicacion}</time>
+        <span>Actualizado el <time datetime={guia.fechaActualizacion}>{guia.fechaActualizacion}</time></span>
       </p>
       <h1>{guia.h1}</h1>
       <p class="lead">{guia.resumen}</p>
     </header>
 
+    <section class="respuesta-directa" aria-label="Respuesta directa">
+      <p class="respuesta-etiqueta">Respuesta rápida</p>
+      <p>{guia.respuestaDirecta}</p>
+    </section>
+
+    <nav class="indice-guia" aria-label="Índice de la guía">
+      <p class="indice-titulo">Índice de contenidos</p>
+      <ol class="indice-lista">
+        {indiceItems.map(function (it) {
+          return (
+            <li>
+              <a href={`#${it.id}`}>{it.texto}</a>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
+
     <blockquote class="cita-editorial">{guia.citaDestacada}</blockquote>
 
-    {guia.secciones.map(function (sec) {
+    <aside class="datos-propios-box" aria-label="Dato propio editorial">
+      <p class="datos-propios-titulo">{guia.datosPropios.titulo}</p>
+      <p class="datos-propios-dato">{guia.datosPropios.dato}</p>
+      <p class="datos-propios-fuente">Fuente: {guia.datosPropios.fuente}</p>
+    </aside>
+
+    {guia.secciones.map(function (sec, idx) {
       return (
-        <section class="articulo-seccion">
-          <h2>{sec.subtitulo}</h2>
+        <section class="articulo-seccion" aria-labelledby={`sec-${idx + 1}`}>
+          <h2 id={`sec-${idx + 1}`}>{sec.subtitulo}</h2>
           {sec.parrafos.map(function (p) {
             return <p>{p}</p>;
           })}
@@ -176,8 +229,28 @@ const jsonld = [
       </div>
     </section>
 
-    <aside class="criterio-box" aria-label="Revisión editorial">
-      <p><strong>Revisión editorial:</strong> esta guía fue redactada y revisada por el <a href="/sobre-nosotros/#criterio-editorial">{guia.autor}</a> siguiendo nuestras pautas de tono humano, claridad y adecuación a cada vínculo. ¿Querés proponer una corrección? <a href="/contacto/">Escribinos acá</a>.</p>
+    {guia.fuentesAutoridad && guia.fuentesAutoridad.length ? (
+      <section class="fuentes-box" aria-labelledby="fuentes-titulo">
+        <h2 id="fuentes-titulo">Referencias y fuentes consultadas</h2>
+        <ul>
+          {guia.fuentesAutoridad.map(function (f) {
+            return (
+              <li>
+                <a href={f.url} target="_blank" rel="noopener noreferrer">{f.nombre}</a>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ) : null}
+
+    <aside class="autor-bio-box" id="autor-guia" aria-label="Sobre el autor y criterio editorial">
+      <div class="autor-bio-cabecera">
+        <span class="autor-bio-nombre">{guia.autor}</span>
+        <span class="autor-bio-rol">· {guia.autorRol}</span>
+      </div>
+      <p class="autor-bio-texto">{guia.autorBio}</p>
+      <p class="fechas-meta">Publicado: <time datetime={guia.fechaPublicacion}>{guia.fechaPublicacion}</time> · Última revisión: <time datetime={guia.fechaActualizacion}>{guia.fechaActualizacion}</time> · <a href="/sobre-nosotros/#criterio-editorial">Criterio editorial</a> · <a href="/contacto/">Sugerir corrección</a></p>
     </aside>
   </article>
 
