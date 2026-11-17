@@ -21,9 +21,25 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Validar contenido y construir el sitio
         run: npm run build
-      - name: Comprobar que el sitemap se haya generado
+      - name: Validar estructura y contenido del sitemap
         run: |
-          test -s dist/sitemap.xml
-          grep -q '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' dist/sitemap.xml
-          ! grep -q '<lastmod>' dist/sitemap.xml
-          echo "Sitemap generado; sin fechas lastmod artificiales."
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          from urllib.parse import urlparse
+
+          path = Path("dist/sitemap.xml")
+          assert path.is_file() and path.stat().st_size > 0, "No se generó dist/sitemap.xml"
+          root = ET.parse(path).getroot()
+          ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+          assert root.tag == "{http://www.sitemaps.org/schemas/sitemap/0.9}urlset", "Raíz XML incorrecta"
+          urls = [node.text or "" for node in root.findall("sm:url/sm:loc", ns)]
+          assert len(urls) == 13706, f"Se esperaban 13706 URLs; hay {len(urls)}"
+          assert len(set(urls)) == len(urls), "Hay URLs duplicadas"
+          for url in urls:
+              parsed = urlparse(url)
+              assert parsed.scheme == "https" and parsed.netloc == "paracumpleanos.com", f"URL fuera del dominio: {url}"
+              assert not parsed.query and not parsed.fragment, f"URL con query o fragmento: {url}"
+          assert not root.findall(".//sm:lastmod", ns), "No usar lastmod sin fechas reales por URL"
+          print(f"Sitemap validado: {len(urls)} URLs únicas, absolutas y del dominio correcto.")
+          PY
