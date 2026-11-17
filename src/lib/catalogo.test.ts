@@ -231,21 +231,23 @@ test('modulo editorial genera 20 perfiles distintos, citas, FAQs y posdatas cohe
   assert.ok(extraerCitaDestacada(msgMama).length > 15);
 });
 
-test('construirSetIndexables filtra todas las 1836 cartas unicas >=140 palabras y omite mensajes breves', () => {
+test('construirSetIndexables prioriza contenido real y unicidad sin minimo artificial de palabras', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const indexables = construirSetIndexables(cat.todosMensajes);
 
-  assert.equal(indexables.size, 1836, `Se esperaban 1836 cartas unicas indexables, hay ${indexables.size}`);
+  assert.equal(indexables.size, 12636, `Se esperaban 12636 mensajes con contenido y slug unicos, hay ${indexables.size}`);
   const cuerpos = new Set<string>();
   for (const m of cat.todosMensajes) {
-    if (indexables.has(m.slug)) {
-      const palabras = String(m.texto || '').trim().split(/\s+/).length;
-      assert.ok(palabras >= 140, `Mensaje indexable ${m.slug} tiene menos de 140 palabras: ${palabras}`);
-      assert.ok(!cuerpos.has(m.texto.trim()), `Mensaje indexable duplicado en texto: ${m.slug}`);
-      cuerpos.add(m.texto.trim());
-    }
+    assert.ok(indexables.has(m.slug), `Mensaje con contenido valido excluido: ${m.slug}`);
+    const cuerpo = String(m.texto || '').normalize('NFC').replace(/\\s+/g, ' ').trim().toLocaleLowerCase('es');
+    assert.ok(!cuerpos.has(cuerpo), `Mensaje indexable duplicado en texto: ${m.slug}`);
+    cuerpos.add(cuerpo);
   }
+
+  const breve = cat.todosMensajes.find((m) => String(m.texto || '').trim().split(/\\s+/).filter(Boolean).length < 50);
+  assert.ok(breve, 'La prueba debe incluir mensajes breves reales');
+  assert.ok(indexables.has(breve.slug), 'Un mensaje breve y unico no se excluye solo por su extension');
 });
 
 test('guias editoriales tienen 10 articulos pilar profundos con tabla, comparacion, plantillas y FAQs', () => {
@@ -303,14 +305,16 @@ test('personalizador adapta nombre y firma sin duplicar saludo ni romper saltos 
   assert.equal(Object.keys(TEMAS_TARJETA).length, 4);
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren las 2906 URLs indexables sin duplicados ni paginas noindex', () => {
+test('generarUrlsSitio y generarSitemapXml cubren las 13706 URLs indexables sin duplicados', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
   const urls = generarUrlsSitio(cat, slugsGuias);
 
-  assert.equal(urls.length, 2906, `Se esperaban 2906 URLs indexables, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 2906, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(urls.length, 13706, `Se esperaban 13706 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 13706, 'Las URLs del sitemap deben ser todas unicas');
+  assert.ok(urls.every((url) => url.startsWith('https://paracumpleanos.com/')));
+  assert.ok(urls.every((url) => !/[?#]/.test(url)));
   assert.ok(urls.includes('https://paracumpleanos.com/'));
   assert.ok(urls.includes('https://paracumpleanos.com/categorias/'));
   assert.ok(urls.includes('https://paracumpleanos.com/guias/'));
@@ -322,21 +326,17 @@ test('generarUrlsSitio y generarSitemapXml cubren las 2906 URLs indexables sin d
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/'));
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/2/'));
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/3/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/hoy-celebramos-tu-autenticidad-tu-fuerza-tranquila-y-tu-enorme-corazon/'));
 
   const indexables = construirSetIndexables(cat.todosMensajes);
-  const ejemploCorto = cat.todosMensajes.find((m) => !indexables.has(m.slug));
-  assert.ok(ejemploCorto);
-  assert.ok(!urls.includes(`https://paracumpleanos.com/${ejemploCorto.slug}/`), 'Una pagina noindex no debe entrar en sitemap.xml');
+  assert.equal(indexables.size, 12636);
 
-  const xml = generarSitemapXml(urls, '2026-11-16');
+  const xml = generarSitemapXml(urls);
   assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xml.match(/<loc>/g) || [];
-  assert.equal(locs.length, 2906);
-
-  const xmlSinFecha = generarSitemapXml(urls);
-  assert.ok(!xmlSinFecha.includes('<lastmod>'), 'No inventar lastmod cuando no hay fechas reales por URL');
-  assert.throws(() => generarSitemapXml(urls, '2026-02-30'), /Fecha lastmod inválida/);
+  assert.equal(locs.length, 13706);
+  assert.ok(!xml.includes('<lastmod>'), 'No agregar lastmod sin fechas reales por URL');
 });
 
 test('Bing IndexNow cubre todas las 2906 URLs indexables en 1 lote <= 10000 y tiene archivo de clave valido', () => {
