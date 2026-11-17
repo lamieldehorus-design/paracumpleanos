@@ -11,7 +11,6 @@ import {
   metaDe,
   nombreHub,
   migasLd,
-  MIN_PALABRAS_INDEXABLE,
   construirSetIndexables
 } from './catalogo';
 
@@ -54,5 +53,4 @@ export {
   metaDe,
   nombreHub,
   migasLd,
-  MIN_PALABRAS_INDEXABLE
 };
