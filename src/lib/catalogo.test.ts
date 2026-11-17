@@ -240,12 +240,12 @@ test('construirSetIndexables prioriza contenido real y unicidad sin minimo artif
   const cuerpos = new Set<string>();
   for (const m of cat.todosMensajes) {
     assert.ok(indexables.has(m.slug), `Mensaje con contenido valido excluido: ${m.slug}`);
-    const cuerpo = String(m.texto || '').normalize('NFC').replace(/\\s+/g, ' ').trim().toLocaleLowerCase('es');
+    const cuerpo = String(m.texto || '').normalize('NFC').replace(/\s+/g, ' ').trim().toLocaleLowerCase('es');
     assert.ok(!cuerpos.has(cuerpo), `Mensaje indexable duplicado en texto: ${m.slug}`);
     cuerpos.add(cuerpo);
   }
 
-  const breve = cat.todosMensajes.find((m) => String(m.texto || '').trim().split(/\\s+/).filter(Boolean).length < 50);
+  const breve = cat.todosMensajes.find((m) => String(m.texto || '').trim().split(/\s+/).filter(Boolean).length < 50);
   assert.ok(breve, 'La prueba debe incluir mensajes breves reales');
   assert.ok(indexables.has(breve.slug), 'Un mensaje breve y unico no se excluye solo por su extension');
 });
