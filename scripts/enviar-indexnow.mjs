@@ -90,18 +90,37 @@ function cargarUrlsDesdeCatalogo() {
 
   for (const h of hubs) {
     urls.push(`https://${HOST}/${h.slug}/`);
-    const total = Math.ceil((porCat.get(h.slug) || []).length / POR_PAGINA);
-    for (let p = 2; p <= total; p++) {
-      urls.push(`https://${HOST}/${h.slug}/${p}/`);
-    }
+  }
+
+  const freqParrafos = new Map();
+  for (const m of mensajes) {
+    const ps = String(m.texto || '').split(/\n\n+/).map((p) => p.trim()).filter((p) => p.length > 25);
+    for (const p of ps) freqParrafos.set(p, (freqParrafos.get(p) || 0) + 1);
   }
 
   const cuerposVistos = new Set();
+  const tokensSeleccionados = [];
+  const toTokens = (s) => new Set(
+    String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((w) => w.length > 3)
+  );
+
   for (const m of mensajes) {
     const texto = String(m.texto || '').trim();
-    const palabras = texto ? texto.split(/\s+/).length : 0;
-    if (palabras >= 140 && !cuerposVistos.has(texto)) {
+    if (!texto || cuerposVistos.has(texto)) continue;
+    const ps = texto.split(/\n\n+/).map((p) => p.trim()).filter((p) => p.length > 25);
+    if (!ps.length || ps.some((p) => (freqParrafos.get(p) || 0) > 1)) continue;
+    const toks = toTokens(texto);
+    if (toks.size < 6) continue;
+    let dup = false;
+    for (const prev of tokensSeleccionados) {
+      let inter = 0;
+      toks.forEach((w) => { if (prev.has(w)) inter++; });
+      if (inter / (toks.size + prev.size - inter) >= 0.55) { dup = true; break; }
+    }
+    if (!dup) {
       cuerposVistos.add(texto);
+      tokensSeleccionados.push(toks);
       urls.push(`https://${HOST}/${m.slug}/`);
     }
   }

@@ -42,6 +42,8 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <meta property="og:site_name" content="ParaCumpleanos" />
   <meta property="og:locale" content="es_AR" />
   <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content={titulo} />
+  <meta name="twitter:description" content={descripcion} />
   {jsonld.map(function (d) { return <script type="application/ld+json" set:html={JSON.stringify(d)} />; })}
 </head>
 <body>

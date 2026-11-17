@@ -30,7 +30,7 @@ const jsonld = [migasLd([
   { name: 'Página ' + pagina, url: SITIO + '/' + hub.slug + '/' + pagina + '/' }
 ])];
 ---
-<Base titulo={titulo} descripcion={descripcion} jsonld={jsonld} grupoActual={hub.grupo || 'destinatarios'} slugActual={hub.slug}>
+<Base titulo={titulo} descripcion={descripcion} jsonld={jsonld} grupoActual={hub.grupo || 'destinatarios'} slugActual={hub.slug} noindex={true}>
   <nav class="migas" aria-label="Migas de pan">
     <a href="/">Inicio</a> › <a href={'/' + hub.slug + '/'}>{nombreHub(hub)}</a> › <span>Página {pagina}</span>
   </nav>
