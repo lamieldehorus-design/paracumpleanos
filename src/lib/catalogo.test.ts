@@ -339,7 +339,7 @@ test('generarUrlsSitio y generarSitemapXml cubren las 13706 URLs indexables sin 
   assert.ok(!xml.includes('<lastmod>'), 'No agregar lastmod sin fechas reales por URL');
 });
 
-test('Bing IndexNow cubre todas las 2906 URLs indexables en 1 lote <= 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre las 13706 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -348,13 +348,15 @@ test('Bing IndexNow cubre todas las 2906 URLs indexables en 1 lote <= 10000 y ti
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
-  const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias), '2026-11-16');
+  const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias));
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 2906);
+  assert.equal(extraidas.length, 13706);
 
   const payloads = construirPayloadsIndexNow(extraidas);
-  assert.equal(payloads.length, 1);
-  assert.equal(payloads[0].urlList.length, 2906);
+  assert.equal(payloads.length, 2);
+  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 13706);
+  assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
+  assert.equal(payloads[1].urlList.length, 3706);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);
