@@ -35,8 +35,9 @@ export const GET: APIRoute = () => {
     GUIAS_EDITORIALES.map((g) => g.slug)
   );
 
-  const fechaHoy = new Date().toISOString().slice(0, 10);
-  const xml = generarSitemapXml(urls, fechaHoy);
+  // No se informa lastmod mientras el proyecto no disponga de fechas
+  // reales de modificación por URL. Evita simular que todo cambió en cada build.
+  const xml = generarSitemapXml(urls);
 
   return new Response(xml, {
     headers: {
