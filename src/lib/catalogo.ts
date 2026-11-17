@@ -218,10 +218,9 @@ function escaparXml(valor: string): string {
     .replace(/'/g, '&apos;');
 }
 
-export function generarSitemapXml(urls: string[], lastmod: string = '2026-11-16'): string {
-  const fecha = escaparXml(lastmod);
+export function generarSitemapXml(urls: string[]): string {
   const bloques = urls.map(
-    (u) => `  <url><loc>${escaparXml(u)}</loc><lastmod>${fecha}</lastmod></url>`
+    (u) => `  <url><loc>${escaparXml(u)}</loc></url>`
   );
   return (
     '<?xml version="1.0" encoding="UTF-8"?>\n' +

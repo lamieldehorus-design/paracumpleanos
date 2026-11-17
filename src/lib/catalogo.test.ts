@@ -328,11 +328,12 @@ test('generarUrlsSitio y generarSitemapXml cubren las 2906 URLs indexables sin d
   assert.ok(ejemploCorto);
   assert.ok(!urls.includes(`https://paracumpleanos.com/${ejemploCorto.slug}/`), 'Una pagina noindex no debe entrar en sitemap.xml');
 
-  const xml = generarSitemapXml(urls, '2026-11-16');
+  const xml = generarSitemapXml(urls);
   assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xml.match(/<loc>/g) || [];
   assert.equal(locs.length, 2906);
+  assert.ok(!xml.includes('<lastmod>'), 'El sitemap no debe inventar fechas de modificacion sin datos fiables');
 });
 
 test('Bing IndexNow cubre todas las 2906 URLs indexables en 1 lote <= 10000 y tiene archivo de clave valido', () => {
@@ -344,7 +345,7 @@ test('Bing IndexNow cubre todas las 2906 URLs indexables en 1 lote <= 10000 y ti
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
-  const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias), '2026-11-16');
+  const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias));
   const extraidas = extraerUrlsDeSitemap(xml);
   assert.equal(extraidas.length, 2906);
 

@@ -35,8 +35,7 @@ export const GET: APIRoute = () => {
     GUIAS_EDITORIALES.map((g) => g.slug)
   );
 
-  const fechaHoy = new Date().toISOString().slice(0, 10);
-  const xml = generarSitemapXml(urls, fechaHoy);
+  const xml = generarSitemapXml(urls);
 
   return new Response(xml, {
     headers: {
