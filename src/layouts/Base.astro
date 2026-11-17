@@ -144,8 +144,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         var textoCard = dl.getAttribute('data-body') || '';
         var emojiCard = dl.getAttribute('data-emoji') || '🎂';
         var canvas = document.createElement('canvas');
-        canvas.width = 1080;
-        canvas.height = 1080;
+        var W = 1080;
         var ctx = canvas.getContext('2d');
         if (!ctx) return;
 
@@ -156,25 +155,9 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         var cBorde = (visualRef && visualRef.getAttribute('data-tema-borde')) || '#e91e8c';
         var cAcento = (visualRef && visualRef.getAttribute('data-tema-acento')) || '#be185d';
 
-        var grad = ctx.createLinearGradient(0, 0, 1080, 1080);
-        grad.addColorStop(0, cInicio);
-        grad.addColorStop(0.55, cMedio);
-        grad.addColorStop(1, cFin);
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 1080, 1080);
-
-        ctx.strokeStyle = cBorde;
-        ctx.lineWidth = 10;
-        ctx.strokeRect(48, 48, 984, 984);
-
-        ctx.fillStyle = cAcento;
-        ctx.textAlign = 'center';
-        ctx.font = '72px system-ui, sans-serif';
-        ctx.fillText(emojiCard, 540, 170);
-
-        ctx.font = 'bold 46px Georgia, serif';
-        function wrapLines(text, maxW) {
-          var words = text.split(/\s+/);
+        function wrapLineas(text, maxW, fontSpec) {
+          ctx.font = fontSpec;
+          var words = String(text || '').split(/\s+/).filter(Boolean);
           var lines = [];
           var line = '';
           for (var i = 0; i < words.length; i++) {
@@ -190,25 +173,93 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           return lines;
         }
 
-        var y = 260;
-        var tLines = wrapLines(tituloCard, 860);
-        for (var i = 0; i < tLines.length; i++) {
-          ctx.fillText(tLines[i], 540, y);
-          y += 58;
+        function prepararBloques(text, maxW, fontSpec, firmaSpec) {
+          var paras = String(text || '').split(/\n{2,}/).map(function (p) { return p.trim(); }).filter(Boolean);
+          return paras.map(function (p) {
+            var esFirma = /^—\s/.test(p);
+            var sublineas = p.split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
+            var wrapped = [];
+            for (var k = 0; k < sublineas.length; k++) {
+              var wLines = wrapLineas(sublineas[k], maxW, esFirma ? firmaSpec : fontSpec);
+              for (var j = 0; j < wLines.length; j++) wrapped.push(wLines[j]);
+            }
+            return { esFirma: esFirma, lineas: wrapped };
+          });
         }
 
-        ctx.fillStyle = '#1f2937';
-        ctx.font = '32px system-ui, sans-serif';
-        y += 32;
-        var bLines = wrapLines(textoCard, 860).slice(0, 12);
-        for (var j = 0; j < bLines.length; j++) {
-          ctx.fillText(bLines[j], 540, y);
-          y += 46;
+        var titleFont = 'bold 44px Georgia, serif';
+        var tLines = wrapLineas(tituloCard, 860, titleFont);
+        var titleLineH = 56;
+        var yStartBody = 250 + tLines.length * titleLineH + 28;
+        var bottomReserved = 150;
+
+        var candidatos = [32, 28, 25];
+        var elegida = null;
+        for (var c = 0; c < candidatos.length; c++) {
+          var fs = candidatos[c];
+          var lh = Math.round(fs * 1.44);
+          var gap = Math.round(fs * 0.62);
+          var bFont = fs + 'px system-ui, -apple-system, sans-serif';
+          var fFont = 'italic 600 ' + fs + 'px Georgia, serif';
+          var blks = prepararBloques(textoCard, 860, bFont, fFont);
+          var hCuerpo = 0;
+          for (var bi = 0; bi < blks.length; bi++) {
+            hCuerpo += blks[bi].lineas.length * lh;
+            if (bi < blks.length - 1) hCuerpo += gap;
+          }
+          if (yStartBody + hCuerpo + bottomReserved <= 1080 || c === candidatos.length - 1) {
+            elegida = { fs: fs, lh: lh, gap: gap, bFont: bFont, fFont: fFont, blks: blks, hCuerpo: hCuerpo };
+            if (yStartBody + hCuerpo + bottomReserved <= 1080) break;
+          }
+        }
+
+        var H = Math.max(1080, Math.ceil(yStartBody + elegida.hCuerpo + bottomReserved));
+        canvas.width = W;
+        canvas.height = H;
+
+        var grad = ctx.createLinearGradient(0, 0, W, H);
+        grad.addColorStop(0, cInicio);
+        grad.addColorStop(0.55, cMedio);
+        grad.addColorStop(1, cFin);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.strokeStyle = cBorde;
+        ctx.lineWidth = 10;
+        ctx.strokeRect(48, 48, W - 96, H - 96);
+
+        ctx.fillStyle = cAcento;
+        ctx.textAlign = 'center';
+        ctx.font = '72px system-ui, sans-serif';
+        ctx.fillText(emojiCard, W / 2, 165);
+
+        ctx.font = titleFont;
+        var y = 250;
+        for (var i = 0; i < tLines.length; i++) {
+          ctx.fillText(tLines[i], W / 2, y);
+          y += titleLineH;
+        }
+
+        y += 28;
+        if (yStartBody + elegida.hCuerpo + bottomReserved < 1080) {
+          var extra = (1080 - (y + elegida.hCuerpo + bottomReserved)) * 0.35;
+          y += Math.round(Math.max(0, extra));
+        }
+
+        for (var bi = 0; bi < elegida.blks.length; bi++) {
+          var blk = elegida.blks[bi];
+          ctx.font = blk.esFirma ? elegida.fFont : elegida.bFont;
+          ctx.fillStyle = blk.esFirma ? cAcento : '#1f2937';
+          for (var li = 0; li < blk.lineas.length; li++) {
+            ctx.fillText(blk.lineas[li], W / 2, y);
+            y += elegida.lh;
+          }
+          if (bi < elegida.blks.length - 1) y += elegida.gap;
         }
 
         ctx.fillStyle = '#b45309';
         ctx.font = 'bold 28px system-ui, sans-serif';
-        ctx.fillText('paracumpleanos.com', 540, 968);
+        ctx.fillText('paracumpleanos.com', W / 2, H - 88);
 
         var a = document.createElement('a');
         a.download = 'tarjeta-cumpleanos.png';

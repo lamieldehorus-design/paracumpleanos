@@ -73,19 +73,47 @@ const temas = Object.values(TEMAS_TARJETA);
         .slice(0, 40);
     }
 
+    function minusculaInicial(texto) {
+      if (!texto) return '';
+      if (texto.charAt(0) === '¡' || texto.charAt(0) === '¿') {
+        return texto.length > 1
+          ? texto.charAt(0) + texto.charAt(1).toLowerCase() + texto.slice(2)
+          : texto;
+      }
+      return texto.charAt(0).toLowerCase() + texto.slice(1);
+    }
+
     function personalizar(baseTexto, nombre, firma) {
       var base = String(baseTexto || '').trim();
       if (!base) return '';
       var n = limpiarCampo(nombre);
-      var f = limpiarCampo(firma);
-      var res = base;
-      if (n) {
+      var f = limpiarCampo(firma).replace(/^[—–-]\s*/, '').trim();
+
+      var parrafos = base.split(/\n{2,}/).map(function (p) { return p.trim(); }).filter(Boolean);
+      if (n && parrafos.length) {
         var esc = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         var reg = new RegExp('(^|\\s|[¡¿])' + esc + '([,:!.]|\\s|$)', 'i');
-        if (!reg.test(res)) {
-          res = n + ', ' + res.charAt(0).toLowerCase() + res.slice(1);
+        if (!reg.test(parrafos[0])) {
+          var p0 = parrafos[0];
+          if (p0.length < 55 && /:$/.test(p0)) {
+            if (!reg.test(base)) {
+              parrafos.unshift('Para ' + n + ':');
+            }
+          } else if (p0.length < 55 && /,$/.test(p0)) {
+            if (/^(Mi\s+amor|Amor\s+m[ií]o|Para\s+vos,\s*mi\s+amor),$/i.test(p0)) {
+              parrafos[0] = n + ', mi amor,';
+            } else {
+              parrafos[0] = n + ',';
+            }
+          } else if (p0.indexOf('\n') !== -1) {
+            parrafos.unshift('Para ' + n + ':');
+          } else {
+            parrafos[0] = n + ', ' + minusculaInicial(p0);
+          }
         }
       }
+
+      var res = parrafos.join('\n\n');
       if (f) {
         res = res + '\n\n— ' + f;
       }
@@ -93,11 +121,43 @@ const temas = Object.values(TEMAS_TARJETA);
     }
 
     function resumirTexto(texto) {
-      var bloques = String(texto || '').split('\n\n').map(function (b) { return b.trim(); }).filter(Boolean);
-      var principal = bloques[0] || '';
-      var plano = principal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
+      var bloques = String(texto || '').split(/\n{2,}/).map(function (b) { return b.trim(); }).filter(Boolean);
+      if (!bloques.length) return '';
+      var cuerpoIdx = -1;
+      for (var i = 0; i < bloques.length; i++) {
+        if (!(bloques[i].length < 55 && /[:,]$/.test(bloques[i]))) {
+          cuerpoIdx = i;
+          break;
+        }
+      }
+      var combinado = '';
+      if (cuerpoIdx > 0) {
+        var saludo = bloques[0];
+        var cuerpo = bloques[cuerpoIdx];
+        combinado = saludo.slice(-1) === ','
+          ? saludo + ' ' + minusculaInicial(cuerpo)
+          : saludo + ' ' + cuerpo;
+      } else {
+        combinado = bloques[0];
+      }
+      var plano = combinado.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
       if (plano.length <= 135) return plano;
       return plano.slice(0, 135).replace(/\s+\S*$/, '') + '…';
+    }
+
+    function renderizarParrafosDom(el, texto) {
+      if (!el) return;
+      el.innerHTML = '';
+      var parrafos = String(texto || '').split(/\n{2,}/).map(function (p) { return p.trim(); }).filter(Boolean);
+      parrafos.forEach(function (p) {
+        var nodoP = document.createElement('p');
+        var lineas = p.split('\n');
+        lineas.forEach(function (linea, idx) {
+          if (idx > 0) nodoP.appendChild(document.createElement('br'));
+          nodoP.appendChild(document.createTextNode(linea));
+        });
+        el.appendChild(nodoP);
+      });
     }
 
     var temaActual = temaBtns.length ? temaBtns[0].getAttribute('data-tema') || 'rosa' : 'rosa';
@@ -142,18 +202,8 @@ const temas = Object.values(TEMAS_TARJETA);
       var origTexto = contenedor.getAttribute('data-orig-texto') || '';
       var origTitulo = contenedor.getAttribute('data-orig-titulo') || '';
       var textoPers = personalizar(origTexto, nombre, firma);
-      var parrafos = textoPers.split('\n\n').filter(Boolean);
 
-      contenedor.innerHTML = '';
-      parrafos.forEach(function (p) {
-        var el = document.createElement('p');
-        var lineas = p.split('\n');
-        lineas.forEach(function (linea, idx) {
-          if (idx > 0) el.appendChild(document.createElement('br'));
-          el.appendChild(document.createTextNode(linea));
-        });
-        contenedor.appendChild(el);
-      });
+      renderizarParrafosDom(contenedor, textoPers);
 
       var completo = (origTitulo ? origTitulo + '. ' : '') + textoPers;
       var root = document.getElementById('mensaje-detalle-bloque');
@@ -164,10 +214,8 @@ const temas = Object.values(TEMAS_TARJETA);
         if (btnWa) btnWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(completo));
         var btnDl = root.querySelector('.btn-descargar');
         var visualExt = root.querySelector('.tarjeta-visual-extracto');
-        var extOrig = root.getAttribute('data-orig-extracto') || '';
-        var extFinal = (limpiarCampo(nombre) || limpiarCampo(firma)) ? resumirTexto(textoPers) : extOrig;
-        if (visualExt) visualExt.textContent = extFinal;
-        if (btnDl) btnDl.setAttribute('data-body', extFinal);
+        if (visualExt) renderizarParrafosDom(visualExt, textoPers);
+        if (btnDl) btnDl.setAttribute('data-body', textoPers);
       }
     }
 

@@ -66,22 +66,128 @@ export function limpiarCampoTexto(valor?: string, maxLen: number = 40): string {
     .slice(0, maxLen);
 }
 
+function escaparRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function minusculaInicial(texto: string): string {
+  if (!texto) return '';
+  if (texto.startsWith('¡') || texto.startsWith('¿')) {
+    return texto.length > 1
+      ? `${texto.charAt(0)}${texto.charAt(1).toLowerCase()}${texto.slice(2)}`
+      : texto;
+  }
+  return `${texto.charAt(0).toLowerCase()}${texto.slice(1)}`;
+}
+
 export function personalizarTexto(textoBase: string, opts: OpcionesPersonalizacion = {}): string {
   const base = String(textoBase || '').trim();
   if (!base) return '';
 
   const nombre = limpiarCampoTexto(opts.nombre, 40);
-  const firma = limpiarCampoTexto(opts.firma, 40);
+  const firma = limpiarCampoTexto(opts.firma, 40).replace(/^[—–-]\s*/, '').trim();
 
-  let resultado = base;
-  if (nombre) {
-    const yaLoContiene = new RegExp(`(^|\\s|[¡¿])${nombre.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}([,:!.]|\\s|$)`, 'i').test(resultado);
+  const parrafos = base
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  if (nombre && parrafos.length) {
+    const yaLoContiene = new RegExp(`(^|\\s|[¡¿])${escaparRegex(nombre)}([,:!.]|\\s|$)`, 'i').test(parrafos[0]);
     if (!yaLoContiene) {
-      resultado = `${nombre}, ${resultado.charAt(0).toLowerCase()}${resultado.slice(1)}`;
+      const p0 = parrafos[0];
+      if (p0.length < 55 && /:$/.test(p0)) {
+        // Bloque etiqueta (p. ej. "Mensaje en inglés:") -> no alterarlo, agregar encabezado limpio arriba
+        const yaEnTodo = new RegExp(`(^|\\s|[¡¿])${escaparRegex(nombre)}([,:!.]|\\s|$)`, 'i').test(base);
+        if (!yaEnTodo) {
+          parrafos.unshift(`Para ${nombre}:`);
+        }
+      } else if (p0.length < 55 && /,$/.test(p0)) {
+        // Saludo epistolar de primera línea (p. ej. "Querida mamá,", "Mi amor,", "Con todo cariño,")
+        if (/^(Mi\s+amor|Amor\s+m[ií]o|Para\s+vos,\s*mi\s+amor),$/i.test(p0)) {
+          parrafos[0] = `${nombre}, mi amor,`;
+        } else {
+          parrafos[0] = `${nombre},`;
+        }
+      } else if (p0.includes('\n')) {
+        // Poema en estrofas -> conservar los versos intactos bajo encabezado personal
+        parrafos.unshift(`Para ${nombre}:`);
+      } else {
+        parrafos[0] = `${nombre}, ${minusculaInicial(p0)}`;
+      }
     }
   }
+
+  let resultado = parrafos.join('\n\n');
   if (firma) {
     resultado = `${resultado}\n\n— ${firma}`;
   }
   return resultado;
+}
+
+/**
+ * Resume un mensaje únicamente para tarjetas de grilla en listados de categoría,
+ * evitando mostrar solo un saludo corto de una palabra tras personalizar.
+ */
+export function resumirTextoCard(texto: string, maxChars: number = 135): string {
+  const bloques = String(texto || '')
+    .split(/\n{2,}/)
+    .map((b) => b.trim())
+    .filter(Boolean);
+  if (!bloques.length) return '';
+
+  const cuerpoIdx = bloques.findIndex((b) => !(b.length < 55 && /[:,]$/.test(b)));
+  let combinado = '';
+  if (cuerpoIdx > 0) {
+    const saludo = bloques[0];
+    const cuerpo = bloques[cuerpoIdx];
+    combinado = saludo.endsWith(',')
+      ? `${saludo} ${minusculaInicial(cuerpo)}`
+      : `${saludo} ${cuerpo}`;
+  } else {
+    combinado = bloques[0];
+  }
+
+  const plano = combinado.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  if (plano.length <= maxChars) return plano;
+  return plano.slice(0, maxChars).replace(/\s+\S*$/, '') + '…';
+}
+
+export interface ParrafoTarjetaCanvas {
+  esFirma: boolean;
+  lineas: string[];
+}
+
+export function prepararParrafosTarjeta(
+  texto: string,
+  medirAncho: (s: string) => number,
+  maxW: number
+): ParrafoTarjetaCanvas[] {
+  const bloques = String(texto || '')
+    .split(/\n{2,}/)
+    .map((b) => b.trim())
+    .filter(Boolean);
+
+  return bloques.map((bloque) => {
+    const esFirma = /^—\s/.test(bloque);
+    const sublineas = bloque.split('\n').map((l) => l.trim()).filter(Boolean);
+    const lineasEnvueltas: string[] = [];
+
+    for (const sub of sublineas) {
+      const palabras = sub.split(/\s+/);
+      let actual = '';
+      for (const palabra of palabras) {
+        const intento = actual ? `${actual} ${palabra}` : palabra;
+        if (medirAncho(intento) > maxW && actual) {
+          lineasEnvueltas.push(actual);
+          actual = palabra;
+        } else {
+          actual = intento;
+        }
+      }
+      if (actual) lineasEnvueltas.push(actual);
+    }
+
+    return { esFirma, lineas: lineasEnvueltas };
+  });
 }

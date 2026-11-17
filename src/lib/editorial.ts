@@ -256,12 +256,50 @@ export function clasificarMensaje(m: any, hub?: any): ClasificacionMensaje {
 }
 
 export function extraerCitaDestacada(m: any): string {
-  const limpio = String(m.texto || '').replace(/\s*\n+\s*/g, ' ').replace(/\s+/g, ' ').trim();
-  const oraciones = limpio.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
+  const bloques = String(m.texto || '')
+    .split(/\n{2,}/)
+    .map((b) => b.trim())
+    .filter(Boolean)
+    .filter((b) => !(b.length < 55 && /[:,]$/.test(b)))
+    .map((b) =>
+      b
+        .replace(/^(Mensaje en inglés|Traducción al español):\s*/i, '')
+        .replace(/\s*\n+\s*/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+    )
+    .filter(Boolean);
+
+  for (const b of bloques) {
+    const sinComillas =
+      (b.startsWith('"') && b.endsWith('"')) || (b.startsWith('«') && b.endsWith('»'))
+        ? b.slice(1, -1).trim()
+        : b;
+    if (sinComillas.length >= 45 && sinComillas.length <= 165) {
+      return sinComillas;
+    }
+  }
+
+  const oraciones: string[] = [];
+  for (const b of bloques) {
+    const sinExterior =
+      (b.startsWith('"') && b.endsWith('"')) || (b.startsWith('«') && b.endsWith('»'))
+        ? b.slice(1, -1).trim()
+        : b;
+    const partes = sinExterior
+      .split(/(?<=[.!?])\s+/)
+      .map((s) => s.replace(/^["«]+|["»]+$/g, '').trim())
+      .filter(Boolean);
+    oraciones.push(...partes);
+  }
+
   const ideal = oraciones.find((o) => o.length >= 45 && o.length <= 165);
   if (ideal) return ideal;
-  const primera = oraciones[0] || limpio;
-  return primera.length <= 165 ? primera : primera.slice(0, 162).replace(/\s+\S*$/, '') + '…';
+  const aceptable = oraciones.find((o) => o.length >= 25 && o.length <= 165);
+  if (aceptable) return aceptable;
+  const primera = oraciones[0] || bloques[0] || '';
+  const limpia = primera.replace(/^["«]+|["»]+$/g, '').trim();
+  return limpia.length <= 165 ? limpia : limpia.slice(0, 162).replace(/\s+\S*$/, '') + '…';
 }
 
 export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {

@@ -467,9 +467,16 @@ img { max-width: 100%; }
 }
 .tarjeta-visual-extracto {
   margin: 0 auto;
-  max-width: 560px;
+  max-width: 580px;
   color: var(--texto);
-  font-size: 0.98rem;
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+.tarjeta-visual-extracto p {
+  margin: 0 0 10px;
+}
+.tarjeta-visual-extracto p:last-child {
+  margin-bottom: 0;
 }
 .tarjeta-visual-marca {
   margin: 12px 0 0;

@@ -101,13 +101,7 @@ const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
 const creado = hub.creado || '2026-11-15';
 const actualizado = hub.actualizado || '2026-11-16';
 const parrafosMsg = esHub ? [] : registro.texto.split('\n\n');
-const parrafoPrincipal = esHub ? '' : (
-  parrafosMsg.find(function (p) {
-    const t = p.trim();
-    return t.length >= 50 && !/^(Mensaje en inglés|Traducción al español):/i.test(t);
-  }) || parrafosMsg.find(function (p) { return p.trim().length >= 25; }) || parrafosMsg[0] || ''
-);
-const extractoCard = parrafoPrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
+const textoCompletoCard = esHub ? '' : registro.texto;
 ---
 <Base
   titulo={titulo}
@@ -255,7 +249,7 @@ const extractoCard = parrafoPrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, 
 
       <PersonalizadorTarjeta modo="mensaje" />
 
-      <div id="mensaje-detalle-bloque" data-orig-extracto={extractoCard}>
+      <div id="mensaje-detalle-bloque">
         <div id="mensaje-cuerpo" class="mensaje" data-orig-texto={registro.texto} data-orig-titulo={registro.titulo}>
           {parrafosMsg.map(function (p) {
             const lineas = p.split('\n');
@@ -271,14 +265,25 @@ const extractoCard = parrafoPrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, 
         <div class="tarjeta-visual" role="img" aria-label={'Tarjeta lista para compartir: ' + registro.titulo}>
           <div class="tarjeta-visual-emoji">{hub.emoji}</div>
           <p class="tarjeta-visual-titulo">{registro.titulo}</p>
-          <p class="tarjeta-visual-extracto">{extractoCard}</p>
+          <div class="tarjeta-visual-extracto">
+            {parrafosMsg.map(function (p) {
+              const lineas = p.split('\n');
+              return (
+                <p>
+                  {lineas.map(function (linea, idx) {
+                    return idx === 0 ? linea : <><br />{linea}</>;
+                  })}
+                </p>
+              );
+            })}
+          </div>
           <p class="tarjeta-visual-marca">paracumpleanos.com</p>
         </div>
         <Compartir
           texto={textoEnviar}
           url={SITIO + '/' + registro.slug + '/'}
           tituloCard={registro.titulo}
-          cuerpoCard={extractoCard}
+          cuerpoCard={textoCompletoCard}
           emojiCard={hub.emoji}
           mostrarDescarga={true}
         />

@@ -16,7 +16,13 @@ import {
   HERMANAS
 } from './catalogo';
 import { GUIAS_EDITORIALES } from '../data/guias';
-import { TEMAS_TARJETA, limpiarCampoTexto, personalizarTexto } from './personalizador';
+import {
+  TEMAS_TARJETA,
+  limpiarCampoTexto,
+  personalizarTexto,
+  resumirTextoCard,
+  prepararParrafosTarjeta
+} from './personalizador';
 import {
   clasificarMensaje,
   extraerCitaDestacada,
@@ -134,6 +140,11 @@ test('descripciones lead, seoTitulo y seoTexto son unicos y ningun titulo queda 
     assert.ok(!cortePrep.test(m.titulo.trim()), `Mensaje ${m.slug} termina en preposicion/articulo: "${m.titulo}"`);
     assert.ok(!/\{[a-zA-Z0-9_]+\}/.test(m.titulo + ' ' + m.texto), `Mensaje ${m.slug} contiene token sin resolver`);
     assert.ok(!/,\s*quien cumple\b|quien cumple\s+de\s+alma|\bpara quien cumple:/i.test(m.texto), `Mensaje ${m.slug} contiene vocativo literal "quien cumple"`);
+    assert.ok(!/Querida persona especial/i.test(m.texto), `Mensaje ${m.slug} contiene saludo generico "Querida persona especial"`);
+    assert.ok(!/\(\d+\/36 para [^)]+\)/.test(m.texto), `Mensaje ${m.slug} contiene marcador interno (/36 para ...)`);
+    assert.ok(!/\b([a-záéíóúüñ]{2,})\s+\1\b/i.test(m.texto), `Mensaje ${m.slug} tiene palabra duplicada consecutiva`);
+    assert.ok(!/de corazón\.\s+Deseo de corazón/i.test(m.texto), `Mensaje ${m.slug} repite "de corazon" pegado`);
+    assert.ok(!/(,\s+(hija|hijo|mamá|papá|hermana|hermano|amiga|amigo|novia|novio|esposa|esposo|abuela|abuelo|prima|primo)\.\s+Cuando pienso en tu cumpleaños),\s+\2,/i.test(m.texto), `Mensaje ${m.slug} repite vocativo en oraciones seguidas`);
   }
 });
 
@@ -229,6 +240,15 @@ test('modulo editorial genera 20 perfiles distintos, citas, FAQs y posdatas cohe
   const msgMama = cat.mensajesDe('feliz-cumpleanos-mama')[0];
   assert.equal(clasificarMensaje(msgMama, cat.hubDe(msgMama)).palabras > 30, true);
   assert.ok(extraerCitaDestacada(msgMama).length > 15);
+
+  for (const m of cat.todosMensajes) {
+    const cita = extraerCitaDestacada(m);
+    assert.ok(cita.length >= 15, `Cita muy corta en ${m.slug}: ${cita}`);
+    assert.ok(!/^(Mensaje en inglés|Traducción al español):/i.test(cita), `Cita expone etiqueta bilingue en ${m.slug}: ${cita}`);
+    assert.ok(!/^(Hoy en tu cumpleaños|Querid[ao]\s+[^,]+|Mi amor|Amor mío|Con todo cariño|Para vos[^,]*),\s+[A-ZÁÉÍÓÚÜÑ]/u.test(cita), `Cita pega saludo con mayuscula en ${m.slug}: ${cita}`);
+    const comillas = (cita.match(/"/g) || []).length;
+    assert.equal(comillas % 2, 0, `Cita con comillas desparejas en ${m.slug}: ${cita}`);
+  }
 });
 
 test('construirSetIndexables prioriza contenido real y unicidad sin minimo artificial de palabras', () => {
@@ -289,7 +309,7 @@ test('guias editoriales tienen 10 articulos pilar profundos con tabla, comparaci
   }
 });
 
-test('personalizador adapta nombre y firma sin duplicar saludo ni romper saltos de linea', () => {
+test('personalizador adapta saludos, cartas, bilingues, poemas y firma sin cortar texto ni perder cuerpo en grillas', () => {
   assert.equal(limpiarCampoTexto('  Laura \n Perez  '), 'Laura Perez');
   const salida = personalizarTexto('Hoy celebramos tu vida con enorme alegría.', {
     nombre: 'Laura',
@@ -299,9 +319,51 @@ test('personalizador adapta nombre y firma sin duplicar saludo ni romper saltos 
 
   const conNombreYaPresente = personalizarTexto('Laura, hoy te deseamos lo mejor del mundo.', {
     nombre: 'Laura',
-    firma: 'Tus amigos'
+    firma: '— Tus amigos'
   });
   assert.equal(conNombreYaPresente, 'Laura, hoy te deseamos lo mejor del mundo.\n\n— Tus amigos');
+
+  const cartaAmor = personalizarTexto('Mi amor,\n\nHoy celebramos un mes más caminando juntos.', {
+    nombre: 'Laura',
+    firma: 'Martín'
+  });
+  assert.equal(cartaAmor, 'Laura, mi amor,\n\nHoy celebramos un mes más caminando juntos.\n\n— Martín');
+
+  const cartaMama = personalizarTexto('Querida mamá,\n\nGracias por estar cada día en nuestra mesa.', {
+    nombre: 'Mami'
+  });
+  assert.equal(cartaMama, 'Mami,\n\nGracias por estar cada día en nuestra mesa.');
+  assert.ok(!/persona especial/i.test(cartaMama));
+
+  const resumenGrilla = resumirTextoCard(cartaMama);
+  assert.equal(resumenGrilla, 'Mami, gracias por estar cada día en nuestra mesa.');
+
+  const bilingue = personalizarTexto('Mensaje en inglés:\n"Happy birthday!"\n\nTraducción al español:\n"¡Feliz cumpleaños!"', {
+    nombre: 'Laura'
+  });
+  assert.equal(
+    bilingue,
+    'Para Laura:\n\nMensaje en inglés:\n"Happy birthday!"\n\nTraducción al español:\n"¡Feliz cumpleaños!"'
+  );
+
+  const poema = personalizarTexto('Hoy brillan las luces\nen tu caminar.\n\nQue sigas sumando\nmotivos para amar.', {
+    nombre: 'Laura'
+  });
+  assert.equal(
+    poema,
+    'Para Laura:\n\nHoy brillan las luces\nen tu caminar.\n\nQue sigas sumando\nmotivos para amar.'
+  );
+
+  const exclam = personalizarTexto('¡Qué alegría festejar tu día!', { nombre: 'Laura' });
+  assert.equal(exclam, 'Laura, ¡qué alegría festejar tu día!');
+
+  const cartaLarga = Array.from({ length: 5 }, (_, i) => `Párrafo ${i + 1} lleno de recuerdos hermosos compartidos juntos en familia.`).join('\n\n') + '\n\n— Sofi';
+  const bloquesCanvas = prepararParrafosTarjeta(cartaLarga, (s) => s.length * 14, 860);
+  const textoReconstruido = bloquesCanvas.map((b) => b.lineas.join(' ')).join(' ');
+  assert.ok(textoReconstruido.includes('Párrafo 5'));
+  assert.ok(textoReconstruido.includes('— Sofi'));
+  assert.ok(!textoReconstruido.includes('…'));
+  assert.equal(bloquesCanvas[bloquesCanvas.length - 1].esFirma, true);
   assert.equal(Object.keys(TEMAS_TARJETA).length, 4);
 });
 
