@@ -333,6 +333,10 @@ test('generarUrlsSitio y generarSitemapXml cubren las 2906 URLs indexables sin d
   assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xml.match(/<loc>/g) || [];
   assert.equal(locs.length, 2906);
+
+  const xmlSinFecha = generarSitemapXml(urls);
+  assert.ok(!xmlSinFecha.includes('<lastmod>'), 'No inventar lastmod cuando no hay fechas reales por URL');
+  assert.throws(() => generarSitemapXml(urls, '2026-02-30'), /Fecha lastmod inválida/);
 });
 
 test('Bing IndexNow cubre todas las 2906 URLs indexables en 1 lote <= 10000 y tiene archivo de clave valido', () => {

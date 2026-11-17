@@ -1,0 +1,29 @@
+name: Validar cambios antes de publicar
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Instalar dependencias
+        run: npm install --no-audit --no-fund
+      - name: Validar contenido y construir el sitio
+        run: npm run build
+      - name: Comprobar que el sitemap se haya generado
+        run: |
+          test -s dist/sitemap.xml
+          grep -q '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' dist/sitemap.xml
+          ! grep -q '<lastmod>' dist/sitemap.xml
+          echo "Sitemap generado; sin fechas lastmod artificiales."

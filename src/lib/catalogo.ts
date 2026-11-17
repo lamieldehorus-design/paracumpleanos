@@ -218,11 +218,29 @@ function escaparXml(valor: string): string {
     .replace(/'/g, '&apos;');
 }
 
-export function generarSitemapXml(urls: string[], lastmod: string = '2026-11-16'): string {
-  const fecha = escaparXml(lastmod);
-  const bloques = urls.map(
-    (u) => `  <url><loc>${escaparXml(u)}</loc><lastmod>${fecha}</lastmod></url>`
-  );
+export function generarSitemapXml(urls: string[], lastmod?: string): string {
+  let fecha: string | undefined;
+
+  if (lastmod !== undefined) {
+    const fechaParseada = new Date(`${lastmod}T00:00:00.000Z`);
+    const fechaValida =
+      /^\d{4}-\d{2}-\d{2}$/.test(lastmod) &&
+      !Number.isNaN(fechaParseada.getTime()) &&
+      fechaParseada.toISOString().slice(0, 10) === lastmod;
+
+    if (!fechaValida) {
+      throw new Error(`Fecha lastmod inválida: ${lastmod}. Usá YYYY-MM-DD o no envíes lastmod.`);
+    }
+
+    fecha = lastmod;
+  }
+
+  const bloques = urls.map((u) => {
+    const loc = `<loc>${escaparXml(u)}</loc>`;
+    const modificacion = fecha ? `<lastmod>${escaparXml(fecha)}</lastmod>` : '';
+    return `  <url>${loc}${modificacion}</url>`;
+  });
+
   return (
     '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
@@ -230,4 +248,3 @@ export function generarSitemapXml(urls: string[], lastmod: string = '2026-11-16'
     '\n</urlset>\n'
   );
 }
-
