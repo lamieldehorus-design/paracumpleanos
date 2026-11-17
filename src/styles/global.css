@@ -611,6 +611,39 @@ img { max-width: 100%; }
   border-radius: 12px;
 }
 .consejo-mensaje h2 { margin: 0 0 8px; font-size: 1.16rem; color: var(--celeste-texto); }
+.posdata-sugerida {
+  margin: 10px 0 12px;
+  padding: 12px 14px;
+  background: #fff;
+  border-left: 4px solid #0284c7;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--texto);
+}
+.ejemplos-guia { display: grid; gap: 14px; grid-template-columns: 1fr; margin-top: 12px; }
+.ejemplo-plantilla {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 16px;
+}
+.ejemplo-etiqueta {
+  margin: 0 0 6px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+}
+.ejemplo-texto { margin: 0; font-size: 0.97rem; line-height: 1.65; color: var(--texto); }
+.criterio-box {
+  margin-top: 24px;
+  padding: 16px 18px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  font-size: 0.93rem;
+  color: var(--texto-suave);
+}
+.criterio-box p { margin: 0; }
 
 .contacto-tarjetas { display: grid; gap: 16px; grid-template-columns: 1fr; margin: 18px 0; }
 .contacto-email { font-size: 1.1rem; font-weight: 700; margin: 10px 0; }
@@ -692,7 +725,7 @@ input, textarea, select { font-size: 16px; }
 @media (min-width: 820px) {
   .contenedor { display: grid; grid-template-columns: 270px 1fr; gap: 32px; }
   .sidebar { margin-bottom: 0; align-self: start; position: sticky; top: 18px; max-height: calc(100vh - 36px); overflow-y: auto; }
-  .grilla, .guias-grid, .contacto-tarjetas, .portal-secciones-grid, .comparacion-concreta { grid-template-columns: repeat(2, 1fr); }
+  .grilla, .guias-grid, .contacto-tarjetas, .portal-secciones-grid, .comparacion-concreta, .ejemplos-guia { grid-template-columns: repeat(2, 1fr); }
   .portal-hero { grid-template-columns: 1.15fr 0.85fr; gap: 32px; }
   .portal-guias-salience { grid-template-columns: 1.05fr 0.95fr; gap: 24px; }
   .estandares-grid { grid-template-columns: repeat(3, 1fr); }

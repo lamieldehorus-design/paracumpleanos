@@ -299,13 +299,14 @@ const extractoCard = parrafoPrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, 
           </div>
         </div>
         <p class="consejo-horario"><strong>Mejor momento sugerido:</strong> {guiaMsg.mejorHorario}</p>
+        <p class="posdata-sugerida">{guiaMsg.posdataSugerida}</p>
         <ol class="lista-editorial lista-numerada">
           {guiaMsg.pasos.map(function (paso) {
             return <li>{paso}</li>;
           })}
         </ol>
         <p class="ver-tambien">
-          Guía recomendada: <a href={`/guias/${guiaMsg.guia.slug}/`}>{guiaMsg.guia.titulo} →</a>
+          Guía recomendada: <a href={`/guias/${guiaMsg.guia.slug}/`}>{guiaMsg.guia.titulo} →</a> · <a href="/sobre-nosotros/#criterio-editorial">Cómo revisamos estos textos</a>
         </p>
       </section>
 

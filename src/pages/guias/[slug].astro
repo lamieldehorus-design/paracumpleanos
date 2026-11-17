@@ -40,6 +40,17 @@ const jsonld = [
       url: `${SITIO}/`
     },
     mainEntityOfPage: urlGuia
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: guia.faqs.map(function (f) {
+      return {
+        '@type': 'Question',
+        name: f.pregunta,
+        acceptedAnswer: { '@type': 'Answer', text: f.respuesta }
+      };
+    })
   }
 ];
 ---
@@ -58,13 +69,15 @@ const jsonld = [
         <span aria-hidden="true">{guia.emoji}</span>
         <span>{guia.tiempoLectura}</span>
         <span>·</span>
-        <span>Por <a href="/sobre-nosotros/">{guia.autor}</a></span>
+        <span>Por <a href="/sobre-nosotros/#criterio-editorial">{guia.autor}</a></span>
         <span>·</span>
         <time datetime={guia.fechaPublicacion}>{guia.fechaPublicacion}</time>
       </p>
       <h1>{guia.h1}</h1>
       <p class="lead">{guia.resumen}</p>
     </header>
+
+    <blockquote class="cita-editorial">{guia.citaDestacada}</blockquote>
 
     {guia.secciones.map(function (sec) {
       return (
@@ -84,6 +97,75 @@ const jsonld = [
       );
     })}
 
+    <section class="articulo-seccion" aria-labelledby="guia-comparacion-titulo">
+      <h2 id="guia-comparacion-titulo">{guia.comparacionPractica.titulo}</h2>
+      <div class="comparacion-concreta">
+        <div class="comp-item comp-evitar">
+          <span class="comp-etiqueta">Evitá enviar genérico</span>
+          <p>«{guia.comparacionPractica.evitar}»</p>
+        </div>
+        <div class="comp-item comp-mejor">
+          <span class="comp-etiqueta">Ejemplo real con criterio</span>
+          <p>«{guia.comparacionPractica.mejor}»</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="bloque-tabla-hub" aria-labelledby="guia-tabla-titulo">
+      <h2 id="guia-tabla-titulo">{guia.tablaComparativa.titulo}</h2>
+      <div class="tabla-responsive">
+        <table class="tabla-comparativa">
+          <thead>
+            <tr>
+              {guia.tablaComparativa.columnas.map(function (col) {
+                return <th>{col}</th>;
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {guia.tablaComparativa.filas.map(function (fila) {
+              return (
+                <tr>
+                  <td><strong>{fila[0]}</strong></td>
+                  <td>{fila[1]}</td>
+                  <td>{fila[2]}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="articulo-seccion" aria-labelledby="guia-ejemplos-titulo">
+      <h2 id="guia-ejemplos-titulo">Plantillas rápidas listas para adaptar</h2>
+      <p>Completá los datos entre corchetes con tu vínculo real antes de copiar:</p>
+      <div class="ejemplos-guia">
+        {guia.ejemplosAdaptables.map(function (ej) {
+          return (
+            <div class="ejemplo-plantilla">
+              <p class="ejemplo-etiqueta">{ej.etiqueta}</p>
+              <p class="ejemplo-texto">{ej.texto}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    <section class="faqs-hub" aria-labelledby="guia-faq-titulo">
+      <h2 id="guia-faq-titulo">Preguntas frecuentes</h2>
+      <div class="faq-lista">
+        {guia.faqs.map(function (f, i) {
+          return (
+            <details class="faq-item" open={i === 0}>
+              <summary>{f.pregunta}</summary>
+              <p>{f.respuesta}</p>
+            </details>
+          );
+        })}
+      </div>
+    </section>
+
     <section class="guia-categoria" aria-labelledby="cats-guia">
       <h2 id="cats-guia">Categorías recomendadas para poner esto en práctica</h2>
       <p>Abrí cualquiera de estas colecciones y usá el personalizador en vivo para agregar el nombre y tu firma antes de copiar o descargar la tarjeta:</p>
@@ -93,6 +175,10 @@ const jsonld = [
         })}
       </div>
     </section>
+
+    <aside class="criterio-box" aria-label="Revisión editorial">
+      <p><strong>Revisión editorial:</strong> esta guía fue redactada y revisada por el <a href="/sobre-nosotros/#criterio-editorial">{guia.autor}</a> siguiendo nuestras pautas de tono humano, claridad y adecuación a cada vínculo. ¿Querés proponer una corrección? <a href="/contacto/">Escribinos acá</a>.</p>
+    </aside>
   </article>
 
   <section class="hermanas" aria-labelledby="otras-guias-titulo">

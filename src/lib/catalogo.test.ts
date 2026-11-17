@@ -180,26 +180,53 @@ test('cartas largas, poemas en estrofas, duelo respetuoso y aniversarios coheren
   }
 });
 
-test('modulo editorial genera tablas comparativas, FAQs, citas y guias de adaptacion coherentes por grupo', () => {
+test('modulo editorial genera 20 perfiles distintos, citas, FAQs y posdatas coherentes sin contaminacion de tono', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
+  const perfilesEncontrados = new Set<string>();
+  const ejConcretos = new Set<string>();
+
+  for (const hub of cat.hubs) {
+    const msgs = cat.mensajesDe(hub.slug);
+    const ed = editorialHubCompleto(hub, msgs);
+    perfilesEncontrados.add(ed.perfil);
+    assert.equal(ed.tabla.length, 3);
+    assert.equal(ed.faqs.length, 3);
+    assert.ok(ed.claves.length >= 3);
+
+    const isDuelo = /fallecid|hasta-el-cielo/.test(hub.slug);
+    const isAniv = /(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(hub.slug);
+
+    if (isDuelo) {
+      assert.equal(ed.perfil, 'duelo', `Hub duelo mal clasificado: ${hub.slug}`);
+      assert.ok(!/(torta|fiesta|pastel|festej\w*|brindis|velas)/i.test(ed.citaClave + ed.claves.join(' ')), `Editorial duelo con fiesta: ${hub.slug}`);
+    }
+    if (isAniv) {
+      assert.ok(ed.perfil === 'aniv_meses' || ed.perfil === 'aniv_anos', `Hub aniversario mal clasificado: ${hub.slug}`);
+      assert.ok(!/cumpleaños/i.test(ed.citaClave + ed.claves.join(' ') + ed.faqs.map((f) => f.pregunta + ' ' + f.respuesta).join(' ')), `Editorial aniversario menciona cumpleaños: ${hub.slug}`);
+    }
+
+    const adapt0 = guiaAdaptacionMensaje(msgs[0], hub);
+    ejConcretos.add(adapt0.ejemploConcreto);
+    assert.ok(adapt0.posdataSugerida.length >= 25);
+    assert.ok(adapt0.citaDestacada.length >= 20);
+    assert.equal(adapt0.pasos.length, 3);
+    if (isDuelo) {
+      assert.ok(!/(torta|fiesta|pastel|festej\w*|velas)/i.test(adapt0.ejemploGenerico + ' ' + adapt0.ejemploConcreto + ' ' + adapt0.posdataSugerida));
+    }
+    if (isAniv) {
+      assert.ok(!/cumpleaños/i.test(adapt0.ejemploGenerico + ' ' + adapt0.ejemploConcreto + ' ' + adapt0.posdataSugerida));
+    }
+  }
+
+  assert.ok(perfilesEncontrados.size >= 18, `Se esperaban al menos 18 perfiles editoriales distintos, hay ${perfilesEncontrados.size}`);
+  assert.ok(ejConcretos.size >= 30, `Se esperaban al menos 30 variaciones de ejemplos concretos, hay ${ejConcretos.size}`);
+
   const hubDuelo = cat.hubsPorSlug.get('felicitaciones-a-madre-fallecida');
-  const msgsDuelo = cat.mensajesDe('felicitaciones-a-madre-fallecida');
-  const edDuelo = editorialHubCompleto(hubDuelo, msgsDuelo);
-  assert.equal(edDuelo.tabla.length, 3);
-  assert.equal(edDuelo.faqs.length, 3);
-  assert.ok(!/torta|fiesta|pastel/i.test(edDuelo.citaClave + edDuelo.claves.join(' ')));
   assert.equal(guiaRelacionadaParaHub(hubDuelo).slug, 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido');
 
-  const hubAniv = cat.hubsPorSlug.get('feliz-aniversario-mi-amor');
-  const edAniv = editorialHubCompleto(hubAniv, cat.mensajesDe('feliz-aniversario-mi-amor'));
-  assert.ok(!/cumpleaños/i.test(edAniv.citaClave + edAniv.claves.join(' ')));
-
   const msgMama = cat.mensajesDe('feliz-cumpleanos-mama')[0];
-  const adapt = guiaAdaptacionMensaje(msgMama, cat.hubDe(msgMama));
-  assert.ok(adapt.citaDestacada.length >= 25);
-  assert.equal(adapt.pasos.length, 3);
   assert.equal(clasificarMensaje(msgMama, cat.hubDe(msgMama)).palabras > 30, true);
   assert.ok(extraerCitaDestacada(msgMama).length > 15);
 });
@@ -221,7 +248,7 @@ test('construirSetIndexables filtra todas las 1836 cartas unicas >=140 palabras 
   }
 });
 
-test('guias editoriales tienen 10 articulos profundos con categorias relacionadas existentes en el catalogo', () => {
+test('guias editoriales tienen 10 articulos pilar profundos con tabla, comparacion, plantillas y FAQs', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
@@ -230,12 +257,30 @@ test('guias editoriales tienen 10 articulos profundos con categorias relacionada
   for (const g of GUIAS_EDITORIALES) {
     assert.ok(!slugsGuias.has(g.slug), `Slug de guia duplicado: ${g.slug}`);
     slugsGuias.add(g.slug);
-    assert.ok(g.secciones.length >= 2, `Guia ${g.slug} requiere al menos 2 secciones`);
-    const palabras = g.secciones
-      .map((s) => `${s.subtitulo} ${s.parrafos.join(' ')} ${(s.lista || []).join(' ')}`)
+    assert.ok(g.secciones.length >= 3, `Guia ${g.slug} requiere al menos 3 secciones`);
+    assert.ok(g.citaDestacada.length >= 40, `Guia ${g.slug} requiere citaDestacada`);
+    assert.ok(g.comparacionPractica.evitar.length >= 30 && g.comparacionPractica.mejor.length >= 30);
+    assert.equal(g.tablaComparativa.columnas.length, 3);
+    assert.ok(g.tablaComparativa.filas.length >= 3, `Guia ${g.slug} tabla con pocas filas`);
+    assert.ok(g.ejemplosAdaptables.length >= 2, `Guia ${g.slug} requiere al menos 2 plantillas adaptables`);
+    assert.equal(g.faqs.length, 3, `Guia ${g.slug} requiere 3 FAQs`);
+
+    const textoTotal = [
+      g.h1,
+      g.resumen,
+      g.citaDestacada,
+      g.comparacionPractica.evitar,
+      g.comparacionPractica.mejor,
+      g.tablaComparativa.titulo,
+      ...g.tablaComparativa.filas.flat(),
+      ...g.ejemplosAdaptables.map((e) => `${e.etiqueta} ${e.texto}`),
+      ...g.faqs.map((f) => `${f.pregunta} ${f.respuesta}`),
+      ...g.secciones.map((s) => `${s.subtitulo} ${s.parrafos.join(' ')} ${(s.lista || []).join(' ')}`)
+    ]
       .join(' ')
       .split(/\s+/).length;
-    assert.ok(palabras >= 160, `Guia ${g.slug} es demasiado corta (${palabras} palabras)`);
+    assert.ok(textoTotal >= 550, `Guia ${g.slug} demasiado corta para articulo pilar (${textoTotal} palabras)`);
+
     for (const rel of g.categoriasRelacionadas) {
       assert.ok(cat.hubsPorSlug.has(rel.slug), `Guia ${g.slug} enlaza a categoria inexistente: ${rel.slug}`);
     }
