@@ -137,7 +137,7 @@ export function crearCatalogo(contenido: any[]) {
 }
 
 export function metaDe(texto: string, max: number = 155): string {
-  const plano = texto.replace(/\\s+/g, ' ').trim();
+  const plano = texto.replace(/\s+/g, ' ').trim();
   if (plano.length <= max) return plano;
   const corte = plano.slice(0, max - 1);
   return corte.slice(0, corte.lastIndexOf(' ')).replace(/[,;:.]$/, '') + '…';
@@ -164,7 +164,7 @@ export function construirSetIndexables(todosMensajes: any[]): Set<string> {
   for (let i = 0; i < todosMensajes.length; i++) {
     const m = todosMensajes[i];
     const texto = String(m.texto || '').trim();
-    const palabras = texto ? texto.split(/\\s+/).length : 0;
+    const palabras = texto ? texto.split(/\s+/).length : 0;
     if (palabras >= MIN_PALABRAS_INDEXABLE && !cuerposVistos.has(texto)) {
       cuerposVistos.add(texto);
       indexables.add(m.slug);
@@ -224,7 +224,7 @@ export function generarSitemapXml(urls: string[], lastmod?: string): string {
   if (lastmod !== undefined) {
     const fechaParseada = new Date(`${lastmod}T00:00:00.000Z`);
     const fechaValida =
-      /^\\d{4}-\\d{2}-\\d{2}$/.test(lastmod) &&
+      /^\d{4}-\d{2}-\d{2}$/.test(lastmod) &&
       !Number.isNaN(fechaParseada.getTime()) &&
       fechaParseada.toISOString().slice(0, 10) === lastmod;
 
@@ -242,9 +242,9 @@ export function generarSitemapXml(urls: string[], lastmod?: string): string {
   });
 
   return (
-    '<?xml version="1.0" encoding="UTF-8"?>\\n' +
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\\n' +
-    bloques.join('\\n') +
-    '\\n</urlset>\\n'
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    bloques.join('\n') +
+    '\n</urlset>\n'
   );
 }
