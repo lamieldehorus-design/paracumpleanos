@@ -8,7 +8,7 @@ Toda guía editorial publicada o actualizada en `src/data/guias.ts` debe cumplir
 3. **H2 en forma de pregunta + índice con anclas**: cada sección en `secciones` debe usar un subtítulo en forma de pregunta (`¿... ?`). Al menos un H2 debe incluir `keywordPrincipal` (o su variante exacta normalizada). El índice de contenidos se genera automáticamente en `src/pages/guias/[slug].astro`.
 4. **Bloques extractables y legibilidad**: abrí cada sección con un párrafo autónomo de 40–60 palabras que responda esa subpregunta sin depender de contexto previo. Mantené párrafos de 2–4 líneas, oraciones cortas y definí cualquier término técnico enseguida.
 5. **E-E-A-T y datos propios verificables**:
-   - Incluí `datosPropios` con cifras reales medidas de nuestro catálogo (`351 categorías`, `12.636 dedicatorias`, distribución por longitudes o reglas editoriales reales) o estudios con fuente citada.
+   - Incluí `datosPropios` con cifras reales medidas de nuestro catálogo (`352 categorías`, `14.080 dedicatorias`, distribución por longitudes o reglas editoriales reales) o estudios con fuente citada.
    - Mantené visible la bio del autor (`autor`, `autorRol`, `autorBio`) y actualizá `fechaActualizacion` (`dateModified` en JSON-LD) en cada revisión (meta: frescura < 90 días).
 6. **Schema y rastreo IA (GEO)**:
    - Cada guía emite `BreadcrumbList`, `Article` (`datePublished` + `dateModified` + `author`), `FAQPage` y `HowTo` (si incluye `pasosHowTo`).
@@ -26,14 +26,15 @@ Toda guía editorial publicada o actualizada en `src/data/guias.ts` debe cumplir
 | `secciones` | Mínimo **3 secciones**, todos los `subtitulo` en formato `¿... ?`, al menos uno con `keywordPrincipal` |
 | `tablaComparativa` | Tabla clara de 3 columnas y >= 3 filas |
 | `ejemplosAdaptables` | Mínimo 2 plantillas concretas |
+| `checklistPractica` | Mínimo **4 acciones prácticas verificables** |
 | `faqs` | Mínimo **3 preguntas frecuentes** literales |
 | `categoriasRelacionadas` | **3 a 5** slugs internos reales existentes en `data/` |
 | `fuentesAutoridad` | **2 a 3** enlaces externos `https://` reales y verificados (`200 OK`) |
-| Extensión total | **>= 800 palabras** útiles para artículos cortos; **1.200–2.500** para guías extensas/tutoriales |
+| Extensión total | **>= 900 palabras** útiles editoriales por guía |
 
 ## 3. Flujo para agregar una guía nueva
 1. Verificá la intención de búsqueda y elegí la `keywordPrincipal` sin canibalizar ninguna categoría ni guía existente.
-2. Agregá el objeto completo a `GUIAS_EDITORIALES` en `src/data/guias.ts` respetando la interfaz `GuiaEditorial`.
-3. Ejecutá `npx --yes tsx --test src/lib/catalogo.test.ts` — el test valida automáticamente longitudes, keywords, H2 en pregunta, enlaces internos, fuentes externas, bio E-E-A-T y extensión mínima.
+2. Agregá el objeto completo a `src/data/guias-parte1.ts` o `src/data/guias-parte2.ts` (reunidas en `GUIAS_EDITORIALES` en `src/data/guias.ts`) respetando la interfaz `GuiaEditorial`.
+3. Ejecutá `npx --yes tsx --test src/lib/catalogo.test.ts` — el test valida automáticamente longitudes, keywords, H2 en pregunta, `checklistPractica`, enlaces internos, fuentes externas, bio E-E-A-T y extensión mínima.
 4. Ejecutá `npm run build` y verificá que `dist/sitemap.xml` y `/guias/<slug>/` compilen sin errores.
 5. Revisá cada 30–60 días en Search Console y actualizá `fechaActualizacion` tras cada mejora real.

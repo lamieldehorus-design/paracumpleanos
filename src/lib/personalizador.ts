@@ -1,6 +1,7 @@
 export interface OpcionesPersonalizacion {
   nombre?: string;
   firma?: string;
+  posdata?: string;
   tema?: string;
 }
 
@@ -14,6 +15,70 @@ export interface TemaTarjeta {
   borde: string;
   acento: string;
 }
+
+export interface TipografiaTarjeta {
+  id: string;
+  nombre: string;
+  tituloCss: string;
+  cuerpoCss: string;
+  canvasTitulo: string;
+  canvasCuerpo: string;
+  canvasFirma: string;
+}
+
+export interface FormatoTarjeta {
+  id: string;
+  nombre: string;
+  ancho: number;
+  altoMin: number;
+}
+
+export const ICONOS_TARJETA = ['🎂', '💐', '✨', '🎉', '💌', '🙏', '❤️', '🥂'];
+
+export const TIPOGRAFIAS_TARJETA: Record<string, TipografiaTarjeta> = {
+  editorial: {
+    id: 'editorial',
+    nombre: 'Editorial clásica',
+    tituloCss: "'Fraunces', Georgia, serif",
+    cuerpoCss: "'Plus Jakarta Sans', system-ui, sans-serif",
+    canvasTitulo: 'bold 44px Georgia, serif',
+    canvasCuerpo: 'system-ui, -apple-system, sans-serif',
+    canvasFirma: 'italic 600 Georgia, serif'
+  },
+  moderna: {
+    id: 'moderna',
+    nombre: 'Moderna clara',
+    tituloCss: "'Plus Jakarta Sans', system-ui, sans-serif",
+    cuerpoCss: "'Plus Jakarta Sans', system-ui, sans-serif",
+    canvasTitulo: 'bold 42px system-ui, -apple-system, sans-serif',
+    canvasCuerpo: 'system-ui, -apple-system, sans-serif',
+    canvasFirma: '600 system-ui, -apple-system, sans-serif'
+  },
+  calida: {
+    id: 'calida',
+    nombre: 'Carta cálida',
+    tituloCss: "'Fraunces', Georgia, serif",
+    cuerpoCss: "Georgia, 'Fraunces', serif",
+    canvasTitulo: 'italic bold 44px Georgia, serif',
+    canvasCuerpo: 'Georgia, serif',
+    canvasFirma: 'italic 600 Georgia, serif'
+  }
+};
+
+export const FORMATOS_TARJETA: Record<string, FormatoTarjeta> = {
+  cuadrada: {
+    id: 'cuadrada',
+    nombre: 'Cuadrada 1:1 (WhatsApp / Post)',
+    ancho: 1080,
+    altoMin: 1080
+  },
+  story: {
+    id: 'story',
+    nombre: 'Story IG 9:16 (Vertical)',
+    ancho: 1080,
+    altoMin: 1920
+  }
+};
 
 export const TEMAS_TARJETA: Record<string, TemaTarjeta> = {
   rosa: {
@@ -55,6 +120,26 @@ export const TEMAS_TARJETA: Record<string, TemaTarjeta> = {
     gradFin: '#fce7f3',
     borde: '#9d174d',
     acento: '#831843'
+  },
+  lavanda: {
+    id: 'lavanda',
+    nombre: 'Lavanda serena',
+    fondoCss: 'linear-gradient(135deg, #f3e8ff 0%, #faf5ff 55%, #fce7f3 100%)',
+    gradInicio: '#f3e8ff',
+    gradMedio: '#faf5ff',
+    gradFin: '#fce7f3',
+    borde: '#9333ea',
+    acento: '#6b21a8'
+  },
+  oliva: {
+    id: 'oliva',
+    nombre: 'Oliva cálida',
+    fondoCss: 'linear-gradient(135deg, #ecfdf5 0%, #f7fee7 55%, #fefce8 100%)',
+    gradInicio: '#ecfdf5',
+    gradMedio: '#f7fee7',
+    gradFin: '#fefce8',
+    borde: '#15803d',
+    acento: '#166534'
   }
 };
 
@@ -86,6 +171,7 @@ export function personalizarTexto(textoBase: string, opts: OpcionesPersonalizaci
 
   const nombre = limpiarCampoTexto(opts.nombre, 40);
   const firma = limpiarCampoTexto(opts.firma, 40).replace(/^[—–-]\s*/, '').trim();
+  const posdata = limpiarCampoTexto(opts.posdata, 120);
 
   const parrafos = base
     .split(/\n{2,}/)
@@ -119,6 +205,9 @@ export function personalizarTexto(textoBase: string, opts: OpcionesPersonalizaci
   }
 
   let resultado = parrafos.join('\n\n');
+  if (posdata) {
+    resultado = `${resultado}\n\nP.D.: ${posdata}`;
+  }
   if (firma) {
     resultado = `${resultado}\n\n— ${firma}`;
   }

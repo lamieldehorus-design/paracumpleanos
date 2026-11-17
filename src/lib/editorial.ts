@@ -12,6 +12,7 @@ export type ClaseTono =
   | 'formal';
 
 export type PerfilEditorial =
+  | 'motivaciones'
   | 'duelo'
   | 'aniv_meses'
   | 'aniv_anos'
@@ -174,6 +175,7 @@ export function detectarPerfilEditorial(hub?: any, msg?: any): PerfilEditorial {
   const grupo = String((hub && hub.grupo) || '').toLowerCase();
   const dest = String((hub && hub.destinatario) || (msg && msg.destinatario) || '').toLowerCase();
 
+  if (slug === 'motivaciones' || slug.includes('motivacion')) return 'motivaciones';
   if (REGEX_DUELO.test(slug)) return 'duelo';
   if (/meses-de-novios/.test(slug)) return 'aniv_meses';
   if (REGEX_ANIV.test(slug)) return 'aniv_anos';
@@ -211,7 +213,10 @@ export function clasificarMensaje(m: any, hub?: any): ClasificacionMensaje {
   let claseTono: ClaseTono = 'emotivo';
   let tonoLabel = 'Emotivo y cercano';
 
-  if (REGEX_DUELO.test(slugCat)) {
+  if (slugCat === 'motivaciones' || slugCat.includes('motivacion')) {
+    claseTono = palabras <= 65 ? 'corto' : 'emotivo';
+    tonoLabel = 'Inspiración práctica';
+  } else if (REGEX_DUELO.test(slugCat)) {
     claseTono = 'duelo';
     tonoLabel = 'Recuerdo sereno';
   } else if (REGEX_POEMA.test(slugCat)) {
@@ -240,7 +245,9 @@ export function clasificarMensaje(m: any, hub?: any): ClasificacionMensaje {
   }
 
   const canalLabel =
-    palabras <= 65
+    slugCat === 'motivaciones'
+      ? 'Estado, Story o nota diaria'
+      : palabras <= 65
       ? 'WhatsApp o estado'
       : palabras >= 120 || claseTono === 'carta' || claseTono === 'poema'
       ? 'Carta impresa o lectura larga'
@@ -307,17 +314,57 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
   const grupo = String((hub && hub.grupo) || '');
 
   let target = 'como-personalizar-tarjetas-y-dedicatorias-whatsapp';
-  if (REGEX_DUELO.test(slug)) target = 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido';
-  else if (REGEX_ANIV.test(slug)) target = 'como-celebrar-meses-de-novios-y-aniversarios-sin-caer-en-cliches';
-  else if (grupo === 'cartas' || slug === 'feliz-cumpleanos-abuelita-cartas-hermosas') {
+  if (slug === 'motivaciones') {
+    target = 'como-escribir-frases-motivacionales-diarias-que-inspiren';
+  } else if (REGEX_DUELO.test(slug)) {
+    target = 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido';
+  } else if (REGEX_ANIV.test(slug)) {
+    target = 'como-celebrar-meses-de-novios-y-aniversarios-sin-caer-en-cliches';
+  } else if (/ingles|english|biling/.test(slug)) {
+    target = 'mensajes-de-cumpleanos-en-ingles-y-espanol-bilingues';
+  } else if (REGEX_POEMA.test(slug)) {
+    target = 'como-escribir-poemas-de-cumpleanos-cortos-que-rimen-bien';
+  } else if (/15-anos|quince/.test(slug)) {
+    target = 'cumpleanos-de-15-anos-dedicatorias-y-reglas-del-festejo';
+  } else if (/18-anos/.test(slug)) {
+    target = 'ideas-para-cumpleanos-de-18-anos-regalos-y-dedicatorias';
+  } else if (/50-anos/.test(slug)) {
+    target = 'como-celebrar-cumpleanos-de-50-anos-homenajes-y-palabras';
+  } else if (/abuel/.test(slug)) {
+    target = 'que-escribir-en-cumpleanos-de-abuelos-con-ternura';
+  } else if (/embaraz/.test(slug)) {
+    target = 'como-felicitar-a-una-embarazada-en-su-cumpleanos';
+  } else if (/gracioso|divertido|chist|humor|risa/.test(slug)) {
+    target = 'frases-de-cumpleanos-graciosas-sin-incomodar';
+  } else if (/para-mi\b/.test(slug)) {
+    target = 'auto-felicitacion-por-mi-cumpleanos-para-agradecer-y-reflexionar';
+  } else if (/whatsapp/.test(slug)) {
+    target = 'como-felicitar-por-whatsapp-sin-sonar-automatico';
+  } else if (/herman/.test(slug)) {
+    target = 'como-escribir-dedicatorias-de-cumpleanos-para-hermanos-complices';
+  } else if (grupo === 'cartas' && /(novi|espos|mi-amor|pareja)/.test(slug)) {
+    target = 'como-escribir-una-carta-de-cumpleanos-a-tu-pareja';
+  } else if (grupo === 'cartas') {
     target = 'como-escribir-una-carta-de-cumpleanos-que-emocione';
-  } else if (grupo === 'profesionales') target = 'como-felicitar-en-el-trabajo-jefe-companeros-clientes';
-  else if (grupo === 'distancia') target = 'como-celebrar-un-cumpleanos-a-la-distancia';
-  else if (grupo === 'cristiano') target = 'frases-de-fe-y-agradecimiento-para-cumpleanos-cristianos';
-  else if (grupo === 'edades' || /bebe|primer-anito|nino|nina|abuel/.test(slug)) {
+  } else if (grupo === 'profesionales') {
+    target = 'como-felicitar-en-el-trabajo-jefe-companeros-clientes';
+  } else if (grupo === 'distancia') {
+    target = 'como-celebrar-un-cumpleanos-a-la-distancia';
+  } else if (grupo === 'cristiano') {
+    target = 'frases-de-fe-y-agradecimiento-para-cumpleanos-cristianos';
+  } else if (/(bebe|primer-anito|nino|nina)/.test(slug)) {
+    target = 'cumpleanos-infantiles-entre-amigos-y-companeros-de-colegio';
+  } else if (grupo === 'edades') {
     target = 'que-regalar-segun-la-edad-guia-practica';
-  } else if (/atrasado/.test(slug)) target = 'etiqueta-digital-cuando-saludar-atrasado-o-por-redes';
-  else if (/invitacion/.test(slug)) target = 'como-organizar-una-fiesta-sorpresa-sin-estres';
+  } else if (/atrasad/.test(slug)) {
+    target = 'etiqueta-digital-cuando-saludar-atrasado-o-por-redes';
+  } else if (/invitacion/.test(slug)) {
+    target = 'como-organizar-una-fiesta-sorpresa-sin-estres';
+  } else if (/(mama|madre|papa|padre|hijo|hija)/.test(slug)) {
+    target = 'mensajes-de-cumpleanos-para-padres-e-hijos-por-etapa';
+  } else if (/(novi|espos|mi-amor|pareja|crush)/.test(slug)) {
+    target = 'como-escribir-una-carta-de-cumpleanos-a-tu-pareja';
+  }
 
   return guiaPorSlug(target) || GUIAS_EDITORIALES[0];
 }
@@ -333,40 +380,50 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
   const perfil = detectarPerfilEditorial(hub);
   const esDuelo = perfil === 'duelo';
   const esAniv = perfil === 'aniv_meses' || perfil === 'aniv_anos';
+  const esMotiv = perfil === 'motivaciones';
 
   const tabla: FilaDecisionHub[] = [
     {
       formato: 'Breves (hasta 65 palabras)',
       cantidad: cortos,
-      idealPara: esDuelo
+      idealPara: esMotiv
+        ? 'Primer impulso de la mañana, estado o nota rápida'
+        : esDuelo
         ? 'Acompañar en silencio por mensaje directo'
         : perfil === 'profesionales'
         ? 'Correo cordial o saludo temprano en el chat laboral'
-        : 'Primer saludo de la mañana por WhatsApp o estado',
-      consejo:
-        perfil === 'bilingue'
-          ? 'Conservá la frase breve en inglés arriba y sumá el nombre abajo.'
-          : `Abrí con el trato real que usás con ${dest} antes de pegar el texto.`
+        : 'Primer saludo de la mañana por WhatsApp o Instagram',
+      consejo: esMotiv
+        ? 'Elegí una sola idea accionable y leela antes de abrir notificaciones.'
+        : perfil === 'bilingue'
+        ? 'Conservá la frase breve en inglés arriba y sumá el nombre abajo.'
+        : `Abrí con el trato real que usás con ${dest} antes de pegar el texto.`
     },
     {
       formato: 'Intermedios (66 a 119 palabras)',
       cantidad: medios,
-      idealPara: esDuelo
+      idealPara: esMotiv
+        ? 'Pausa reflexiva de mitad de semana o tarjeta Story'
+        : esDuelo
         ? 'Recordar una anécdota familiar con respeto'
         : esAniv
         ? 'Nota junto a una foto impresa o sorpresa de la tarde'
         : 'Tarjeta junto a un regalo o dedicatoria personal',
-      consejo: 'Sumá una escena concreta de este último período en el segundo párrafo.'
+      consejo: esMotiv
+        ? 'Compartila en WhatsApp o descargala en formato Story vertical para guardar.'
+        : 'Sumá una escena concreta de este último período en el segundo párrafo.'
     },
     {
       formato: 'Extensos o cartas (120+ palabras)',
       cantidad: largos,
-      idealPara: esAniv
+      idealPara: esMotiv
+        ? 'Lectura de balance personal o inicio de nuevo ciclo'
+        : esAniv
         ? 'Carta íntima para celebrar su historia juntos'
         : perfil === 'mayores'
         ? 'Dedicatoria impresa con letra clara para atesorar en familia'
         : 'Carta escrita a mano o lectura tranquila al final del día',
-      consejo: 'Personalizá encabezado y firma arriba y descargá la tarjeta PNG.'
+      consejo: 'Personalizá encabezado, posdata y estilo arriba antes de bajar tu tarjeta PNG.'
     }
   ];
 
@@ -428,7 +485,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Puedo descargar una tarjeta imagen con estos textos?',
           respuesta:
-            'Sí, en cada una de las 36 dedicatorias podés elegir el tema visual y descargar tu tarjeta PNG cuadrada 1080×1080 lista para compartir.'
+            'Sí, en cada una de las 40 dedicatorias podés elegir el tema visual y descargar tu tarjeta PNG cuadrada 1080×1080 o vertical Story 1080×1920 lista para compartir.'
         }
       ];
       break;
@@ -455,7 +512,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Cómo convierto cualquiera de estos textos en tarjeta imagen?',
           respuesta:
-            'Al abrir cualquiera de las 36 dedicatorias o usar el estudio rápido vas a encontrar 4 estilos visuales y el botón de descarga PNG 1080×1080.'
+            'Al abrir cualquiera de las 40 dedicatorias o usar el personalizador vas a encontrar 6 estilos visuales, tipografías, posdata y descarga PNG cuadrada o Story.'
         }
       ];
       break;
@@ -472,7 +529,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Todas las frases incluyen su traducción clara al español?',
           respuesta:
-            'Sí. Cada una de las 36 opciones presenta primero el texto en inglés y debajo su traducción natural al español.'
+            'Sí. Cada una de las 40 opciones presenta primero el texto en inglés y debajo su traducción natural al español.'
         },
         {
           pregunta: '¿Conviene copiar solo la parte en inglés o el mensaje bilingüe?',
@@ -482,7 +539,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Se actualiza la tarjeta descargable al poner un nombre arriba?',
           respuesta:
-            'Sí, tanto el botón de Copiar como WhatsApp y la tarjeta PNG 1080×1080 incorporan automáticamente el nombre y la firma que indiques.'
+            'Sí, tanto el botón de Copiar como WhatsApp, Instagram y la tarjeta PNG cuadrada o Story incorporan automáticamente el nombre y la firma que indiques.'
         }
       ];
       break;
@@ -725,7 +782,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Puedo crear una tarjeta linda para acompañar un regalo o sobre?',
           respuesta:
-            'Sí, en cada dedicatoria podés elegir el color (Rosa, Dorado, Celeste o Marfil) y descargar la tarjeta PNG 1080×1080 en un clic.'
+            'Sí, en cada dedicatoria podés elegir entre 6 colores (Rosa, Dorado, Celeste, Marfil, Oliva y Lavanda) y descargar la tarjeta cuadrada o Story 1080×1920 en un clic.'
         }
       ];
       break;
@@ -887,7 +944,34 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Puedo bajar la tarjeta como imagen para subir a estados?',
           respuesta:
-            'Sí, cada tarjeta cuenta con descarga instantánea en PNG cuadrado 1080×1080 en cuatro paletas distintas.'
+            'Sí, cada tarjeta cuenta con descarga instantánea en PNG cuadrado 1080×1080 o vertical Story 1080×1920 en 6 paletas distintas y botón directo para Instagram.'
+        }
+      ];
+      break;
+
+    case 'motivaciones':
+      subtituloClaves = 'Cómo convertir frases motivacionales diarias en impulso real';
+      claves = [
+        'Elegí una sola reflexión corta para hoy y convertila en una micro-acción concreta de cinco minutos.',
+        'Sumá la posdata o descargala en formato Story Instagram 1080×1920 en tonos Oliva Cálida o Lavanda Serena para tu fondo o estado.',
+        'Activá el aviso diario en la parte superior para recibir cada mañana una frase curada o agendar un recordatorio recurrente.'
+      ];
+      citaClave = 'La constancia serena de cada mañana construye más cambios reales que los arranques intensos que duran solo dos días.';
+      faqs = [
+        {
+          pregunta: '¿Conviene leer una frase por día o muchas de golpe?',
+          respuesta:
+            'Leer una sola reflexión tranquila cada mañana y aplicarla a una tarea concreta del día genera muchísima más claridad que recorrer cuarenta frases sin pausa.'
+        },
+        {
+          pregunta: '¿Cómo funciona el aviso de motivación diaria gratuito?',
+          respuesta:
+            'Dejás tu email, elegís el horario preferido y podés activar las notificaciones del navegador o descargar el recordatorio diario de calendario (.ics) en un clic.'
+        },
+        {
+          pregunta: '¿Puedo compartir estas motivaciones en Instagram Stories?',
+          respuesta:
+            'Sí. Elegí el formato Story IG (1080×1920) en el personalizador y tocá el botón Instagram para descargar la imagen limpia y copiar el texto.'
         }
       ];
       break;
@@ -908,12 +992,12 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Cómo adapto estas felicitaciones para que suenen escritas por mí?',
           respuesta:
-            'Completá "Nombre o apodo" y "Tu firma" en el personalizador superior: todos los botones de Copiar, WhatsApp y la tarjeta PNG se actualizan automáticamente.'
+            'Completá "Nombre o apodo", "Posdata" y "Tu firma" en el personalizador superior: todos los botones de Copiar, WhatsApp, Instagram y la tarjeta PNG se actualizan automáticamente.'
         },
         {
           pregunta: '¿Es mejor mandar texto por WhatsApp o descargar la tarjeta imagen?',
           respuesta:
-            'El texto directo funciona bárbaro para iniciar conversación en chat; la tarjeta PNG (con 4 colores a elección) luce ideal en historias, estados o impresa con un regalo.'
+            'El texto directo funciona bárbaro para iniciar conversación en chat; la tarjeta PNG (con 6 paletas y formato cuadrado o Story IG) luce ideal en historias, estados o impresa con un regalo.'
         }
       ];
       break;
@@ -946,6 +1030,18 @@ export function guiaAdaptacionMensaje(m: any, hub: any): GuiaAdaptacionMensaje {
   const esDuelo = perfil === 'duelo';
 
   const bancoPorPerfil: Record<PerfilEditorial, VarianteEjemplo[]> = {
+    motivaciones: [
+      {
+        generico: 'Creé en vos mismo y nunca te rindas porque los sueños se cumplen.',
+        concreto: 'Hoy no hace falta resolver toda la semana: elegí una sola tarea importante, cerrá distracciones veinticinco minutos y celebrá haber dado ese paso.',
+        posdata: 'Posdata sugerida: «Leelo de vuelta al cerrar la tarde y anotá una cosa concreta que sí salió hoy.»'
+      },
+      {
+        generico: 'Hoy es un gran día para empezar con toda la actitud positiva del mundo.',
+        concreto: 'Descansar a tiempo también es avanzar con inteligencia; protegé tu energía cuidando las pausas y enfocando tu atención en lo que sí depende de vos.',
+        posdata: 'Posdata sugerida: «Descargala en Story 1080×1920 con fondo Oliva Cálida y guardala en tu pantalla.»'
+      }
+    ],
     duelo: [
       {
         generico: 'Te mando un saludo en este día especial, muchas bendiciones para tu familia.',
@@ -1191,7 +1287,9 @@ export function guiaAdaptacionMensaje(m: any, hub: any): GuiaAdaptacionMensaje {
   const variante = elegirVariante(bancoPorPerfil[perfil], slugMsg);
 
   const mejorHorario =
-    perfil === 'profesionales'
+    perfil === 'motivaciones'
+      ? 'Temprano antes de abrir correos o redes (entre las 7:00 y las 9:00 hs) para marcar calma y foco.'
+      : perfil === 'profesionales'
       ? 'A media mañana (entre las 9:00 y las 11:30 hs) por correo o chat laboral.'
       : perfil === 'distancia'
       ? 'Temprano según su horario local para el saludo inicial, y audio/llamada tranquila a la tarde.'
@@ -1203,23 +1301,30 @@ export function guiaAdaptacionMensaje(m: any, hub: any): GuiaAdaptacionMensaje {
       ? 'Durante la mañana o tarde tranquila, respetando la intimidad del día.'
       : 'Al despertar con el desayuno o al cierre del día para que se destaque entre el resto.';
 
-  const pasos = esDuelo
-    ? [
-        `Escribí arriba cómo llamaban a ${dest} en casa y tu firma familiar.`,
-        'Agregá si querés un recuerdo breve y concreto compartido en familia.',
-        'Copiá el texto o descargá la tarjeta sobria en estilo Marfil o Celeste.'
-      ]
-    : perfil === 'profesionales'
-    ? [
-        `Ingresá arriba el nombre o título de ${dest} y cómo firmás vos o todo el equipo.`,
-        'Mantené el mismo trato habitual (vos o usted) revisando las líneas del mensaje.',
-        'Copiá para enviar por mail/chat laboral o descargá la tarjeta sobria en Marfil.'
-      ]
-    : [
-        `Completá arriba el apodo de ${dest} y cómo firmás vos habitualmente.`,
-        'Elegí si lo mandás directo por WhatsApp o si descargás la tarjeta PNG con tu estilo favorito.',
-        'Sumale al cierre la posdata sugerida adaptada a una comida, charla o recuerdo real.'
-      ];
+  const pasos =
+    perfil === 'motivaciones'
+      ? [
+          'Leé esta reflexión con calma y elegí una sola acción simple para hoy.',
+          'Personalizá arriba un apodo o dedicatoria si la enviás a alguien que necesita aliento.',
+          'Descargala como Story IG o compartila por WhatsApp e Instagram en un clic.'
+        ]
+      : esDuelo
+      ? [
+          `Escribí arriba cómo llamaban a ${dest} en casa y tu firma familiar.`,
+          'Agregá si querés un recuerdo breve y concreto compartido en familia.',
+          'Copiá el texto o descargá la tarjeta sobria en estilo Marfil o Celeste.'
+        ]
+      : perfil === 'profesionales'
+      ? [
+          `Ingresá arriba el nombre o título de ${dest} y cómo firmás vos o todo el equipo.`,
+          'Mantené el mismo trato habitual (vos o usted) revisando las líneas del mensaje.',
+          'Copiá para enviar por mail/chat laboral o descargá la tarjeta sobria en Marfil.'
+        ]
+      : [
+          `Completá arriba el apodo de ${dest}, una posdata y cómo firmás habitualmente.`,
+          'Elegí paleta, tipografía y proporción cuadrada o Story IG 1080×1920.',
+          'Mandalo por WhatsApp, compartilo en Instagram o bajalo como tarjeta PNG completa.'
+        ];
 
   return {
     perfil,

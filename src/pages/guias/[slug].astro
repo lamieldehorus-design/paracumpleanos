@@ -80,6 +80,7 @@ const indiceItems = [
   { id: 'guia-comparacion-titulo', texto: guia.comparacionPractica.titulo },
   { id: 'guia-tabla-titulo', texto: guia.tablaComparativa.titulo },
   { id: 'guia-ejemplos-titulo', texto: 'Plantillas rápidas listas para adaptar' },
+  { id: 'guia-checklist-titulo', texto: 'Checklist rápida antes de enviar' },
   { id: 'guia-faq-titulo', texto: 'Preguntas frecuentes' }
 ];
 ---
@@ -197,12 +198,34 @@ const indiceItems = [
         {guia.ejemplosAdaptables.map(function (ej) {
           return (
             <div class="ejemplo-plantilla">
-              <p class="ejemplo-etiqueta">{ej.etiqueta}</p>
+              <div class="ejemplo-cabecera">
+                <p class="ejemplo-etiqueta">{ej.etiqueta}</p>
+                <button class="btn btn-copiar btn-sm" type="button" data-text={ej.texto}>Copiar plantilla</button>
+              </div>
               <p class="ejemplo-texto">{ej.texto}</p>
             </div>
           );
         })}
       </div>
+    </section>
+
+    <section class="articulo-seccion guia-checklist-box" aria-labelledby="guia-checklist-titulo" data-guia-checklist={guia.slug}>
+      <div class="checklist-cabecera">
+        <h2 id="guia-checklist-titulo">Checklist rápida antes de enviar</h2>
+        <span class="checklist-progreso" id="guia-checklist-progreso">0 de {guia.checklistPractica.length} listas</span>
+      </div>
+      <ul class="guia-checklist">
+        {guia.checklistPractica.map(function (paso, idx) {
+          return (
+            <li>
+              <label class="checklist-item">
+                <input type="checkbox" data-checklist-idx={idx} />
+                <span>{paso}</span>
+              </label>
+            </li>
+          );
+        })}
+      </ul>
     </section>
 
     <section class="faqs-hub" aria-labelledby="guia-faq-titulo">
@@ -269,4 +292,42 @@ const indiceItems = [
     </div>
     <p class="ver-tambien"><a href="/guias/">Ver las {GUIAS_EDITORIALES.length} guías completas →</a></p>
   </section>
+
+  <script is:inline>
+    (function () {
+      var box = document.querySelector('[data-guia-checklist]');
+      if (!box) return;
+      var slug = box.getAttribute('data-guia-checklist') || 'guia';
+      var key = 'pc_checklist_' + slug;
+      var inputs = box.querySelectorAll('input[type="checkbox"][data-checklist-idx]');
+      var prog = document.getElementById('guia-checklist-progreso');
+      function cargar() {
+        try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch (_) { return []; }
+      }
+      function guardar(arr) {
+        try { localStorage.setItem(key, JSON.stringify(arr)); } catch (_) {}
+      }
+      function actualizarProgreso() {
+        var checked = 0;
+        var arr = [];
+        inputs.forEach(function (inp) {
+          if (inp.checked) {
+            checked++;
+            arr.push(Number(inp.getAttribute('data-checklist-idx')));
+          }
+        });
+        if (prog) prog.textContent = checked + ' de ' + inputs.length + ' listas';
+        return arr;
+      }
+      var guardados = cargar();
+      inputs.forEach(function (inp) {
+        var idx = Number(inp.getAttribute('data-checklist-idx'));
+        if (guardados.indexOf(idx) !== -1) inp.checked = true;
+        inp.addEventListener('change', function () {
+          guardar(actualizarProgreso());
+        });
+      });
+      actualizarProgreso();
+    })();
+  </script>
 </Base>

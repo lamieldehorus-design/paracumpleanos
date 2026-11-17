@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { GUIAS_EDITORIALES } from '../../data/guias.ts';
-import { MARCA, SITIO, migasLd } from '../../lib/contenido.ts';
+import { MARCA, SITIO, hubs, migasLd } from '../../lib/contenido.ts';
 
 const jsonld = [
   migasLd([
@@ -19,24 +19,35 @@ const jsonld = [
 ---
 <Base
   titulo={`Guías para escribir felicitaciones y celebrar mejor - ${MARCA}`}
-  descripcion={`Artículos y guías prácticas escritas por el Equipo Editorial de ${MARCA}: cómo redactar cartas emotivas, qué regalar según la edad, etiqueta laboral y más.`}
+  descripcion={`Artículos y ${GUIAS_EDITORIALES.length} guías prácticas escritas por el Equipo Editorial de ${MARCA}: cartas emotivas, regalos según la edad, motivación diaria, redes y más.`}
   jsonld={jsonld}
 >
   <nav class="migas" aria-label="Migas de pan">
     <a href="/">Inicio</a> › <span>Guías editoriales</span>
   </nav>
-  <h1>Guías prácticas para escribir y celebrar mejor</h1>
-  <p class="lead">Además de miles de mensajes listos para personalizar, acá reunimos artículos originales escritos por nuestro equipo editorial para ayudarte a encontrar el tono justo, elegir un regalo con criterio o redactar una carta sin quedarte en blanco.</p>
+  <h1>{GUIAS_EDITORIALES.length} Guías prácticas para escribir y celebrar mejor</h1>
+  <p class="lead">Además de miles de mensajes listos para personalizar, acá reunimos {GUIAS_EDITORIALES.length} guías completas escritas por nuestro equipo editorial para ayudarte a encontrar el tono justo, elegir un regalo con criterio, redactar cartas memorables y aprovechar tarjetas Stories e Instagram.</p>
 
-  <div class="guias-grid">
+  <div class="buscador-inline">
+    <input
+      type="search"
+      id="filtro-guias"
+      placeholder={`Filtrar entre las ${GUIAS_EDITORIALES.length} guías por tema (carta, 18 años, Instagram, abuelos, motivación...)`}
+      aria-label="Filtrar guías por palabra clave"
+    />
+    <span class="buscador-conteo" id="filtro-guias-conteo">{GUIAS_EDITORIALES.length} guías</span>
+  </div>
+
+  <div class="guias-grid" id="grid-guias">
     {GUIAS_EDITORIALES.map(function (guia) {
+      const searchBlob = `${guia.titulo} ${guia.resumen} ${guia.keywordPrincipal} ${guia.keywordsSecundarias.join(' ')}`.toLowerCase();
       return (
-        <article class="card guia-card">
+        <article class="card guia-card" data-guia-search={searchBlob}>
           <p class="guia-meta">
             <span aria-hidden="true">{guia.emoji}</span>
             <span>{guia.tiempoLectura}</span>
             <span>·</span>
-            <time datetime={guia.fechaPublicacion}>{guia.fechaPublicacion}</time>
+            <time datetime={guia.fechaActualizacion}>{guia.fechaActualizacion}</time>
           </p>
           <h2><a href={`/guias/${guia.slug}/`}>{guia.titulo}</a></h2>
           <p>{guia.resumen}</p>
@@ -48,6 +59,29 @@ const jsonld = [
 
   <section class="hermanas">
     <h2>¿Buscás un mensaje directo para copiar ahora?</h2>
-    <p>Visitá nuestro <a href="/categorias/">directorio con las 351 categorías completas</a> o probá el personalizador en vivo dentro de cada sección.</p>
+    <p>Visitá nuestro <a href="/categorias/">directorio con las {hubs.length} categorías completas</a> (incluyendo <a href="/motivaciones/">Motivaciones diarias</a>) o probá el personalizador en vivo dentro de cada sección.</p>
   </section>
+
+  <script is:inline>
+    (function () {
+      var input = document.getElementById('filtro-guias');
+      var grid = document.getElementById('grid-guias');
+      var conteo = document.getElementById('filtro-guias-conteo');
+      if (!input || !grid) return;
+      var cards = grid.querySelectorAll('.guia-card');
+      function norm(s) {
+        return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      }
+      input.addEventListener('input', function () {
+        var q = norm(input.value);
+        var visibles = 0;
+        cards.forEach(function (c) {
+          var hay = !q || norm(c.getAttribute('data-guia-search')).indexOf(q) !== -1;
+          c.style.display = hay ? '' : 'none';
+          if (hay) visibles++;
+        });
+        if (conteo) conteo.textContent = visibles + (visibles === 1 ? ' guía' : ' guías');
+      });
+    })();
+  </script>
 </Base>
