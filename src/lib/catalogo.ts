@@ -156,20 +156,25 @@ export function migasLd(items: { name: string; url: string }[]): any {
   };
 }
 
-export const MIN_PALABRAS_INDEXABLE = 140;
-
 export function construirSetIndexables(todosMensajes: any[]): Set<string> {
   const indexables = new Set<string>();
   const cuerposVistos = new Set<string>();
-  for (let i = 0; i < todosMensajes.length; i++) {
-    const m = todosMensajes[i];
-    const texto = String(m.texto || '').trim();
-    const palabras = texto ? texto.split(/\s+/).length : 0;
-    if (palabras >= MIN_PALABRAS_INDEXABLE && !cuerposVistos.has(texto)) {
-      cuerposVistos.add(texto);
-      indexables.add(m.slug);
+
+  for (const m of todosMensajes) {
+    const slug = String(m.slug || '').trim();
+    const titulo = String(m.titulo || '').trim();
+    const texto = String(m.texto || '').normalize('NFC').replace(/\s+/g, ' ').trim();
+    const categoria = String(m.categoria || '').trim();
+    const claveTexto = texto.toLocaleLowerCase('es');
+
+    // La indexabilidad depende de señales editoriales básicas, no de un
+    // mínimo arbitrario de palabras: contenido, título, categoría y unicidad.
+    if (slug && titulo && texto && categoria && !cuerposVistos.has(claveTexto)) {
+      cuerposVistos.add(claveTexto);
+      indexables.add(slug);
     }
   }
+
   return indexables;
 }
 
