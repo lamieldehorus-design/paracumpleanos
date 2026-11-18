@@ -1,10 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import TarjetaMensaje from '../components/TarjetaMensaje.astro';
+import AlertaMotivacionDiaria from '../components/AlertaMotivacionDiaria.astro';
 import { GRUPOS, hubs, todosMensajes, hubsPorGrupo, mensajesDe, nombreHub, SITIO, MARCA } from '../lib/contenido.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { TEMAS_TARJETA } from '../lib/personalizador.ts';
-import { clasificarMensaje } from '../lib/editorial.ts';
 
 // Muestras representativas de distintas secciones para que la portada refleje todo el portal
 const muestraSlugsCats = [
@@ -28,7 +28,7 @@ const muestraMensajes = muestraSlugsCats
 const guiasLead = GUIAS_EDITORIALES[0];
 const guiasSecundarias = GUIAS_EDITORIALES.slice(1, 5);
 
-// Indice liviano de todas las 351 categorias + 10 guias para el buscador universal del portal
+// Indice liviano de todas las categorías + guías para el buscador universal del portal
 const indiceBuscador = hubs
   .map((h) => ({
     titulo: nombreHub(h),
@@ -61,7 +61,7 @@ const jsonld = [
 ---
 <Base
   titulo="ParaCumpleanos — Portal de felicitaciones, cartas y guías originales"
-  descripcion="Buscá entre 351 colecciones y 12.636 dedicatorias inéditas en español para mamá, papá, amigos, pareja, trabajo, aniversario o duelo. Personalizá y descargá tarjetas al instante."
+  descripcion={`Buscá entre ${hubs.length} colecciones, ${GUIAS_EDITORIALES.length} guías prácticas y ${todosMensajes.length.toLocaleString('es-AR')} dedicatorias inéditas en español para mamá, papá, pareja, motivaciones o duelo.`}
   jsonld={jsonld}
   esPortal={true}
 >
@@ -72,7 +72,7 @@ const jsonld = [
       </p>
       <h1 id="portal-h1">Palabras reales para celebrar a quien más querés</h1>
       <p class="portal-sub">
-        Elegí entre 351 destinatarios y momentos reales, personalizá el saludo con nombre y firma en segundos, y mandalo directo por WhatsApp o en tarjeta PNG sin registrarte.
+        Elegí entre {hubs.length} destinatarios y momentos reales, personalizá el saludo con nombre, posdata y firma en segundos, y compartilo por WhatsApp, Instagram o en tarjeta PNG sin registrarte.
       </p>
 
       <div class="portal-buscador-caja">
@@ -81,7 +81,7 @@ const jsonld = [
           <input
             id="portal-buscador"
             type="search"
-            placeholder="Ej.: mamá, 15 años, jefe, carta, aniversario…"
+            placeholder="Ej.: mamá, 15 años, motivaciones, carta, aniversario…"
             autocomplete="off"
           />
           <a class="btn btn-copiar" href="#secciones-portal">Explorar secciones</a>
@@ -96,6 +96,8 @@ const jsonld = [
         <a href="/feliz-cumpleanos-papa/">Papá</a>
         <span aria-hidden="true">·</span>
         <a href="/feliz-cumpleanos-amiga/">Amiga</a>
+        <span aria-hidden="true">·</span>
+        <a href="/motivaciones/">Motivaciones diarias ✨</a>
         <span aria-hidden="true">·</span>
         <a href="/carta-para-mi-hija/">Carta para hija</a>
         <span aria-hidden="true">·</span>
@@ -140,6 +142,8 @@ const jsonld = [
       </div>
     </div>
   </section>
+
+  <AlertaMotivacionDiaria />
 
   <section id="secciones-portal" class="portal-banda" aria-labelledby="titulo-secciones-portal">
     <div class="banda-cabecera">
@@ -254,16 +258,16 @@ const jsonld = [
     <h2 id="titulo-criterio-portal">Por qué miles de lectores eligen ParaCumpleanos</h2>
     <div class="estandares-grid">
       <div class="estandar-item">
-        <h3>01. 12.636 textos únicos sin copias</h3>
+        <h3>01. {todosMensajes.length.toLocaleString('es-AR')} textos únicos sin copias</h3>
         <p>Cada publicación tiene redacción original en voseo cercano o trato formal según el vínculo, evitando repetir párrafos entre categorías.</p>
       </div>
       <div class="estandar-item">
         <h3>02. Contexto respetado al detalle</h3>
-        <p>Separamos fechas sensibles de duelo, aniversarios de pareja, entornos laborales y edades hito para no mezclar jamás tonos inadecuados.</p>
+        <p>Separamos fechas sensibles de duelo, aniversarios de pareja, motivaciones diarias, entornos laborales y edades hito para cuidar siempre el tono justo.</p>
       </div>
       <div class="estandar-item">
-        <h3>03. Personalización y tarjeta sin registros</h3>
-        <p>Adaptá nombres, firmá, copiá para WhatsApp o descargá tarjetas 1080×1080 al instante. Conocé más en <a href="/sobre-nosotros/">Sobre nosotros</a> o escribinos en <a href="/contacto/">Contacto</a>.</p>
+        <h3>03. Personalización y Story IG al instante</h3>
+        <p>Sumá nombre, posdata, ícono y tipografía en {temas.length} paletas, compartí en WhatsApp o Instagram y bajá tarjetas cuadradas o Story 1080×1920. Conocé más en <a href="/sobre-nosotros/">Sobre nosotros</a>.</p>
       </div>
     </div>
   </section>
@@ -312,7 +316,7 @@ const jsonld = [
           if (!hits.length) {
             var liVacio = document.createElement('li');
             liVacio.className = 'portal-res-vacio';
-            liVacio.innerHTML = 'No encontramos coincidencias directas. <a href="/categorias/">Explorá las 351 categorías →</a>';
+            liVacio.innerHTML = 'No encontramos coincidencias directas. <a href="/categorias/">Explorá todas las categorías →</a>';
             listaRes.appendChild(liVacio);
             return;
           }

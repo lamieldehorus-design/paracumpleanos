@@ -6,7 +6,7 @@ const jsonld = [migasLd([
   { name: 'Categorías', url: SITIO + '/categorias/' }
 ])];
 ---
-<Base titulo="351 Categorías de felicitaciones - ParaCumpleanos" descripcion="Todas las 351 categorías de felicitaciones de cumpleaños: mamá, amiga, hijo, amor, cartas, edades, cristianos y más. Elegí el destinatario y encontrá el mensaje perfecto." jsonld={jsonld}>
+<Base titulo={`${hubs.length} Categorías de felicitaciones - ParaCumpleanos`} descripcion={`Todas las ${hubs.length} categorías y ${todosMensajes.length.toLocaleString('es-AR')} textos originales: mamá, amiga, cartas, edades, motivaciones, cristianos y más.`} jsonld={jsonld}>
   <nav class="migas" aria-label="Migas de pan">
     <a href="/">Inicio</a> › <span>Categorías</span>
   </nav>

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
-import { GRUPOS, hubs, hubsPorGrupo, nombreHub } from '../lib/contenido.ts';
+import { GRUPOS, hubs, hubsPorGrupo, nombreHub, todosMensajes } from '../lib/contenido.ts';
+import { GUIAS_EDITORIALES } from '../data/guias.ts';
 interface Props {
   titulo: string;
   descripcion: string;
@@ -65,6 +66,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       <nav class="nav-principal" aria-label="Navegación principal">
         <a href="/feliz-cumpleanos-mama/">Mamá</a>
         <a href="/feliz-cumpleanos-amiga/">Amiga</a>
+        <a href="/motivaciones/">Motivaciones</a>
         <a href="/categorias/#cartas">Cartas</a>
         <a href="/guias/">Guías</a>
         <a href="/sobre-nosotros/">Nosotros</a>
@@ -115,10 +117,26 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   )}
 
   <footer class="pie">
-    <p>ParaCumpleanos — {hubs.length} colecciones de felicitaciones y cartas originales en español.</p>
+    <div class="pie-marca">
+      <a href="/" class="pie-logo" aria-label="ParaCumpleanos — Volver al inicio">
+        <img
+          src="/logopc.png"
+          alt="ParaCumpleanos"
+          class="pie-logo-img"
+          width="180"
+          height="44"
+          loading="lazy"
+          decoding="async"
+          onerror="this.style.display='none';var f=this.nextElementSibling;if(f)f.style.display='inline-flex';"
+        />
+        <span class="logo-fallback" style="display:none">ParaCumpleanos 🎂</span>
+      </a>
+    </div>
+    <p>ParaCumpleanos — {hubs.length} colecciones, {GUIAS_EDITORIALES.length} guías prácticas y {todosMensajes.length.toLocaleString('es-AR')} textos originales en español.</p>
     <nav aria-label="Páginas institucionales">
       <a href="/">Inicio</a>
       <a href="/categorias/">Categorías</a>
+      <a href="/motivaciones/">Motivaciones</a>
       <a href="/guias/">Guías</a>
       <a href="/sobre-nosotros/">Sobre nosotros</a>
       <a href="/contacto/">Contacto</a>
@@ -126,46 +144,80 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       <a href="/terminos-de-uso/">Términos de uso</a>
     </nav>
   </footer>
+
+  <div id="pc-toast" class="pc-toast" role="status" aria-live="polite" hidden></div>
+
   <script is:inline>
-    document.addEventListener('click', function (e) {
-      var btn = e.target.closest ? e.target.closest('.btn-copiar') : null;
-      if (btn) {
-        var texto = btn.getAttribute('data-text') || '';
-        function ok() {
-          var original = btn.textContent;
-          btn.textContent = '¡Copiado! ✓';
-          setTimeout(function () { btn.textContent = original; }, 2000);
+    (function () {
+      var toastTimer = null;
+      window.pcMostrarToast = function (mensaje, enlaceHref, enlaceTexto) {
+        var el = document.getElementById('pc-toast');
+        if (!el) return;
+        el.innerHTML = '';
+        var p = document.createElement('span');
+        p.textContent = mensaje;
+        el.appendChild(p);
+        if (enlaceHref && enlaceTexto) {
+          var a = document.createElement('a');
+          a.href = enlaceHref;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.textContent = enlaceTexto;
+          el.appendChild(a);
         }
-        function fallback() {
+        var btnClose = document.createElement('button');
+        btnClose.type = 'button';
+        btnClose.className = 'pc-toast-cerrar';
+        btnClose.setAttribute('aria-label', 'Cerrar aviso');
+        btnClose.textContent = '×';
+        btnClose.addEventListener('click', function () { el.hidden = true; });
+        el.appendChild(btnClose);
+        el.hidden = false;
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { el.hidden = true; }, 6500);
+      };
+
+      function copiarAlPortapapeles(texto) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(texto).then(function () { return true; }, function () { return false; });
+        }
+        try {
           var ta = document.createElement('textarea');
           ta.value = texto;
           document.body.appendChild(ta);
           ta.select();
-          try { document.execCommand('copy'); ok(); } catch (err) {}
+          var res = document.execCommand('copy');
           document.body.removeChild(ta);
+          return Promise.resolve(res);
+        } catch (_) {
+          return Promise.resolve(false);
         }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(texto).then(ok, fallback);
-        } else { fallback(); }
-        return;
       }
 
-      var dl = e.target.closest ? e.target.closest('.btn-descargar') : null;
-      if (dl) {
-        var tituloCard = dl.getAttribute('data-title') || 'Feliz cumpleaños';
-        var textoCard = dl.getAttribute('data-body') || '';
-        var emojiCard = dl.getAttribute('data-emoji') || '🎂';
-        var canvas = document.createElement('canvas');
-        var W = 1080;
-        var ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
+      function generarCanvasTarjeta(opts) {
+        var tituloCard = opts.title || 'Feliz cumpleaños';
+        var textoCard = opts.body || '';
+        var emojiCard = opts.emoji || '🎂';
+        var subtitulo = opts.subtitulo || '';
         var visualRef = document.querySelector('.tarjeta-visual');
+        var fuente = opts.fuente || (visualRef && visualRef.getAttribute('data-fuente')) || 'editorial';
+        var formato = opts.formato || (visualRef && visualRef.getAttribute('data-formato')) || 'cuadrada';
+
         var cInicio = (visualRef && visualRef.getAttribute('data-tema-inicio')) || '#fdf2f8';
         var cMedio = (visualRef && visualRef.getAttribute('data-tema-medio')) || '#fff7ed';
         var cFin = (visualRef && visualRef.getAttribute('data-tema-fin')) || '#e0f2fe';
         var cBorde = (visualRef && visualRef.getAttribute('data-tema-borde')) || '#e91e8c';
         var cAcento = (visualRef && visualRef.getAttribute('data-tema-acento')) || '#be185d';
+
+        if (!subtitulo && visualRef) {
+          subtitulo = visualRef.getAttribute('data-subtitulo') || '';
+        }
+
+        var canvas = document.createElement('canvas');
+        var W = 1080;
+        var minH = formato === 'story' ? 1920 : 1080;
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return null;
 
         function wrapLineas(text, maxW, fontSpec) {
           ctx.font = fontSpec;
@@ -199,19 +251,24 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           });
         }
 
-        var titleFont = 'bold 44px Georgia, serif';
+        var famTit = fuente === 'moderna' ? 'system-ui, -apple-system, sans-serif' : 'Georgia, serif';
+        var famCuerpo = fuente === 'calida' ? 'Georgia, serif' : 'system-ui, -apple-system, sans-serif';
+        var titleFont = (fuente === 'calida' ? 'italic bold ' : 'bold ') + (formato === 'story' ? '48px ' : '44px ') + famTit;
         var tLines = wrapLineas(tituloCard, 860, titleFont);
-        var titleLineH = 56;
-        var yStartBody = 250 + tLines.length * titleLineH + 28;
-        var bottomReserved = 150;
+        var titleLineH = formato === 'story' ? 62 : 56;
+        var baseTopEmoji = formato === 'story' ? 240 : 165;
+        var baseTopSub = subtitulo ? baseTopEmoji + 70 : baseTopEmoji;
+        var baseTopTitle = (subtitulo ? baseTopSub + 66 : baseTopEmoji + 85);
+        var yStartBody = baseTopTitle + tLines.length * titleLineH + 30;
+        var bottomReserved = formato === 'story' ? 180 : 150;
 
-        var candidatos = [32, 28, 25];
+        var candidatos = formato === 'story' ? [36, 32, 28] : [32, 28, 25];
         var elegida = null;
         for (var c = 0; c < candidatos.length; c++) {
           var fs = candidatos[c];
-          var lh = Math.round(fs * 1.44);
+          var lh = Math.round(fs * 1.46);
           var gap = Math.round(fs * 0.62);
-          var bFont = fs + 'px system-ui, -apple-system, sans-serif';
+          var bFont = fs + 'px ' + famCuerpo;
           var fFont = 'italic 600 ' + fs + 'px Georgia, serif';
           var blks = prepararBloques(textoCard, 860, bFont, fFont);
           var hCuerpo = 0;
@@ -219,13 +276,13 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
             hCuerpo += blks[bi].lineas.length * lh;
             if (bi < blks.length - 1) hCuerpo += gap;
           }
-          if (yStartBody + hCuerpo + bottomReserved <= 1080 || c === candidatos.length - 1) {
+          if (yStartBody + hCuerpo + bottomReserved <= minH || c === candidatos.length - 1) {
             elegida = { fs: fs, lh: lh, gap: gap, bFont: bFont, fFont: fFont, blks: blks, hCuerpo: hCuerpo };
-            if (yStartBody + hCuerpo + bottomReserved <= 1080) break;
+            if (yStartBody + hCuerpo + bottomReserved <= minH) break;
           }
         }
 
-        var H = Math.max(1080, Math.ceil(yStartBody + elegida.hCuerpo + bottomReserved));
+        var H = Math.max(minH, Math.ceil(yStartBody + elegida.hCuerpo + bottomReserved));
         canvas.width = W;
         canvas.height = H;
 
@@ -242,19 +299,24 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
         ctx.fillStyle = cAcento;
         ctx.textAlign = 'center';
-        ctx.font = '72px system-ui, sans-serif';
-        ctx.fillText(emojiCard, W / 2, 165);
+        ctx.font = (formato === 'story' ? '88px ' : '72px ') + 'system-ui, sans-serif';
+        ctx.fillText(emojiCard, W / 2, baseTopEmoji);
+
+        if (subtitulo) {
+          ctx.font = 'bold 26px system-ui, -apple-system, sans-serif';
+          ctx.fillText(subtitulo.toUpperCase(), W / 2, baseTopSub);
+        }
 
         ctx.font = titleFont;
-        var y = 250;
+        var y = baseTopTitle;
         for (var i = 0; i < tLines.length; i++) {
           ctx.fillText(tLines[i], W / 2, y);
           y += titleLineH;
         }
 
-        y += 28;
-        if (yStartBody + elegida.hCuerpo + bottomReserved < 1080) {
-          var extra = (1080 - (y + elegida.hCuerpo + bottomReserved)) * 0.35;
+        y += 30;
+        if (yStartBody + elegida.hCuerpo + bottomReserved < H) {
+          var extra = (H - (y + elegida.hCuerpo + bottomReserved)) * 0.38;
           y += Math.round(Math.max(0, extra));
         }
 
@@ -273,14 +335,126 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         ctx.font = 'bold 28px system-ui, sans-serif';
         ctx.fillText('paracumpleanos.com', W / 2, H - 88);
 
-        var a = document.createElement('a');
-        a.download = 'tarjeta-cumpleanos.png';
-        a.href = canvas.toDataURL('image/png');
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        return { canvas: canvas, formato: formato };
       }
-    });
+
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest ? e.target.closest('.btn-copiar') : null;
+        if (btn) {
+          var texto = btn.getAttribute('data-text') || '';
+          var original = btn.textContent;
+          copiarAlPortapapeles(texto).then(function (ok) {
+            if (!ok) return;
+            btn.textContent = '¡Copiado! ✓';
+            setTimeout(function () { btn.textContent = original; }, 2000);
+          });
+          return;
+        }
+
+        var dl = e.target.closest ? e.target.closest('.btn-descargar') : null;
+        if (dl) {
+          var resDl = generarCanvasTarjeta({
+            title: dl.getAttribute('data-title') || 'Feliz cumpleaños',
+            body: dl.getAttribute('data-body') || '',
+            emoji: dl.getAttribute('data-emoji') || '🎂',
+            fuente: dl.getAttribute('data-fuente') || '',
+            formato: dl.getAttribute('data-formato') || '',
+            subtitulo: dl.getAttribute('data-subtitulo') || ''
+          });
+          if (!resDl) return;
+          var a = document.createElement('a');
+          a.download = resDl.formato === 'story' ? 'tarjeta-story-ig.png' : 'tarjeta-cumpleanos.png';
+          a.href = resDl.canvas.toDataURL('image/png');
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.pcMostrarToast('✓ Tarjeta PNG descargada lista para compartir.');
+          return;
+        }
+
+        var ig = e.target.closest ? e.target.closest('.btn-ig') : null;
+        if (ig) {
+          var igTitulo = ig.getAttribute('data-ig-title') || 'Feliz cumpleaños';
+          var igCuerpo = ig.getAttribute('data-ig-body') || '';
+          var igEmoji = ig.getAttribute('data-ig-emoji') || '🎂';
+          var igTexto = ig.getAttribute('data-ig-text') || (igTitulo + '. ' + igCuerpo);
+          var igUrl = ig.getAttribute('data-ig-url') || window.location.href;
+          var caption = igTexto + '\n\nVía paracumpleanos.com';
+
+          var resIg = generarCanvasTarjeta({
+            title: igTitulo,
+            body: igCuerpo,
+            emoji: igEmoji,
+            fuente: ig.getAttribute('data-fuente') || '',
+            formato: ig.getAttribute('data-formato') || '',
+            subtitulo: ig.getAttribute('data-subtitulo') || ''
+          });
+
+          function fallbackDescargaIg() {
+            if (resIg) {
+              var linkDl = document.createElement('a');
+              linkDl.download = resIg.formato === 'story' ? 'tarjeta-story-instagram.png' : 'tarjeta-instagram.png';
+              linkDl.href = resIg.canvas.toDataURL('image/png');
+              document.body.appendChild(linkDl);
+              linkDl.click();
+              document.body.removeChild(linkDl);
+            }
+            copiarAlPortapapeles(caption).then(function () {
+              window.pcMostrarToast(
+                '✓ Imagen PNG para Instagram descargada y texto copiado.',
+                'https://www.instagram.com/',
+                'Abrir Instagram →'
+              );
+            });
+          }
+
+          if (resIg && resIg.canvas.toBlob && navigator.share && navigator.canShare) {
+            resIg.canvas.toBlob(function (blob) {
+              if (!blob) { fallbackDescargaIg(); return; }
+              try {
+                var file = new File([blob], 'tarjeta-instagram.png', { type: 'image/png' });
+                if (navigator.canShare({ files: [file] })) {
+                  navigator.share({
+                    files: [file],
+                    title: igTitulo,
+                    text: caption,
+                    url: igUrl
+                  }).catch(function () { fallbackDescargaIg(); });
+                  return;
+                }
+              } catch (_) {}
+              fallbackDescargaIg();
+            }, 'image/png');
+          } else {
+            fallbackDescargaIg();
+          }
+        }
+      });
+
+      // Chequeo pasivo de notificacion diaria motivacional si el visitante activo alertas
+      try {
+        var raw = localStorage.getItem('pc_motivacion_diaria');
+        if (raw && typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+          var conf = JSON.parse(raw);
+          var hoyStr = new Date().toISOString().slice(0, 10);
+          if (conf && conf.activo && conf.push && conf.ultimaFechaNotif !== hoyStr) {
+            var partesH = String(conf.hora || '08:30').split(':');
+            var minsObj = Number(partesH[0] || 8) * 60 + Number(partesH[1] || 30);
+            var ahoraD = new Date();
+            var minsAhora = ahoraD.getHours() * 60 + ahoraD.getMinutes();
+            if (minsAhora >= minsObj) {
+              var titEl = document.getElementById('motiv-frase-link');
+              var cueEl = document.getElementById('motiv-frase-cuerpo');
+              if (titEl && cueEl) {
+                new Notification('✨ ' + titEl.textContent, { body: cueEl.textContent, icon: '/logopc.png' });
+                conf.ultimaFechaNotif = hoyStr;
+                localStorage.setItem('pc_motivacion_diaria', JSON.stringify(conf));
+              }
+            }
+          }
+        }
+      } catch (_) {}
+    })();
   </script>
   <!-- Default Statcounter code for ParaCumpleanos
   https://paracumpleanos.com/ -->

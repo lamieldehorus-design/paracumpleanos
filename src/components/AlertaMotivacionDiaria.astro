@@ -1,0 +1,310 @@
+---
+import { mensajesDe, SITIO } from '../lib/contenido.ts';
+
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+const motivaciones = mensajesDe('motivaciones') || [];
+const listaFrases = motivaciones.map(function (m) {
+  const primerParrafo = String(m.texto || '').split(/\n{2,}/)[0] || m.texto || '';
+  return {
+    slug: m.slug,
+    titulo: m.titulo,
+    texto: primerParrafo
+  };
+});
+const inicial = listaFrases[0] || {
+  slug: 'motivaciones',
+  titulo: 'Empezá hoy con una sola tarea importante',
+  texto: 'Elegí una sola tarea que mueva tus proyectos hacia adelante y terminala con calma.'
+};
+---
+<section
+  class={'alerta-motivacion' + (compact ? ' alerta-motivacion-compact' : '')}
+  aria-labelledby="titulo-motivacion-diaria"
+  data-motivacion-widget="1"
+>
+  <div class="motiv-layout">
+    <div class="motiv-frase-col">
+      <p class="banda-kicker">✨ Motivación del día · Renovación diaria</p>
+      <h2 id="titulo-motivacion-diaria">Tu dosis diaria de enfoque y calma</h2>
+      <article class="motiv-frase-card" aria-live="polite">
+        <p class="motiv-fecha-hoy" id="motiv-fecha-hoy">Frase destacada de hoy</p>
+        <h3 id="motiv-frase-titulo">
+          <a id="motiv-frase-link" href={`/${inicial.slug}/`}>{inicial.titulo}</a>
+        </h3>
+        <p id="motiv-frase-cuerpo">{inicial.texto}</p>
+        <div class="motiv-frase-acciones">
+          <button
+            type="button"
+            class="btn btn-copiar btn-sm"
+            id="motiv-btn-copiar"
+            data-text={`${inicial.titulo}. ${inicial.texto}`}
+          >
+            Copiar frase
+          </button>
+          <button
+            type="button"
+            class="btn btn-ig btn-sm"
+            id="motiv-btn-ig"
+            data-ig-title={inicial.titulo}
+            data-ig-body={inicial.texto}
+            data-ig-emoji="✨"
+            data-ig-text={`${inicial.titulo}. ${inicial.texto}`}
+            data-ig-url={`${SITIO}/${inicial.slug}/`}
+          >
+            Instagram
+          </button>
+          <a class="enlace-directorio" href="/motivaciones/">Ver las {motivaciones.length} motivaciones →</a>
+        </div>
+      </article>
+    </div>
+
+    <div class="motiv-suscripcion-col">
+      <h3>Recibí tu alerta motivacional cada mañana</h3>
+      <p class="motiv-sub">
+        Dejá tu email para guardar tu recordatorio diario gratuito, activar alertas del navegador al visitarnos o sumar un aviso recurrente en tu calendario.
+      </p>
+
+      <form class="motiv-form" id="motiv-form" novalidate>
+        <div class="motiv-form-fila">
+          <div class="motiv-campo">
+            <label for="motiv-email">Tu correo electrónico</label>
+            <input
+              id="motiv-email"
+              type="email"
+              required
+              placeholder="tuemail@ejemplo.com"
+              autocomplete="email"
+            />
+          </div>
+          <div class="motiv-campo motiv-campo-hora">
+            <label for="motiv-hora">Horario</label>
+            <select id="motiv-hora">
+              <option value="07:30">07:30 hs</option>
+              <option value="08:30" selected>08:30 hs</option>
+              <option value="12:00">12:00 hs</option>
+              <option value="19:00">19:00 hs</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="motiv-check-push">
+          <input type="checkbox" id="motiv-check-push" checked />
+          <span>Activar también notificación visual diaria en este navegador</span>
+        </label>
+
+        <div class="motiv-botones">
+          <button type="submit" class="btn btn-copiar" id="motiv-submit">Activar aviso diario</button>
+          <button type="button" class="btn btn-descargar" id="motiv-ics" hidden>Agregar a Calendario (.ics)</button>
+          <button type="button" class="pers-limpiar" id="motiv-probar" hidden>Probar alerta hoy</button>
+          <button type="button" class="pers-limpiar" id="motiv-pausar" hidden>Pausar</button>
+        </div>
+      </form>
+
+      <div class="motiv-estado" id="motiv-estado" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <script id="motiv-frases-json" type="application/json" set:html={JSON.stringify(listaFrases)} />
+</section>
+
+<script is:inline>
+  (function () {
+    var dataEl = document.getElementById('motiv-frases-json');
+    var frases = [];
+    try {
+      frases = JSON.parse((dataEl && dataEl.textContent) || '[]');
+    } catch (_) {}
+    if (!frases.length) return;
+
+    var ahora = new Date();
+    var inicioAnio = new Date(ahora.getFullYear(), 0, 0);
+    var diaAnio = Math.floor((ahora - inicioAnio) / 86400000);
+    var fraseHoy = frases[diaAnio % frases.length];
+    var fechaStr = ahora.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
+
+    var elFecha = document.getElementById('motiv-fecha-hoy');
+    var elTit = document.getElementById('motiv-frase-link');
+    var elCue = document.getElementById('motiv-frase-cuerpo');
+    var btnCop = document.getElementById('motiv-btn-copiar');
+    var btnIg = document.getElementById('motiv-btn-ig');
+
+    if (elFecha) elFecha.textContent = 'Frase del día · ' + fechaStr;
+    if (elTit) {
+      elTit.textContent = fraseHoy.titulo;
+      elTit.setAttribute('href', '/' + fraseHoy.slug + '/');
+    }
+    if (elCue) elCue.textContent = fraseHoy.texto;
+    if (btnCop) btnCop.setAttribute('data-text', fraseHoy.titulo + '. ' + fraseHoy.texto);
+    if (btnIg) {
+      btnIg.setAttribute('data-ig-title', fraseHoy.titulo);
+      btnIg.setAttribute('data-ig-body', fraseHoy.texto);
+      btnIg.setAttribute('data-ig-text', fraseHoy.titulo + '. ' + fraseHoy.texto);
+      btnIg.setAttribute('data-ig-url', 'https://paracumpleanos.com/' + fraseHoy.slug + '/');
+    }
+
+    var STORAGE_KEY = 'pc_motivacion_diaria';
+    var form = document.getElementById('motiv-form');
+    var inputEmail = document.getElementById('motiv-email');
+    var selectHora = document.getElementById('motiv-hora');
+    var checkPush = document.getElementById('motiv-check-push');
+    var btnSubmit = document.getElementById('motiv-submit');
+    var btnIcs = document.getElementById('motiv-ics');
+    var btnProbar = document.getElementById('motiv-probar');
+    var btnPausar = document.getElementById('motiv-pausar');
+    var estado = document.getElementById('motiv-estado');
+    if (!form || !inputEmail || !selectHora) return;
+
+    function leerEstado() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (_) { return null; }
+    }
+    function guardarEstado(obj) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); } catch (_) {}
+    }
+
+    function mostrarMensajeEstado(msg, tipo) {
+      if (!estado) return;
+      estado.className = 'motiv-estado' + (tipo ? ' ' + tipo : '');
+      estado.textContent = msg;
+    }
+
+    function descargarIcs(horaStr) {
+      var parts = String(horaStr || '08:30').split(':');
+      var hh = String(parts[0] || '08').padStart(2, '0');
+      var mm = String(parts[1] || '30').padStart(2, '0');
+      var d = new Date();
+      var stamp =
+        d.getFullYear().toString() +
+        String(d.getMonth() + 1).padStart(2, '0') +
+        String(d.getDate()).padStart(2, '0');
+      var ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//ParaCumpleanos//MotivacionDiaria//ES',
+        'BEGIN:VEVENT',
+        'UID:motivacion-diaria-' + stamp + '@paracumpleanos.com',
+        'DTSTAMP:' + stamp + 'T' + hh + mm + '00Z',
+        'DTSTART:' + stamp + 'T' + hh + mm + '00',
+        'DURATION:PT5M',
+        'RRULE:FREQ=DAILY',
+        'SUMMARY:✨ Tu frase motivacional diaria — ParaCumpleanos',
+        'DESCRIPTION:Leé tu motivación del día: ' + fraseHoy.titulo + ' en https://paracumpleanos.com/motivaciones/',
+        'URL:https://paracumpleanos.com/motivaciones/',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+
+      var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'motivacion-diaria-paracumpleanos.ics';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    }
+
+    function dispararNotificacion(subtitulo) {
+      if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+        try {
+          new Notification('✨ ' + fraseHoy.titulo, {
+            body: fraseHoy.texto,
+            icon: '/logopc.png'
+          });
+          return true;
+        } catch (_) {}
+      }
+      if (window.pcMostrarToast) {
+        window.pcMostrarToast((subtitulo || 'Motivación del día') + ': "' + fraseHoy.titulo + '"');
+      }
+      return false;
+    }
+
+    function pintarUI(conf) {
+      var activa = Boolean(conf && conf.activo && conf.email);
+      if (conf && conf.email) inputEmail.value = conf.email;
+      if (conf && conf.hora) selectHora.value = conf.hora;
+      if (checkPush && conf && typeof conf.push === 'boolean') checkPush.checked = conf.push;
+
+      if (btnSubmit) btnSubmit.textContent = activa ? 'Actualizar preferencia' : 'Activar aviso diario';
+      if (btnIcs) btnIcs.hidden = !activa;
+      if (btnProbar) btnProbar.hidden = !activa;
+      if (btnPausar) btnPausar.hidden = !activa;
+
+      if (activa) {
+        mostrarMensajeEstado(
+          '✓ Aviso diario activo para ' + conf.email + ' a las ' + conf.hora + ' hs. Podés sumar el evento recurrente (.ics) a tu calendario o probar tu alerta ahora.',
+          'ok'
+        );
+      }
+    }
+
+    var actual = leerEstado();
+    if (actual) pintarUI(actual);
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = String(inputEmail.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        mostrarMensajeEstado('Ingresá un correo electrónico válido para guardar tu recordatorio diario.', 'error');
+        inputEmail.focus();
+        return;
+      }
+
+      var hora = selectHora.value || '08:30';
+      var quierePush = Boolean(checkPush && checkPush.checked);
+
+      function finalizar(perm) {
+        var nuevo = {
+          email: email,
+          hora: hora,
+          push: quierePush && perm === 'granted',
+          activo: true,
+          actualizado: new Date().toISOString().slice(0, 10),
+          ultimaFechaNotif: new Date().toISOString().slice(0, 10)
+        };
+        guardarEstado(nuevo);
+        pintarUI(nuevo);
+        dispararNotificacion('Suscripción activa');
+      }
+
+      if (quierePush && typeof Notification !== 'undefined' && Notification.permission === 'default') {
+        Notification.requestPermission().then(finalizar, function () { finalizar('denied'); });
+      } else {
+        finalizar(typeof Notification !== 'undefined' ? Notification.permission : 'denied');
+      }
+    });
+
+    if (btnIcs) {
+      btnIcs.addEventListener('click', function () {
+        descargarIcs(selectHora.value || '08:30');
+        mostrarMensajeEstado('✓ Descargamos tu recordatorio diario (.ics) para Google Calendar, Apple o Outlook.', 'ok');
+      });
+    }
+
+    if (btnProbar) {
+      btnProbar.addEventListener('click', function () {
+        if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+          Notification.requestPermission().then(function () {
+            dispararNotificacion('Frase de hoy');
+          });
+        } else {
+          dispararNotificacion('Frase de hoy');
+        }
+      });
+    }
+
+    if (btnPausar) {
+      btnPausar.addEventListener('click', function () {
+        try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+        inputEmail.value = '';
+        pintarUI(null);
+        mostrarMensajeEstado('Aviso diario pausado y eliminado de este navegador.', '');
+      });
+    }
+  })();
+</script>

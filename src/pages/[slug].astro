@@ -4,6 +4,7 @@ import TarjetaMensaje from '../components/TarjetaMensaje.astro';
 import Compartir from '../components/Compartir.astro';
 import Hermanas from '../components/Hermanas.astro';
 import PersonalizadorTarjeta from '../components/PersonalizadorTarjeta.astro';
+import AlertaMotivacionDiaria from '../components/AlertaMotivacionDiaria.astro';
 import {
   contenido,
   POR_PAGINA,
@@ -32,7 +33,9 @@ const { registro } = Astro.props;
 const esHub = registro.tipo === 'hub';
 const hub = hubDe(registro);
 const urlHub = SITIO + '/' + hub.slug + '/';
-const mensajesCat = esHub ? mensajesDe(hub.slug) : [];
+const mensajesHub = mensajesDe(hub.slug);
+const mensajesCat = esHub ? mensajesHub : [];
+const totalMensajesHub = mensajesHub.length;
 const totalPaginas = Math.ceil(mensajesCat.length / POR_PAGINA);
 const mensajesPagina = mensajesCat.slice(0, POR_PAGINA);
 const relacionadas = esHub ? [] : relacionadasDe(registro);
@@ -131,10 +134,13 @@ const textoCompletoCard = esHub ? '' : registro.texto;
         })}
       </div>
 
+      {hub.slug === 'motivaciones' ? <AlertaMotivacionDiaria compact={true} /> : null}
+
       <PersonalizadorTarjeta modo="hub" />
 
       <div class="tarjeta-visual" role="img" aria-label={'Tarjeta destacada de ' + (registro.keyword || registro.h1)}>
         <div class="tarjeta-visual-emoji">{registro.emoji}</div>
+        <p class="tarjeta-visual-subtitulo" hidden></p>
         <p class="tarjeta-visual-titulo">{nombreHub(registro)}</p>
         <p class="tarjeta-visual-extracto">{mensajesCat.length} textos originales listos para personalizar, copiar o descargar en PNG</p>
         <p class="tarjeta-visual-marca">paracumpleanos.com</p>
@@ -264,6 +270,7 @@ const textoCompletoCard = esHub ? '' : registro.texto;
         </div>
         <div class="tarjeta-visual" role="img" aria-label={'Tarjeta lista para compartir: ' + registro.titulo}>
           <div class="tarjeta-visual-emoji">{hub.emoji}</div>
+          <p class="tarjeta-visual-subtitulo" hidden></p>
           <p class="tarjeta-visual-titulo">{registro.titulo}</p>
           <div class="tarjeta-visual-extracto">
             {parrafosMsg.map(function (p) {
@@ -321,7 +328,7 @@ const textoCompletoCard = esHub ? '' : registro.texto;
           {relacionadas.map(function (m) { return <li><a href={'/' + m.slug + '/'}>{m.titulo}</a></li>; })}
         </ul>
       </section>
-      <p class="ver-tambien">Ver las 36 opciones completas en <a href={'/' + hub.slug + '/'}>{hub.titulo} →</a></p>
+      <p class="ver-tambien">Ver las {totalMensajesHub} opciones completas en <a href={'/' + hub.slug + '/'}>{hub.titulo} →</a></p>
       <Hermanas hub={hub} />
     </div>
   ) : null}

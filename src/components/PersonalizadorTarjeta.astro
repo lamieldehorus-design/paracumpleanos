@@ -1,19 +1,26 @@
 ---
-import { TEMAS_TARJETA } from '../lib/personalizador.ts';
+import {
+  TEMAS_TARJETA,
+  ICONOS_TARJETA,
+  TIPOGRAFIAS_TARJETA,
+  FORMATOS_TARJETA
+} from '../lib/personalizador.ts';
 
 interface Props {
   modo?: 'hub' | 'mensaje';
 }
 const { modo = 'hub' } = Astro.props;
 const temas = Object.values(TEMAS_TARJETA);
+const tipografias = Object.values(TIPOGRAFIAS_TARJETA);
+const formatos = Object.values(FORMATOS_TARJETA);
 ---
 <section class="personalizador" aria-label="Personalizar felicitación en vivo" data-modo={modo}>
   <div class="personalizador-cabecera">
-    <h2 class="personalizador-titulo">✨ Personalizá esta felicitación al instante</h2>
+    <h2 class="personalizador-titulo">✨ Personalizá tu tarjeta y dedicatoria al instante</h2>
     <p class="personalizador-desc">
       {modo === 'mensaje'
-        ? 'Escribí el nombre de quien cumple y tu firma: el texto, el enlace de WhatsApp, la copia y la tarjeta descargable se actualizan en vivo.'
-        : 'Escribí el nombre de quien cumple años y tu firma para adaptar en vivo todas las tarjetas de esta página y elegir el estilo visual.'}
+        ? 'Ajustá nombre, firma, posdata, ícono, tipografía y formato (cuadrada o Story Instagram): el texto, WhatsApp, Instagram, la copia y el PNG se actualizan en vivo.'
+        : 'Escribí nombre, firma y posdata, elegí paleta, ícono y formato visual para adaptar todas las tarjetas de esta página antes de copiar o compartir.'}
     </p>
   </div>
   <div class="personalizador-controles">
@@ -25,8 +32,17 @@ const temas = Object.values(TEMAS_TARJETA);
       <label for="pers-firma">Tu firma</label>
       <input id="pers-firma" type="text" maxlength="40" placeholder="Ej.: Tu hija Sofi, Los chicos" autocomplete="off" />
     </div>
+    <div class="pers-campo">
+      <label for="pers-subtitulo">Encabezado o motivo (opcional)</label>
+      <input id="pers-subtitulo" type="text" maxlength="45" placeholder="Ej.: Felices 30, Con todo cariño" autocomplete="off" />
+    </div>
+    <div class="pers-campo">
+      <label for="pers-posdata">Posdata breve P.D. (opcional)</label>
+      <input id="pers-posdata" type="text" maxlength="120" placeholder="Ej.: Nos vemos el sábado para brindar" autocomplete="off" />
+    </div>
+
     <div class="pers-campo pers-campo-temas">
-      <span class="pers-etiqueta">Estilo de tarjeta</span>
+      <span class="pers-etiqueta">Estilo visual de tarjeta ({temas.length} paletas)</span>
       <div class="pers-temas" role="radiogroup" aria-label="Color de la tarjeta visual">
         {temas.map(function (t, idx) {
           return (
@@ -49,8 +65,58 @@ const temas = Object.values(TEMAS_TARJETA);
         })}
       </div>
     </div>
+
+    <div class="pers-campo">
+      <span class="pers-etiqueta">Ícono de la tarjeta</span>
+      <div class="pers-opciones-inline" role="radiogroup" aria-label="Ícono decorativo de la tarjeta">
+        {ICONOS_TARJETA.map(function (ic, idx) {
+          return (
+            <button
+              type="button"
+              class={'pers-chip-btn' + (idx === 0 ? ' activo' : '')}
+              data-pers-icono={ic}
+              aria-pressed={idx === 0 ? 'true' : 'false'}
+              title={`Usar ícono ${ic}`}
+            >
+              {ic}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+
+    <div class="pers-campo">
+      <span class="pers-etiqueta">Tipografía y proporción de descarga</span>
+      <div class="pers-opciones-inline">
+        {tipografias.map(function (f, idx) {
+          return (
+            <button
+              type="button"
+              class={'pers-chip-btn pers-chip-texto' + (idx === 0 ? ' activo' : '')}
+              data-pers-fuente={f.id}
+              aria-pressed={idx === 0 ? 'true' : 'false'}
+            >
+              {f.nombre}
+            </button>
+          );
+        })}
+        {formatos.map(function (fmt, idx) {
+          return (
+            <button
+              type="button"
+              class={'pers-chip-btn pers-chip-texto' + (idx === 0 ? ' activo' : '')}
+              data-pers-formato={fmt.id}
+              aria-pressed={idx === 0 ? 'true' : 'false'}
+            >
+              {fmt.id === 'story' ? '📱 Story IG 9:16' : '🖼️ Cuadrada 1:1'}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+
     <div class="pers-acciones">
-      <button type="button" id="pers-limpiar" class="pers-limpiar">Limpiar</button>
+      <button type="button" id="pers-limpiar" class="pers-limpiar">Restablecer todo</button>
     </div>
   </div>
   <p class="personalizador-estado" id="pers-estado" aria-live="polite"></p>
@@ -60,17 +126,37 @@ const temas = Object.values(TEMAS_TARJETA);
   (function () {
     var inputNombre = document.getElementById('pers-nombre');
     var inputFirma = document.getElementById('pers-firma');
+    var inputSub = document.getElementById('pers-subtitulo');
+    var inputPosdata = document.getElementById('pers-posdata');
     var btnLimpiar = document.getElementById('pers-limpiar');
     var estadoEl = document.getElementById('pers-estado');
     var temaBtns = document.querySelectorAll('.pers-tema-btn');
+    var iconoBtns = document.querySelectorAll('[data-pers-icono]');
+    var fuenteBtns = document.querySelectorAll('[data-pers-fuente]');
+    var formatoBtns = document.querySelectorAll('[data-pers-formato]');
     if (!inputNombre || !inputFirma) return;
 
-    function limpiarCampo(val) {
+    var FUENTES = {
+      editorial: {
+        titulo: "'Fraunces', Georgia, serif",
+        cuerpo: "'Plus Jakarta Sans', system-ui, sans-serif"
+      },
+      moderna: {
+        titulo: "'Plus Jakarta Sans', system-ui, sans-serif",
+        cuerpo: "'Plus Jakarta Sans', system-ui, sans-serif"
+      },
+      calida: {
+        titulo: "'Fraunces', Georgia, serif",
+        cuerpo: "Georgia, 'Fraunces', serif"
+      }
+    };
+
+    function limpiarCampo(val, maxLen) {
       return String(val || '')
         .replace(/[\r\n\t]+/g, ' ')
         .replace(/\s+/g, ' ')
         .trim()
-        .slice(0, 40);
+        .slice(0, maxLen || 40);
     }
 
     function minusculaInicial(texto) {
@@ -83,11 +169,12 @@ const temas = Object.values(TEMAS_TARJETA);
       return texto.charAt(0).toLowerCase() + texto.slice(1);
     }
 
-    function personalizar(baseTexto, nombre, firma) {
+    function personalizar(baseTexto, nombre, firma, posdata) {
       var base = String(baseTexto || '').trim();
       if (!base) return '';
-      var n = limpiarCampo(nombre);
-      var f = limpiarCampo(firma).replace(/^[—–-]\s*/, '').trim();
+      var n = limpiarCampo(nombre, 40);
+      var f = limpiarCampo(firma, 40).replace(/^[—–-]\s*/, '').trim();
+      var pd = limpiarCampo(posdata, 120);
 
       var parrafos = base.split(/\n{2,}/).map(function (p) { return p.trim(); }).filter(Boolean);
       if (n && parrafos.length) {
@@ -114,9 +201,8 @@ const temas = Object.values(TEMAS_TARJETA);
       }
 
       var res = parrafos.join('\n\n');
-      if (f) {
-        res = res + '\n\n— ' + f;
-      }
+      if (pd) res = res + '\n\nP.D.: ' + pd;
+      if (f) res = res + '\n\n— ' + f;
       return res;
     }
 
@@ -161,6 +247,9 @@ const temas = Object.values(TEMAS_TARJETA);
     }
 
     var temaActual = temaBtns.length ? temaBtns[0].getAttribute('data-tema') || 'rosa' : 'rosa';
+    var iconoActual = '';
+    var fuenteActual = 'editorial';
+    var formatoActual = 'cuadrada';
 
     function aplicarTema(temaId) {
       var elegido = null;
@@ -193,15 +282,82 @@ const temas = Object.values(TEMAS_TARJETA);
         card.setAttribute('data-tema-acento', acento);
         var tit = card.querySelector('.tarjeta-visual-titulo');
         if (tit) tit.style.color = acento;
+        var sub = card.querySelector('.tarjeta-visual-subtitulo');
+        if (sub) sub.style.color = acento;
       });
     }
 
-    function renderizarMensajeUnico(nombre, firma) {
+    function aplicarEstiloAvanzado() {
+      iconoBtns.forEach(function (b) {
+        var ic = b.getAttribute('data-pers-icono');
+        var es = iconoActual ? ic === iconoActual : b === iconoBtns[0];
+        b.classList.toggle('activo', es);
+        b.setAttribute('aria-pressed', es ? 'true' : 'false');
+      });
+      fuenteBtns.forEach(function (b) {
+        var f = b.getAttribute('data-pers-fuente');
+        var es = f === fuenteActual;
+        b.classList.toggle('activo', es);
+        b.setAttribute('aria-pressed', es ? 'true' : 'false');
+      });
+      formatoBtns.forEach(function (b) {
+        var fmt = b.getAttribute('data-pers-formato');
+        var es = fmt === formatoActual;
+        b.classList.toggle('activo', es);
+        b.setAttribute('aria-pressed', es ? 'true' : 'false');
+      });
+
+      var fDef = FUENTES[fuenteActual] || FUENTES.editorial;
+      var subLimpio = inputSub ? limpiarCampo(inputSub.value, 45) : '';
+
+      document.querySelectorAll('.tarjeta-visual').forEach(function (card) {
+        card.setAttribute('data-fuente', fuenteActual);
+        card.setAttribute('data-formato', formatoActual);
+        card.classList.toggle('formato-story', formatoActual === 'story');
+        if (subLimpio) card.setAttribute('data-subtitulo', subLimpio);
+        else card.removeAttribute('data-subtitulo');
+
+        var em = card.querySelector('.tarjeta-visual-emoji');
+        if (em) {
+          if (!em.getAttribute('data-orig-emoji')) em.setAttribute('data-orig-emoji', em.textContent || '🎂');
+          em.textContent = iconoActual || em.getAttribute('data-orig-emoji');
+        }
+        var tit = card.querySelector('.tarjeta-visual-titulo');
+        if (tit) tit.style.fontFamily = fDef.titulo;
+        var ext = card.querySelector('.tarjeta-visual-extracto');
+        if (ext) ext.style.fontFamily = fDef.cuerpo;
+        var subEl = card.querySelector('.tarjeta-visual-subtitulo');
+        if (subEl) {
+          subEl.textContent = subLimpio;
+          subEl.hidden = !subLimpio;
+        }
+      });
+
+      document.querySelectorAll('.btn-descargar').forEach(function (btn) {
+        if (!btn.getAttribute('data-orig-emoji')) btn.setAttribute('data-orig-emoji', btn.getAttribute('data-emoji') || '🎂');
+        if (iconoActual) btn.setAttribute('data-emoji', iconoActual);
+        else btn.setAttribute('data-emoji', btn.getAttribute('data-orig-emoji'));
+        btn.setAttribute('data-fuente', fuenteActual);
+        btn.setAttribute('data-formato', formatoActual);
+        btn.setAttribute('data-subtitulo', subLimpio);
+      });
+
+      document.querySelectorAll('.btn-ig').forEach(function (btn) {
+        if (!btn.getAttribute('data-orig-emoji')) btn.setAttribute('data-orig-emoji', btn.getAttribute('data-ig-emoji') || '🎂');
+        if (iconoActual) btn.setAttribute('data-ig-emoji', iconoActual);
+        else btn.setAttribute('data-ig-emoji', btn.getAttribute('data-orig-emoji'));
+        btn.setAttribute('data-fuente', fuenteActual);
+        btn.setAttribute('data-formato', formatoActual);
+        btn.setAttribute('data-subtitulo', subLimpio);
+      });
+    }
+
+    function renderizarMensajeUnico(nombre, firma, posdata) {
       var contenedor = document.getElementById('mensaje-cuerpo');
       if (!contenedor) return;
       var origTexto = contenedor.getAttribute('data-orig-texto') || '';
       var origTitulo = contenedor.getAttribute('data-orig-titulo') || '';
-      var textoPers = personalizar(origTexto, nombre, firma);
+      var textoPers = personalizar(origTexto, nombre, firma, posdata);
 
       renderizarParrafosDom(contenedor, textoPers);
 
@@ -213,19 +369,24 @@ const temas = Object.values(TEMAS_TARJETA);
         var btnWa = root.querySelector('.btn-wa');
         if (btnWa) btnWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(completo));
         var btnDl = root.querySelector('.btn-descargar');
+        var btnIg = root.querySelector('.btn-ig');
         var visualExt = root.querySelector('.tarjeta-visual-extracto');
         if (visualExt) renderizarParrafosDom(visualExt, textoPers);
         if (btnDl) btnDl.setAttribute('data-body', textoPers);
+        if (btnIg) {
+          btnIg.setAttribute('data-ig-body', textoPers);
+          btnIg.setAttribute('data-ig-text', completo);
+        }
       }
     }
 
-    function renderizarTarjetasListado(nombre, firma) {
-      var hayPers = Boolean(limpiarCampo(nombre) || limpiarCampo(firma));
+    function renderizarTarjetasListado(nombre, firma, posdata) {
+      var hayPers = Boolean(limpiarCampo(nombre, 40) || limpiarCampo(firma, 40) || limpiarCampo(posdata, 120));
       document.querySelectorAll('[data-card-personalizable]').forEach(function (card) {
         var origTit = card.getAttribute('data-orig-titulo') || '';
         var origTxt = card.getAttribute('data-orig-texto') || '';
         var origRes = card.getAttribute('data-orig-resumen') || '';
-        var persTxt = personalizar(origTxt, nombre, firma);
+        var persTxt = personalizar(origTxt, nombre, firma, posdata);
         var completo = (origTit ? origTit + '. ' : '') + persTxt;
 
         var resEl = card.querySelector('.card-resumen');
@@ -236,23 +397,38 @@ const temas = Object.values(TEMAS_TARJETA);
         if (btnCop) btnCop.setAttribute('data-text', completo);
         var btnWa = card.querySelector('.btn-wa');
         if (btnWa) btnWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(completo));
+        var btnIg = card.querySelector('.btn-ig');
+        if (btnIg) {
+          btnIg.setAttribute('data-ig-body', persTxt);
+          btnIg.setAttribute('data-ig-text', completo);
+        }
       });
     }
 
     function aplicarTodo(guardar) {
       var nombre = inputNombre.value;
       var firma = inputFirma.value;
-      renderizarTarjetasListado(nombre, firma);
-      renderizarMensajeUnico(nombre, firma);
+      var posdata = inputPosdata ? inputPosdata.value : '';
+      var sub = inputSub ? inputSub.value : '';
+      aplicarEstiloAvanzado();
+      renderizarTarjetasListado(nombre, firma, posdata);
+      renderizarMensajeUnico(nombre, firma, posdata);
 
-      var nLimpio = limpiarCampo(nombre);
-      var fLimpia = limpiarCampo(firma);
+      var nLimpio = limpiarCampo(nombre, 40);
+      var fLimpia = limpiarCampo(firma, 40);
+      var sLimpio = limpiarCampo(sub, 45);
+      var pLimpia = limpiarCampo(posdata, 120);
+
       if (estadoEl) {
-        if (nLimpio || fLimpia) {
+        if (nLimpio || fLimpia || sLimpio || pLimpia || iconoActual || fuenteActual !== 'editorial' || formatoActual !== 'cuadrada') {
           var partes = [];
           if (nLimpio) partes.push('para ' + nLimpio);
           if (fLimpia) partes.push('firmado por ' + fLimpia);
-          estadoEl.textContent = 'Vista previa personalizada activa (' + partes.join(' · ') + ').';
+          if (pLimpia) partes.push('con posdata');
+          if (formatoActual === 'story') partes.push('formato Story 9:16');
+          estadoEl.textContent = partes.length
+            ? 'Vista previa personalizada activa (' + partes.join(' · ') + ').'
+            : 'Estilo visual personalizado activo.';
         } else {
           estadoEl.textContent = '';
         }
@@ -261,16 +437,45 @@ const temas = Object.values(TEMAS_TARJETA);
         try {
           sessionStorage.setItem('pc_pers_nombre', nLimpio);
           sessionStorage.setItem('pc_pers_firma', fLimpia);
+          sessionStorage.setItem('pc_pers_subtitulo', sLimpio);
+          sessionStorage.setItem('pc_pers_posdata', pLimpia);
           sessionStorage.setItem('pc_pers_tema', temaActual);
+          sessionStorage.setItem('pc_pers_icono', iconoActual);
+          sessionStorage.setItem('pc_pers_fuente', fuenteActual);
+          sessionStorage.setItem('pc_pers_formato', formatoActual);
         } catch (err) {}
       }
     }
 
     inputNombre.addEventListener('input', function () { aplicarTodo(true); });
     inputFirma.addEventListener('input', function () { aplicarTodo(true); });
+    if (inputSub) inputSub.addEventListener('input', function () { aplicarTodo(true); });
+    if (inputPosdata) inputPosdata.addEventListener('input', function () { aplicarTodo(true); });
+
     temaBtns.forEach(function (btn) {
       btn.addEventListener('click', function () {
         aplicarTema(btn.getAttribute('data-tema') || 'rosa');
+        aplicarTodo(true);
+      });
+    });
+
+    iconoBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        iconoActual = btn.getAttribute('data-pers-icono') || '';
+        aplicarTodo(true);
+      });
+    });
+
+    fuenteBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        fuenteActual = btn.getAttribute('data-pers-fuente') || 'editorial';
+        aplicarTodo(true);
+      });
+    });
+
+    formatoBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        formatoActual = btn.getAttribute('data-pers-formato') || 'cuadrada';
         aplicarTodo(true);
       });
     });
@@ -279,6 +484,11 @@ const temas = Object.values(TEMAS_TARJETA);
       btnLimpiar.addEventListener('click', function () {
         inputNombre.value = '';
         inputFirma.value = '';
+        if (inputSub) inputSub.value = '';
+        if (inputPosdata) inputPosdata.value = '';
+        iconoActual = '';
+        fuenteActual = 'editorial';
+        formatoActual = 'cuadrada';
         aplicarTema('rosa');
         aplicarTodo(true);
       });
@@ -287,11 +497,23 @@ const temas = Object.values(TEMAS_TARJETA);
     try {
       var sNom = sessionStorage.getItem('pc_pers_nombre') || '';
       var sFir = sessionStorage.getItem('pc_pers_firma') || '';
+      var sSub = sessionStorage.getItem('pc_pers_subtitulo') || '';
+      var sPos = sessionStorage.getItem('pc_pers_posdata') || '';
       var sTem = sessionStorage.getItem('pc_pers_tema') || 'rosa';
+      var sIco = sessionStorage.getItem('pc_pers_icono') || '';
+      var sFue = sessionStorage.getItem('pc_pers_fuente') || 'editorial';
+      var sFmt = sessionStorage.getItem('pc_pers_formato') || 'cuadrada';
       if (sNom) inputNombre.value = sNom;
       if (sFir) inputFirma.value = sFir;
+      if (sSub && inputSub) inputSub.value = sSub;
+      if (sPos && inputPosdata) inputPosdata.value = sPos;
+      if (sIco) iconoActual = sIco;
+      if (sFue) fuenteActual = sFue;
+      if (sFmt) formatoActual = sFmt;
       if (sTem && sTem !== 'rosa') aplicarTema(sTem);
-      if (sNom || sFir) aplicarTodo(false);
+      if (sNom || sFir || sSub || sPos || sIco || sFue !== 'editorial' || sFmt !== 'cuadrada') {
+        aplicarTodo(false);
+      }
     } catch (err) {}
   })();
 </script>

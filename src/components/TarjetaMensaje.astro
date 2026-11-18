@@ -32,5 +32,11 @@ const resumen = plano.length <= 130 ? plano : plano.slice(0, 130).replace(/\s+\S
   </p>
   <h3><a href={'/' + m.slug + '/'}>{m.titulo}</a></h3>
   <p class="card-resumen">{resumen}</p>
-  <Compartir texto={m.titulo + '. ' + m.texto} url={SITIO + '/' + m.slug + '/'} />
+  <Compartir
+    texto={m.titulo + '. ' + m.texto}
+    url={SITIO + '/' + m.slug + '/'}
+    tituloCard={m.titulo}
+    cuerpoCard={m.texto}
+    emojiCard={hubRef.emoji || '🎂'}
+  />
 </article>

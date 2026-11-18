@@ -256,7 +256,8 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         subtitulo: '¿Cómo elegir tipografía, colores y obsequio si vas a imprimir las dedicatorias?',
         parrafos: [
           'Usá nuestro personalizador con el tema Marfil Sobrio o Oliva Cálida y tipografía Editorial Serif: ofrecen contraste excelente sobre papel y conservan todos los saltos de párrafo listos para encuadernar o pegar en un álbum de firmas familiar.',
-          'Si acompañás la tarjeta con una experiencia compartida —como una escapada corta, un buen vino o una cena tranquila sin celular— convertís el medio siglo en una jornada luminosa y serena.'
+          'Si acompañás la tarjeta con una experiencia compartida —como una escapada corta, un buen vino o una cena tranquila sin celular— convertís el medio siglo en una jornada luminosa y serena.',
+          'Recordá también reservar cinco minutos del festejo para entregar un cuaderno de firmas o leer dos cartas breves antes del brindis: ese equilibrio entre disfrute cotidiano y reconocimiento genuino transforma los 50 años en uno de los cumpleaños más recordados de toda la vida familiar.'
         ]
       }
     ]
@@ -384,7 +385,8 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         subtitulo: '¿Qué hacer si el abuelo está lejos o en otro país el día de su cumpleaños?',
         parrafos: [
           'Enviá una tarjeta visual impresa a través de un familiar cercano, grabá un audio tranquilo contando qué hiciste esa semana y coordiná una videollamada corta con buena luz e imagen estable en un momento calmo de la tarde.',
-          'Mantener contacto frecuente después del cumpleaños —y no solo en esa fecha del calendario— multiplica muchísimo la alegría cotidiana de los adultos mayores.'
+          'Mantener contacto frecuente después del cumpleaños —y no solo en esa fecha del calendario— multiplica muchísimo la alegría cotidiana de los adultos mayores y fortalece el puente afectivo entre nietos, padres y abuelos durante todo el año.',
+          'Incluso podés mandar una foto impresa actual de los nietos junto a la tarjeta generada en Marfil Sobrio para que puedan guardarla en la mesa de luz o en la heladera.'
         ]
       }
     ]
@@ -511,7 +513,8 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         subtitulo: '¿Cómo puede sorprender la pareja en el último cumpleaños antes del nacimiento?',
         parrafos: [
           'Resolvé vos todo el festejo sin delegarle organización ni compras: coordiná una cena tranquila en casa o salida corta cómoda y dejale junto al desayuno una carta escrita agradeciendo compartir este proyecto de familia juntos.',
-          'Cuidar sus horarios de descanso y demostrar admiración por su serenidad hace que ese cumpleaños quede atesorado para siempre.'
+          'Cuidar sus horarios de descanso y demostrar admiración por su serenidad hace que ese cumpleaños quede atesorado para siempre como un momento íntimo pensado únicamente para su bienestar.',
+          'Si familiares o amigos preguntan qué regalarle durante la semana previa, podés orientar amablemente hacia opciones que la mimen a ella —una infusión rica, ropa cómoda o sesión de descanso— guardando los regalos del recién nacido para su llegada. Cuidar ese límite sencillo transforma un cumpleaños común en un respiro muy agradecido para quien atraviesa tantos cambios diarios.'
         ]
       }
     ]
@@ -639,7 +642,8 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         parrafos: [
           'Elegí el filtro "Con humor" dentro de nuestra categoría graciosa o entre amigos, agregá su apodo en vivo arriba y exportá la tarjeta cuadrada para chat o Story vertical 1080×1920 para etiquetar al instante.',
           'Si acompañás un regalo físico, imprimir una tarjeta alegre con tipografía Moderna clara funciona bárbaro como antesala divertida de un detalle útil o un vale de salida compartida.',
-          'Además, podés sumar una posdata breve debajo con el apodo del grupo o una broma sobre quién lleva la torta para hacer la tarjeta todavía más personal.'
+          'Además, podés sumar una posdata breve debajo con el apodo del grupo o una broma sobre quién lleva la torta para hacer la tarjeta todavía más personal.',
+          'Como regla final, si dudás entre dos chistes para un grupo amplio donde también leen tíos o compañeros de trabajo, quedate siempre con la opción de humor amable sobre la torta, la siesta o la música del festejo: garantiza risas compartidas sin dejar a nadie incómodo.'
         ]
       }
     ]
@@ -768,7 +772,9 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         parrafos: [
           'Si recibiste cartas largas o mensajes especiales de familiares mayores, destacalos en WhatsApp con estrella o guardá una captura en una carpeta aparte: releerlos meses después recarga ánimo en días comunes.',
           'También podés anotar en ese mismo momento los cumpleaños cercanos de las personas que te escribieron para devolver el gesto con igual atención cuando les toque celebrar.',
-          'Si alguien se tomó el trabajo de enviarte un mensaje personalizado o una tarjeta diseñada especialmente, responder mencionando ese gesto concreto cierra el intercambio con calidez genuina.'
+          'Si alguien se tomó el trabajo de enviarte un mensaje personalizado o una tarjeta diseñada especialmente, responder mencionando ese gesto concreto cierra el intercambio con calidez genuina.',
+          'Por último, en mensajes de colegas, clientes o conocidos lejanos alcanzará con contestar durante la mañana siguiente manteniendo el mismo registro formal o cercano: de ese modo cerrás todos los saludos en quince minutos ordenados sin vivir pendiente de las notificaciones ni responder apurado con emojis sueltos que restan calidez.',
+          'Tomar ese ritmo ordenado permite vivir el cumpleaños con gente real frente a frente y agradecer al día siguiente con serenidad y atención.'
         ]
       }
     ]
@@ -895,7 +901,8 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         subtitulo: '¿Qué secciones de ParaCumpleanos cubren cada vínculo familiar con concordancia cuidada?',
         parrafos: [
           'Podés explorar desde cartas extensas para madre, padre, hijo e hija hasta saludos por edad exacta (desde 1 año hasta 90), personalizando arriba con los nombres reales de casa en un clic.',
-          'Cada texto fue auditado para cuidar las terminaciones en femenino o masculino y evitar errores automáticos.'
+          'Cada texto fue auditado para cuidar las terminaciones en femenino o masculino y evitar errores automáticos cuando adaptás una tarjeta para tu familia.',
+          'Además, si buscás un formato físico para dejar junto a la cama o debajo del plato en la mesa del domingo, la descarga en Marfil Sobrio o Dorado Festivo conserva márgenes amplios, posdata personalizada y tu firma al cierre sin recortar ninguna oración.'
         ]
       }
     ]
@@ -1024,7 +1031,8 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         parrafos: [
           'Si hay reunión presencial, reproducilo en silencio relativo justo antes del brindis con buen sonido conectado y buena pantalla. Si están a distancia, compartilo por la tarde cuando ya pueda verlo tranquilo con auriculares y guardarlo en su celular.',
           'Tené siempre una copia descargada en alta resolución para que el homenajeado pueda conservarla sin depender de enlaces temporales ni chats que expiran.',
-          'Un detalle extra muy lindo es enviar una tarjeta impresa con un código QR hacia esa carpeta privada para que pueda abrir el video sorpresa cada vez que quiera.'
+          'Un detalle extra muy lindo es enviar una tarjeta impresa con un código QR hacia esa carpeta privada para que pueda abrir el video sorpresa cada vez que quiera.',
+          'Por último, verificá siempre el volumen parejo entre los saludos grabados en interior y los grabados al aire libre para que nadie tenga que subir y bajar el sonido durante la proyección familiar, y probá reproducir todo el archivo en la pantalla elegida media hora antes de que lleguen los invitados.'
         ]
       }
     ]
@@ -1151,7 +1159,9 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
       {
         subtitulo: '¿Cómo ayudan nuestras categorías para quinceañeras, padres y amigas?',
         parrafos: [
-          'Podés consultar las 40 opciones en nuestras colecciones específicas de 15 años, personalizar apodo, firma y posdata arriba y elegir tarjetas en Lavanda Serena, Dorado Festivo o Rosa Clásica listas para WhatsApp, Instagram Stories o papel impreso.'
+          'Podés consultar las 40 opciones en nuestras colecciones específicas de 15 años, personalizar apodo, firma y posdata arriba y elegir tarjetas en Lavanda Serena, Dorado Festivo o Rosa Clásica listas para WhatsApp, Instagram Stories o papel impreso.',
+          'Si entregás un regalo compartido entre varias amigas o compañeros del club, sumen una posdata breve al pie con todos los nombres y guarden una copia digital para que la quinceañera pueda volver a leerla tranquila después del festejo.',
+          'Cuidar el equilibrio entre alegría genuina, respeto por su personalidad y recuerdos verdaderos asegura que las palabras elegidas sigan emocionando incluso muchos años después.'
         ]
       }
     ]
@@ -1280,7 +1290,8 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         parrafos: [
           'Filtrá por mensajes breves dentro de nuestra categoría general o formal, quitá referencias a velas o fiestas y usá la opción de personalización con tonos neutros como Oliva Cálida o Marfil Sobrio.',
           'También podés enviar únicamente texto limpio por chat privado en lugar de tarjeta gráfica si esa persona prefiere pasar totalmente desapercibida ese día.',
-          'Recordá siempre que el mejor regalo para alguien reservado es respetar sus tiempos sin exponer su cumpleaños en grupos públicos ni insistir con festejos que no pidió.'
+          'Recordá siempre que el mejor regalo para alguien reservado es respetar sus tiempos sin exponer su cumpleaños en grupos públicos ni insistir con festejos que no pidió.',
+          'Acompañar ese respeto con un encuentro tranquilo en la semana —una charla mano a mano tomando café o caminando sin menciones obligadas al cumpleaños ni regalos comprometidos— transmite muchísimo más aprecio real que cualquier celebración multitudinaria forzada que esa persona no eligió.'
         ]
       }
     ]
@@ -1409,7 +1420,9 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         parrafos: [
           'Usá la tarjeta breve para celebrar públicamente en Instagram o estado, y mandale por WhatsApp directo el texto más personal con el recuerdo concreto que no hace falta contar a todo internet.',
           'Podés usar nuestro botón directo "Compartir en Instagram" en cada mensaje para descargar la imagen y copiar automáticamente la dedicatoria lista para pegar en tu historia o publicación.',
-          'Si agregás una posdata corta con la hora del brindis o un saludo íntimo de tu grupo de amigos, lográs que esa tarjeta visual destaque entre decenas de historias idénticas sin sobrecargar la pantalla.'
+          'Si agregás una posdata corta con la hora del brindis o un saludo íntimo de tu grupo de amigos, lográs que esa tarjeta visual destaque entre decenas de historias idénticas sin sobrecargar la pantalla.',
+          'Recordá también verificar la vista previa del encuadre antes de publicar la Story para que los márgenes del nombre, la firma y la posdata queden completamente despejados y legibles tanto en celulares chicos como en pantallas grandes, evitando que las etiquetas de usuario o la barra superior tapen parte del texto principal.',
+          'Elegí además una tipografía de alto contraste acorde al clima del homenaje para que cualquier contacto pueda leer el mensaje completo en tres segundos.'
         ]
       }
     ]
@@ -1537,7 +1550,8 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         subtitulo: '¿Cuál es la mejor presentación si vas a entregarla en mano o por mensaje?',
         parrafos: [
           'Pasar los cuatro párrafos a mano o descargar nuestra tarjeta PNG en Lavanda Serena o Marfil Sobrio dentro de un sobre cerrado acompaña perfecto cualquier regalo o desayuno en casa.',
-          'Si ese día trabajan en horarios distintos, enviar un mensaje corto al despertar y entregar la carta a la noche multiplica la sorpresa.'
+          'Si ese día trabajan en horarios distintos, enviar un mensaje corto al despertar y entregar la carta a la noche multiplica la sorpresa.',
+          'No hace falta esperar a un aniversario redondo para hablar con esa honestidad cotidiana: cuidar la voz propia, nombrar los pequeños acuerdos de convivencia y proponer tiempo sin pantallas convierte una simple hoja escrita a mano o una tarjeta impresa con amor en el recuerdo más valorado del festejo.'
         ]
       }
     ]
@@ -1666,7 +1680,9 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         parrafos: [
           'Podés visitar nuestra nueva categoría Motivaciones diarias (/motivaciones/) y activar el aviso diario gratuito en el portal para sostener pequeños recordatorios prácticos de bienestar y foco todas las mañanas.',
           'Además, usando la opción de descarga Story 1080×1920 podés guardar tus reflexiones favoritas con estética limpia en tonos Oliva o Lavanda para releerlas cuando arranque una semana exigente.',
-          'Anotar en tu cuaderno o calendario tres propósitos sencillos para tu nuevo ciclo —sin listas imposibles— te permite volver a tu cumpleaños el año próximo viendo con claridad cuánto avanzaste en calma, qué vínculos cuidaste mejor y qué metas reales disfrutaste.'
+          'Anotar en tu cuaderno o calendario tres propósitos sencillos para tu nuevo ciclo —sin listas imposibles— te permite volver a tu cumpleaños el año próximo viendo con claridad cuánto avanzaste en calma, qué vínculos cuidaste mejor y qué metas reales disfrutaste.',
+          'De ese modo la celebración personal deja de ser una foto aislada de redes sociales y se transforma en un hábito luminoso para cuidar tu propio ritmo, agradecer a quienes estuvieron cerca durante los meses intensos y empezar el año siguiente con prioridades claras y serenidad.',
+          'Guardar ese texto en tu agenda digital te sirve además como brújula honesta cuando regresen semanas exigentes o decisiones importantes.'
         ]
       }
     ]
@@ -1795,7 +1811,8 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         subtitulo: '¿Qué hacer después del festejo escolar para cerrar con buena onda entre familias?',
         parrafos: [
           'Al día siguiente agradecé brevemente en el grupo, compartí dos fotos generales respetuosas donde se vean juegos sin exponer de más a otros chicos y avisá si quedó algún abrigo o botellita olvidada.',
-          'Si celebran en casa o en plaza pública, mandar la ubicación en mapa junto a la invitación el día anterior asegura que nadie se pierda camino al festejo.'
+          'Si celebran en casa o en plaza pública, mandar la ubicación en mapa junto a la invitación el día anterior asegura que nadie se pierda camino al festejo.',
+          'Por último, guardar todas las tarjetitas escritas por sus compañeros dentro de una caja de recuerdos junto a una foto grupal de ese cumpleaños permite que el niño reviva años después quiénes fueron sus primeros amigos del jardín o primaria.'
         ]
       }
     ]
@@ -1925,7 +1942,9 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
         parrafos: [
           'Podés abrir nuestras colecciones epistolares para hermana mayor, hermana o hermano, cargar los apodos familiares arriba y descargar la tarjeta completa sin cortes ni repeticiones.',
           'También contás con selección de tonos Oliva, Marfil o Dorado Festivo, tipografía Editorial y formato Story o cuadrado para enviar por WhatsApp o acompañar un regalo en mano.',
-          'Incluso podés usar el botón directo de Instagram para bajar la imagen vertical con su apodo familiar arriba y copiar automáticamente la dedicatoria lista para acompañar una foto vieja divertida de ustedes.'
+          'Incluso podés usar el botón directo de Instagram para bajar la imagen vertical con su apodo familiar arriba y copiar automáticamente la dedicatoria lista para acompañar una foto vieja divertida de ustedes.',
+          'Si comparten el festejo en la mesa familiar, leer una posdata corta o dejar la tarjeta junto a su plato suma un momento cálido que rompe la rutina y se recuerda mucho más que cualquier paquete envuelto, especialmente cuando ambos crecieron y valoran cada gesto genuino.',
+          'Dejar además una línea agradeciendo esa hermandad cotidiana consolida la confianza mutua para todo el año.'
         ]
       }
     ]
