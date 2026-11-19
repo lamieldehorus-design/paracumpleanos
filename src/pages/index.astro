@@ -5,6 +5,7 @@ import AlertaMotivacionDiaria from '../components/AlertaMotivacionDiaria.astro';
 import { GRUPOS, hubs, todosMensajes, hubsPorGrupo, mensajesDe, nombreHub, SITIO, MARCA } from '../lib/contenido.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { TEMAS_TARJETA } from '../lib/personalizador.ts';
+import { ZODIACOS } from '../lib/horoscopo.ts';
 
 // Muestras representativas de distintas secciones para que la portada refleje todo el portal
 const muestraSlugsCats = [
@@ -45,7 +46,30 @@ const indiceBuscador = hubs
       emoji: g.emoji,
       q: `${g.titulo} ${g.resumen} ${g.slug}`.toLowerCase()
     }))
-  );
+  )
+  .concat([
+    {
+      titulo: 'Calculadora de edad exacta, 10.000 días, acróstico y agenda .ics',
+      slug: '/herramientas/',
+      tipo: 'Herramienta',
+      emoji: '🛠️',
+      q: 'herramientas calculadora edad exacta dias vividos 10000 acrostico nombre armador dedicatoria agenda recordatorios ics'.toLowerCase()
+    },
+    {
+      titulo: 'Horóscopo de cumpleaños: fechas, signos y meses del año',
+      slug: '/horoscopo/',
+      tipo: 'Horóscopo',
+      emoji: '✨',
+      q: 'horoscopo zodiaco signo fechas cumpleaños mes nacimiento'.toLowerCase()
+    },
+    ...ZODIACOS.map((s) => ({
+      titulo: `Cumpleaños de ${s.nombre} (${s.rangoTexto})`,
+      slug: `/horoscopo/${s.slug}/`,
+      tipo: 'Signo zodiacal',
+      emoji: s.simbolo,
+      q: `horoscopo ${s.nombre} ${s.rangoTexto} ${s.mesesNombres.join(' ')} ${s.elemento}`.toLowerCase()
+    }))
+  ]);
 
 const temas = Object.values(TEMAS_TARJETA);
 
@@ -86,7 +110,7 @@ const jsonld = [
           <input
             id="portal-buscador"
             type="search"
-            placeholder="Ej.: mamá, 15 años, motivaciones, carta, aniversario…"
+            placeholder="Ej.: mamá, 15 años, junio, carta…"
             autocomplete="off"
           />
           <a class="btn btn-copiar" href="#secciones-portal">Explorar secciones</a>
@@ -148,13 +172,31 @@ const jsonld = [
     </div>
   </section>
 
+  <section class="portal-herramientas-tira" aria-label="Herramientas interactivas y horóscopo">
+    <a class="portal-util-card" href="/herramientas/">
+      <span class="portal-util-kicker">Herramientas gratuitas</span>
+      <span class="portal-util-titulo">🎂 Edad exacta, acróstico y agenda .ics</span>
+      <span class="portal-util-desc">Calculá días vividos e hito de 10.000 días, creá acrósticos por nombre y descargá alertas anuales.</span>
+    </a>
+    <a class="portal-util-card" href="/horoscopo/">
+      <span class="portal-util-kicker">Zodíaco y calendario</span>
+      <span class="portal-util-titulo">♈ Horóscopo de cumpleaños</span>
+      <span class="portal-util-desc">Consultá frases, perfil festivo y regalos para los 12 signos enlazados con su mes exacto.</span>
+    </a>
+    <a class="portal-util-card" href="/categorias/#meses">
+      <span class="portal-util-kicker">Calendario completo</span>
+      <span class="portal-util-titulo">📅 Cumpleaños por mes del año</span>
+      <span class="portal-util-desc">Colecciones de enero a diciembre y fechas especiales conectadas con cada signo zodiacal.</span>
+    </a>
+  </section>
+
   <AlertaMotivacionDiaria />
 
   <section id="secciones-portal" class="portal-banda" aria-labelledby="titulo-secciones-portal">
     <div class="banda-cabecera">
       <div>
         <p class="banda-kicker">Mapa completo del portal</p>
-        <h2 id="titulo-secciones-portal">Navegá las 10 secciones temáticas ({hubs.length} colecciones)</h2>
+        <h2 id="titulo-secciones-portal">Navegá las {GRUPOS.length} secciones temáticas ({hubs.length} colecciones)</h2>
       </div>
       <a class="enlace-directorio" href="/categorias/">Ver listado alfabético completo →</a>
     </div>

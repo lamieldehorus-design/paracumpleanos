@@ -1,5 +1,5 @@
 ---
-// Botones de compartir: WhatsApp, Instagram, Facebook, copiar y descarga opcional de tarjeta PNG
+// Botones de compartir: WhatsApp, Instagram, Facebook, copiar, descarga PNG e impresión postal opcional
 interface Props {
   texto: string;
   url: string;
@@ -26,14 +26,19 @@ const { texto, url, tituloCard = '', cuerpoCard = '', emojiCard = '🎂', mostra
   <a class="btn btn-fb" href={'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url)} target="_blank" rel="noopener">Facebook</a>
   <button class="btn btn-copiar" type="button" data-text={texto}>Copiar</button>
   {mostrarDescarga ? (
-    <button
-      class="btn btn-descargar"
-      type="button"
-      data-title={tituloCard}
-      data-body={cuerpoCard}
-      data-emoji={emojiCard}
-    >
-      Descargar tarjeta
-    </button>
+    <>
+      <button
+        class="btn btn-descargar"
+        type="button"
+        data-title={tituloCard}
+        data-body={cuerpoCard}
+        data-emoji={emojiCard}
+      >
+        Descargar tarjeta
+      </button>
+      <button class="btn btn-imprimir" type="button">
+        Imprimir postal
+      </button>
+    </>
   ) : null}
 </div>

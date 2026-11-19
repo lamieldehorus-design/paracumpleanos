@@ -1,0 +1,842 @@
+---
+import Base from '../../layouts/Base.astro';
+import {
+  SITIO,
+  MARCA,
+  migasLd
+} from '../../lib/contenido.ts';
+import {
+  ZODIACOS,
+  MESES_CON_SIGNOS,
+  VERSOS_ACROSTICO,
+  generarAcrostico,
+  calcularEstadisticasCumpleanos,
+  construirDedicatoriaGuiada
+} from '../../lib/horoscopo.ts';
+
+const titulo = `Herramientas de cumpleaños: edad exacta, acróstico y agenda - ${MARCA}`;
+const descripcion =
+  'Calculá tu edad exacta, días vividos e hito de 10.000 días, creá acrósticos con nombre, armá dedicatorias en 3 pasos y guardá cumpleaños con alertas .ics.';
+
+const demoCalc = calcularEstadisticasCumpleanos('1995-06-05');
+const demoAcrostico = generarAcrostico('SOFÍA', 'emotivo');
+const demoAcrosticoTexto = demoAcrostico.map((l) => `${l.letra} — ${l.verso}`).join('\n');
+const demoDedicatoria = construirDedicatoriaGuiada({
+  vinculo: 'amistad',
+  tono: 'emotivo',
+  nombre: 'Sofía',
+  detalle: 'esos mates de los domingos escuchando sin apuro',
+  firma: 'Tu amiga Laura'
+});
+
+const faqs = [
+  {
+    pregunta: '¿Qué calcula exactamente la herramienta de edad y 10.000 días?',
+    respuesta:
+      'Calcula años, meses y días calendario exactos (contemplando años bisiestos y el ajuste del 29 de febrero), suma el total real de días y horas vividas, muestra el día de la semana en que naciste, revela la fecha de tus 10.000 días y te enlaza directo con tu signo del horóscopo y el mes de tu cumpleaños.'
+  },
+  {
+    pregunta: '¿Mis cumpleaños agendados o mis fotos se suben a algún servidor?',
+    respuesta:
+      'No. Tanto tu agenda personal de cumpleaños como las fotos que sumás en el Estudio de Tarjetas funcionan 100% de forma local en tu navegador (localStorage / FileReader), sin cuentas ni envío a servidores externos.'
+  },
+  {
+    pregunta: '¿Cómo funcionan los recordatorios anuales .ics?',
+    respuesta:
+      'Al guardar un cumpleaños en tu agenda podés descargar un archivo estándar de calendario (.ics) con repetición anual automática (RRULE:FREQ=YEARLY) y dos avisos previos: 48 horas antes y a las 9 de la mañana del mismo día, compatible con Google Calendar, Apple Calendar y Outlook.'
+  }
+];
+
+const jsonld = [
+  migasLd([
+    { name: 'Inicio', url: SITIO + '/' },
+    { name: 'Herramientas de cumpleaños', url: SITIO + '/herramientas/' }
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Herramientas de cumpleaños de ParaCumpleanos',
+    url: SITIO + '/herramientas/',
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'All',
+    inLanguage: 'es',
+    description: descripcion
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.pregunta,
+      acceptedAnswer: { '@type': 'Answer', text: f.respuesta }
+    }))
+  }
+];
+
+const signosCliente = ZODIACOS.map((s) => ({
+  slug: s.slug,
+  nombre: s.nombre,
+  simbolo: s.simbolo,
+  elemento: s.elemento,
+  rangoTexto: s.rangoTexto,
+  inicioMes: s.inicioMes,
+  inicioDia: s.inicioDia,
+  finMes: s.finMes,
+  finDia: s.finDia,
+  mesesSlugs: s.mesesSlugs,
+  mesesNombres: s.mesesNombres
+}));
+---
+<Base
+  titulo={titulo}
+  descripcion={descripcion}
+  jsonld={jsonld}
+  grupoActual="meses"
+>
+  <nav class="migas" aria-label="Migas de pan">
+    <a href="/">Inicio</a> › <span>Herramientas</span>
+  </nav>
+
+  <h1>Herramientas interactivas de cumpleaños y dedicatorias</h1>
+  <p class="lead">
+    Cuatro utilidades gratuitas pensadas para resolver en un minuto lo que necesitás antes de cada festejo: calcular edad exacta y signo zodiacal, crear un acróstico personalizado, redactar una dedicatoria guiada en tres pasos y agendar cumpleaños con alertas .ics privadas.
+  </p>
+
+  <nav class="herr-nav-saltos no-print" aria-label="Ir a herramienta">
+    <a href="#calculadora-edad">🎂 Calculadora de edad y signo</a>
+    <a href="#generador-acrostico">✍️ Generador de acrósticos</a>
+    <a href="#armador-dedicatoria">💌 Armador en 3 pasos</a>
+    <a href="#agenda-cumpleanos">📅 Agenda y alertas .ics</a>
+  </nav>
+
+  <!-- 1. CALCULADORA DE EDAD EXACTA, 10.000 DIAS Y HOROSCOPO -->
+  <section id="calculadora-edad" class="herr-modulo" aria-labelledby="tit-calc">
+    <p class="herr-modulo-kicker">Utilidad 01 · Calendario y signo</p>
+    <h2 id="tit-calc">Calculadora de edad exacta, hito de 10.000 días y signo</h2>
+    <p class="herr-modulo-intro">
+      Ingresá una fecha de nacimiento para conocer años, meses, días y horas vividas, qué día de la semana nació esa persona, cuánto falta para el próximo festejo y el acceso directo a su horóscopo y mes de cumpleaños.
+    </p>
+
+    <div class="herr-form-grid no-print">
+      <div class="herr-campo">
+        <label for="herr-calc-fecha">Fecha de nacimiento</label>
+        <input id="herr-calc-fecha" type="date" value="1995-06-05" max="2035-12-31" />
+      </div>
+      <div>
+        <button id="herr-calc-btn" type="button" class="btn btn-copiar">Calcular estadísticas</button>
+      </div>
+    </div>
+
+    <p id="herr-calc-error" class="personalizador-estado" role="alert" hidden></p>
+
+    <div id="herr-calc-res">
+      <div class="herr-stats-grid">
+        <div class="herr-stat-caja">
+          <span class="herr-stat-label">Edad exacta hoy</span>
+          <strong class="herr-stat-valor" id="stat-edad">{demoCalc.anios} años, {demoCalc.meses} m, {demoCalc.dias} d</strong>
+        </div>
+        <div class="herr-stat-caja">
+          <span class="herr-stat-label">Total vivido</span>
+          <strong class="herr-stat-valor" id="stat-dias">{demoCalc.totalDiasVividos.toLocaleString('es-AR')} días</strong>
+        </div>
+        <div class="herr-stat-caja">
+          <span class="herr-stat-label">Nació un día</span>
+          <strong class="herr-stat-valor" id="stat-dia-sem">{demoCalc.diaSemanaNacimiento.charAt(0).toUpperCase() + demoCalc.diaSemanaNacimiento.slice(1)}</strong>
+        </div>
+        <div class="herr-stat-caja">
+          <span class="herr-stat-label">Próximo cumpleaños</span>
+          <strong class="herr-stat-valor" id="stat-proximo">En {demoCalc.diasParaProximoCumple} días ({demoCalc.edadProximoCumple} años)</strong>
+        </div>
+        <div class="herr-stat-caja">
+          <span class="herr-stat-label">Hito de 10.000 días</span>
+          <strong class="herr-stat-valor" id="stat-10k">{demoCalc.hito10MilDiasIso}</strong>
+        </div>
+        <div class="herr-stat-caja">
+          <span class="herr-stat-label">Signo y elemento</span>
+          <strong class="herr-stat-valor" id="stat-signo">{demoCalc.signo.simbolo} {demoCalc.signo.nombre} ({demoCalc.signo.elemento})</strong>
+        </div>
+      </div>
+
+      <div class="herr-links-resultado" id="herr-calc-links">
+        <a id="herr-link-signo" class="chip" href={`/horoscopo/${demoCalc.signo.slug}/`}>
+          Ver perfil de {demoCalc.signo.nombre} {demoCalc.signo.simbolo} →
+        </a>
+        <a id="herr-link-mes" class="chip" href={`/${demoCalc.mesSlug}/`}>
+          Frases de cumpleaños en {demoCalc.mesNombre} →
+        </a>
+        <a class="chip" href="/horoscopo/">Comparar los 12 signos →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. GENERADOR DE ACROSTICOS POR NOMBRE -->
+  <section id="generador-acrostico" class="herr-modulo" aria-labelledby="tit-acro">
+    <p class="herr-modulo-kicker">Utilidad 02 · Postal con iniciales</p>
+    <h2 id="tit-acro">Generador de acrósticos personalizados con nombre</h2>
+    <p class="herr-modulo-intro">
+      Convertí cualquier nombre o apodo en un mensaje original letra por letra. Elegí el tono que mejor encaje con el vínculo, copialo al portapapeles, bajalo como imagen PNG o imprimilo como postal.
+    </p>
+
+    <div class="herr-form-grid no-print">
+      <div class="herr-campo">
+        <label for="herr-acro-nombre">Nombre para el acróstico</label>
+        <input id="herr-acro-nombre" type="text" maxlength="24" value="SOFÍA" placeholder="Ej.: Sofía, Mamá, Valentín" autocomplete="off" />
+      </div>
+      <div class="herr-campo">
+        <label for="herr-acro-tono">Tono del acróstico</label>
+        <select id="herr-acro-tono">
+          <option value="emotivo">Emotivo y cercano</option>
+          <option value="humor">Con humor y chispa</option>
+          <option value="fe">Con fe y bendición</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="acciones no-print">
+      <button id="herr-acro-btn" type="button" class="btn btn-copiar">Actualizar acróstico</button>
+    </div>
+
+    <div id="herr-acro-hoja" class="herr-acrostico-hoja">
+      <p class="tarjeta-visual-subtitulo">ACRÓSTICO PERSONALIZADO</p>
+      <p class="tarjeta-visual-titulo" id="herr-acro-titulo">Acróstico para SOFÍA</p>
+      <ul class="herr-acrostico-lista" id="herr-acro-lista">
+        {demoAcrostico.map((item) => (
+          <li>
+            <strong class="herr-acrostico-letra">{item.letra}</strong>
+            <span>{item.verso}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="tarjeta-visual-marca">paracumpleanos.com</p>
+    </div>
+
+    <div class="acciones no-print">
+      <button id="herr-acro-copiar" type="button" class="btn btn-copiar" data-text={`Acróstico para SOFÍA\n\n${demoAcrosticoTexto}`}>
+        Copiar acróstico
+      </button>
+      <a
+        id="herr-acro-wa"
+        class="btn btn-wa"
+        href={'https://wa.me/?text=' + encodeURIComponent(`Acróstico para SOFÍA\n\n${demoAcrosticoTexto}`)}
+        target="_blank"
+        rel="noopener"
+      >
+        WhatsApp
+      </a>
+      <button
+        id="herr-acro-dl"
+        type="button"
+        class="btn btn-descargar"
+        data-title="Acróstico para SOFÍA"
+        data-body={demoAcrosticoTexto}
+        data-emoji="✍️"
+      >
+        Descargar PNG
+      </button>
+      <button type="button" class="btn btn-imprimir">Imprimir postal</button>
+    </div>
+  </section>
+
+  <!-- 3. ARMADOR GUIADO DE DEDICATORIA EN 3 PASOS -->
+  <section id="armador-dedicatoria" class="herr-modulo" aria-labelledby="tit-arm">
+    <p class="herr-modulo-kicker">Utilidad 03 · Redactor asistido</p>
+    <h2 id="tit-arm">Armador guiado de dedicatoria en 3 pasos</h2>
+    <p class="herr-modulo-intro">
+      Combiná vínculo, tono y un recuerdo concreto real para obtener al instante una dedicatoria de tres párrafos que no suena copiada en serie.
+    </p>
+
+    <div class="herr-form-grid no-print">
+      <div class="herr-campo">
+        <label for="herr-arm-vinculo">Paso 1: Vínculo con quien cumple</label>
+        <select id="herr-arm-vinculo">
+          <option value="amistad" selected>Amistad cercana</option>
+          <option value="familia">Familia (mamá, papá, hijos, hermanos)</option>
+          <option value="pareja">Pareja / Novio / Esposa</option>
+          <option value="trabajo">Trabajo / Colega / Jefe</option>
+        </select>
+      </div>
+      <div class="herr-campo">
+        <label for="herr-arm-tono">Paso 2: Tono principal</label>
+        <select id="herr-arm-tono">
+          <option value="emotivo" selected>Emotivo y profundo</option>
+          <option value="breve">Breve y directo para WhatsApp</option>
+          <option value="humor">Con humor cálido</option>
+          <option value="fe">Con fe y gratitud</option>
+        </select>
+      </div>
+      <div class="herr-campo">
+        <label for="herr-arm-nombre">Nombre o apodo (opcional)</label>
+        <input id="herr-arm-nombre" type="text" maxlength="36" value="Sofía" placeholder="Ej.: Sofía, Papá, Martín" autocomplete="off" />
+      </div>
+      <div class="herr-campo">
+        <label for="herr-arm-firma">Tu firma (opcional)</label>
+        <input id="herr-arm-firma" type="text" maxlength="36" value="Tu amiga Laura" placeholder="Ej.: Tu hija Sofi" autocomplete="off" />
+      </div>
+      <div class="herr-campo" style="grid-column: 1 / -1;">
+        <label for="herr-arm-detalle">Paso 3: Anécdota, rasgo o recuerdo real (opcional)</label>
+        <input
+          id="herr-arm-detalle"
+          type="text"
+          maxlength="140"
+          value="esos mates de los domingos escuchando sin apuro"
+          placeholder="Ej.: tu apoyo en la mudanza, nuestras charlas del viernes…"
+          autocomplete="off"
+        />
+      </div>
+    </div>
+
+    <div class="acciones no-print">
+      <button id="herr-arm-btn" type="button" class="btn btn-copiar">Armar dedicatoria</button>
+    </div>
+
+    <div id="herr-arm-salida" class="herr-dedicatoria-salida">{demoDedicatoria}</div>
+
+    <div class="acciones no-print">
+      <button id="herr-arm-copiar" type="button" class="btn btn-copiar" data-text={demoDedicatoria}>
+        Copiar dedicatoria
+      </button>
+      <a
+        id="herr-arm-wa"
+        class="btn btn-wa"
+        href={'https://wa.me/?text=' + encodeURIComponent(demoDedicatoria)}
+        target="_blank"
+        rel="noopener"
+      >
+        WhatsApp
+      </a>
+      <button
+        id="herr-arm-dl"
+        type="button"
+        class="btn btn-descargar"
+        data-title="Dedicatoria personalizada"
+        data-body={demoDedicatoria}
+        data-emoji="💌"
+      >
+        Descargar PNG
+      </button>
+    </div>
+  </section>
+
+  <!-- 4. AGENDA PRIVADA CON RECORDATORIOS ANUALES .ICS -->
+  <section id="agenda-cumpleanos" class="herr-modulo" aria-labelledby="tit-ag">
+    <p class="herr-modulo-kicker">Utilidad 04 · Calendario local</p>
+    <h2 id="tit-ag">Agenda privada de cumpleaños con recordatorios .ics</h2>
+    <p class="herr-modulo-intro">
+      Anotá las fechas importantes de tu familia y amigos en este dispositivo. Calculamos cuántos días faltan, enlazamos su signo y mes correspondiente y podés bajar cada evento anual en archivo <code>.ics</code> para tu calendario.
+    </p>
+
+    <form id="herr-ag-form" class="herr-form-grid no-print">
+      <div class="herr-campo">
+        <label for="herr-ag-nombre">Nombre de la persona</label>
+        <input id="herr-ag-nombre" type="text" required maxlength="40" placeholder="Ej.: Mamá, Juan, Prima Carla" />
+      </div>
+      <div class="herr-campo">
+        <label for="herr-ag-relacion">Vínculo o nota</label>
+        <select id="herr-ag-relacion">
+          <option value="Familia">Familia</option>
+          <option value="Amistad">Amistad</option>
+          <option value="Pareja">Pareja</option>
+          <option value="Trabajo">Trabajo</option>
+        </select>
+      </div>
+      <div class="herr-campo">
+        <label for="herr-ag-mes">Mes de cumpleaños</label>
+        <select id="herr-ag-mes">
+          {MESES_CON_SIGNOS.map((m) => (
+            <option value={m.mesNum}>{m.nombreCap}</option>
+          ))}
+        </select>
+      </div>
+      <div class="herr-campo">
+        <label for="herr-ag-dia">Día (1 a 31)</label>
+        <input id="herr-ag-dia" type="number" min="1" max="31" required value="15" />
+      </div>
+      <div style="grid-column: 1 / -1;">
+        <button id="herr-ag-btn" type="submit" class="btn btn-copiar">Guardar en mi agenda local</button>
+      </div>
+    </form>
+
+    <ul id="herr-ag-lista" class="herr-agenda-lista" aria-live="polite"></ul>
+    <p id="herr-ag-vacio" class="texto-ayuda">
+      Todavía no cargaste fechas en este navegador. Probá sumar tu primer cumpleaños arriba para descargar su alerta anual <code>.ics</code>.
+    </p>
+  </section>
+
+  <!-- CONTENIDO INFORMATIVO SEO Y FAQS -->
+  <section class="guia-categoria" aria-labelledby="tit-seo-herr">
+    <h2 id="tit-seo-herr">Cómo aprovechar estas herramientas antes de escribir una tarjeta</h2>
+    <p>
+      Las mejores felicitaciones nacen cuando combinamos un dato exacto con una escena vivida juntos. Saber que alguien está por cruzar sus <strong>10.000 días de vida</strong> (alrededor de los 27 años y 4 meses), o recordar qué día de la semana nació, convierte un saludo de rutina en una anécdota que toda la mesa comenta.
+    </p>
+    <p>
+      Si buscás salir de las frases repetidas de redes sociales, generá primero un acróstico breve con el nombre del agasajado o completá los tres pasos del armador guiado con una referencia concreta. Después podés copiar el texto o pasarlo por el <a href="/feliz-cumpleanos-mama/">personalizador de tarjetas visuales</a> para sumar foto propia, paletas editoriales e impresión postal.
+    </p>
+    <p>
+      Para explorar más ideas organizadas por temporada del año, entrá al mapa completo de <a href="/categorias/#meses">cumpleaños por meses</a> o revisá el perfil de cada fecha en el <a href="/horoscopo/">horóscopo de cumpleaños</a>.
+    </p>
+  </section>
+
+  <section class="faqs-hub" aria-labelledby="faq-herr-tit">
+    <h2 id="faq-herr-tit">Preguntas frecuentes sobre las herramientas</h2>
+    <div class="faq-lista">
+      {faqs.map((f, idx) => (
+        <details class="faq-item" open={idx === 0}>
+          <summary>{f.pregunta}</summary>
+          <p>{f.respuesta}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <script id="herr-signos-json" type="application/json" set:html={JSON.stringify(signosCliente)} />
+  <script id="herr-meses-json" type="application/json" set:html={JSON.stringify(MESES_CON_SIGNOS)} />
+  <script id="herr-versos-json" type="application/json" set:html={JSON.stringify(VERSOS_ACROSTICO)} />
+
+  <script is:inline>
+    (function () {
+      var SIGNOS = [];
+      var MESES = [];
+      var VERSOS = {};
+      try {
+        SIGNOS = JSON.parse((document.getElementById('herr-signos-json') || {}).textContent || '[]');
+        MESES = JSON.parse((document.getElementById('herr-meses-json') || {}).textContent || '[]');
+        VERSOS = JSON.parse((document.getElementById('herr-versos-json') || {}).textContent || '{}');
+      } catch (e) {}
+
+      var DIAS_SEM = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+
+      function esBisiesto(a) {
+        return (a % 4 === 0 && a % 100 !== 0) || a % 400 === 0;
+      }
+
+      function diasEnMes(a, m) {
+        return new Date(Date.UTC(a, m, 0)).getUTCDate();
+      }
+
+      function resolverSigno(mes, dia) {
+        for (var i = 0; i < SIGNOS.length; i++) {
+          var s = SIGNOS[i];
+          if ((mes === s.inicioMes && dia >= s.inicioDia) || (mes === s.finMes && dia <= s.finDia)) {
+            return s;
+          }
+        }
+        return SIGNOS[0];
+      }
+
+      // 1. CALCULADORA DE EDAD Y SIGNO
+      var inpFecha = document.getElementById('herr-calc-fecha');
+      var btnCalc = document.getElementById('herr-calc-btn');
+      var errCalc = document.getElementById('herr-calc-error');
+
+      function ejecutarCalculo() {
+        if (!inpFecha) return;
+        var val = String(inpFecha.value || '').trim();
+        var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(val);
+        if (!m) {
+          if (errCalc) { errCalc.textContent = 'Ingresá una fecha válida completa.'; errCalc.hidden = false; }
+          return;
+        }
+        var aNac = Number(m[1]), mNac = Number(m[2]), dNac = Number(m[3]);
+        var dtNac = new Date(Date.UTC(aNac, mNac - 1, dNac));
+        if (dtNac.getUTCFullYear() !== aNac || dtNac.getUTCMonth() + 1 !== mNac || dtNac.getUTCDate() !== dNac) {
+          if (errCalc) { errCalc.textContent = 'Esa fecha no existe en el calendario.'; errCalc.hidden = false; }
+          return;
+        }
+        var hoyLocal = new Date();
+        var dtRef = new Date(Date.UTC(hoyLocal.getFullYear(), hoyLocal.getMonth(), hoyLocal.getDate()));
+        if (dtNac.getTime() > dtRef.getTime()) {
+          if (errCalc) { errCalc.textContent = 'Elegí una fecha de nacimiento anterior o igual a hoy.'; errCalc.hidden = false; }
+          return;
+        }
+        if (errCalc) errCalc.hidden = true;
+
+        var aRef = dtRef.getUTCFullYear(), mRef = dtRef.getUTCMonth() + 1, dRef = dtRef.getUTCDate();
+        var anios = aRef - aNac, meses = mRef - mNac, dias = dRef - dNac;
+        if (dias < 0) {
+          meses -= 1;
+          var mp = mRef === 1 ? 12 : mRef - 1;
+          var ap = mRef === 1 ? aRef - 1 : aRef;
+          dias += diasEnMes(ap, mp);
+        }
+        if (meses < 0) {
+          anios -= 1;
+          meses += 12;
+        }
+
+        var msDia = 86400000;
+        var totalDias = Math.round((dtRef.getTime() - dtNac.getTime()) / msDia);
+        var diaSem = DIAS_SEM[dtNac.getUTCDay()];
+        var diaCap = diaSem.charAt(0).toUpperCase() + diaSem.slice(1);
+
+        function cumpleEn(y) {
+          var adj = mNac === 2 && dNac === 29 && !esBisiesto(y) ? 28 : dNac;
+          return new Date(Date.UTC(y, mNac - 1, adj));
+        }
+        var prox = cumpleEn(aRef);
+        if (prox.getTime() < dtRef.getTime()) prox = cumpleEn(aRef + 1);
+        var falta = Math.round((prox.getTime() - dtRef.getTime()) / msDia);
+        var edadProx = prox.getUTCFullYear() - aNac;
+        var d10k = new Date(dtNac.getTime() + 10000 * msDia).toISOString().slice(0, 10);
+
+        var signo = resolverSigno(mNac, dNac);
+        var mesObj = MESES[mNac - 1];
+
+        var elEdad = document.getElementById('stat-edad');
+        var elDias = document.getElementById('stat-dias');
+        var elDiaSem = document.getElementById('stat-dia-sem');
+        var elProx = document.getElementById('stat-proximo');
+        var el10k = document.getElementById('stat-10k');
+        var elSigno = document.getElementById('stat-signo');
+        var lnkSigno = document.getElementById('herr-link-signo');
+        var lnkMes = document.getElementById('herr-link-mes');
+
+        if (elEdad) elEdad.textContent = anios + ' años, ' + meses + ' m, ' + dias + ' d';
+        if (elDias) elDias.textContent = totalDias.toLocaleString('es-AR') + ' días';
+        if (elDiaSem) elDiaSem.textContent = diaCap;
+        if (elProx) {
+          elProx.textContent = falta === 0
+            ? '¡Hoy cumple ' + edadProx + ' años! 🎉'
+            : 'En ' + falta + ' días (' + edadProx + ' años)';
+        }
+        if (el10k) el10k.textContent = d10k + (totalDias >= 10000 ? ' (ya vivido)' : ' (próximo)');
+        if (elSigno && signo) elSigno.textContent = signo.simbolo + ' ' + signo.nombre + ' (' + signo.elemento + ')';
+        if (lnkSigno && signo) {
+          lnkSigno.href = '/horoscopo/' + signo.slug + '/';
+          lnkSigno.textContent = 'Ver perfil de ' + signo.nombre + ' ' + signo.simbolo + ' →';
+        }
+        if (lnkMes && mesObj) {
+          lnkMes.href = '/' + mesObj.slug + '/';
+          lnkMes.textContent = 'Frases de cumpleaños en ' + mesObj.nombreCap + ' →';
+        }
+      }
+
+      if (btnCalc) btnCalc.addEventListener('click', ejecutarCalculo);
+      if (inpFecha) inpFecha.addEventListener('change', ejecutarCalculo);
+      ejecutarCalculo();
+
+      // 2. GENERADOR DE ACROSTICOS
+      var inpAcroNom = document.getElementById('herr-acro-nombre');
+      var selAcroTono = document.getElementById('herr-acro-tono');
+      var btnAcro = document.getElementById('herr-acro-btn');
+      var ulAcro = document.getElementById('herr-acro-lista');
+      var titAcro = document.getElementById('herr-acro-titulo');
+      var btnAcroCop = document.getElementById('herr-acro-copiar');
+      var btnAcroWa = document.getElementById('herr-acro-wa');
+      var btnAcroDl = document.getElementById('herr-acro-dl');
+
+      function normLetra(ch) {
+        var u = ch.toUpperCase();
+        if (u === 'Ñ') return 'Ñ';
+        return u.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      }
+
+      function actualizarAcrostico() {
+        var raw = String((inpAcroNom && inpAcroNom.value) || 'SOFÍA').trim();
+        var tono = (selAcroTono && selAcroTono.value) || 'emotivo';
+        var letras = Array.from(raw).filter(function (c) {
+          return /[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/.test(c);
+        });
+        if (!letras.length) letras = ['A', 'M', 'O', 'R'];
+
+        var dic = VERSOS[tono] || VERSOS.emotivo || {};
+        var usados = {};
+        var lineas = letras.map(function (orig) {
+          var base = normLetra(orig);
+          var ops = dic[base] || ['Alegría sincera y paz duradera en este nuevo año para vos'];
+          var idx = usados[base] || 0;
+          usados[base] = idx + 1;
+          return { letra: orig.toUpperCase(), verso: ops[idx % ops.length] };
+        });
+
+        var nombreShow = letras.join('').toUpperCase();
+        var tituloCard = 'Acróstico para ' + nombreShow;
+        if (titAcro) titAcro.textContent = tituloCard;
+        if (ulAcro) {
+          ulAcro.innerHTML = '';
+          lineas.forEach(function (it) {
+            var li = document.createElement('li');
+            var st = document.createElement('strong');
+            st.className = 'herr-acrostico-letra';
+            st.textContent = it.letra;
+            var sp = document.createElement('span');
+            sp.textContent = it.verso;
+            li.appendChild(st);
+            li.appendChild(sp);
+            ulAcro.appendChild(li);
+          });
+        }
+
+        var cuerpo = lineas.map(function (it) { return it.letra + ' — ' + it.verso; }).join('\n');
+        var completo = tituloCard + '\n\n' + cuerpo;
+        if (btnAcroCop) btnAcroCop.setAttribute('data-text', completo);
+        if (btnAcroWa) btnAcroWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(completo));
+        if (btnAcroDl) {
+          btnAcroDl.setAttribute('data-title', tituloCard);
+          btnAcroDl.setAttribute('data-body', cuerpo);
+        }
+      }
+
+      if (btnAcro) btnAcro.addEventListener('click', actualizarAcrostico);
+      if (inpAcroNom) inpAcroNom.addEventListener('input', actualizarAcrostico);
+      if (selAcroTono) selAcroTono.addEventListener('change', actualizarAcrostico);
+
+      // 3. ARMADOR EN 3 PASOS
+      var selVinculo = document.getElementById('herr-arm-vinculo');
+      var selTono = document.getElementById('herr-arm-tono');
+      var inpArmNom = document.getElementById('herr-arm-nombre');
+      var inpArmFir = document.getElementById('herr-arm-firma');
+      var inpArmDet = document.getElementById('herr-arm-detalle');
+      var btnArm = document.getElementById('herr-arm-btn');
+      var outArm = document.getElementById('herr-arm-salida');
+      var btnArmCop = document.getElementById('herr-arm-copiar');
+      var btnArmWa = document.getElementById('herr-arm-wa');
+      var btnArmDl = document.getElementById('herr-arm-dl');
+
+      var APERTURAS = {
+        familia: {
+          emotivo: ['Querido/a ', ', hoy celebramos tu vida agradeciendo todo lo que sumás en nuestra mesa.', 'Hoy celebramos tu vida agradeciendo todo lo que sumás en nuestra mesa familiar.'],
+          breve: ['¡Muy feliz cumpleaños, ', '! Que nunca te falten salud, calma y abrazos cerca de casa.', '¡Muy feliz cumpleaños! Que nunca te falten salud, calma y abrazos cerca de casa.'],
+          humor: ['¡Feliz vuelta al sol, ', '! Prometemos no contar las velas si guardás la mejor porción de torta.', '¡Feliz vuelta al sol! Prometemos no contar las velas si guardás la mejor porción de torta.'],
+          fe: ['', ', damos gracias a Dios por tu vida y pedimos que Su paz abrace cada día de tu año nuevo.', 'Damos gracias a Dios por tu vida y pedimos que Su paz abrace cada día de tu año nuevo.']
+        },
+        pareja: {
+          emotivo: ['', ', mi amor: gracias por transformar los días comunes en mi lugar favorito del mundo.', 'Mi amor, gracias por transformar los días comunes en mi lugar favorito del mundo.'],
+          breve: ['¡Feliz cumple, ', '! Qué suerte celebrar otro año caminando codo a codo.', '¡Feliz cumple! Qué suerte celebrar otro año caminando codo a codo.'],
+          humor: ['¡Feliz cumple, ', '! Hoy elegís vos la comida y prometo no discutir ni un minuto.', '¡Feliz cumple! Hoy elegís vos la comida y prometo no discutir ni un minuto.'],
+          fe: ['', ', agradezco a Dios haber cruzado nuestros caminos; que nos siga regalando paz y alegría juntos.', 'Agradezco a Dios haber cruzado nuestros caminos; que nos siga regalando paz y alegría juntos.']
+        },
+        amistad: {
+          emotivo: ['', ', gracias por esa amistad leal que salva hasta las semanas más pesadas con una charla sincera.', 'Gracias por esa amistad leal que salva hasta las semanas más pesadas con una charla sincera.'],
+          breve: ['¡Feliz cumple, ', '! Por muchas risas, mates y planes buenos este año nuevo.', '¡Feliz cumple! Por muchas risas, mates y planes buenos este año nuevo.'],
+          humor: ['', ', ¡feliz cumple! Otro año más fingiendo ser adultos responsables pero riéndonos igual que siempre.', '¡Feliz cumple! Otro año más fingiendo ser adultos responsables pero riéndonos igual que siempre.'],
+          fe: ['', ', que Dios bendiga tu vida generosa y te regale un año sereno rodeado de afectos fieles.', 'Que Dios bendiga tu vida generosa y te regale un año sereno rodeado de afectos fieles.']
+        },
+        trabajo: {
+          emotivo: ['Estimado/a ', ', le deseo un muy feliz cumpleaños y un excelente año personal lleno de proyectos serenos.', 'Le deseo un muy feliz cumpleaños y un excelente año personal lleno de proyectos serenos.'],
+          breve: ['¡Muy feliz cumpleaños, ', '! Mis mejores deseos de salud y éxito en este nuevo ciclo.', '¡Muy feliz cumpleaños! Mis mejores deseos de salud y éxito en este nuevo ciclo.'],
+          humor: ['¡Feliz cumpleaños, ', '! Hoy permiso oficial para cerrar planillas temprano y brindar tranquilo.', '¡Feliz cumpleaños! Hoy permiso oficial para cerrar planillas temprano y brindar tranquilo.'],
+          fe: ['', ', que este nuevo año esté lleno de bendiciones, salud firme y satisfacciones en su tarea diaria.', 'Que este nuevo año esté lleno de bendiciones, salud firme y satisfacciones en su tarea diaria.']
+        }
+      };
+
+      var CIERRES = {
+        emotivo: 'Que los próximos doce meses traigan descanso verdadero, salud firme y motivos para brindar sin apuro.',
+        breve: '¡Disfrutá muchísimo tu día rodeado de gente buena!',
+        humor: 'Guardá porción de torta para el próximo brindis que nos debemos.',
+        fe: 'Que nunca falte abrigo espiritual ni alegría en tu hogar.'
+      };
+
+      function armarDedicatoria() {
+        var v = (selVinculo && selVinculo.value) || 'amistad';
+        var t = (selTono && selTono.value) || 'emotivo';
+        var nom = String((inpArmNom && inpArmNom.value) || '').trim();
+        var fir = String((inpArmFir && inpArmFir.value) || '').trim().replace(/^[—–-]\s*/, '');
+        var det = String((inpArmDet && inpArmDet.value) || '').trim();
+
+        var apDef = (APERTURAS[v] && APERTURAS[v][t]) || APERTURAS.amistad.emotivo;
+        var b1 = nom ? (apDef[0] + nom + apDef[1]) : apDef[2];
+        var b2 = '';
+        if (det) {
+          var detMin = det.charAt(0).toLowerCase() + det.slice(1).replace(/\.$/, '');
+          b2 = v === 'trabajo'
+            ? 'Siempre se valora muchísimo ' + detMin + '.'
+            : 'Todavía atesoro ' + detMin + '; en esos gestos reales se nota lo grande que sos.';
+        }
+        var b3 = CIERRES[t] || CIERRES.emotivo;
+        var texto = [b1, b2, b3].filter(Boolean).join('\n\n') + (fir ? '\n\n— ' + fir : '');
+
+        if (outArm) outArm.textContent = texto;
+        if (btnArmCop) btnArmCop.setAttribute('data-text', texto);
+        if (btnArmWa) btnArmWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(texto));
+        if (btnArmDl) {
+          btnArmDl.setAttribute('data-title', nom ? 'Para ' + nom : 'Dedicatoria personalizada');
+          btnArmDl.setAttribute('data-body', texto);
+        }
+      }
+
+      if (btnArm) btnArm.addEventListener('click', armarDedicatoria);
+      [selVinculo, selTono, inpArmNom, inpArmFir, inpArmDet].forEach(function (el) {
+        if (el) el.addEventListener('input', armarDedicatoria);
+      });
+
+      // 4. AGENDA PRIVADA DE CUMPLEANOS CON DESCARGA .ICS
+      var STORAGE_AG = 'pc_agenda_cumples_v1';
+      var formAg = document.getElementById('herr-ag-form');
+      var ulAg = document.getElementById('herr-ag-lista');
+      var vacioAg = document.getElementById('herr-ag-vacio');
+
+      function cargarAgenda() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_AG) || '[]') || [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function guardarAgenda(lista) {
+        try {
+          localStorage.setItem(STORAGE_AG, JSON.stringify(lista));
+        } catch (e) {}
+      }
+
+      function diasHasta(mes, dia) {
+        var hoy = new Date();
+        var ref = new Date(Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()));
+        function fechaAnio(y) {
+          var adj = mes === 2 && dia === 29 && !esBisiesto(y) ? 28 : dia;
+          return new Date(Date.UTC(y, mes - 1, adj));
+        }
+        var prox = fechaAnio(ref.getUTCFullYear());
+        if (prox.getTime() < ref.getTime()) prox = fechaAnio(ref.getUTCFullYear() + 1);
+        return Math.round((prox.getTime() - ref.getTime()) / 86400000);
+      }
+
+      function generarContenidoIcs(item) {
+        var anio = new Date().getFullYear();
+        var mm = String(item.mes).padStart(2, '0');
+        var dd = String(item.dia).padStart(2, '0');
+        var dt = anio + mm + dd;
+        var dtEnd = new Date(Date.UTC(anio, item.mes - 1, item.dia + 1)).toISOString().slice(0, 10).replace(/-/g, '');
+        var mesObj = MESES[item.mes - 1] || MESES[0];
+        var signo = resolverSigno(item.mes, item.dia);
+        var rel = item.relacion ? ' (' + item.relacion + ')' : '';
+        var uid = 'cumple-' + item.nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + mm + dd + '@paracumpleanos.com';
+        var stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+        return [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//ParaCumpleanos//Agenda Cumpleanos//ES',
+          'CALSCALE:GREGORIAN',
+          'BEGIN:VEVENT',
+          'UID:' + uid,
+          'DTSTAMP:' + stamp,
+          'DTSTART;VALUE=DATE:' + dt,
+          'DTEND;VALUE=DATE:' + dtEnd,
+          'RRULE:FREQ=YEARLY',
+          'SUMMARY:Cumpleaños de ' + item.nombre + rel,
+          'DESCRIPTION:Recordatorio anual ParaCumpleanos.com (' + signo.nombre + '). Ideas en https://paracumpleanos.com/' + mesObj.slug + '/ y https://paracumpleanos.com/horoscopo/' + signo.slug + '/',
+          'BEGIN:VALARM',
+          'TRIGGER:-P2D',
+          'ACTION:DISPLAY',
+          'DESCRIPTION:Faltan 2 días para el cumpleaños de ' + item.nombre,
+          'END:VALARM',
+          'BEGIN:VALARM',
+          'TRIGGER:PT9H',
+          'ACTION:DISPLAY',
+          'DESCRIPTION:Hoy cumple años ' + item.nombre,
+          'END:VALARM',
+          'END:VEVENT',
+          'END:VCALENDAR'
+        ].join('\r\n');
+      }
+
+      function renderAgenda() {
+        if (!ulAg) return;
+        var lista = cargarAgenda();
+        lista.sort(function (a, b) {
+          return diasHasta(a.mes, a.dia) - diasHasta(b.mes, b.dia);
+        });
+        ulAg.innerHTML = '';
+        if (vacioAg) vacioAg.hidden = lista.length > 0;
+
+        lista.forEach(function (item) {
+          var mesObj = MESES[item.mes - 1] || MESES[0];
+          var signo = resolverSigno(item.mes, item.dia);
+          var falta = diasHasta(item.mes, item.dia);
+          var li = document.createElement('li');
+          li.className = 'herr-agenda-item';
+
+          var info = document.createElement('div');
+          info.className = 'herr-agenda-info';
+
+          var nom = document.createElement('span');
+          nom.className = 'herr-agenda-nombre';
+          nom.textContent = item.nombre + (item.relacion ? ' (' + item.relacion + ')' : '');
+
+          var meta = document.createElement('span');
+          meta.className = 'herr-agenda-meta';
+          meta.innerHTML =
+            item.dia + ' de ' + mesObj.nombreCap + ' · ' +
+            (falta === 0 ? '¡Hoy cumple años! 🎉' : 'Faltan ' + falta + ' días') +
+            ' · <a href="/horoscopo/' + signo.slug + '/">' + signo.simbolo + ' ' + signo.nombre + '</a>' +
+            ' · <a href="/' + mesObj.slug + '/">Frases de ' + mesObj.nombreCap + '</a>';
+
+          info.appendChild(nom);
+          info.appendChild(meta);
+
+          var acc = document.createElement('div');
+          acc.className = 'herr-agenda-acciones';
+
+          var btnIcs = document.createElement('button');
+          btnIcs.type = 'button';
+          btnIcs.className = 'btn btn-descargar btn-sm';
+          btnIcs.textContent = 'Descargar .ics';
+          btnIcs.addEventListener('click', function () {
+            var icsText = generarContenidoIcs(item);
+            var blob = new Blob([icsText], { type: 'text/calendar;charset=utf-8' });
+            var urlBlob = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = urlBlob;
+            a.download = 'cumple-' + item.nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.ics';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(function () { URL.revokeObjectURL(urlBlob); }, 1000);
+            if (window.pcMostrarToast) {
+              window.pcMostrarToast('✓ Evento anual .ics descargado para tu calendario.');
+            }
+          });
+
+          var btnDel = document.createElement('button');
+          btnDel.type = 'button';
+          btnDel.className = 'pers-limpiar btn-sm';
+          btnDel.textContent = 'Quitar';
+          btnDel.addEventListener('click', function () {
+            var nueva = cargarAgenda().filter(function (x) { return x.id !== item.id; });
+            guardarAgenda(nueva);
+            renderAgenda();
+          });
+
+          acc.appendChild(btnIcs);
+          acc.appendChild(btnDel);
+
+          li.appendChild(info);
+          li.appendChild(acc);
+          ulAg.appendChild(li);
+        });
+      }
+
+      if (formAg) {
+        formAg.addEventListener('submit', function (ev) {
+          ev.preventDefault();
+          var nom = String((document.getElementById('herr-ag-nombre') || {}).value || '').trim();
+          var rel = String((document.getElementById('herr-ag-relacion') || {}).value || 'Familia');
+          var mes = Number((document.getElementById('herr-ag-mes') || {}).value || '1');
+          var dia = Number((document.getElementById('herr-ag-dia') || {}).value || '1');
+          if (!nom || dia < 1 || dia > 31 || mes < 1 || mes > 12) return;
+          var maxDiaMes = diasEnMes(2024, mes);
+          if (dia > maxDiaMes) dia = maxDiaMes;
+
+          var lista = cargarAgenda();
+          lista.push({
+            id: String(Date.now()) + '-' + Math.random().toString(36).slice(2, 6),
+            nombre: nom,
+            relacion: rel,
+            mes: mes,
+            dia: dia
+          });
+          guardarAgenda(lista);
+          formAg.reset();
+          var diaEl = document.getElementById('herr-ag-dia');
+          if (diaEl) diaEl.value = '15';
+          renderAgenda();
+          if (window.pcMostrarToast) {
+            window.pcMostrarToast('✓ Cumpleaños de ' + nom + ' guardado en tu agenda privada.');
+          }
+        });
+      }
+
+      renderAgenda();
+    })();
+  </script>
+</Base>

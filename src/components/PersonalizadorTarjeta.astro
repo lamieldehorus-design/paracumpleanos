@@ -115,6 +115,14 @@ const formatos = Object.values(FORMATOS_TARJETA);
       </div>
     </div>
 
+    <div class="pers-campo">
+      <label for="pers-foto">Foto propia opcional (100% privada en tu dispositivo)</label>
+      <div class="pers-foto-fila">
+        <input id="pers-foto" type="file" accept="image/*" class="pers-foto-input" />
+        <button type="button" id="pers-foto-quitar" class="pers-limpiar" hidden>Quitar foto</button>
+      </div>
+    </div>
+
     <div class="pers-acciones">
       <button type="button" id="pers-limpiar" class="pers-limpiar">Restablecer todo</button>
     </div>
@@ -128,6 +136,8 @@ const formatos = Object.values(FORMATOS_TARJETA);
     var inputFirma = document.getElementById('pers-firma');
     var inputSub = document.getElementById('pers-subtitulo');
     var inputPosdata = document.getElementById('pers-posdata');
+    var inputFoto = document.getElementById('pers-foto');
+    var btnQuitarFoto = document.getElementById('pers-foto-quitar');
     var btnLimpiar = document.getElementById('pers-limpiar');
     var estadoEl = document.getElementById('pers-estado');
     var temaBtns = document.querySelectorAll('.pers-tema-btn');
@@ -250,6 +260,33 @@ const formatos = Object.values(FORMATOS_TARJETA);
     var iconoActual = '';
     var fuenteActual = 'editorial';
     var formatoActual = 'cuadrada';
+    var fotoDataUrl = '';
+
+    function sincronizarFotoTarjeta(card) {
+      var wrap = card.querySelector('.tarjeta-visual-foto-wrap');
+      if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.className = 'tarjeta-visual-foto-wrap';
+        var img = document.createElement('img');
+        img.className = 'tarjeta-visual-foto';
+        img.alt = 'Foto personalizada para la tarjeta';
+        wrap.appendChild(img);
+        var titRef = card.querySelector('.tarjeta-visual-titulo');
+        if (titRef && titRef.parentNode === card) {
+          card.insertBefore(wrap, titRef);
+        } else {
+          card.appendChild(wrap);
+        }
+      }
+      var imgEl = wrap.querySelector('.tarjeta-visual-foto');
+      if (fotoDataUrl && imgEl) {
+        imgEl.src = fotoDataUrl;
+        wrap.hidden = false;
+      } else {
+        wrap.hidden = true;
+        if (imgEl) imgEl.removeAttribute('src');
+      }
+    }
 
     function aplicarTema(temaId) {
       var elegido = null;
@@ -331,6 +368,7 @@ const formatos = Object.values(FORMATOS_TARJETA);
           subEl.textContent = subLimpio;
           subEl.hidden = !subLimpio;
         }
+        sincronizarFotoTarjeta(card);
       });
 
       document.querySelectorAll('.btn-descargar').forEach(function (btn) {
@@ -420,11 +458,12 @@ const formatos = Object.values(FORMATOS_TARJETA);
       var pLimpia = limpiarCampo(posdata, 120);
 
       if (estadoEl) {
-        if (nLimpio || fLimpia || sLimpio || pLimpia || iconoActual || fuenteActual !== 'editorial' || formatoActual !== 'cuadrada') {
+        if (nLimpio || fLimpia || sLimpio || pLimpia || fotoDataUrl || iconoActual || fuenteActual !== 'editorial' || formatoActual !== 'cuadrada') {
           var partes = [];
           if (nLimpio) partes.push('para ' + nLimpio);
           if (fLimpia) partes.push('firmado por ' + fLimpia);
           if (pLimpia) partes.push('con posdata');
+          if (fotoDataUrl) partes.push('con foto propia');
           if (formatoActual === 'story') partes.push('formato Story 9:16');
           estadoEl.textContent = partes.length
             ? 'Vista previa personalizada activa (' + partes.join(' · ') + ').'
@@ -451,6 +490,41 @@ const formatos = Object.values(FORMATOS_TARJETA);
     inputFirma.addEventListener('input', function () { aplicarTodo(true); });
     if (inputSub) inputSub.addEventListener('input', function () { aplicarTodo(true); });
     if (inputPosdata) inputPosdata.addEventListener('input', function () { aplicarTodo(true); });
+
+    if (inputFoto) {
+      inputFoto.addEventListener('change', function () {
+        var archivo = inputFoto.files && inputFoto.files[0];
+        if (!archivo) return;
+        if (!archivo.type || archivo.type.indexOf('image/') !== 0) {
+          if (window.pcMostrarToast) window.pcMostrarToast('Elegí un archivo de imagen válido (JPG, PNG o WebP).');
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+          var src = String((ev.target && ev.target.result) || '');
+          if (!src) return;
+          var imgObj = new Image();
+          imgObj.onload = function () {
+            fotoDataUrl = src;
+            window.__pcTarjetaFotoImg = imgObj;
+            if (btnQuitarFoto) btnQuitarFoto.hidden = false;
+            aplicarTodo(false);
+          };
+          imgObj.src = src;
+        };
+        reader.readAsDataURL(archivo);
+      });
+    }
+
+    if (btnQuitarFoto) {
+      btnQuitarFoto.addEventListener('click', function () {
+        fotoDataUrl = '';
+        window.__pcTarjetaFotoImg = null;
+        if (inputFoto) inputFoto.value = '';
+        btnQuitarFoto.hidden = true;
+        aplicarTodo(false);
+      });
+    }
 
     temaBtns.forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -486,6 +560,10 @@ const formatos = Object.values(FORMATOS_TARJETA);
         inputFirma.value = '';
         if (inputSub) inputSub.value = '';
         if (inputPosdata) inputPosdata.value = '';
+        fotoDataUrl = '';
+        window.__pcTarjetaFotoImg = null;
+        if (inputFoto) inputFoto.value = '';
+        if (btnQuitarFoto) btnQuitarFoto.hidden = true;
         iconoActual = '';
         fuenteActual = 'editorial';
         formatoActual = 'cuadrada';

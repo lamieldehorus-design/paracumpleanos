@@ -21,6 +21,8 @@ export const GRUPOS: GrupoInfo[] = [
   { id: 'familia', nombre: 'Familia política y extendida', emoji: '🏡' },
   { id: 'profesionales', nombre: 'Trabajo, escuela y profesión', emoji: '💼' },
   { id: 'aniversarios', nombre: 'Aniversarios y meses de novios', emoji: '💑' },
+  { id: 'meses', nombre: 'Cumpleaños por mes y signo', emoji: '🗓️' },
+  { id: 'fechas_hitos', nombre: 'Fechas especiales e hitos de vida', emoji: '💐' },
   { id: 'especiales', nombre: 'Ocasiones especiales', emoji: '✨' }
 ];
 
@@ -180,17 +182,24 @@ export function construirSetIndexables(todosMensajes: any[]): Set<string> {
 
 export function generarUrlsSitio(
   catalogo: ReturnType<typeof crearCatalogo>,
-  slugsGuias: string[] = []
+  slugsGuias: string[] = [],
+  slugsSignos: string[] = []
 ): string[] {
   const urls: string[] = [
     `${SITIO}/`,
     `${SITIO}/categorias/`,
+    `${SITIO}/herramientas/`,
+    `${SITIO}/horoscopo/`,
     `${SITIO}/guias/`,
     `${SITIO}/sobre-nosotros/`,
     `${SITIO}/contacto/`,
     `${SITIO}/privacidad/`,
     `${SITIO}/terminos-de-uso/`
   ];
+
+  for (const slugSigno of slugsSignos) {
+    urls.push(`${SITIO}/horoscopo/${slugSigno}/`);
+  }
 
   for (const slugGuia of slugsGuias) {
     urls.push(`${SITIO}/guias/${slugGuia}/`);

@@ -73,12 +73,11 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         <span class="logo-fallback" style="display:none">ParaCumpleanos 🎂</span>
       </a>
       <nav class="nav-principal" aria-label="Navegación principal">
-        <a href="/feliz-cumpleanos-mama/">Mamá</a>
-        <a href="/feliz-cumpleanos-amiga/">Amiga</a>
+        <a href="/herramientas/">Herramientas</a>
+        <a href="/horoscopo/">Horóscopo</a>
         <a href="/motivaciones/">Motivaciones</a>
-        <a href="/categorias/#cartas">Cartas</a>
+        <a href="/categorias/#meses">Meses</a>
         <a href="/guias/">Guías</a>
-        <a href="/sobre-nosotros/">Nosotros</a>
         <a href="/contacto/">Contacto</a>
       </nav>
       <a class="nav-cta" href="/categorias/">{hubs.length} categorías</a>
@@ -144,6 +143,9 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
     <p>ParaCumpleanos — {hubs.length} colecciones, {GUIAS_EDITORIALES.length} guías prácticas y {todosMensajes.length.toLocaleString('es-AR')} textos originales en español.</p>
     <nav aria-label="Páginas institucionales">
       <a href="/">Inicio</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="/horoscopo/">Horóscopo</a>
+      <a href="/categorias/#meses">Meses</a>
       <a href="/categorias/">Categorías</a>
       <a href="/motivaciones/">Motivaciones</a>
       <a href="/guias/">Guías</a>
@@ -260,14 +262,19 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           });
         }
 
+        var fotoImg = window.__pcTarjetaFotoImg && window.__pcTarjetaFotoImg.naturalWidth ? window.__pcTarjetaFotoImg : null;
         var famTit = fuente === 'moderna' ? 'system-ui, -apple-system, sans-serif' : 'Georgia, serif';
         var famCuerpo = fuente === 'calida' ? 'Georgia, serif' : 'system-ui, -apple-system, sans-serif';
         var titleFont = (fuente === 'calida' ? 'italic bold ' : 'bold ') + (formato === 'story' ? '48px ' : '44px ') + famTit;
         var tLines = wrapLineas(tituloCard, 860, titleFont);
         var titleLineH = formato === 'story' ? 62 : 56;
-        var baseTopEmoji = formato === 'story' ? 240 : 165;
-        var baseTopSub = subtitulo ? baseTopEmoji + 70 : baseTopEmoji;
-        var baseTopTitle = (subtitulo ? baseTopSub + 66 : baseTopEmoji + 85);
+        var baseTopEmoji = formato === 'story' ? 210 : 145;
+        var baseTopSub = subtitulo ? baseTopEmoji + 68 : baseTopEmoji;
+        var fotoSize = formato === 'story' ? 250 : 210;
+        var fotoTop = (subtitulo ? baseTopSub + 46 : baseTopEmoji + 46);
+        var baseTopTitle = fotoImg
+          ? fotoTop + fotoSize + 64
+          : (subtitulo ? baseTopSub + 66 : baseTopEmoji + 85);
         var yStartBody = baseTopTitle + tLines.length * titleLineH + 30;
         var bottomReserved = formato === 'story' ? 180 : 150;
 
@@ -308,7 +315,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
         ctx.fillStyle = cAcento;
         ctx.textAlign = 'center';
-        ctx.font = (formato === 'story' ? '88px ' : '72px ') + 'system-ui, sans-serif';
+        ctx.font = (formato === 'story' ? '82px ' : '68px ') + 'system-ui, sans-serif';
         ctx.fillText(emojiCard, W / 2, baseTopEmoji);
 
         if (subtitulo) {
@@ -316,7 +323,51 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           ctx.fillText(subtitulo.toUpperCase(), W / 2, baseTopSub);
         }
 
+        if (fotoImg) {
+          var fx = Math.round((W - fotoSize) / 2);
+          var fy = Math.round(fotoTop);
+          var rad = 24;
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(fx + rad, fy);
+          ctx.lineTo(fx + fotoSize - rad, fy);
+          ctx.quadraticCurveTo(fx + fotoSize, fy, fx + fotoSize, fy + rad);
+          ctx.lineTo(fx + fotoSize, fy + fotoSize - rad);
+          ctx.quadraticCurveTo(fx + fotoSize, fy + fotoSize, fx + fotoSize - rad, fy + fotoSize);
+          ctx.lineTo(fx + rad, fy + fotoSize);
+          ctx.quadraticCurveTo(fx, fy + fotoSize, fx, fy + fotoSize - rad);
+          ctx.lineTo(fx, fy + rad);
+          ctx.quadraticCurveTo(fx, fy, fx + rad, fy);
+          ctx.closePath();
+          ctx.clip();
+          var iw = fotoImg.naturalWidth;
+          var ih = fotoImg.naturalHeight;
+          var escFoto = Math.max(fotoSize / iw, fotoSize / ih);
+          var dw = iw * escFoto;
+          var dh = ih * escFoto;
+          ctx.drawImage(fotoImg, fx + (fotoSize - dw) / 2, fy + (fotoSize - dh) / 2, dw, dh);
+          ctx.restore();
+
+          ctx.save();
+          ctx.strokeStyle = cBorde;
+          ctx.lineWidth = 6;
+          ctx.beginPath();
+          ctx.moveTo(fx + rad, fy);
+          ctx.lineTo(fx + fotoSize - rad, fy);
+          ctx.quadraticCurveTo(fx + fotoSize, fy, fx + fotoSize, fy + rad);
+          ctx.lineTo(fx + fotoSize, fy + fotoSize - rad);
+          ctx.quadraticCurveTo(fx + fotoSize, fy + fotoSize, fx + fotoSize - rad, fy + fotoSize);
+          ctx.lineTo(fx + rad, fy + fotoSize);
+          ctx.quadraticCurveTo(fx, fy + fotoSize, fx, fy + fotoSize - rad);
+          ctx.lineTo(fx, fy + rad);
+          ctx.quadraticCurveTo(fx, fy, fx + rad, fy);
+          ctx.closePath();
+          ctx.stroke();
+          ctx.restore();
+        }
+
         ctx.font = titleFont;
+        ctx.fillStyle = cAcento;
         var y = baseTopTitle;
         for (var i = 0; i < tLines.length; i++) {
           ctx.fillText(tLines[i], W / 2, y);
@@ -436,6 +487,14 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
             }, 'image/png');
           } else {
             fallbackDescargaIg();
+          }
+          return;
+        }
+
+        var imp = e.target.closest ? e.target.closest('.btn-imprimir') : null;
+        if (imp) {
+          if (typeof window.print === 'function') {
+            window.print();
           }
         }
       });

@@ -1,0 +1,124 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  ZODIACOS,
+  MESES_CON_SIGNOS,
+  resolverSignoPorDiaMes,
+  calcularEstadisticasCumpleanos,
+  generarAcrostico,
+  construirDedicatoriaGuiada,
+  construirIcsCumpleanos,
+  signoPorSlug,
+  mesInfoPorSlug
+} from './horoscopo';
+
+test('todos los 12 signos y los 12 meses mantienen enlaces bidireccionales consistentes', () => {
+  assert.equal(ZODIACOS.length, 12);
+  assert.equal(MESES_CON_SIGNOS.length, 12);
+
+  for (const signo of ZODIACOS) {
+    assert.equal(signo.mesesSlugs.length, 2);
+    assert.equal(signo.frasesCumpleanos.length, 3);
+    assert.equal(signo.faqs.length, 3);
+    assert.equal(signo.ideasRegalo.length, 3);
+
+    for (const mesSlug of signo.mesesSlugs) {
+      const mesInfo = mesInfoPorSlug(mesSlug);
+      assert.ok(mesInfo, `Mes inexistente en ${signo.slug}: ${mesSlug}`);
+      assert.ok(
+        mesInfo.signos.some((s) => s.slug === signo.slug),
+        `El mes ${mesSlug} no enlaza de vuelta al signo ${signo.slug}`
+      );
+    }
+  }
+
+  for (const mesInfo of MESES_CON_SIGNOS) {
+    assert.equal(mesInfo.signos.length, 2);
+    for (const ref of mesInfo.signos) {
+      const signo = signoPorSlug(ref.slug);
+      assert.ok(signo, `Signo inexistente en ${mesInfo.slug}: ${ref.slug}`);
+      assert.ok(
+        signo.mesesSlugs.includes(mesInfo.slug),
+        `El signo ${signo.slug} no incluye al mes ${mesInfo.slug}`
+      );
+    }
+  }
+});
+
+test('resolverSignoPorDiaMes cubre exactamente las fechas frontera de los 12 signos', () => {
+  assert.equal(resolverSignoPorDiaMes(3, 20).slug, 'piscis');
+  assert.equal(resolverSignoPorDiaMes(3, 21).slug, 'aries');
+  assert.equal(resolverSignoPorDiaMes(4, 19).slug, 'aries');
+  assert.equal(resolverSignoPorDiaMes(4, 20).slug, 'tauro');
+  assert.equal(resolverSignoPorDiaMes(5, 20).slug, 'tauro');
+  assert.equal(resolverSignoPorDiaMes(5, 21).slug, 'geminis');
+  assert.equal(resolverSignoPorDiaMes(6, 20).slug, 'geminis');
+  assert.equal(resolverSignoPorDiaMes(6, 21).slug, 'cancer');
+  assert.equal(resolverSignoPorDiaMes(12, 21).slug, 'sagitario');
+  assert.equal(resolverSignoPorDiaMes(12, 22).slug, 'capricornio');
+  assert.equal(resolverSignoPorDiaMes(1, 19).slug, 'capricornio');
+  assert.equal(resolverSignoPorDiaMes(1, 20).slug, 'acuario');
+  assert.equal(resolverSignoPorDiaMes(2, 29).slug, 'piscis');
+});
+
+test('calcularEstadisticasCumpleanos calcula edad exacta, 10000 dias, bisiestos y enlace mes/signo', () => {
+  const stats = calcularEstadisticasCumpleanos('1995-06-05', '2026-11-19');
+  assert.equal(stats.anios, 31);
+  assert.equal(stats.meses, 5);
+  assert.equal(stats.dias, 14);
+  assert.equal(stats.diaSemanaNacimiento, 'lunes');
+  assert.equal(stats.signo.slug, 'geminis');
+  assert.equal(stats.mesSlug, 'cumpleanos-en-junio');
+  assert.equal(stats.hito10MilDiasIso, '2022-10-21');
+  assert.equal(stats.hito10MilDiasPasado, true);
+  assert.equal(stats.proximoCumpleIso, '2027-06-05');
+  assert.equal(stats.edadProximoCumple, 32);
+
+  // Año bisiesto 29 de febrero ajustado al 28 en 2027
+  const statsBisiesto = calcularEstadisticasCumpleanos('2000-02-29', '2026-11-19');
+  assert.equal(statsBisiesto.signo.slug, 'piscis');
+  assert.equal(statsBisiesto.mesSlug, 'cumpleanos-en-febrero');
+  assert.equal(statsBisiesto.proximoCumpleIso, '2027-02-28');
+});
+
+test('generarAcrostico maneja tildes, eñe, letras repetidas y los 3 tonos', () => {
+  const ac = generarAcrostico('Sofía', 'emotivo');
+  assert.equal(ac.length, 5);
+  assert.deepEqual(
+    ac.map((l) => l.letra),
+    ['S', 'O', 'F', 'Í', 'A']
+  );
+  assert.ok(ac.every((l) => l.verso.length >= 25));
+
+  const acHumor = generarAcrostico('Ana', 'humor');
+  assert.equal(acHumor.length, 3);
+  assert.notEqual(acHumor[0].verso, acHumor[2].verso, 'Letras repetidas deben alternar verso');
+
+  const acEne = generarAcrostico('Iñaki', 'fe');
+  assert.equal(acEne[1].letra, 'Ñ');
+});
+
+test('construirDedicatoriaGuiada y construirIcsCumpleanos producen salidas validas', () => {
+  const texto = construirDedicatoriaGuiada({
+    vinculo: 'amistad',
+    tono: 'emotivo',
+    nombre: 'Camila',
+    detalle: 'aquella charla infinita de verano con mates',
+    firma: 'Martín'
+  });
+  assert.ok(texto.includes('Camila'));
+  assert.ok(texto.includes('aquella charla infinita de verano con mates'));
+  assert.ok(texto.includes('— Martín'));
+
+  const ics = construirIcsCumpleanos({
+    nombre: 'Mamá',
+    mes: 5,
+    dia: 25,
+    relacion: 'mamá',
+    anioBase: 2026
+  });
+  assert.ok(ics.includes('RRULE:FREQ=YEARLY'));
+  assert.ok(ics.includes('DTSTART;VALUE=DATE:20260525'));
+  assert.ok(ics.includes('https://paracumpleanos.com/cumpleanos-en-mayo/'));
+  assert.ok(ics.includes('https://paracumpleanos.com/horoscopo/geminis/'));
+});

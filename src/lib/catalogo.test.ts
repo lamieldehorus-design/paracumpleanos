@@ -16,6 +16,7 @@ import {
   HERMANAS
 } from './catalogo';
 import { GUIAS_EDITORIALES } from '../data/guias';
+import { ZODIACOS, MESES_CON_SIGNOS } from './horoscopo';
 import {
   TEMAS_TARJETA,
   ICONOS_TARJETA,
@@ -67,17 +68,18 @@ function cargarDatosCompletos() {
   return all;
 }
 
-test('catalogo contiene exactamente 352 categorias y 40 mensajes por categoria (14080 todos unicos)', () => {
+test('catalogo contiene exactamente 380 categorias y 40 mensajes por categoria (15200 todos unicos)', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
-  assert.equal(cat.hubs.length, 352, `Se esperaban 352 hubs, hay ${cat.hubs.length}`);
+  assert.equal(cat.hubs.length, 380, `Se esperaban 380 hubs, hay ${cat.hubs.length}`);
   assert.ok(cat.hubsPorSlug.has('motivaciones'), 'Debe existir el hub /motivaciones/');
-  assert.equal(cat.todosMensajes.length, 352 * 40, `Se esperaban ${352 * 40} mensajes, hay ${cat.todosMensajes.length}`);
+  assert.ok(cat.hubsPorSlug.has('cumpleanos-en-junio'), 'Debe existir el hub /cumpleanos-en-junio/');
+  assert.equal(cat.todosMensajes.length, 380 * 40, `Se esperaban ${380 * 40} mensajes, hay ${cat.todosMensajes.length}`);
   assert.equal(
     new Set(cat.todosMensajes.map((m) => String(m.texto || '').trim())).size,
-    14080,
-    'Todos los 14080 mensajes deben tener cuerpo unico sin duplicados'
+    15200,
+    'Todos los 15200 mensajes deben tener cuerpo unico sin duplicados'
   );
 
   for (const hub of cat.hubs) {
@@ -124,10 +126,10 @@ test('descripciones lead, seoTitulo y seoTexto son unicos y ningun titulo queda 
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
-  assert.equal(new Set(cat.hubs.map((h) => h.lead)).size, 352, 'Cada categoria debe tener una descripcion lead unica');
-  assert.equal(new Set(cat.hubs.map((h) => h.seoTitulo)).size, 352, 'Cada categoria debe tener un seoTitulo unico');
-  assert.equal(new Set(cat.hubs.map((h) => h.seoTexto)).size, 352, 'Cada categoria debe tener un seoTexto unico');
-  assert.equal(new Set(cat.hubs.map((h) => h.titulo)).size, 352, 'Cada categoria debe tener un titulo unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.lead)).size, 380, 'Cada categoria debe tener una descripcion lead unica');
+  assert.equal(new Set(cat.hubs.map((h) => h.seoTitulo)).size, 380, 'Cada categoria debe tener un seoTitulo unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.seoTexto)).size, 380, 'Cada categoria debe tener un seoTexto unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.titulo)).size, 380, 'Cada categoria debe tener un titulo unico');
 
   const cortePrep = /(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(de|del|en|con|a|al|para|por|sin|y|el|la|los|las|un|una|tu|su)$/i;
   for (const h of cat.hubs) {
@@ -244,7 +246,7 @@ test('modulo editorial genera 20 perfiles distintos, citas, FAQs y posdatas cohe
     }
   }
 
-  assert.ok(perfilesEncontrados.size >= 19, `Se esperaban al menos 19 perfiles editoriales distintos, hay ${perfilesEncontrados.size}`);
+  assert.ok(perfilesEncontrados.size >= 22, `Se esperaban al menos 22 perfiles editoriales distintos, hay ${perfilesEncontrados.size}`);
   assert.ok(ejConcretos.size >= 30, `Se esperaban al menos 30 variaciones de ejemplos concretos, hay ${ejConcretos.size}`);
 
   const hubDuelo = cat.hubsPorSlug.get('felicitaciones-a-madre-fallecida');
@@ -269,7 +271,7 @@ test('construirSetIndexables prioriza contenido real y unicidad sin minimo artif
   const cat = crearCatalogo(datos);
   const indexables = construirSetIndexables(cat.todosMensajes);
 
-  assert.equal(indexables.size, 14080, `Se esperaban 14080 mensajes con contenido y slug unicos, hay ${indexables.size}`);
+  assert.equal(indexables.size, 15200, `Se esperaban 15200 mensajes con contenido y slug unicos, hay ${indexables.size}`);
   const cuerpos = new Set<string>();
   for (const m of cat.todosMensajes) {
     assert.ok(indexables.has(m.slug), `Mensaje con contenido valido excluido: ${m.slug}`);
@@ -292,7 +294,7 @@ test('guias editoriales cumplen checklist completo SEO y GEO 2026 para guias act
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
 
-  assert.equal(GUIAS_EDITORIALES.length, 30, `Se esperaban 30 guias editoriales, hay ${GUIAS_EDITORIALES.length}`);
+  assert.equal(GUIAS_EDITORIALES.length, 36, `Se esperaban 36 guias editoriales, hay ${GUIAS_EDITORIALES.length}`);
   const slugsGuias = new Set<string>();
   for (const g of GUIAS_EDITORIALES) {
     assert.ok(!slugsGuias.has(g.slug), `Slug de guia duplicado: ${g.slug}`);
@@ -423,18 +425,23 @@ test('personalizador adapta saludos, cartas, bilingues, poemas y firma sin corta
   assert.equal(Object.keys(FORMATOS_TARJETA).length, 2);
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren las 15525 URLs indexables sin duplicados', () => {
+test('generarUrlsSitio y generarSitemapXml cubren las 16777 URLs indexables sin duplicados incluyendo herramientas, horoscopo y meses', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
-  const urls = generarUrlsSitio(cat, slugsGuias);
+  const slugsSignos = ZODIACOS.map((s) => s.slug);
+  const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos);
 
-  assert.equal(urls.length, 15525, `Se esperaban 15525 URLs indexables, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 15525, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(urls.length, 16777, `Se esperaban 16777 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 16777, 'Las URLs del sitemap deben ser todas unicas');
   assert.ok(urls.every((url) => url.startsWith('https://paracumpleanos.com/')));
   assert.ok(urls.every((url) => !/[?#]/.test(url)));
   assert.ok(urls.includes('https://paracumpleanos.com/'));
   assert.ok(urls.includes('https://paracumpleanos.com/categorias/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/herramientas/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/horoscopo/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/horoscopo/geminis/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/cumpleanos-en-junio/'));
   assert.ok(urls.includes('https://paracumpleanos.com/motivaciones/'));
   assert.ok(urls.includes('https://paracumpleanos.com/guias/'));
   assert.ok(urls.includes('https://paracumpleanos.com/sobre-nosotros/'));
@@ -447,18 +454,27 @@ test('generarUrlsSitio y generarSitemapXml cubren las 15525 URLs indexables sin 
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/4/'));
   assert.ok(urls.includes('https://paracumpleanos.com/hoy-celebramos-tu-autenticidad-tu-fuerza-tranquila-y-tu-enorme-corazon/'));
 
+  for (const s of ZODIACOS) {
+    for (const mSlug of s.mesesSlugs) {
+      assert.ok(cat.hubsPorSlug.has(mSlug), `Signo ${s.slug} enlaza a mes inexistente: ${mSlug}`);
+    }
+  }
+  for (const m of MESES_CON_SIGNOS) {
+    assert.ok(cat.hubsPorSlug.has(m.slug), `Falta categoria mensual ${m.slug}`);
+  }
+
   const indexables = construirSetIndexables(cat.todosMensajes);
-  assert.equal(indexables.size, 14080);
+  assert.equal(indexables.size, 15200);
 
   const xml = generarSitemapXml(urls);
   assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xml.match(/<loc>/g) || [];
-  assert.equal(locs.length, 15525);
+  assert.equal(locs.length, 16777);
   assert.ok(!xml.includes('<lastmod>'), 'No agregar lastmod sin fechas reales por URL');
 });
 
-test('Bing IndexNow cubre las 15525 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre las 16777 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -467,15 +483,16 @@ test('Bing IndexNow cubre las 15525 URLs en lotes validos de hasta 10000 y tiene
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
-  const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias));
+  const slugsSignos = ZODIACOS.map((s) => s.slug);
+  const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias, slugsSignos));
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 15525);
+  assert.equal(extraidas.length, 16777);
 
   const payloads = construirPayloadsIndexNow(extraidas);
   assert.equal(payloads.length, 2);
-  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 15525);
+  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 16777);
   assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
-  assert.equal(payloads[1].urlList.length, 5525);
+  assert.equal(payloads[1].urlList.length, 6777);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);

@@ -1,0 +1,241 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITIO, MARCA, migasLd } from '../../lib/contenido.ts';
+import { ZODIACOS, MESES_CON_SIGNOS } from '../../lib/horoscopo.ts';
+
+const titulo = `Horóscopo de cumpleaños: fechas, signos y meses - ${MARCA}`;
+const descripcion =
+  'Calculá el signo según el día de nacimiento y accedé a frases, ideas de regalos y las colecciones de cumpleaños de cada mes del año.';
+
+const faqs = [
+  {
+    pregunta: '¿Cómo se vincula cada signo zodiacal con las categorías de cumpleaños por mes?',
+    respuesta:
+      'Cada signo del zodíaco abarca dos meses consecutivos del calendario. Por ejemplo, Géminis une los cumpleaños del 21 al 31 de mayo con los del 1 al 20 de junio, por lo que en cada ficha conectamos directamente ambas colecciones mensuales.'
+  },
+  {
+    pregunta: '¿Qué pasa si alguien cumple el 29 de febrero?',
+    respuesta:
+      'Quienes nacen el 29 de febrero pertenecen al signo Piscis (del 19 de febrero al 20 de marzo). En nuestra calculadora de edad y agenda podés ingresar el 29 de febrero sin errores y el cálculo ajusta automáticamente los años no bisiestos.'
+  },
+  {
+    pregunta: '¿Puedo personalizar una tarjeta para el signo elegido?',
+    respuesta:
+      'Sí. Dentro de cada página de signo y dentro de las 12 colecciones por mes tenés nuestro estudio en vivo para agregar nombre, firma, posdata, foto propia opcional, descarga en PNG cuadrado o Story IG e impresión postal.'
+  }
+];
+
+const jsonld = [
+  migasLd([
+    { name: 'Inicio', url: SITIO + '/' },
+    { name: 'Horóscopo de cumpleaños', url: SITIO + '/horoscopo/' }
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: titulo,
+    description: descripcion,
+    url: SITIO + '/horoscopo/',
+    inLanguage: 'es'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.pregunta,
+      acceptedAnswer: { '@type': 'Answer', text: f.respuesta }
+    }))
+  }
+];
+
+const signosBuscador = ZODIACOS.map((s) => ({
+  slug: s.slug,
+  nombre: s.nombre,
+  simbolo: s.simbolo,
+  elemento: s.elemento,
+  rangoTexto: s.rangoTexto,
+  tonoIdeal: s.tonoIdeal,
+  inicioMes: s.inicioMes,
+  inicioDia: s.inicioDia,
+  finMes: s.finMes,
+  finDia: s.finDia,
+  mesesSlugs: s.mesesSlugs,
+  mesesNombres: s.mesesNombres
+}));
+---
+<Base
+  titulo={titulo}
+  descripcion={descripcion}
+  jsonld={jsonld}
+  grupoActual="meses"
+>
+  <nav class="migas" aria-label="Migas de pan">
+    <a href="/">Inicio</a> › <span>Horóscopo de cumpleaños</span>
+  </nav>
+
+  <h1>Horóscopo de cumpleaños: signos, frases y meses</h1>
+  <p class="lead">
+    Elegí el signo zodiacal de la persona homenajeada o ingresá su día y mes de nacimiento para descubrir qué tono de mensaje conecta mejor, ideas de regalo concretas y las colecciones completas de cumpleaños del mes correspondiente.
+  </p>
+
+  <!-- BUSCADOR INSTANTANEO POR DIA Y MES -->
+  <section class="horoscopo-buscador-box" aria-labelledby="hor-busq-tit">
+    <h2 id="hor-busq-tit">Calculá rápido el signo según día y mes de nacimiento</h2>
+    <div class="herr-form-grid">
+      <div class="herr-campo">
+        <label for="hor-mes-sel">Mes de nacimiento</label>
+        <select id="hor-mes-sel">
+          {MESES_CON_SIGNOS.map((m) => (
+            <option value={m.mesNum} selected={m.mesNum === 6}>{m.nombreCap}</option>
+          ))}
+        </select>
+      </div>
+      <div class="herr-campo">
+        <label for="hor-dia-inp">Día</label>
+        <input id="hor-dia-inp" type="number" min="1" max="31" value="5" />
+      </div>
+    </div>
+
+    <div id="hor-busq-res" class="horoscopo-buscador-res" aria-live="polite">
+      <p style="margin:0 0 8px;">
+        <strong>♊ Géminis</strong> (21 de mayo al 20 de junio) · Elemento <strong>Aire</strong> · Tono sugerido: <em>Ingenio fresco, complicidad y ritmo ágil</em>.
+      </p>
+      <div class="herr-links-resultado" style="border-top:none;padding-top:0;">
+        <a id="hor-res-signo" class="chip" href="/horoscopo/geminis/">Abrir guía completa de Géminis →</a>
+        <a id="hor-res-mes1" class="chip" href="/cumpleanos-en-mayo/">Cumpleaños en Mayo →</a>
+        <a id="hor-res-mes2" class="chip" href="/cumpleanos-en-junio/">Cumpleaños en Junio →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRILLA DE LOS 12 SIGNOS -->
+  <section aria-labelledby="hor-grid-tit">
+    <h2 id="hor-grid-tit">Los 12 signos del zodíaco y sus meses de cumpleaños</h2>
+    <div class="horoscopo-grid">
+      {ZODIACOS.map((s) => (
+        <article class="horoscopo-card">
+          <div class="horoscopo-card-top">
+            <h3>
+              <a href={`/horoscopo/${s.slug}/`}>{s.simbolo} {s.nombre}</a>
+            </h3>
+            <span class="horoscopo-elemento">{s.elemento}</span>
+          </div>
+          <p class="horoscopo-rango">{s.rangoTexto}</p>
+          <p class="horoscopo-resumen">
+            <strong>Tono ideal:</strong> {s.tonoIdeal}. {s.comoSaludar}
+          </p>
+          <div class="horoscopo-enlaces-mes">
+            <span>Meses del signo:</span>
+            <a href={`/${s.mesesSlugs[0]}/`}>{s.mesesNombres[0]}</a>
+            <span aria-hidden="true">·</span>
+            <a href={`/${s.mesesSlugs[1]}/`}>{s.mesesNombres[1]}</a>
+            <span aria-hidden="true">·</span>
+            <a href={`/horoscopo/${s.slug}/`}>Ver guía →</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- TABLA COMPARATIVA DE LOS 12 SIGNOS -->
+  <section class="bloque-tabla-hub" aria-labelledby="hor-tabla-tit">
+    <h2 id="hor-tabla-tit">Tabla rápida de fechas, tonos y enlaces por mes</h2>
+    <div class="tabla-responsive">
+      <table class="tabla-comparativa">
+        <thead>
+          <tr>
+            <th>Signo</th>
+            <th>Fechas exactas</th>
+            <th>Elemento</th>
+            <th>Tono de dedicatoria</th>
+            <th>Meses vinculados</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ZODIACOS.map((s) => (
+            <tr>
+              <td><strong><a href={`/horoscopo/${s.slug}/`}>{s.simbolo} {s.nombre}</a></strong></td>
+              <td class="num-col">{s.rangoTexto}</td>
+              <td>{s.elemento}</td>
+              <td>{s.tonoIdeal}</td>
+              <td>
+                <a href={`/${s.mesesSlugs[0]}/`}>{s.mesesNombres[0]}</a> / <a href={`/${s.mesesSlugs[1]}/`}>{s.mesesNombres[1]}</a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- INDICE DE LOS 12 MESES -->
+  <section class="guia-categoria" aria-labelledby="hor-meses-tit">
+    <h2 id="hor-meses-tit">Explorá las 12 colecciones de cumpleaños por mes del año</h2>
+    <p>
+      Cada mes reúne 40 dedicatorias inéditas adaptadas a la estación y al clima de los dos signos que conviven en sus fechas:
+    </p>
+    <div class="chips">
+      {MESES_CON_SIGNOS.map((m) => (
+        <a class="chip" href={`/${m.slug}/`}>
+          {m.nombreCap} ({m.signos[0].simbolo} {m.signos[0].nombre} y {m.signos[1].simbolo} {m.signos[1].nombre})
+        </a>
+      ))}
+    </div>
+    <p class="ver-tambien">
+      ¿Querés calcular también edad exacta, horas vividas e hito de 10.000 días? Usá nuestras <a href="/herramientas/">herramientas de cumpleaños →</a>
+    </p>
+  </section>
+
+  <section class="faqs-hub" aria-labelledby="hor-faq-tit">
+    <h2 id="hor-faq-tit">Preguntas frecuentes sobre horóscopo y meses de nacimiento</h2>
+    <div class="faq-lista">
+      {faqs.map((f, idx) => (
+        <details class="faq-item" open={idx === 0}>
+          <summary>{f.pregunta}</summary>
+          <p>{f.respuesta}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <script id="hor-signos-json" type="application/json" set:html={JSON.stringify(signosBuscador)} />
+  <script is:inline>
+    (function () {
+      var SIGNOS = [];
+      try {
+        SIGNOS = JSON.parse((document.getElementById('hor-signos-json') || {}).textContent || '[]');
+      } catch (e) {}
+
+      var selMes = document.getElementById('hor-mes-sel');
+      var inpDia = document.getElementById('hor-dia-inp');
+      var resBox = document.getElementById('hor-busq-res');
+      if (!selMes || !inpDia || !resBox || !SIGNOS.length) return;
+
+      function actualizar() {
+        var mes = Number(selMes.value || '6');
+        var dia = Math.max(1, Math.min(31, Number(inpDia.value || '1')));
+        var elegido = SIGNOS[0];
+        for (var i = 0; i < SIGNOS.length; i++) {
+          var s = SIGNOS[i];
+          if ((mes === s.inicioMes && dia >= s.inicioDia) || (mes === s.finMes && dia <= s.finDia)) {
+            elegido = s;
+            break;
+          }
+        }
+        resBox.innerHTML =
+          '<p style="margin:0 0 8px;">' +
+          '<strong>' + elegido.simbolo + ' ' + elegido.nombre + '</strong> (' + elegido.rangoTexto + ') · ' +
+          'Elemento <strong>' + elegido.elemento + '</strong> · Tono sugerido: <em>' + elegido.tonoIdeal + '</em>.</p>' +
+          '<div class="herr-links-resultado" style="border-top:none;padding-top:0;">' +
+          '<a class="chip" href="/horoscopo/' + elegido.slug + '/">Abrir guía completa de ' + elegido.nombre + ' →</a>' +
+          '<a class="chip" href="/' + elegido.mesesSlugs[0] + '/">Cumpleaños en ' + elegido.mesesNombres[0] + ' →</a>' +
+          '<a class="chip" href="/' + elegido.mesesSlugs[1] + '/">Cumpleaños en ' + elegido.mesesNombres[1] + ' →</a>' +
+          '</div>';
+      }
+
+      selMes.addEventListener('change', actualizar);
+      inpDia.addEventListener('input', actualizar);
+    })();
+  </script>
+</Base>

@@ -13,6 +13,10 @@ export type ClaseTono =
 
 export type PerfilEditorial =
   | 'motivaciones'
+  | 'meses'
+  | 'fecha_especial'
+  | 'jubilacion'
+  | 'nacimiento'
   | 'duelo'
   | 'aniv_meses'
   | 'aniv_anos'
@@ -176,6 +180,10 @@ export function detectarPerfilEditorial(hub?: any, msg?: any): PerfilEditorial {
   const dest = String((hub && hub.destinatario) || (msg && msg.destinatario) || '').toLowerCase();
 
   if (slug === 'motivaciones' || slug.includes('motivacion')) return 'motivaciones';
+  if (grupo === 'meses' || /^cumpleanos-en-/.test(slug)) return 'meses';
+  if (/jubilacion/.test(slug)) return 'jubilacion';
+  if (/nacimiento|cumplemes/.test(slug)) return 'nacimiento';
+  if (/^feliz-dia-|^feliz-navidad|^feliz-ano-nuevo/.test(slug)) return 'fecha_especial';
   if (REGEX_DUELO.test(slug)) return 'duelo';
   if (/meses-de-novios/.test(slug)) return 'aniv_meses';
   if (REGEX_ANIV.test(slug)) return 'aniv_anos';
@@ -316,6 +324,16 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
   let target = 'como-personalizar-tarjetas-y-dedicatorias-whatsapp';
   if (slug === 'motivaciones') {
     target = 'como-escribir-frases-motivacionales-diarias-que-inspiren';
+  } else if (grupo === 'meses' || /^cumpleanos-en-/.test(slug)) {
+    target = 'cumpleanos-segun-tu-signo-del-zodiaco-como-felicitar';
+  } else if (slug === 'brindis-de-cumpleanos') {
+    target = 'como-dar-un-brindis-de-cumpleanos-inolvidable-en-60-segundos';
+  } else if (slug === 'feliz-dia-del-padre') {
+    target = 'que-regalar-a-papa-que-dice-que-no-quiere-nada-ideas-con-dedicatoria';
+  } else if (/30-anos-para-mi|bodas-de-plata/.test(slug)) {
+    target = 'frasco-de-los-30-motivos-como-armarlo-paso-a-paso-con-frases';
+  } else if (/feliz-dia-|jubilacion|cumplemes|nacimiento/.test(slug)) {
+    target = 'regalos-economicos-con-valor-emocional-y-tarjeta-personalizada';
   } else if (REGEX_DUELO.test(slug)) {
     target = 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido';
   } else if (REGEX_ANIV.test(slug)) {
@@ -976,6 +994,114 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
       ];
       break;
 
+    case 'meses':
+      subtituloClaves = `Cómo aprovechar ${nombre.toLowerCase()} según su signo y temporada`;
+      claves = [
+        'Conectá el saludo con el clima real de su mes de nacimiento y con la personalidad de los dos signos que comparten esta fecha.',
+        'Si cumple cerca del cambio de signo (entre el 19 y el 23), confirmá su signo exacto en nuestro horóscopo antes de elegir tono o regalo.',
+        'Sumá una foto opcional y descargá la tarjeta PNG cuadrada o Story IG en la paleta que mejor refleje su estilo.'
+      ];
+      citaClave = 'Un saludo pensado según la época del año y el temperamento de su signo se siente mucho más personal desde la primera línea.';
+      faqs = [
+        {
+          pregunta: `¿Qué signos del zodiaco celebran su fecha dentro de "${nombre}"?`,
+          respuesta:
+            'Cada mes abarca dos signos vecinos del zodiaco. Más arriba tenés el enlace directo a las dos fichas de horóscopo correspondientes para ajustar tu saludo y regalo.'
+        },
+        {
+          pregunta: '¿Cómo adapto estas frases si quien cumple vive en otro hemisferio?',
+          respuesta:
+            'Cuidamos redacciones que funcionan bien tanto en el sur como en el norte, y arriba podés sumar su nombre, posdata y firma en un segundo.'
+        },
+        {
+          pregunta: '¿Puedo agregar una fotografía propia a la tarjeta antes de descargarla?',
+          respuesta:
+            'Sí. En el personalizador superior cargás una foto desde tu dispositivo sin subirla a ningún servidor para bajar tu tarjeta PNG o imprimir la postal.'
+        }
+      ];
+      break;
+
+    case 'fecha_especial':
+      subtituloClaves = `Claves para que tu saludo en ${nombre.toLowerCase()} destaque entre mensajes repetidos`;
+      claves = [
+        'Nombrá un rasgo o momento cotidiano real compartido este año antes de pegar deseos generales.',
+        'En fechas masivas donde llegan decenas de cadenas idénticas, un mensaje limpio de tres o cuatro líneas con apodo vale diez veces más.',
+        'Acompañá el texto con tarjeta visual personalizada, foto opcional o modo postal imprimible para entregar en mano.'
+      ];
+      citaClave = 'En fechas muy celebradas en el calendario, cuatro líneas con un recuerdo verdadero destacan muchísimo más que una imagen reenviada.';
+      faqs = [
+        {
+          pregunta: `¿Cuál es la mejor hora para enviar "${nombre}"?`,
+          respuesta:
+            'A la mañana temprano junto al desayuno o al mediodía en calma, evitando reenviar las mismas cadenas saturadas de último minuto.'
+        },
+        {
+          pregunta: '¿Sirven para imprimir y entregar junto a un presente o flores?',
+          respuesta:
+            'Sí. Podés adaptar nombre y firma arriba y tocar Imprimir postal o descargar el PNG cuadrado listo para compartir.'
+        },
+        {
+          pregunta: '¿Puedo firmar en nombre de toda la familia o del curso?',
+          respuesta:
+            'Claro: escribí por ejemplo "Tus hijos y nietos" o "Las familias del grupo" en el campo Tu firma arriba.'
+        }
+      ];
+      break;
+
+    case 'jubilacion':
+      subtituloClaves = 'Cómo equilibrar respeto profesional y alegría en una despedida laboral';
+      claves = [
+        'Agradecé una contribución concreta —su paciencia para enseñar, su humor de oficina o su ejemplo constante— sin caer en clichés tristes.',
+        'Celebrá con optimismo el tiempo libre que empieza ahora: viajes, hobbies, descanso y mañanas sin despertador.',
+        'Firmá con claridad si el saludo representa a un compañero o a todo el equipo de trabajo.'
+      ];
+      citaClave = 'Despedir una etapa laboral con gratitud sincera por lo enseñado y alegría por el descanso merecido deja un recuerdo imborrable.';
+      faqs = [
+        {
+          pregunta: '¿Conviene trato de vos o de usted al saludar por jubilación?',
+          respuesta:
+            'Respetá exactamente el trato que usaron todos estos años en el trabajo. Arriba podés sumar nombre, posdata y firma del equipo completo.'
+        },
+        {
+          pregunta: '¿Cómo hago para que la tarjeta represente a varios compañeros?',
+          respuesta:
+            'Ingresá en "Tu firma" algo como "Todo el equipo de Administración" y usá el botón Imprimir postal para entregarla firmada en papel.'
+        },
+        {
+          pregunta: '¿Puedo bajarla como imagen para mandar al grupo de WhatsApp?',
+          respuesta:
+            'Sí, en cada dedicatoria descargás al instante la tarjeta PNG 1080×1080 en estilo Marfil, Celeste o Dorado.'
+        }
+      ];
+      break;
+
+    case 'nacimiento':
+      subtituloClaves = 'Cómo celebrar la llegada o primeros meses de un bebé con ternura';
+      claves = [
+        'Abrazá tanto al bebé como a mamá y papá, evitando consejos médicos no pedidos u opiniones sobre descanso.',
+        'Anotá un detalle concreto de este momento o de su primer año para que la tarjeta sirva como recuerdo familiar.',
+        'Podés cargar una foto local en el personalizador superior para armar una postal tierna en formato Story o impresa.'
+      ];
+      citaClave = 'Las mejores palabras para recibir a un bebé cuidan el descanso de la casa y celebran con suavidad cada primer descubrimiento.';
+      faqs = [
+        {
+          pregunta: '¿Cuándo conviene enviar los mensajes por nacimiento de bebé?',
+          respuesta:
+            'Un saludo escrito breve y cálido durante los primeros días permite que mamá y papá lo lean tranquilos cuando el bebé duerme, sin presionar visitas.'
+        },
+        {
+          pregunta: '¿Cómo adapto la tarjeta de cumplemes para subir a Instagram Stories?',
+          respuesta:
+            'Elegí formato Story IG 9:16 arriba, cargá si querés una foto del bebé desde tu teléfono y tocá Instagram para descargarla limpia.'
+        },
+        {
+          pregunta: '¿Se pueden imprimir estas dedicatorias para guardar en el álbum?',
+          respuesta:
+            'Sí. Con el botón Imprimir postal en cada mensaje obtenés una lámina limpia para sumar al álbum de recuerdos.'
+        }
+      ];
+      break;
+
     default:
       claves = [
         `Arrancá con el apodo real de ${dest} en lugar de un saludo genérico: cambia al instante cómo se lee la primera línea.`,
@@ -1040,6 +1166,54 @@ export function guiaAdaptacionMensaje(m: any, hub: any): GuiaAdaptacionMensaje {
         generico: 'Hoy es un gran día para empezar con toda la actitud positiva del mundo.',
         concreto: 'Descansar a tiempo también es avanzar con inteligencia; protegé tu energía cuidando las pausas y enfocando tu atención en lo que sí depende de vos.',
         posdata: 'Posdata sugerida: «Descargala en Story 1080×1920 con fondo Oliva Cálida y guardala en tu pantalla.»'
+      }
+    ],
+    meses: [
+      {
+        generico: 'Feliz cumpleaños este mes, que la pases muy lindo con tu gente.',
+        concreto: 'Qué lindo celebrar tu nueva vuelta al sol en este mes tan tuyo; ojalá el clima de temporada acompañe con buena mesa, descanso real y charlas largas.',
+        posdata: 'Posdata sugerida: «Consultá abajo tu signo del zodiaco para sumar un guiño exacto de regalo o brindis.»'
+      },
+      {
+        generico: 'Muchas felicidades en tu mes de nacimiento, éxitos siempre.',
+        concreto: 'Quienes nacen en esta época traen energía especial a la mesa; brindamos hoy por tus proyectos nuevos y por muchas mañanas tranquilas.',
+        posdata: 'Posdata sugerida: «Sumá una foto tuya en el estudio visual y compartila directo en Stories.»'
+      }
+    ],
+    fecha_especial: [
+      {
+        generico: 'Feliz día, bendiciones y muchas felicidades para vos y toda tu familia.',
+        concreto: 'Hoy paramos un minuto para agradecer tu presencia cercana de todo el año, esa paciencia cotidiana y los momentos lindos compartidos en nuestra mesa.',
+        posdata: 'Posdata sugerida: «Guardemos un rato esta semana para vernos sin apuro y brindar juntos.»'
+      },
+      {
+        generico: 'Que pases un hermoso día rodeado de amor y alegría hoy.',
+        concreto: 'En medio de las corridas del calendario quería dejarte estas líneas con calma para decirte cuánto valoramos tu compañía leal y tu buen humor.',
+        posdata: 'Posdata sugerida: «Imprimí esta postal para entregarla en papel junto a un detalle rico.»'
+      }
+    ],
+    jubilacion: [
+      {
+        generico: 'Felicitaciones por su jubilación, éxitos en esta nueva etapa.',
+        concreto: 'Gracias por tantos años de compromiso honesto, compañerismo diario y paciencia para enseñar oficio; disfrutá ahora cada mañana sin despertador.',
+        posdata: 'Posdata sugerida: «Las puertas del equipo y el café de media tarde siempre quedan abiertos para vos.»'
+      },
+      {
+        generico: 'Feliz retiro, descanse mucho después de tanto trabajo.',
+        concreto: 'Cerrás un ciclo laboral enorme dejando respeto y afecto genuino en todos los que trabajamos a tu lado; que empiecen los mejores viajes y hobbies.',
+        posdata: 'Posdata sugerida: «— Todo el equipo, agradecidos por tu huella diaria.»'
+      }
+    ],
+    nacimiento: [
+      {
+        generico: 'Felicidades por el bebé, muchas bendiciones para los papás.',
+        concreto: 'Qué emoción enorme recibir esta vida nueva en la familia; deseamos que tengan días serenos, abrazos tiernos y ayuda cerquita para descansar.',
+        posdata: 'Posdata sugerida: «Cuando necesiten una vianda rica o un mandado, avisame y paso sin molestar.»'
+      },
+      {
+        generico: 'Hermoso el bebé en su cumplemes, sigue creciendo rápido.',
+        concreto: 'Cada sonrisa nueva y cada descubrimiento chiquito iluminan este primer año inolvidable; guardemos esta postal en el álbum para cuando crezca.',
+        posdata: 'Posdata sugerida: «Anotá atrás de la tarjeta qué canción o juguete ama este mes.»'
       }
     ],
     duelo: [
