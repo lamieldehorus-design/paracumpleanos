@@ -45,11 +45,14 @@ const jsonld = [migasLd([
     (function () {
       var input = document.getElementById('filtro-cats');
       if (!input) return;
-      input.addEventListener('input', function () {
-        var q = input.value.toLowerCase().trim();
+      function norm(s) {
+        return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      }
+      function filtrar() {
+        var q = norm(input.value);
         var items = document.querySelectorAll('#lista-categorias li');
         for (var i = 0; i < items.length; i++) {
-          var txt = items[i].getAttribute('data-cat') || '';
+          var txt = norm(items[i].getAttribute('data-cat') || '');
           items[i].style.display = !q || txt.indexOf(q) !== -1 ? '' : 'none';
         }
         var secs = document.querySelectorAll('.cat-grupo-bloque');
@@ -57,7 +60,16 @@ const jsonld = [migasLd([
           var visibles = secs[j].querySelectorAll('li:not([style*="display: none"])').length;
           secs[j].style.display = visibles > 0 ? '' : 'none';
         }
-      });
+      }
+      input.addEventListener('input', filtrar);
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var qParam = params.get('q');
+        if (qParam) {
+          input.value = qParam;
+          filtrar();
+        }
+      } catch (_) {}
     })();
   </script>
 </Base>

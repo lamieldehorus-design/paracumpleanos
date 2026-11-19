@@ -50,6 +50,11 @@ import {
   construirJwtGsc,
   construirEndpointsGsc
 } from './google-notify';
+import {
+  REDIRECCIONES_POSTS,
+  REDIRECCIONES_RAIZ_LEGADAS,
+  sugerirHubParaRutaLegada
+} from './redirecciones-legadas';
 
 function cargarDatosCompletos() {
   const base = JSON.parse(fs.readFileSync(path.resolve('data/contenido.json'), 'utf8'));
@@ -519,6 +524,51 @@ test('Google RSS + WebSub y Search Console Sitemaps API generan feed y JWT valid
   const robots = fs.readFileSync(path.resolve('public/robots.txt'), 'utf8');
   assert.ok(robots.includes('Sitemap: https://paracumpleanos.com/sitemap.xml'));
   assert.ok(!robots.includes('sitemap-index.xml'));
+});
+
+test('redirecciones legadas GSC resuelven a hubs reales sin colisiones y titulos/metas reflejan 40 textos', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+  const todosSlugsExistentes = new Set(datos.map((r: any) => r.slug));
+
+  for (const r of REDIRECCIONES_POSTS) {
+    assert.ok(cat.hubsPorSlug.has(r.destinoSlug), `Destino faltante para /posts/${r.slugOrigen}: ${r.destinoSlug}`);
+    if (r.alternativoSlug) {
+      assert.ok(cat.hubsPorSlug.has(r.alternativoSlug), `Alternativo faltante: ${r.alternativoSlug}`);
+    }
+  }
+  for (const r of REDIRECCIONES_RAIZ_LEGADAS) {
+    assert.ok(!todosSlugsExistentes.has(r.slugOrigen), `Alias raiz colisiona con slug existente: ${r.slugOrigen}`);
+    assert.ok(cat.hubsPorSlug.has(r.destinoSlug), `Destino faltante para /${r.slugOrigen}: ${r.destinoSlug}`);
+    if (r.alternativoSlug) {
+      assert.ok(cat.hubsPorSlug.has(r.alternativoSlug), `Alternativo faltante: ${r.alternativoSlug}`);
+    }
+  }
+
+  assert.equal(sugerirHubParaRutaLegada('/posts/frases-de-cumpleanos-para-mi-papa', cat.hubs), 'feliz-cumpleanos-papa');
+  assert.equal(sugerirHubParaRutaLegada('/posts/frases-de-cumpleanos-para-abuelos/', cat.hubs), 'feliz-cumpleanos-abuelo');
+  assert.equal(sugerirHubParaRutaLegada('/posts/frases-de-cumpleanos-para-mi-hijo/', cat.hubs), 'feliz-cumpleanos-hijo');
+  assert.equal(sugerirHubParaRutaLegada('/posts/frases-de-cumpleanos-para-mi-mama', cat.hubs), 'feliz-cumpleanos-mama');
+  assert.equal(sugerirHubParaRutaLegada('/mensajes-de-cumpleanos-para-un-primo/', cat.hubs), 'feliz-cumpleanos-primo');
+  assert.equal(sugerirHubParaRutaLegada('/mensajes-de-cumpleanos-para-papa/', cat.hubs), 'feliz-cumpleanos-papa');
+
+  for (const hub of cat.hubs) {
+    const slugNums = hub.slug.match(/\d+/g) || [];
+    for (const numEdad of hub.slug.match(/\b\d+(?=-anos|-meses|-ano)\b/g) || []) {
+      assert.ok(hub.titulo.includes(numEdad), `Hub ${hub.slug} perdio el numero ${numEdad} en titulo: ${hub.titulo}`);
+      assert.ok(hub.h1.includes(numEdad), `Hub ${hub.slug} perdio el numero ${numEdad} en h1: ${hub.h1}`);
+      assert.ok(hub.meta.includes(numEdad), `Hub ${hub.slug} perdio el numero ${numEdad} en meta: ${hub.meta}`);
+    }
+    if (!slugNums.includes('36')) {
+      assert.ok(!/\b36\b/.test(hub.titulo), `Hub ${hub.slug} aun muestra 36 en titulo: ${hub.titulo}`);
+      assert.ok(!/\b36\b/.test(hub.meta), `Hub ${hub.slug} aun muestra 36 en meta: ${hub.meta}`);
+      assert.ok(!/\b36\s+publicaciones\b/.test(hub.seoTexto || ''), `Hub ${hub.slug} aun dice 36 publicaciones`);
+    }
+    if (!slugNums.includes('30')) {
+      assert.ok(!/\b30\b/.test(hub.titulo), `Hub ${hub.slug} aun muestra 30 en titulo: ${hub.titulo}`);
+    }
+    assert.ok(!/cartas largas y sentidas listos/i.test(hub.meta), `Hub ${hub.slug} con concordancia listos errónea`);
+  }
 });
 
 

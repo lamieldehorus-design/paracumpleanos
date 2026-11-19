@@ -1,0 +1,6 @@
+---
+import PuenteRedireccion from '../components/PuenteRedireccion.astro';
+import { REDIRECCIONES_RAIZ_LEGADAS } from '../lib/redirecciones-legadas.ts';
+const r = REDIRECCIONES_RAIZ_LEGADAS.find((x) => x.slugOrigen === 'frases-de-cumpleanos-para-abuelos')!;
+---
+<PuenteRedireccion titulo={r.titulo} destinoSlug={r.destinoSlug} alternativoSlug={r.alternativoSlug} alternativoTexto={r.alternativoTexto} />

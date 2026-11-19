@@ -55,7 +55,12 @@ const jsonld = [
     '@type': 'WebSite',
     name: MARCA,
     url: SITIO + '/',
-    inLanguage: 'es-AR'
+    inLanguage: 'es-AR',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: SITIO + '/categorias/?q={search_term_string}',
+      'query-input': 'required name=search_term_string'
+    }
   }
 ];
 ---

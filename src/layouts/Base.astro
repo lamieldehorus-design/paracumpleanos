@@ -10,6 +10,8 @@ interface Props {
   slugActual?: string;
   noindex?: boolean;
   esPortal?: boolean;
+  relPrev?: string;
+  relNext?: string;
 }
 const {
   titulo,
@@ -18,7 +20,9 @@ const {
   grupoActual = 'destinatarios',
   slugActual = '',
   noindex = false,
-  esPortal = false
+  esPortal = false,
+  relPrev,
+  relNext
 } = Astro.props;
 const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 ---
@@ -32,6 +36,8 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <title>{titulo}</title>
   <meta name="description" content={descripcion} />
   <link rel="canonical" href={url} />
+  {relPrev ? <link rel="prev" href={'https://paracumpleanos.com' + relPrev} /> : null}
+  {relNext ? <link rel="next" href={'https://paracumpleanos.com' + relNext} /> : null}
   <link rel="alternate" type="application/rss+xml" title="ParaCumpleanos RSS" href="https://paracumpleanos.com/rss.xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -40,11 +46,14 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <meta property="og:description" content={descripcion} />
   <meta property="og:type" content="website" />
   <meta property="og:url" content={url} />
+  <meta property="og:image" content="https://paracumpleanos.com/logopc.png" />
+  <meta property="og:image:alt" content="ParaCumpleanos — Dedicatorias, cartas y tarjetas personalizadas" />
   <meta property="og:site_name" content="ParaCumpleanos" />
   <meta property="og:locale" content="es_AR" />
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={titulo} />
   <meta name="twitter:description" content={descripcion} />
+  <meta name="twitter:image" content="https://paracumpleanos.com/logopc.png" />
   {jsonld.map(function (d) { return <script type="application/ld+json" set:html={JSON.stringify(d)} />; })}
 </head>
 <body>

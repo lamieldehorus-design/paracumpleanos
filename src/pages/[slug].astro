@@ -100,11 +100,93 @@ if (esHub && editorialHub) {
   });
 }
 
-const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
 const creado = hub.creado || '2026-11-15';
-const actualizado = hub.actualizado || '2026-11-16';
+const actualizado = hub.actualizado || '2026-11-19';
 const parrafosMsg = esHub ? [] : registro.texto.split('\n\n');
 const textoCompletoCard = esHub ? '' : registro.texto;
+
+const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: string; label: string }[] }> = {
+  'feliz-cumpleanos-abuelo': {
+    texto: '¿Buscás saludos para ambos abuelos?',
+    enlaces: [
+      { href: '/feliz-cumpleanos-abuela/', label: 'Frases para mi abuela' },
+      { href: '/feliz-cumpleanos-abuelito/', label: 'Feliz cumpleaños abuelito' }
+    ]
+  },
+  'feliz-cumpleanos-abuela': {
+    texto: '¿Buscás saludos para ambos abuelos?',
+    enlaces: [
+      { href: '/feliz-cumpleanos-abuelo/', label: 'Frases para mi abuelo' },
+      { href: '/feliz-cumpleanos-abuelita-cartas-hermosas/', label: 'Cartas para abuelita' }
+    ]
+  },
+  'feliz-cumpleanos-papa': {
+    texto: 'Más formatos para saludar a papá:',
+    enlaces: [
+      { href: '/cumpleanos-para-un-papa/', label: 'Cumpleaños para un papá' },
+      { href: '/cartas-para-mi-papa-que-lo-haga-llorar/', label: 'Cartas emotivas para papá' }
+    ]
+  },
+  'feliz-cumpleanos-mama': {
+    texto: 'Más formatos para saludar a mamá:',
+    enlaces: [
+      { href: '/cartas-para-mi-madre/', label: 'Cartas largas para mamá' },
+      { href: '/poemas-para-mi-mama/', label: 'Poemas para mi mamá' }
+    ]
+  },
+  'feliz-cumpleanos-primo': {
+    texto: 'Explorá más opciones para tu primo:',
+    enlaces: [
+      { href: '/frases-para-un-primo/', label: 'Frases breves para un primo' },
+      { href: '/feliz-cumpleanos-primo-hermano/', label: 'Para primo hermano' }
+    ]
+  },
+  'frases-para-un-primo': {
+    texto: 'Explorá más mensajes para un primo:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-primo/', label: 'Feliz cumpleaños primo (40 mensajes)' },
+      { href: '/frases-para-un-primo-que-esta-lejos/', label: 'Para un primo lejos' }
+    ]
+  },
+  'feliz-cumpleanos-20-anos': {
+    texto: '¿Cumplís 20 años vos hoy?',
+    enlaces: [
+      { href: '/feliz-cumpleanos-para-mi/', label: 'Auto-felicitaciones y frases para mí' },
+      { href: '/feliz-cumpleanos-para-mi-hija-de-20-anos/', label: 'Para hija de 20 años' }
+    ]
+  },
+  'feliz-cumpleanos-para-mi': {
+    texto: '¿Festejás una década o edad especial?',
+    enlaces: [
+      { href: '/feliz-cumpleanos-20-anos/', label: 'Frases de 20 años' },
+      { href: '/feliz-cumpleanos-30-anos/', label: 'Frases de 30 años' }
+    ]
+  },
+  'frases-para-mi-hija-de-5-anos': {
+    texto: 'Más dedicatorias para tu hija:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-hija/', label: 'Feliz cumpleaños hija (todas las edades)' },
+      { href: '/carta-para-mi-hija/', label: 'Cartas largas para mi hija' }
+    ]
+  }
+};
+const parContextual = esHub ? PARES_CONTEXTUALES[registro.slug] : undefined;
+
+if (esHub) {
+  jsonld.push({
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: registro.titulo,
+    description: registro.meta,
+    url: urlHub,
+    inLanguage: 'es',
+    datePublished: creado,
+    dateModified: actualizado,
+    author: { '@type': 'Organization', name: MARCA, url: SITIO + '/sobre-nosotros/' },
+    publisher: { '@type': 'Organization', name: MARCA, url: SITIO + '/' }
+  });
+}
+const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
 ---
 <Base
   titulo={titulo}
@@ -113,6 +195,7 @@ const textoCompletoCard = esHub ? '' : registro.texto;
   grupoActual={hub.grupo || 'destinatarios'}
   slugActual={hub.slug}
   noindex={noindexPagina}
+  relNext={esHub && totalPaginas > 1 ? '/' + registro.slug + '/2/' : undefined}
 >
   <nav class="migas" aria-label="Migas de pan">
     <a href="/">Inicio</a> › {esHub ? <span>{nombreHub(hub)}</span> : <a href={'/' + hub.slug + '/'}>{nombreHub(hub)}</a>}
@@ -133,6 +216,15 @@ const textoCompletoCard = esHub ? '' : registro.texto;
           return <p class="lead">{p}</p>;
         })}
       </div>
+
+      {parContextual ? (
+        <aside class="enlace-par-contextual" aria-label="Colecciones complementarias">
+          <span>{parContextual.texto}</span>
+          {parContextual.enlaces.map(function (el) {
+            return <a href={el.href}>{el.label} →</a>;
+          })}
+        </aside>
+      ) : null}
 
       {hub.slug === 'motivaciones' ? <AlertaMotivacionDiaria compact={true} /> : null}
 

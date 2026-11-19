@@ -1,0 +1,121 @@
+---
+import Base from '../layouts/Base.astro';
+import { hubs, nombreHub, todosMensajes } from '../lib/contenido.ts';
+
+const indiceHubs = hubs.map((h) => ({
+  slug: h.slug,
+  nombre: nombreHub(h),
+  emoji: h.emoji || '🎂',
+  dest: h.destinatario || ''
+}));
+---
+<Base
+  titulo="Página no encontrada — Encontrá tu dedicatoria en ParaCumpleanos"
+  descripcion={`Buscá entre las ${hubs.length} categorías y ${todosMensajes.length.toLocaleString('es-AR')} textos originales de ParaCumpleanos.`}
+  noindex={true}
+  esPortal={true}
+>
+  <section class="card" style="max-width: 780px; margin: 24px auto; padding: 28px;">
+    <p class="card-meta"><span>Error 404 · Ruta movida o inexistente</span></p>
+    <h1>No encontramos esa dirección exacta, pero tu dedicatoria está acá</h1>
+    <p class="lead">
+      Si llegaste desde un enlace antiguo, escribí a quién querés saludar o elegí una de nuestras {hubs.length} colecciones actualizadas.
+    </p>
+
+    <div id="sugerencia-404" class="comparacion-concreta" style="margin: 18px 0;" hidden>
+      <div class="comp-item comp-mejor" style="grid-column: 1 / -1;">
+        <span class="comp-etiqueta">Coincidencia probable según tu enlace</span>
+        <p id="sugerencia-404-texto" style="margin: 6px 0 12px;"></p>
+        <a id="sugerencia-404-link" class="btn btn-copiar" href="/categorias/">Ir a la colección sugerida →</a>
+      </div>
+    </div>
+
+    <div class="portal-buscador-caja" style="margin-top: 16px;">
+      <label for="buscador-404" class="portal-buscador-label">Buscá destinatario, edad o motivo:</label>
+      <div class="portal-buscador-fila">
+        <input id="buscador-404" type="search" placeholder="Ej.: papá, abuelos, primo, hija de 5 años, motivaciones…" autocomplete="off" />
+        <a class="btn btn-descargar" href="/categorias/">Ver todas ({hubs.length})</a>
+      </div>
+      <ul id="resultados-404" class="portal-resultados" hidden></ul>
+    </div>
+
+    <div class="chips" style="margin-top: 22px;">
+      <a class="chip" href="/feliz-cumpleanos-papa/">💙 Papá</a>
+      <a class="chip" href="/feliz-cumpleanos-mama/">💐 Mamá</a>
+      <a class="chip" href="/feliz-cumpleanos-abuelo/">🎩 Abuelo</a>
+      <a class="chip" href="/feliz-cumpleanos-abuela/">🌷 Abuela</a>
+      <a class="chip" href="/feliz-cumpleanos-primo/">🎉 Primo</a>
+      <a class="chip" href="/feliz-cumpleanos-prima-dios-te-bendiga/">🦋 Prima con fe</a>
+      <a class="chip" href="/feliz-cumpleanos-hijo/">🌟 Hijo</a>
+      <a class="chip" href="/motivaciones/">✨ Motivaciones diarias</a>
+    </div>
+  </section>
+
+  <script id="indice-404-json" type="application/json" set:html={JSON.stringify(indiceHubs)} />
+  <script is:inline>
+    (function () {
+      var dataEl = document.getElementById('indice-404-json');
+      var indice = [];
+      try { indice = JSON.parse((dataEl && dataEl.textContent) || '[]'); } catch (_) {}
+
+      function norm(s) {
+        return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      }
+
+      var stop = new Set(['posts', 'post', 'frases', 'mensajes', 'cumpleanos', 'feliz', 'para', 'de', 'del', 'la', 'el', 'mi', 'un', 'una']);
+      var pathTokens = norm(window.location.pathname).split(/[^a-z0-9]+/).filter(function (t) { return t.length >= 2 && !stop.has(t); });
+      if (pathTokens.length && indice.length) {
+        var mejor = null;
+        var puntaje = 0;
+        indice.forEach(function (h) {
+          var hs = norm(h.slug + ' ' + h.nombre + ' ' + h.dest);
+          var pts = 0;
+          pathTokens.forEach(function (t) {
+            if (hs.indexOf(t) !== -1) pts += 2;
+            else if (t === 'abuelos' && (hs.indexOf('abuelo') !== -1 || hs.indexOf('abuela') !== -1)) pts += 2;
+          });
+          if (pts > puntaje) { puntaje = pts; mejor = h; }
+        });
+        if (mejor && puntaje >= 2) {
+          var box = document.getElementById('sugerencia-404');
+          var txt = document.getElementById('sugerencia-404-texto');
+          var lnk = document.getElementById('sugerencia-404-link');
+          if (box && txt && lnk) {
+            txt.textContent = mejor.emoji + ' ' + mejor.nombre + ' (40 mensajes listos para personalizar y copiar)';
+            lnk.setAttribute('href', '/' + mejor.slug + '/');
+            box.hidden = false;
+          }
+        }
+      }
+
+      var input = document.getElementById('buscador-404');
+      var res = document.getElementById('resultados-404');
+      if (input && res) {
+        input.addEventListener('input', function () {
+          var q = norm(input.value.trim());
+          res.innerHTML = '';
+          if (q.length < 2) { res.hidden = true; return; }
+          var hits = indice.filter(function (h) {
+            return norm(h.nombre + ' ' + h.slug + ' ' + h.dest).indexOf(q) !== -1;
+          }).slice(0, 8);
+          res.hidden = false;
+          if (!hits.length) {
+            var liV = document.createElement('li');
+            liV.className = 'portal-res-vacio';
+            liV.innerHTML = 'Sin resultados directos. <a href="/categorias/">Explorar las 352 categorías →</a>';
+            res.appendChild(liV);
+            return;
+          }
+          hits.forEach(function (h) {
+            var li = document.createElement('li');
+            var a = document.createElement('a');
+            a.href = '/' + h.slug + '/';
+            a.innerHTML = '<span>' + h.emoji + ' ' + h.nombre + '</span><span class="portal-res-tipo">40 textos</span>';
+            li.appendChild(a);
+            res.appendChild(li);
+          });
+        });
+      }
+    })();
+  </script>
+</Base>
