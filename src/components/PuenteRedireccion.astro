@@ -1,5 +1,5 @@
 ---
-import { SITIO, MARCA } from '../lib/contenido.ts';
+import { SITIO, MARCA, hubs } from '../lib/contenido.ts';
 import '../styles/global.css';
 
 interface Props {
@@ -19,26 +19,62 @@ const rutaAlt = alternativoSlug ? '/' + alternativoSlug + '/' : '';
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex, follow" />
+  <meta name="robots" content="follow" />
   <title>{titulo} — {MARCA}</title>
   <link rel="canonical" href={urlDestino} />
-  <meta http-equiv="refresh" content={`0;url=${rutaDestino}`} />
-  <script is:inline define:vars={{ rutaDestino }}>
-    window.location.replace(rutaDestino);
-  </script>
+  <link rel="preconnect" href="https://www.statcounter.com" crossorigin />
+  <link rel="preconnect" href="https://c.statcounter.com" crossorigin />
+  <meta http-equiv="refresh" content={`1;url=${rutaDestino}`} />
 </head>
 <body>
+  <script is:inline type="text/javascript" define:vars={{ rutaDestino }}>
+    window.sc_project = 13334162;
+    window.sc_invisible = 1;
+    window.sc_security = "3e891d7b";
+    (function () {
+      var redirigido = false;
+      function irADestino() {
+        if (redirigido) return;
+        redirigido = true;
+        window.location.replace(rutaDestino);
+      }
+      function enviarPixelFallback() {
+        try {
+          if (window._statcounter && window._statcounter._security_codes && window._statcounter._security_codes[13334162]) return;
+          if (typeof fetch === 'function') {
+            fetch('https://c.statcounter.com/13334162/0/3e891d7b/1/', {
+              mode: 'no-cors',
+              keepalive: true,
+              credentials: 'omit',
+              referrerPolicy: 'no-referrer-when-downgrade'
+            }).catch(function () {});
+          }
+        } catch (_) {}
+      }
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.statcounter.com/counter/counter.js';
+      s.onload = function () { setTimeout(irADestino, 60); };
+      s.onerror = function () { enviarPixelFallback(); irADestino(); };
+      document.head.appendChild(s);
+      setTimeout(function () {
+        enviarPixelFallback();
+        irADestino();
+      }, 320);
+    })();
+  </script>
+  <noscript><div class="statcounter"><a title="Web Analytics Made Easy - Statcounter" href="https://statcounter.com/" target="_blank" rel="noopener"><img class="statcounter" src="https://c.statcounter.com/13334162/0/3e891d7b/1/" alt="Web Analytics Made Easy - Statcounter" referrerpolicy="no-referrer-when-downgrade" /></a></div></noscript>
   <main class="contenedor-portal" style="padding: 48px 18px; max-width: 720px; margin: 0 auto;">
     <section class="card" style="padding: 28px;">
       <p class="card-meta"><span>Colección actualizada</span></p>
       <h1 style="margin-top: 6px;">{titulo}</h1>
-      <p>Actualizamos esta sección con 40 dedicatorias originales, personalizador con nombre y descarga en tarjeta PNG o Story de Instagram.</p>
+      <p>Actualizamos esta sección con 40 dedicatorias originales, personalizador con nombre, foto opcional y descarga en tarjeta PNG o Story de Instagram.</p>
       <div class="acciones" style="margin-top: 18px; flex-wrap: wrap;">
         <a class="btn btn-copiar" href={rutaDestino}>Ir a la colección ahora →</a>
         {alternativoSlug ? (
           <a class="btn btn-descargar" href={rutaAlt}>{alternativoTexto || 'Ver colección relacionada'}</a>
         ) : null}
-        <a class="btn" href="/categorias/">Ver las 352 categorías</a>
+        <a class="btn" href="/categorias/">Ver las {hubs.length} categorías</a>
       </div>
     </section>
   </main>

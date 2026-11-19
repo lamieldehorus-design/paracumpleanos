@@ -41,6 +41,8 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <link rel="alternate" type="application/rss+xml" title="ParaCumpleanos RSS" href="https://paracumpleanos.com/rss.xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://www.statcounter.com" crossorigin />
+  <link rel="preconnect" href="https://c.statcounter.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <meta property="og:title" content={titulo} />
   <meta property="og:description" content={descripcion} />
@@ -57,6 +59,48 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   {jsonld.map(function (d) { return <script type="application/ld+json" set:html={JSON.stringify(d)} />; })}
 </head>
 <body>
+  <!-- Statcounter temprano con respaldo keepalive sin duplicacion -->
+  <script is:inline type="text/javascript">
+  var sc_project=13334162;
+  var sc_invisible=1;
+  var sc_security="3e891d7b";
+  var sc_download_type="7z|aac|avi|csv|doc|docx|exe|flv|gif|gz|ics|jpeg|jpg|mov|mp3|mp4|mpeg|mpg|pdf|png|ppt|pptx|rar|tar|torrent|txt|wma|wmv|xls|xlsx|xml|zip";
+  (function () {
+    if (window.__pcScInicializado) return;
+    window.__pcScInicializado = true;
+    window.__pcScFallbackEnviado = false;
+    function scYaRegistro() {
+      return !!(window._statcounter && window._statcounter._security_codes && window._statcounter._security_codes[13334162]);
+    }
+    window.__pcScEnviarFallback = function () {
+      if (window.__pcScFallbackEnviado || scYaRegistro()) return;
+      window.__pcScFallbackEnviado = true;
+      var pixelUrl = 'https://c.statcounter.com/13334162/0/3e891d7b/1/';
+      try {
+        if (typeof fetch === 'function') {
+          fetch(pixelUrl, {
+            mode: 'no-cors',
+            keepalive: true,
+            credentials: 'omit',
+            referrerPolicy: 'no-referrer-when-downgrade'
+          }).catch(function () {});
+          return;
+        }
+      } catch (_) {}
+      try {
+        var img = new Image();
+        img.referrerPolicy = 'no-referrer-when-downgrade';
+        img.src = pixelUrl;
+      } catch (_) {}
+    };
+    window.addEventListener('pagehide', function () { window.__pcScEnviarFallback(); });
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') window.__pcScEnviarFallback();
+    });
+  })();
+  </script>
+  <script is:inline type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async onerror="window.__pcScEnviarFallback && window.__pcScEnviarFallback()"></script>
+  <noscript><div class="statcounter"><a title="Web Analytics Made Easy - Statcounter" href="https://statcounter.com/" target="_blank" rel="noopener"><img class="statcounter" src="https://c.statcounter.com/13334162/0/3e891d7b/1/" alt="Web Analytics Made Easy - Statcounter" referrerpolicy="no-referrer-when-downgrade" /></a></div></noscript>
   <header class="cabecera">
     <div class="cabecera-inner">
       <a href="/" class="logo" aria-label="ParaCumpleanos — Inicio">
@@ -524,15 +568,5 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       } catch (_) {}
     })();
   </script>
-  <!-- Default Statcounter code for ParaCumpleanos
-  https://paracumpleanos.com/ -->
-  <script is:inline type="text/javascript">
-  var sc_project=13334162;
-  var sc_invisible=1;
-  var sc_security="3e891d7b";
-  </script>
-  <script is:inline type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
-  <noscript><div class="statcounter"><a title="Web Analytics Made Easy - Statcounter" href="https://statcounter.com/" target="_blank" rel="noopener"><img class="statcounter" src="https://c.statcounter.com/13334162/0/3e891d7b/1/" alt="Web Analytics Made Easy - Statcounter" referrerpolicy="no-referrer-when-downgrade" /></a></div></noscript>
-  <!-- End of Statcounter Code -->
 </body>
 </html>

@@ -588,5 +588,45 @@ test('redirecciones legadas GSC resuelven a hubs reales sin colisiones y titulos
   }
 });
 
+test('Statcounter 13334162 cubre todas las paginas Astro con respaldo anti-rebote sin perdida de visitas', () => {
+  const baseSrc = fs.readFileSync(path.resolve('src/layouts/Base.astro'), 'utf8');
+  const puenteSrc = fs.readFileSync(path.resolve('src/components/PuenteRedireccion.astro'), 'utf8');
+
+  for (const [nombre, src] of [
+    ['Base.astro', baseSrc],
+    ['PuenteRedireccion.astro', puenteSrc]
+  ]) {
+    assert.ok(src.includes('13334162'), `${nombre} debe incluir sc_project 13334162`);
+    assert.ok(src.includes('3e891d7b'), `${nombre} debe incluir sc_security 3e891d7b`);
+    assert.ok(src.includes('https://www.statcounter.com/counter/counter.js'), `${nombre} debe cargar counter.js`);
+    assert.ok(src.includes('https://c.statcounter.com/13334162/0/3e891d7b/1/'), `${nombre} debe incluir pixel keepalive/noscript`);
+  }
+
+  // En PuenteRedireccion.astro usa define:vars, asi que sc_project debe quedar en window.
+  assert.ok(puenteSrc.includes('window.sc_project = 13334162'), 'PuenteRedireccion debe asignar window.sc_project');
+  assert.ok(!puenteSrc.includes('352 categorías'), 'PuenteRedireccion no debe hardcodear 352 categorias');
+
+  const paginasDir = path.resolve('src/pages');
+  const recolectarAstro = (dir: string): string[] => {
+    const out: string[] = [];
+    for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, ent.name);
+      if (ent.isDirectory()) out.push(...recolectarAstro(full));
+      else if (ent.name.endsWith('.astro')) out.push(full);
+    }
+    return out;
+  };
+  const paginasAstro = recolectarAstro(paginasDir);
+  assert.ok(paginasAstro.length >= 16, `Se esperaban >= 16 plantillas .astro en src/pages, hay ${paginasAstro.length}`);
+
+  for (const archivo of paginasAstro) {
+    const contenidoArchivo = fs.readFileSync(archivo, 'utf8');
+    const usaLayoutConStatcounter =
+      contenidoArchivo.includes('layouts/Base.astro') ||
+      contenidoArchivo.includes('components/PuenteRedireccion.astro');
+    assert.ok(usaLayoutConStatcounter, `Pagina sin Statcounter (no importa Base ni PuenteRedireccion): ${archivo}`);
+  }
+});
+
 
 
