@@ -3330,6 +3330,60 @@ input, textarea, select { font-size: 16px; }
   min-width: 260px;
 }
 
-
-
-
+.banderines-guias-sep {
+  margin: 28px 0 14px;
+  padding: 18px 20px;
+  background: var(--papel);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+}
+.banderines-guias-sep h2 {
+  margin: 0 0 6px;
+  font-size: 1.32rem;
+}
+.banderines-guias-sep p {
+  margin: 0;
+  color: var(--suave);
+  line-height: 1.6;
+}
+.guia-banderin-articulo {
+  margin: 18px 0 24px;
+}
+.guia-banderin-cuerpo {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 24px 24px 10px;
+  line-height: 1.72;
+  font-size: 1.03rem;
+}
+.guia-banderin-cuerpo p {
+  margin: 0 0 15px;
+}
+.cta-herramienta-banderines {
+  margin-top: 20px;
+  padding: 20px 22px;
+  background: linear-gradient(135deg, #fdf2f8 0%, #fff7ed 100%);
+  border: 1px solid #f5d0e3;
+  border-radius: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.cta-herramienta-banderines > div {
+  flex: 1 1 320px;
+}
+.cta-herramienta-banderines h2 {
+  margin: 0 0 6px;
+  font-size: 1.18rem;
+}
+.cta-herramienta-banderines p {
+  margin: 0;
+  color: var(--suave);
+  line-height: 1.55;
+}
+.card-guia-leer {
+  margin: 12px 0 0;
+}

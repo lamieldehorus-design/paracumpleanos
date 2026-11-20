@@ -27,7 +27,6 @@ import {
   guiaAdaptacionMensaje
 } from '../lib/editorial.ts';
 import { mesInfoPorSlug } from '../lib/horoscopo.ts';
-import { resolverConfigBanderin } from '../lib/banderines.ts';
 
 export function getStaticPaths() {
   return contenido.map(function (r) {
@@ -53,7 +52,6 @@ const mesZodiaco = esHub && hub.grupo === 'meses' ? mesInfoPorSlug(hub.slug) : u
 const guiaMsg = !esHub ? guiaAdaptacionMensaje(registro, hub) : null;
 const esAnivPersonalizable = hub.slug === 'mas-de-10-anos-de-novios';
 const esBanderines = hub.slug === 'banderines-de-cumpleanos-para-imprimir';
-const configBanderin = esBanderines ? resolverConfigBanderin(esHub ? null : registro) : null;
 
 const migas = [{ name: 'Inicio', url: SITIO + '/' }, { name: nombreHub(hub), url: urlHub }]
   .concat(esHub ? [] : [{ name: registro.titulo, url: SITIO + '/' + registro.slug + '/' }]);
@@ -583,9 +581,9 @@ const textoEnviar = esHub ? '' : registro.texto;
     <div>
       <h1>{registro.h1}</h1>
       <p class="meta-linea-editorial">
-        <span>{mensajesCat.length} dedicatorias inéditas</span>
+        <span>{esBanderines ? `${mensajesCat.length} guías prácticas e ideas` : `${mensajesCat.length} dedicatorias inéditas`}</span>
         <span aria-hidden="true">·</span>
-        <span>Personalización en vivo</span>
+        <span>{esBanderines ? 'Herramienta online A4 independiente' : 'Personalización en vivo'}</span>
         <span aria-hidden="true">·</span>
         <span>Actualizado el <time datetime={actualizado}>{actualizado}</time></span>
       </p>
@@ -635,7 +633,15 @@ const textoEnviar = esHub ? '' : registro.texto;
       {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="hub" /> : null}
 
       {esBanderines ? (
-        <EstudioBanderines modo="hub" configInicial={configBanderin} />
+        <>
+          <EstudioBanderines modo="hub" />
+          <div class="banderines-guias-sep">
+            <h2>{mensajesCat.length} guías prácticas, tutoriales e ideas de banderines de cumpleaños</h2>
+            <p>
+              Artículos paso a paso pensados aparte de la herramienta online: elección de papeles, medidas exactas, técnicas para colgar sin arruinar paredes, temáticas por edad y trucos de diseño casero.
+            </p>
+          </div>
+        </>
       ) : (
         <>
           <PersonalizadorTarjeta modo="hub" />
@@ -752,34 +758,9 @@ const textoEnviar = esHub ? '' : registro.texto;
         <span>{guiaMsg.clasificacion.palabras} palabras ({guiaMsg.clasificacion.tiempoLectura})</span>
       </p>
 
-      {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="mensaje" /> : null}
-
       {esBanderines ? (
-        <EstudioBanderines modo="mensaje" configInicial={configBanderin} tituloPublicacion={registro.titulo} />
-      ) : (
-        <PersonalizadorTarjeta modo="mensaje" />
-      )}
-
-      <div id="mensaje-detalle-bloque">
-        <div id="mensaje-cuerpo" class="mensaje" data-slug={registro.slug} data-orig-texto={registro.texto} data-orig-titulo={registro.titulo}>
-          {parrafosMsg.map(function (p) {
-            const lineas = p.split('\n');
-            return (
-              <p>
-                {lineas.map(function (linea, idx) {
-                  return idx === 0 ? linea : <><br />{linea}</>;
-                })}
-              </p>
-            );
-          })}
-        </div>
-        <div class="tarjeta-visual" role="img" aria-label={'Tarjeta lista para compartir: ' + registro.titulo}>
-          <div class="tarjeta-visual-emoji">{hub.emoji}</div>
-          <p class="tarjeta-visual-subtitulo" hidden></p>
-          <div class="tarjeta-visual-foto-wrap" hidden>
-            <img class="tarjeta-visual-foto" alt="Foto personalizada para la tarjeta" />
-          </div>
-          <div class="tarjeta-visual-extracto">
+        <article class="guia-banderin-articulo" id="mensaje-cuerpo" data-slug={registro.slug}>
+          <div class="mensaje guia-banderin-cuerpo">
             {parrafosMsg.map(function (p) {
               const lineas = p.split('\n');
               return (
@@ -791,54 +772,106 @@ const textoEnviar = esHub ? '' : registro.texto;
               );
             })}
           </div>
-          <p class="tarjeta-visual-marca">paracumpleanos.com</p>
-        </div>
-        <Compartir
-          texto={textoEnviar}
-          url={SITIO + '/' + registro.slug + '/'}
-          tituloCard={registro.titulo}
-          cuerpoCard={textoCompletoCard}
-          emojiCard={hub.emoji}
-          mostrarDescarga={true}
-        />
-      </div>
 
-      <blockquote class="cita-editorial">{guiaMsg.citaDestacada}</blockquote>
+          <aside class="cta-herramienta-banderines" aria-label="Herramienta online de banderines">
+            <div>
+              <p class="eyebrow">Herramienta gratuita independiente</p>
+              <h2>¿Querés diseñar e imprimir tu propio banderín en A4?</h2>
+              <p>
+                Cuando termines de leer estas recomendaciones, pasá por nuestro creador online para escribir la frase que elijas, combinar formas, colores o tu propia foto y descargar las hojas A4 listas para recortar.
+              </p>
+            </div>
+            <a class="btn btn-primario" href="/banderines-de-cumpleanos-para-imprimir/#estudio-banderines">
+              Abrir herramienta de banderines A4 →
+            </a>
+          </aside>
+        </article>
+      ) : (
+        <>
+          {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="mensaje" /> : null}
+          <PersonalizadorTarjeta modo="mensaje" />
 
-      <section class="consejo-mensaje" aria-labelledby="consejo-adaptar-titulo">
-        <h2 id="consejo-adaptar-titulo">
-          {guiaMsg.perfil === 'motivaciones'
-            ? 'Cómo aplicar esta motivación en acciones concretas hoy'
-            : 'Cómo adaptar este texto en 30 segundos para que suene tuyo'}
-        </h2>
-        <div class="comparacion-concreta">
-          <div class="comp-item comp-evitar">
-            <span class="comp-etiqueta">
-              {guiaMsg.perfil === 'motivaciones' ? 'Frase vacía de internet' : 'Evitá enviar genérico'}
-            </span>
-            <p>«{guiaMsg.ejemploGenerico}»</p>
+          <div id="mensaje-detalle-bloque">
+            <div id="mensaje-cuerpo" class="mensaje" data-slug={registro.slug} data-orig-texto={registro.texto} data-orig-titulo={registro.titulo}>
+              {parrafosMsg.map(function (p) {
+                const lineas = p.split('\n');
+                return (
+                  <p>
+                    {lineas.map(function (linea, idx) {
+                      return idx === 0 ? linea : <><br />{linea}</>;
+                    })}
+                  </p>
+                );
+              })}
+            </div>
+            <div class="tarjeta-visual" role="img" aria-label={'Tarjeta lista para compartir: ' + registro.titulo}>
+              <div class="tarjeta-visual-emoji">{hub.emoji}</div>
+              <p class="tarjeta-visual-subtitulo" hidden></p>
+              <div class="tarjeta-visual-foto-wrap" hidden>
+                <img class="tarjeta-visual-foto" alt="Foto personalizada para la tarjeta" />
+              </div>
+              <div class="tarjeta-visual-extracto">
+                {parrafosMsg.map(function (p) {
+                  const lineas = p.split('\n');
+                  return (
+                    <p>
+                      {lineas.map(function (linea, idx) {
+                        return idx === 0 ? linea : <><br />{linea}</>;
+                      })}
+                    </p>
+                  );
+                })}
+              </div>
+              <p class="tarjeta-visual-marca">paracumpleanos.com</p>
+            </div>
+            <Compartir
+              texto={textoEnviar}
+              url={SITIO + '/' + registro.slug + '/'}
+              tituloCard={registro.titulo}
+              cuerpoCard={textoCompletoCard}
+              emojiCard={hub.emoji}
+              mostrarDescarga={true}
+            />
           </div>
-          <div class="comp-item comp-mejor">
-            <span class="comp-etiqueta">
-              {guiaMsg.perfil === 'motivaciones' ? 'Paso práctico para destrabar tu día' : 'Sumá un detalle real'}
-            </span>
-            <p>«{guiaMsg.ejemploConcreto}»</p>
-          </div>
-        </div>
-        <p class="consejo-horario"><strong>Mejor momento sugerido:</strong> {guiaMsg.mejorHorario}</p>
-        <p class="posdata-sugerida">{guiaMsg.posdataSugerida}</p>
-        <ol class="lista-editorial lista-numerada">
-          {guiaMsg.pasos.map(function (paso) {
-            return <li>{paso}</li>;
-          })}
-        </ol>
-        <p class="ver-tambien">
-          Guía recomendada: <a href={`/guias/${guiaMsg.guia.slug}/`}>{guiaMsg.guia.titulo} →</a> · <a href="/sobre-nosotros/#criterio-editorial">Cómo revisamos estos textos</a>
-        </p>
-      </section>
+
+          <blockquote class="cita-editorial">{guiaMsg.citaDestacada}</blockquote>
+
+          <section class="consejo-mensaje" aria-labelledby="consejo-adaptar-titulo">
+            <h2 id="consejo-adaptar-titulo">
+              {guiaMsg.perfil === 'motivaciones'
+                ? 'Cómo aplicar esta motivación en acciones concretas hoy'
+                : 'Cómo adaptar este texto en 30 segundos para que suene tuyo'}
+            </h2>
+            <div class="comparacion-concreta">
+              <div class="comp-item comp-evitar">
+                <span class="comp-etiqueta">
+                  {guiaMsg.perfil === 'motivaciones' ? 'Frase vacía de internet' : 'Evitá enviar genérico'}
+                </span>
+                <p>«{guiaMsg.ejemploGenerico}»</p>
+              </div>
+              <div class="comp-item comp-mejor">
+                <span class="comp-etiqueta">
+                  {guiaMsg.perfil === 'motivaciones' ? 'Paso práctico para destrabar tu día' : 'Sumá un detalle real'}
+                </span>
+                <p>«{guiaMsg.ejemploConcreto}»</p>
+              </div>
+            </div>
+            <p class="consejo-horario"><strong>Mejor momento sugerido:</strong> {guiaMsg.mejorHorario}</p>
+            <p class="posdata-sugerida">{guiaMsg.posdataSugerida}</p>
+            <ol class="lista-editorial lista-numerada">
+              {guiaMsg.pasos.map(function (paso) {
+                return <li>{paso}</li>;
+              })}
+            </ol>
+            <p class="ver-tambien">
+              Guía recomendada: <a href={`/guias/${guiaMsg.guia.slug}/`}>{guiaMsg.guia.titulo} →</a> · <a href="/sobre-nosotros/#criterio-editorial">Cómo revisamos estos textos</a>
+            </p>
+          </section>
+        </>
+      )}
 
       <section class="relacionadas">
-        <h2>Otras dedicatorias únicas de {guiaMsg.destinatarioNombre}</h2>
+        <h2>{esBanderines ? 'Otras guías prácticas sobre banderines de cumpleaños' : `Otras dedicatorias únicas de ${guiaMsg.destinatarioNombre}`}</h2>
         <ul>
           {relacionadas.map(function (m) { return <li><a href={'/' + m.slug + '/'}>{m.titulo}</a></li>; })}
         </ul>

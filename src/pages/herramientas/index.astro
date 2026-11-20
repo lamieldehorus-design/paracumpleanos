@@ -210,8 +210,8 @@ const signosCliente = ZODIACOS.map((s) => ({
     </div>
 
     <div id="herr-acro-hoja" class="herr-acrostico-hoja">
-      <p class="tarjeta-visual-subtitulo">ACRÓSTICO PERSONALIZADO</p>
-      <p class="tarjeta-visual-titulo" id="herr-acro-titulo">Acróstico para SOFÍA</p>
+      <p class="tarjeta-visual-subtitulo no-print">ACRÓSTICO PERSONALIZADO</p>
+      <p class="tarjeta-visual-titulo no-print" id="herr-acro-titulo">Acróstico para SOFÍA</p>
       <ul class="herr-acrostico-lista" id="herr-acro-lista">
         {demoAcrostico.map((item) => (
           <li>
@@ -240,8 +240,6 @@ const signosCliente = ZODIACOS.map((s) => ({
         id="herr-acro-dl"
         type="button"
         class="btn btn-descargar"
-        data-title="Acróstico para SOFÍA"
-        data-mostrar-titulo="1"
         data-body={demoAcrosticoTexto}
         data-emoji="✍️"
       >
@@ -700,7 +698,6 @@ const signosCliente = ZODIACOS.map((s) => ({
         if (btnAcroCop) btnAcroCop.setAttribute('data-text', cuerpoCopia);
         if (btnAcroWa) btnAcroWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(cuerpoCopia));
         if (btnAcroDl) {
-          btnAcroDl.setAttribute('data-title', tituloCard);
           btnAcroDl.setAttribute('data-body', cuerpo);
         }
       }

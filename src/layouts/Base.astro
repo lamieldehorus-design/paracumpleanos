@@ -296,8 +296,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       }
 
       function generarCanvasTarjeta(opts) {
-        var mostrarTitulo = Boolean(opts.mostrarTitulo);
-        var tituloCard = mostrarTitulo ? String(opts.title || '').trim() : '';
+        var tituloCard = '';
         var textoCard = opts.body || '';
         var emojiCard = opts.emoji || '🎂';
         var subtitulo = opts.subtitulo || '';
@@ -539,8 +538,6 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           if (slugDl && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugDl, 4);
           var visualDl = (dl.closest && dl.closest('.herr-modulo') && dl.closest('.herr-modulo').querySelector('.tarjeta-visual')) || document.querySelector('.tarjeta-visual');
           var resDl = generarCanvasTarjeta({
-            title: dl.getAttribute('data-title') || '',
-            mostrarTitulo: dl.getAttribute('data-mostrar-titulo') === '1',
             body: dl.getAttribute('data-body') || '',
             emoji: dl.getAttribute('data-emoji') || '🎂',
             fuente: dl.getAttribute('data-fuente') || '',
@@ -570,8 +567,6 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           var caption = igTexto + '\n\nVía paracumpleanos.com';
 
           var resIg = generarCanvasTarjeta({
-            title: igTitulo,
-            mostrarTitulo: ig.getAttribute('data-mostrar-titulo') === '1',
             body: igCuerpo,
             emoji: igEmoji,
             fuente: ig.getAttribute('data-fuente') || '',

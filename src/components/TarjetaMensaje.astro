@@ -15,10 +15,11 @@ const bloques = (m.texto || '').split('\n\n').map((b: string) => b.trim()).filte
 const bloquePrincipal = bloques.find((b: string) => !(b.length < 55 && /[:,]$/.test(b))) || bloques[0] || '';
 const plano = bloquePrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
 const resumen = plano.length <= 130 ? plano : plano.slice(0, 130).replace(/\s+\S*$/, '') + '…';
+const esBanderinGuia = hubRef?.slug === 'banderines-de-cumpleanos-para-imprimir';
 ---
 <article
   class="card"
-  data-card-personalizable="1"
+  data-card-personalizable={esBanderinGuia ? undefined : '1'}
   data-slug={m.slug}
   data-tono={clasif.claseTono}
   data-segmentos={clasif.segmentos.join(',')}
@@ -36,19 +37,25 @@ const resumen = plano.length <= 130 ? plano : plano.slice(0, 130).replace(/\s+\S
     </p>
   ) : null}
   <p class="card-meta">
-    <span>{clasif.tonoLabel}</span>
+    <span>{esBanderinGuia ? 'Guía práctica' : clasif.tonoLabel}</span>
     <span aria-hidden="true">·</span>
-    <span>{clasif.canalLabel}</span>
+    <span>{esBanderinGuia ? 'Banderines A4' : clasif.canalLabel}</span>
     <span aria-hidden="true">·</span>
     <span>{clasif.palabras} palabras</span>
   </p>
   <h3><a href={'/' + m.slug + '/'}>{m.titulo}</a></h3>
   <p class="card-resumen">{resumen}</p>
-  <Compartir
-    texto={m.texto}
-    url={SITIO + '/' + m.slug + '/'}
-    tituloCard={m.titulo}
-    cuerpoCard={m.texto}
-    emojiCard={hubRef.emoji || '🎂'}
-  />
+  {esBanderinGuia ? (
+    <p class="card-guia-leer">
+      <a class="btn btn-copiar" href={'/' + m.slug + '/'}>Leer guía completa →</a>
+    </p>
+  ) : (
+    <Compartir
+      texto={m.texto}
+      url={SITIO + '/' + m.slug + '/'}
+      tituloCard={m.titulo}
+      cuerpoCard={m.texto}
+      emojiCard={hubRef.emoji || '🎂'}
+    />
+  )}
 </article>

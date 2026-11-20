@@ -390,7 +390,7 @@ const jsonLd = [
 
           secciones.push(
             '<section class="cal-seccion">' +
-              '<h3>🎉 Celebraciones y publicaciones del ' +
+              '<h3>🎉 Fechas especiales y publicaciones del ' +
               escHtml(dato.etiqueta) +
               '</h3>' +
               '<div class="cal-cards">' +
@@ -402,14 +402,14 @@ const jsonLd = [
         } else {
           secciones.push(
             '<section class="cal-seccion">' +
-              '<h3>🎉 Celebraciones puntuales del ' +
+              '<h3>📅 Fechas especiales del ' +
               escHtml(dato.etiqueta) +
               '</h3>' +
-              '<p class="cal-vacio">No hay una fecha festiva puntual registrada en el archivo para el ' +
+              '<p class="cal-vacio">El ' +
               escHtml(dato.etiqueta) +
-              '. Abajo encontrás las publicaciones reales del mes de ' +
+              ' no coincide con una fecha conmemorativa fija (como San Valentín, Día de la Mujer, Día del Maestro o Navidad). Debajo tenés las publicaciones reales de cumpleaños de ' +
               escHtml(mesesNombres[mesActual - 1]) +
-              ' y el signo del zodíaco correspondiente a este día.</p>' +
+              ' y el signo del zodíaco de este día.</p>' +
               '</section>'
           );
         }

@@ -51,9 +51,9 @@ const jsonld = [migasLd([
   <p class="meta-linea-editorial">
     <span>Página {pagina} de {total}</span>
     <span aria-hidden="true">·</span>
-    <span>{msj.length} dedicatorias inéditas</span>
+    <span>{esBanderines ? `${msj.length} guías prácticas e ideas` : `${msj.length} dedicatorias inéditas`}</span>
     <span aria-hidden="true">·</span>
-    <span>Personalización en vivo</span>
+    <span>{esBanderines ? 'Herramienta online A4 independiente' : 'Personalización en vivo'}</span>
   </p>
   <p class="lead">{hub.meta}</p>
   {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="hub" /> : null}
