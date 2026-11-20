@@ -37,6 +37,9 @@ function asegurarActivosPublicos() {
 export default defineConfig({
   site: 'https://paracumpleanos.com',
   trailingSlash: 'always',
+  devToolbar: {
+    enabled: false
+  },
   integrations: [asegurarActivosPublicos()],
   server: {
     host: '0.0.0.0',
