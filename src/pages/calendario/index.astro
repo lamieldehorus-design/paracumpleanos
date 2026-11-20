@@ -1,0 +1,566 @@
+---
+import Base from '../../layouts/Base.astro';
+import { MESES_NOMBRES_HITOS, PAISES_HITOS } from '../../data/hitos-historicos.ts';
+import {
+  DIAS_POR_MES_EVERGREEN,
+  generarIndiceCalendarioAnualSinAnio
+} from '../../lib/calendario.ts';
+import { SITIO, hubsPorSlug, mensajesDe } from '../../lib/contenido.ts';
+
+const indiceCalendario = generarIndiceCalendarioAnualSinAnio(hubsPorSlug, mensajesDe('motivaciones'));
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Calendario Perpetuo sin Año de Cumpleaños, Efemérides e Hitos Históricos',
+    applicationCategory: 'LifestyleApplication',
+    operatingSystem: 'All',
+    url: `${SITIO}/calendario/`,
+    description:
+      'Elegí cualquier día y mes del calendario sin año para descubrir hitos históricos mundiales de 195 países, celebraciones especiales, cumpleaños del mes, signo zodiacal, motivación diaria y fecha de duelo.',
+    inLanguage: 'es'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITIO}/` },
+      { '@type': 'ListItem', position: 2, name: 'Calendario sin año', item: `${SITIO}/calendario/` }
+    ]
+  }
+];
+---
+
+<Base
+  titulo="Calendario de Fechas, Hitos Históricos y Cumpleaños (Sin Año)"
+  descripcion={`Elegí cualquier día y mes sin año y descubrí todo en nuestra web: hitos históricos de ${PAISES_HITOS.length} países, fechas especiales, cumpleaños, signo zodiacal, motivación y duelo.`}
+  jsonld={jsonLd}
+>
+  <nav class="migas" aria-label="Ruta de navegación">
+    <a href="/">Inicio</a>
+    <span>/</span>
+    <span>Calendario</span>
+  </nav>
+
+  <header class="hub-hero">
+    <p class="eyebrow">Calendario perpetuo · Día y mes (sin año)</p>
+    <h1>Calendario de celebraciones, hitos históricos y fechas especiales</h1>
+    <p class="lead">
+      Elegí cualquier mes y día (del 1 de enero al 31 de diciembre, sin indicar año) para ver reunido todo lo que corresponde a esa fecha en ParaCumpleanos: los hitos históricos mundiales que se festejan ese día en distintos países, fechas anuales del sitio, cumpleaños del mes, signo zodiacal, motivación diaria y acceso directo para recordar una fecha de duelo.
+    </p>
+  </header>
+
+  <section class="cal-layout" aria-label="Selector interactivo de día y mes sin año">
+    <div class="cal-panel-selector">
+      <div class="cal-meses" role="tablist" aria-label="Elegir mes">
+        {MESES_NOMBRES_HITOS.map((nombre, idx) => (
+          <button
+            type="button"
+            class="cal-mes-btn"
+            data-mes={idx + 1}
+            role="tab"
+            aria-selected="false"
+          >
+            {nombre.charAt(0).toUpperCase() + nombre.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      <div class="cal-cuadricula-head">
+        <strong id="cal-mes-activo-titulo">Enero</strong>
+        <button type="button" class="cal-btn-hoy" id="cal-btn-hoy">Ir al día de hoy</button>
+      </div>
+
+      <div class="cal-dias-grid" id="cal-dias-grid" role="grid" aria-label="Días del mes seleccionado"></div>
+
+      <div class="cal-leyenda">
+        <span><i class="cal-dot cal-dot--hito"></i> Hito histórico mundial</span>
+        <span><i class="cal-dot cal-dot--especial"></i> Fecha especial del sitio</span>
+      </div>
+    </div>
+
+    <div class="cal-panel-detalle" id="cal-detalle" aria-live="polite">
+      <div class="cal-detalle-header">
+        <p class="eyebrow">Fecha seleccionada (sin año)</p>
+        <h2 id="cal-fecha-titulo">1 de enero</h2>
+        <p class="cal-detalle-sub" id="cal-fecha-sub"></p>
+      </div>
+
+      <div class="cal-bloques" id="cal-bloques"></div>
+
+      <section class="cal-acciones-fecha" aria-label="Guardar esta fecha">
+        <h3>¿Querés guardar esta fecha en tu calendario?</h3>
+        <div class="cal-guardar-form">
+          <input
+            type="text"
+            id="cal-guardar-nombre"
+            placeholder="Nombre de la persona o motivo (ej.: Mamá, Sofía, Recuerdo)"
+            maxlength="60"
+          />
+          <select id="cal-guardar-tipo" aria-label="Tipo de recordatorio">
+            <option value="cumpleanos">🎂 Cumpleaños</option>
+            <option value="duelo">🕊️ Fecha de duelo y recuerdo</option>
+          </select>
+          <button type="button" class="btn btn--primario" id="cal-btn-ics">
+            Descargar recordatorio (.ics)
+          </button>
+          <a href="#" class="btn btn--secundario" id="cal-btn-duelo-ir">
+            Abrir en Condolencias
+          </a>
+        </div>
+        <p class="cal-guardar-estado" id="cal-guardar-estado" role="status"></p>
+      </section>
+    </div>
+  </section>
+
+  <section class="cal-explorar-mas">
+    <h2>Seguí explorando por fecha</h2>
+    <div class="pais-conexiones__grid">
+      <a class="pais-enlace-card" href="/hitos-historicos/">
+        <strong>Atlas de {PAISES_HITOS.length} países</strong>
+        <span>Buscá cualquier país del mundo y descubrí su historia nacional completa.</span>
+      </a>
+      <a class="pais-enlace-card" href="/condolencias/">
+        <strong>Condolencias y fecha de duelo</strong>
+        <span>40 publicaciones serenas y selector para recordar fechas sensibles.</span>
+      </a>
+      <a class="pais-enlace-card" href="/horoscopo/">
+        <strong>Horóscopo de cumpleaños</strong>
+        <span>Los 12 signos del zodíaco con rasgos, compatibilidades y saludos.</span>
+      </a>
+      <a class="pais-enlace-card" href="/herramientas/">
+        <strong>Herramientas gratuitas</strong>
+        <span>Calculadora de edad, acrósticos, agenda .ics y banderines para imprimir.</span>
+      </a>
+    </div>
+  </section>
+
+  <script
+    is:inline
+    define:vars={{
+      indiceCalendario,
+      mesesNombres: MESES_NOMBRES_HITOS,
+      diasPorMes: DIAS_POR_MES_EVERGREEN
+    }}
+  >
+    (function () {
+      var hoy = new Date();
+      var params = new URLSearchParams(window.location.search);
+      var mesActual = parseInt(params.get('mes') || String(hoy.getMonth() + 1), 10);
+      var diaActual = parseInt(params.get('dia') || String(hoy.getDate()), 10);
+      if (isNaN(mesActual) || mesActual < 1 || mesActual > 12) mesActual = hoy.getMonth() + 1;
+      var maxIni = diasPorMes[mesActual - 1] || 31;
+      if (isNaN(diaActual) || diaActual < 1 || diaActual > maxIni) diaActual = Math.min(hoy.getDate(), maxIni);
+
+      var btnsMes = Array.prototype.slice.call(document.querySelectorAll('.cal-mes-btn'));
+      var elMesTitulo = document.getElementById('cal-mes-activo-titulo');
+      var elDiasGrid = document.getElementById('cal-dias-grid');
+      var elFechaTitulo = document.getElementById('cal-fecha-titulo');
+      var elFechaSub = document.getElementById('cal-fecha-sub');
+      var elBloques = document.getElementById('cal-bloques');
+      var btnHoy = document.getElementById('cal-btn-hoy');
+      var inputNombre = document.getElementById('cal-guardar-nombre');
+      var selectTipo = document.getElementById('cal-guardar-tipo');
+      var btnIcs = document.getElementById('cal-btn-ics');
+      var btnDueloIr = document.getElementById('cal-btn-duelo-ir');
+      var elEstado = document.getElementById('cal-guardar-estado');
+
+      function escHtml(s) {
+        return String(s || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function fmtAnio(a) {
+        return a < 0 ? Math.abs(a) + ' a. C.' : String(a);
+      }
+
+      function renderDias() {
+        var nombreMes = mesesNombres[mesActual - 1] || 'enero';
+        elMesTitulo.textContent = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1);
+        btnsMes.forEach(function (b) {
+          var m = parseInt(b.getAttribute('data-mes'), 10);
+          var activo = m === mesActual;
+          b.classList.toggle('activo', activo);
+          b.setAttribute('aria-selected', activo ? 'true' : 'false');
+        });
+
+        var totalDias = diasPorMes[mesActual - 1] || 31;
+        if (diaActual > totalDias) diaActual = totalDias;
+
+        var html = '';
+        for (var d = 1; d <= totalDias; d++) {
+          var dato = indiceCalendario[mesActual + '-' + d];
+          var tieneHito = dato && (dato.hitosPaises.length > 0 || dato.hitosGlobales.length > 0);
+          var tieneEsp = dato && dato.fechasEspecialesExactas.length > 0;
+          var sel = d === diaActual ? ' activo' : '';
+          html +=
+            '<button type="button" class="cal-dia-btn' +
+            sel +
+            '" data-dia="' +
+            d +
+            '" aria-pressed="' +
+            (d === diaActual ? 'true' : 'false') +
+            '">' +
+            '<span class="cal-dia-num">' +
+            d +
+            '</span>' +
+            '<span class="cal-dia-dots">' +
+            (tieneHito ? '<i class="cal-dot cal-dot--hito" title="Hito histórico"></i>' : '') +
+            (tieneEsp ? '<i class="cal-dot cal-dot--especial" title="Fecha especial"></i>' : '') +
+            '</span>' +
+            '</button>';
+        }
+        elDiasGrid.innerHTML = html;
+
+        Array.prototype.slice.call(elDiasGrid.querySelectorAll('.cal-dia-btn')).forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            diaActual = parseInt(btn.getAttribute('data-dia'), 10) || 1;
+            actualizarUrl();
+            renderDias();
+            renderDetalle();
+          });
+        });
+      }
+
+      function actualizarUrl() {
+        try {
+          var nuevaUrl = window.location.pathname + '?mes=' + mesActual + '&dia=' + diaActual;
+          window.history.replaceState(null, '', nuevaUrl);
+        } catch (e) {}
+      }
+
+      function renderDetalle() {
+        var dato = indiceCalendario[mesActual + '-' + diaActual];
+        if (!dato) return;
+
+        elFechaTitulo.textContent = dato.etiqueta;
+        var totalHitos = dato.hitosPaises.length + dato.hitosGlobales.length;
+        elFechaSub.textContent =
+          'Signo ' +
+          dato.signoNombre +
+          ' ' +
+          dato.signoSimbolo +
+          ' · ' +
+          (totalHitos === 0
+            ? 'Sin feriado nacional exacto hoy, con efemérides y colecciones del mes'
+            : totalHitos === 1
+              ? '1 hito histórico mundial en esta fecha'
+              : totalHitos + ' hitos históricos mundiales en esta fecha');
+
+        if (btnDueloIr) {
+          btnDueloIr.href = '/condolencias/?mes=' + mesActual + '&dia=' + diaActual + '#fecha-duelo';
+        }
+
+        var secciones = [];
+
+        // 1. Hitos históricos de países y globales
+        if (dato.hitosPaises.length > 0 || dato.hitosGlobales.length > 0) {
+          var cardsHitos = dato.hitosPaises
+            .map(function (h) {
+              return (
+                '<article class="cal-card cal-card--hito">' +
+                '<div class="cal-card__meta">' +
+                escHtml(h.bandera) +
+                ' <strong>' +
+                escHtml(h.paisNombre) +
+                '</strong> · Año histórico ' +
+                escHtml(fmtAnio(h.anio)) +
+                '</div>' +
+                '<h4><a href="/hitos-historicos/' +
+                escHtml(h.paisSlug) +
+                '/">' +
+                escHtml(h.titulo) +
+                '</a></h4>' +
+                '<p>' +
+                escHtml(h.resumen) +
+                '</p>' +
+                '<p class="cal-card__extra"><strong>Cómo se festeja:</strong> ' +
+                escHtml(h.comoSeFesteja) +
+                '</p>' +
+                '<a class="cal-card__link" href="/hitos-historicos/' +
+                escHtml(h.paisSlug) +
+                '/">Leer historia completa de ' +
+                escHtml(h.paisNombre) +
+                ' →</a>' +
+                '</article>'
+              );
+            })
+            .join('');
+
+          var cardsGlob = dato.hitosGlobales
+            .map(function (g) {
+              return (
+                '<article class="cal-card cal-card--global">' +
+                '<div class="cal-card__meta">' +
+                escHtml(g.icono) +
+                ' <strong>' +
+                escHtml(g.ambito) +
+                '</strong> · ' +
+                escHtml(fmtAnio(g.anio)) +
+                '</div>' +
+                '<h4>' +
+                escHtml(g.titulo) +
+                '</h4>' +
+                '<p>' +
+                escHtml(g.explicacion) +
+                '</p>' +
+                '</article>'
+              );
+            })
+            .join('');
+
+          secciones.push(
+            '<section class="cal-seccion">' +
+              '<h3>🌍 Hitos históricos mundiales del ' +
+              escHtml(dato.etiqueta) +
+              '</h3>' +
+              '<div class="cal-cards">' +
+              cardsHitos +
+              cardsGlob +
+              '</div>' +
+              '</section>'
+          );
+        } else {
+          secciones.push(
+            '<section class="cal-seccion">' +
+              '<h3>🌍 Hitos históricos mundiales del ' +
+              escHtml(dato.etiqueta) +
+              '</h3>' +
+              '<p class="cal-vacio">Ningún Estado soberano fija su día nacional exacto el ' +
+              escHtml(dato.etiqueta) +
+              '. Podés recorrer las fechas marcadas con punto rosa en este mes o explorar el <a href="/hitos-historicos/">atlas completo de 195 países</a>.</p>' +
+              '</section>'
+          );
+        }
+
+        // 2. Fechas especiales exactas del sitio
+        if (dato.fechasEspecialesExactas.length > 0) {
+          var cardsEsp = dato.fechasEspecialesExactas
+            .map(function (f) {
+              return (
+                '<a class="cal-card cal-card--especial" href="/' +
+                escHtml(f.slug) +
+                '/">' +
+                '<div class="cal-card__meta">' +
+                escHtml(f.emoji) +
+                ' Celebración en ParaCumpleanos</div>' +
+                '<h4>' +
+                escHtml(f.titulo) +
+                '</h4>' +
+                '<p>40 mensajes inéditos y tarjetas personalizadas listas para copiar o descargar.</p>' +
+                '<span class="cal-card__link">Abrir colección →</span>' +
+                '</a>'
+              );
+            })
+            .join('');
+          secciones.push(
+            '<section class="cal-seccion">' +
+              '<h3>🎉 Celebraciones especiales del ' +
+              escHtml(dato.etiqueta) +
+              '</h3>' +
+              '<div class="cal-cards">' +
+              cardsEsp +
+              '</div>' +
+              '</section>'
+          );
+        }
+
+        // 3. Cumpleaños del mes + Signo zodiacal
+        secciones.push(
+          '<section class="cal-seccion">' +
+            '<h3>🎂 Cumpleaños y horóscopo para el ' +
+            escHtml(dato.etiqueta) +
+            '</h3>' +
+            '<div class="cal-cards cal-cards--dos">' +
+            '<a class="cal-card" href="/' +
+            escHtml(dato.hubMesSlug) +
+            '/">' +
+            '<div class="cal-card__meta">📅 Colección del mes</div>' +
+            '<h4>' +
+            escHtml(dato.hubMesTitulo) +
+            '</h4>' +
+            '<p>60 textos inéditos de cumpleaños para dedicar a quienes cumplen años en este mes.</p>' +
+            '<span class="cal-card__link">Ver 60 dedicatorias →</span>' +
+            '</a>' +
+            '<a class="cal-card" href="/horoscopo/' +
+            escHtml(dato.signoSlug) +
+            '/">' +
+            '<div class="cal-card__meta">' +
+            escHtml(dato.signoSimbolo) +
+            ' Signo del zodíaco</div>' +
+            '<h4>Nacidos el ' +
+            escHtml(dato.etiqueta) +
+            ': ' +
+            escHtml(dato.signoNombre) +
+            '</h4>' +
+            '<p>Rasgos del signo, compatibilidades y saludos personalizados de cumpleaños.</p>' +
+            '<span class="cal-card__link">Explorar ' +
+            escHtml(dato.signoNombre) +
+            ' →</span>' +
+            '</a>' +
+            '</div>' +
+            '</section>'
+        );
+
+        // 4. Motivación diaria + Fecha de duelo
+        var cardMotivacion = dato.motivacion
+          ? '<a class="cal-card" href="/posts/' +
+            escHtml(dato.motivacion.slug) +
+            '/">' +
+            '<div class="cal-card__meta">✨ Motivación para el ' +
+            escHtml(dato.etiqueta) +
+            '</div>' +
+            '<h4>' +
+            escHtml(dato.motivacion.titulo) +
+            '</h4>' +
+            '<p>' +
+            escHtml(dato.motivacion.extracto) +
+            '</p>' +
+            '<span class="cal-card__link">Leer reflexión completa →</span>' +
+            '</a>'
+          : '';
+
+        var cardDuelo =
+          '<a class="cal-card cal-card--duelo" href="/condolencias/?mes=' +
+          mesActual +
+          '&dia=' +
+          diaActual +
+          '#fecha-duelo">' +
+          '<div class="cal-card__meta">🕊️ Fecha de duelo y condolencias</div>' +
+          '<h4>Recordar a un ser querido el ' +
+          escHtml(dato.etiqueta) +
+          '</h4>' +
+          '<p>Accedé a 40 textos serenos de condolencias y configurá esta fecha de recuerdo sin año.</p>' +
+          '<span class="cal-card__link">Ir a Condolencias →</span>' +
+          '</a>';
+
+        secciones.push(
+          '<section class="cal-seccion">' +
+            '<h3>✨ Inspiración diaria y memoria respetuosa</h3>' +
+            '<div class="cal-cards cal-cards--dos">' +
+            cardMotivacion +
+            cardDuelo +
+            '</div>' +
+            '</section>'
+        );
+
+        // 5. Otras fechas especiales del mismo mes
+        if (dato.fechasEspecialesDelMes.length > 0) {
+          var linksMes = dato.fechasEspecialesDelMes
+            .map(function (f) {
+              return (
+                '<a class="pais-chip" href="/' +
+                escHtml(f.slug) +
+                '/">' +
+                escHtml(f.emoji) +
+                ' ' +
+                escHtml(f.titulo) +
+                ' (' +
+                escHtml(f.notaFecha) +
+                ')</a>'
+              );
+            })
+            .join('');
+          secciones.push(
+            '<section class="cal-seccion">' +
+              '<h3>🗓️ Otras celebraciones de ' +
+              escHtml(mesesNombres[mesActual - 1]) +
+              ' en la web</h3>' +
+              '<div class="pais-chips">' +
+              linksMes +
+              '</div>' +
+              '</section>'
+          );
+        }
+
+        elBloques.innerHTML = secciones.join('');
+      }
+
+      btnsMes.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          mesActual = parseInt(btn.getAttribute('data-mes'), 10) || 1;
+          var max = diasPorMes[mesActual - 1] || 31;
+          if (diaActual > max) diaActual = max;
+          actualizarUrl();
+          renderDias();
+          renderDetalle();
+        });
+      });
+
+      if (btnHoy) {
+        btnHoy.addEventListener('click', function () {
+          var ahora = new Date();
+          mesActual = ahora.getMonth() + 1;
+          diaActual = ahora.getDate();
+          actualizarUrl();
+          renderDias();
+          renderDetalle();
+        });
+      }
+
+      if (btnIcs) {
+        btnIcs.addEventListener('click', function () {
+          var nombre = (inputNombre && inputNombre.value ? inputNombre.value : '').trim();
+          var tipo = selectTipo ? selectTipo.value : 'cumpleanos';
+          var esDuelo = tipo === 'duelo';
+          var etiqueta = diaActual + ' de ' + mesesNombres[mesActual - 1];
+          var titulo = esDuelo
+            ? 'En memoria de ' + (nombre || 'un ser querido') + ' (' + etiqueta + ')'
+            : 'Cumpleaños de ' + (nombre || etiqueta);
+          var ahora = new Date();
+          var anio = ahora.getFullYear();
+          var esBis = function (a) { return (a % 4 === 0 && a % 100 !== 0) || a % 400 === 0; };
+          var diaEf = mesActual === 2 && diaActual === 29 && !esBis(anio) ? 28 : diaActual;
+          var dtObj = new Date(anio, mesActual - 1, diaEf);
+          if (dtObj < new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate())) {
+            anio += 1;
+            diaEf = mesActual === 2 && diaActual === 29 && !esBis(anio) ? 28 : diaActual;
+          }
+          var pad = function (n) { return String(n).padStart(2, '0'); };
+          var ini = anio + pad(mesActual) + pad(diaEf);
+          var sig = new Date(anio, mesActual - 1, diaEf + 1);
+          var fin = sig.getFullYear() + pad(sig.getMonth() + 1) + pad(sig.getDate());
+          var dtstamp =
+            ahora.getUTCFullYear() + pad(ahora.getUTCMonth() + 1) + pad(ahora.getUTCDate()) +
+            'T' + pad(ahora.getUTCHours()) + pad(ahora.getUTCMinutes()) + pad(ahora.getUTCSeconds()) + 'Z';
+          var urlDestino = esDuelo
+            ? 'https://paracumpleanos.com/condolencias/'
+            : 'https://paracumpleanos.com/calendario/?mes=' + mesActual + '&dia=' + diaActual;
+          var ics = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//ParaCumpleanos//Calendario//ES',
+            'CALSCALE:GREGORIAN',
+            'BEGIN:VEVENT',
+            'UID:' + tipo + '-' + mesActual + '-' + diaActual + '-' + Date.now() + '@paracumpleanos.com',
+            'DTSTAMP:' + dtstamp,
+            'DTSTART;VALUE=DATE:' + ini,
+            'DTEND;VALUE=DATE:' + fin,
+            'RRULE:FREQ=YEARLY',
+            'SUMMARY:' + titulo.replace(/[,;\\]/g, ' '),
+            'DESCRIPTION:Recordatorio anual desde ParaCumpleanos.com — ' + urlDestino,
+            'END:VEVENT',
+            'END:VCALENDAR'
+          ].join('\r\n');
+          var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = (esDuelo ? 'duelo-' : 'fecha-') + mesActual + '-' + diaActual + '.ics';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          if (elEstado) elEstado.textContent = 'Recordatorio anual (.ics) descargado para el ' + etiqueta + '.';
+        });
+      }
+
+      renderDias();
+      renderDetalle();
+    })();
+  </script>
+</Base>

@@ -1,0 +1,290 @@
+---
+import Base from '../../layouts/Base.astro';
+import {
+  CONTINENTES_META,
+  ETIQUETAS_TIPO_HITO,
+  MESES_NOMBRES_HITOS,
+  PAISES_HITOS,
+  formatearAnioHistorico,
+  formatearFechaHitoSinAnio,
+  hitosPaisesPorDiaMes,
+  paisesVecinosMismoContinente,
+  type PaisHito
+} from '../../data/hitos-historicos.ts';
+import { SLUGS_MESES } from '../../lib/calendario.ts';
+import { MARCA, SITIO } from '../../lib/contenido.ts';
+import { resolverSignoPorDiaMes } from '../../lib/horoscopo.ts';
+
+export function getStaticPaths() {
+  return PAISES_HITOS.map((pais) => ({
+    params: { pais: pais.slug },
+    props: { pais }
+  }));
+}
+
+interface Props {
+  pais: PaisHito;
+}
+
+const { pais } = Astro.props;
+const hito = pais.hitoPrincipal;
+const fechaSinAnio = formatearFechaHitoSinAnio(hito.dia, hito.mes);
+const anioTexto = formatearAnioHistorico(hito.anioHistorico);
+const tipoEtiqueta = ETIQUETAS_TIPO_HITO[hito.tipo];
+const continenteMeta = CONTINENTES_META.find((c) => c.id === pais.continente);
+const nombreMes = MESES_NOMBRES_HITOS[hito.mes - 1] ?? 'enero';
+const slugMes = SLUGS_MESES[hito.mes - 1] ?? 'cumpleanos-en-enero';
+const signoFecha = resolverSignoPorDiaMes(hito.mes, hito.dia);
+
+const mismosDia = hitosPaisesPorDiaMes(hito.mes, hito.dia).filter(
+  (item) => item.pais.slug !== pais.slug
+);
+const vecinos = paisesVecinosMismoContinente(pais, 6);
+
+const tituloSeo = `${pais.nombre}: qué se festeja el ${fechaSinAnio} (${anioTexto})`.slice(0, 60);
+const descripcionSeo = `${hito.titulo} (${fechaSinAnio} de ${anioTexto}): historia completa de ${pais.nombre}, qué ocurrió, tradiciones y saludo conmemorativo listo para compartir.`.slice(0, 160);
+
+const faqs = [
+  {
+    pregunta: `¿Qué se festeja en ${pais.nombre} el ${fechaSinAnio}?`,
+    respuesta: `${hito.titulo}. ${hito.resumen}`
+  },
+  {
+    pregunta: `¿En qué año ocurrió este hito histórico de ${pais.nombre}?`,
+    respuesta: `El acontecimiento histórico conmemorativo tuvo lugar en ${anioTexto} y permanece como la fecha nacional de referencia de ${pais.nombre} (capital: ${pais.capital}).`
+  },
+  {
+    pregunta: `¿Cómo se celebra tradicionalmente esta fecha en ${pais.nombre}?`,
+    respuesta: hito.comoSeFesteja
+  }
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${hito.titulo} — ${pais.nombre} (${fechaSinAnio})`,
+    description: descripcionSeo,
+    inLanguage: 'es',
+    datePublished: '2026-11-20',
+    dateModified: '2026-11-20',
+    author: { '@type': 'Organization', name: MARCA },
+    publisher: { '@type': 'Organization', name: MARCA, url: SITIO },
+    mainEntityOfPage: `${SITIO}/hitos-historicos/${pais.slug}/`
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.pregunta,
+      acceptedAnswer: { '@type': 'Answer', text: f.respuesta }
+    }))
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITIO}/` },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Hitos históricos mundiales',
+        item: `${SITIO}/hitos-historicos/`
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: pais.nombre,
+        item: `${SITIO}/hitos-historicos/${pais.slug}/`
+      }
+    ]
+  }
+];
+---
+
+<Base
+  titulo={tituloSeo}
+  descripcion={descripcionSeo}
+  jsonld={jsonLd}
+>
+  <nav class="migas" aria-label="Ruta de navegación">
+    <a href="/">Inicio</a>
+    <span>/</span>
+    <a href="/hitos-historicos/">Hitos históricos</a>
+    <span>/</span>
+    <span>{pais.nombre}</span>
+  </nav>
+
+  <article class="pais-hito-articulo">
+    <header class="pais-hito-hero">
+      <div class="pais-hito-hero__bandera" aria-hidden="true">{pais.bandera}</div>
+      <div>
+        <p class="eyebrow">
+          {continenteMeta?.nombre ?? pais.continente} · {pais.subregion} · {tipoEtiqueta}
+        </p>
+        <h1>{hito.titulo} ({fechaSinAnio})</h1>
+        <p class="lead">{hito.resumen}</p>
+      </div>
+    </header>
+
+    <section class="pais-ficha" aria-label="Ficha histórica resumida">
+      <div class="pais-ficha__dato">
+        <span>Fecha conmemorativa</span>
+        <strong>{fechaSinAnio}</strong>
+      </div>
+      <div class="pais-ficha__dato">
+        <span>Año del hito</span>
+        <strong>{anioTexto}</strong>
+      </div>
+      <div class="pais-ficha__dato">
+        <span>Capital</span>
+        <strong>{pais.capital}</strong>
+      </div>
+      <div class="pais-ficha__dato">
+        <span>Región</span>
+        <strong>{pais.subregion}</strong>
+      </div>
+    </section>
+
+    <section class="pais-bloque-editorial">
+      <h2>¿Qué ocurrió el {fechaSinAnio} de {anioTexto} en {pais.nombre}?</h2>
+      <p>{hito.contextoHistorico}</p>
+
+      <h2>¿Cómo se festeja este día en {pais.nombre}?</h2>
+      <p>{hito.comoSeFesteja}</p>
+
+      <aside class="pais-dato-curioso">
+        <strong>Dato histórico destacado</strong>
+        <p>{pais.datoCurioso}</p>
+      </aside>
+    </section>
+
+    <section class="pais-saludo-box" aria-label="Saludo conmemorativo listo para copiar">
+      <p class="eyebrow">Mensaje conmemorativo</p>
+      <h2>Saludo sugerido para el {fechaSinAnio} en {pais.nombre}</h2>
+      <blockquote id="pais-saludo-texto">{hito.saludoSugerido}</blockquote>
+      <div class="pais-saludo-box__acciones">
+        <button type="button" class="btn btn--primario" id="pais-btn-copiar">
+          Copiar saludo
+        </button>
+        <a
+          href={`https://wa.me/?text=${encodeURIComponent(hito.saludoSugerido)}`}
+          class="btn btn--secundario"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Compartir por WhatsApp
+        </a>
+        <a href={`/calendario/?mes=${hito.mes}&dia=${hito.dia}`} class="btn btn--secundario">
+          Ver todo lo del {fechaSinAnio} en el calendario
+        </a>
+      </div>
+      <p class="pais-saludo-estado" id="pais-saludo-estado" role="status"></p>
+    </section>
+
+    {pais.hitosSecundarios && pais.hitosSecundarios.length > 0 && (
+      <section class="pais-secundarios">
+        <h2>Otras fechas históricas clave de {pais.nombre}</h2>
+        <div class="pais-secundarios__lista">
+          {pais.hitosSecundarios.map((sec) => {
+            const fechaSec = formatearFechaHitoSinAnio(sec.dia, sec.mes);
+            const anioSec = formatearAnioHistorico(sec.anioHistorico);
+            return (
+              <div class="pais-sec-card">
+                <p class="pais-sec-card__fecha">
+                  <strong>{fechaSec}</strong> ({anioSec}) · {ETIQUETAS_TIPO_HITO[sec.tipo]}
+                </p>
+                <h3>{sec.titulo}</h3>
+                <p>{sec.contextoHistorico}</p>
+                <p><strong>Cómo se conmemora:</strong> {sec.comoSeFesteja}</p>
+                <a href={`/calendario/?mes=${sec.mes}&dia=${sec.dia}`}>
+                  Explorar el {fechaSec} en el calendario sin año →
+                </a>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <section class="pais-conexiones" aria-label="Conexiones con el calendario y el sitio">
+      <h2>¿Cumplís años o recordás una fecha el {fechaSinAnio}?</h2>
+      <div class="pais-conexiones__grid">
+        <a class="pais-enlace-card" href={`/calendario/?mes=${hito.mes}&dia=${hito.dia}`}>
+          <strong>Calendario del {fechaSinAnio}</strong>
+          <span>Descubrí todos los hitos, celebraciones y motivación del día sin año.</span>
+        </a>
+        <a class="pais-enlace-card" href={`/${slugMes}/`}>
+          <strong>Cumpleaños en {nombreMes}</strong>
+          <span>60 mensajes inéditos y tarjetas listas para quienes celebran este mes.</span>
+        </a>
+        <a class="pais-enlace-card" href={`/horoscopo/${signoFecha.slug}/`}>
+          <strong>Signo {signoFecha.nombre} {signoFecha.simbolo}</strong>
+          <span>Perfil del signo que rige el {fechaSinAnio} y dedicatorias a medida.</span>
+        </a>
+        <a class="pais-enlace-card" href={`/condolencias/?mes=${hito.mes}&dia=${hito.dia}`}>
+          <strong>Condolencias y fecha de duelo</strong>
+          <span>Palabras respetuosas y recordatorio anual si esta es una fecha sensible.</span>
+        </a>
+      </div>
+    </section>
+
+    {mismosDia.length > 0 && (
+      <section class="pais-relacionados">
+        <h2>Otros países que celebran un hito histórico el {fechaSinAnio}</h2>
+        <div class="pais-chips">
+          {mismosDia.map((m) => (
+            <a href={`/hitos-historicos/${m.pais.slug}/`} class="pais-chip">
+              {m.pais.bandera} {m.pais.nombre} ({formatearAnioHistorico(m.evento.anioHistorico)})
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="pais-relacionados">
+      <h2>Más países de {continenteMeta?.nombre ?? pais.continente}</h2>
+      <div class="pais-chips">
+        {vecinos.map((v) => (
+          <a href={`/hitos-historicos/${v.slug}/`} class="pais-chip">
+            {v.bandera} {v.nombre} · {formatearFechaHitoSinAnio(v.hitoPrincipal.dia, v.hitoPrincipal.mes)}
+          </a>
+        ))}
+        <a href="/hitos-historicos/" class="pais-chip pais-chip--todos">
+          Ver los {PAISES_HITOS.length} países del mundo →
+        </a>
+      </div>
+    </section>
+
+    <section class="pais-faqs">
+      <h2>Preguntas frecuentes sobre la fecha histórica de {pais.nombre}</h2>
+      <div class="faq-lista">
+        {faqs.map((f) => (
+          <details class="faq-item" open>
+            <summary>{f.pregunta}</summary>
+            <p>{f.respuesta}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  </article>
+
+  <script is:inline>
+    (function () {
+      var btn = document.getElementById('pais-btn-copiar');
+      var txt = document.getElementById('pais-saludo-texto');
+      var estado = document.getElementById('pais-saludo-estado');
+      if (btn && txt) {
+        btn.addEventListener('click', function () {
+          var valor = (txt.textContent || '').trim();
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(valor).then(function () {
+              if (estado) estado.textContent = 'Saludo conmemorativo copiado al portapapeles.';
+            });
+          }
+        });
+      }
+    })();
+  </script>
+</Base>

@@ -81,7 +81,7 @@ export interface GuiaAdaptacionMensaje {
   guia: GuiaEditorial;
 }
 
-const REGEX_DUELO = /fallecid|hasta-el-cielo/;
+const REGEX_DUELO = /fallecid|hasta-el-cielo|condolencias|pesame|duelo/;
 const REGEX_ANIV = /(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/;
 const REGEX_POEMA = /^poema|poesia|-poema/;
 
@@ -344,8 +344,12 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     )
   ) {
     target = 'regalos-economicos-con-valor-emocional-y-tarjeta-personalizada';
+  } else if (slug === 'condolencias') {
+    target = 'como-escribir-condolencias-y-palabras-de-pesame-respetuosas';
   } else if (REGEX_DUELO.test(slug)) {
     target = 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido';
+  } else if (slug === 'frases-para-invitacion-de-cumpleanos' || slug === 'tarjetas-bonitas-para-felicitar-en-un-cumpleanos') {
+    target = 'invitaciones-y-postales-de-cumpleanos-para-imprimir-y-editar';
   } else if (REGEX_ANIV.test(slug)) {
     target = 'como-celebrar-meses-de-novios-y-aniversarios-sin-caer-en-cliches';
   } else if (/ingles|english|biling/.test(slug)) {

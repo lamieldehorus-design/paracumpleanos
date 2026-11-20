@@ -5,6 +5,7 @@ import Compartir from '../components/Compartir.astro';
 import Hermanas from '../components/Hermanas.astro';
 import PersonalizadorTarjeta from '../components/PersonalizadorTarjeta.astro';
 import AlertaMotivacionDiaria from '../components/AlertaMotivacionDiaria.astro';
+import SelectorFechaDuelo from '../components/SelectorFechaDuelo.astro';
 import {
   contenido,
   POR_PAGINA,
@@ -444,6 +445,76 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
       { href: '/feliz-dia-del-maestro/', label: 'Feliz Día del Maestro' },
       { href: '/cumpleanos-en-septiembre/', label: 'Cumpleaños en Septiembre' }
     ]
+  },
+  'condolencias': {
+    texto: 'Otras colecciones serenas de recuerdo y acompañamiento:',
+    enlaces: [
+      { href: '/frases-para-una-persona-fallecida/', label: 'Frases para una persona fallecida' },
+      { href: '/feliz-cumpleanos-hasta-el-cielo/', label: 'Mensajes hasta el cielo' },
+      { href: '/felicitaciones-a-madre-fallecida/', label: 'Recuerdo para madre fallecida' },
+      { href: '/frases-lindas-para-mi-padre-fallecido-que-esta-en-el-cielo/', label: 'Recuerdo para padre fallecido' },
+      { href: '/calendario/', label: 'Ver calendario de fechas' }
+    ]
+  },
+  'frases-para-una-persona-fallecida': {
+    texto: 'Acompañamiento en fechas de duelo y pésame:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias y mensajes de pésame (40 textos)' },
+      { href: '/feliz-cumpleanos-hasta-el-cielo/', label: 'Mensajes hasta el cielo' },
+      { href: '/calendario/', label: 'Calendario de fechas sin año' }
+    ]
+  },
+  'feliz-cumpleanos-hasta-el-cielo': {
+    texto: 'Acompañamiento en fechas de duelo y pésame:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias y palabras de pésame' },
+      { href: '/frases-para-una-persona-fallecida/', label: 'Para una persona fallecida' }
+    ]
+  },
+  'felicitaciones-a-madre-fallecida': {
+    texto: 'Más textos serenos de recuerdo y condolencias:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias y mensajes de pésame' },
+      { href: '/frases-lindas-para-mi-padre-fallecido-que-esta-en-el-cielo/', label: 'Recuerdo para padre fallecido' }
+    ]
+  },
+  'frases-lindas-para-mi-padre-fallecido-que-esta-en-el-cielo': {
+    texto: 'Más textos serenos de recuerdo y condolencias:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias y mensajes de pésame' },
+      { href: '/felicitaciones-a-madre-fallecida/', label: 'Recuerdo para madre fallecida' }
+    ]
+  },
+  'frases-para-una-hermana-fallecida-en-su-cumpleanos': {
+    texto: 'Más textos serenos de recuerdo y condolencias:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias y mensajes de pésame' },
+      { href: '/feliz-cumpleanos-hasta-el-cielo/', label: 'Mensajes hasta el cielo' }
+    ]
+  },
+  'frases-para-invitacion-de-cumpleanos': {
+    texto: 'Completá tu fiesta con decoración y postales:',
+    enlaces: [
+      { href: '/herramientas/#banderines-imprimir', label: 'Crear banderines para imprimir A4' },
+      { href: '/tarjetas-bonitas-para-felicitar-en-un-cumpleanos/', label: 'Postales y tarjetas para imprimir' },
+      { href: '/guias/tematicas-de-cumpleanos-ideas-originales-para-fiestas/', label: '24 temáticas de cumpleaños' }
+    ]
+  },
+  'tarjetas-bonitas-para-felicitar-en-un-cumpleanos': {
+    texto: 'Más recursos para imprimir y celebrar:',
+    enlaces: [
+      { href: '/herramientas/#banderines-imprimir', label: 'Generador de banderines para imprimir' },
+      { href: '/frases-para-invitacion-de-cumpleanos/', label: 'Invitaciones de cumpleaños' },
+      { href: '/guias/banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas/', label: 'Medidas y plantillas de banderines' }
+    ]
+  },
+  'feliz-cumpleanos-general': {
+    texto: 'Recursos populares para tu festejo:',
+    enlaces: [
+      { href: '/herramientas/#banderines-imprimir', label: 'Banderines para imprimir' },
+      { href: '/calendario/', label: 'Calendario de fechas e hitos' },
+      { href: '/guias/tematicas-de-cumpleanos-ideas-originales-para-fiestas/', label: 'Ideas de temáticas de cumpleaños' }
+    ]
   }
 };
 const parContextual = esHub ? PARES_CONTEXTUALES[registro.slug] : undefined;
@@ -520,12 +591,15 @@ const textoEnviar = esHub ? '' : registro.texto;
           </div>
           <p class="enlace-horoscopo-pie">
             <a href="/horoscopo/">Comparar los 12 signos del zodíaco →</a>
+            <a href="/calendario/">Ver calendario e hitos históricos del mes →</a>
             <a href="/herramientas/#calculadora-edad">Calcular edad exacta y signo →</a>
           </p>
         </aside>
       ) : null}
 
       {hub.slug === 'motivaciones' ? <AlertaMotivacionDiaria compact={true} /> : null}
+
+      {editorialHub.perfil === 'duelo' ? <SelectorFechaDuelo /> : null}
 
       <PersonalizadorTarjeta modo="hub" />
 

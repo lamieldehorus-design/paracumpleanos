@@ -1800,4 +1800,881 @@ input, textarea, select { font-size: 16px; }
   line-height: 1.5;
 }
 
+/* ==========================================================================
+   NUEVOS MODULOS: FECHA DE DUELO, CALENDARIO SIN ANIO, HITOS HISTORICOS Y BANDERINES
+   ========================================================================== */
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--rosa-oscuro);
+}
+
+.hub-hero {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 24px 22px;
+  margin: 0 0 22px;
+  box-shadow: var(--sombra);
+}
+.hub-hero h1 {
+  margin: 0 0 10px;
+}
+.hub-acciones-rapidas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn--primario {
+  background: var(--rosa);
+  color: #fff;
+  border-color: var(--rosa);
+}
+.btn--primario:hover {
+  background: var(--rosa-oscuro);
+  border-color: var(--rosa-oscuro);
+  color: #fff;
+}
+.btn--secundario {
+  background: #fff;
+  color: var(--texto);
+  border: 1px solid var(--borde);
+}
+.btn--secundario:hover {
+  border-color: var(--rosa);
+  color: var(--rosa-oscuro);
+}
+
+/* Selector de Fecha de Duelo */
+.duelo-selector {
+  background: #faf9f7;
+  border: 1px solid #d6d0c9;
+  border-left: 4px solid #6b7280;
+  border-radius: 14px;
+  padding: 22px;
+  margin: 20px 0 26px;
+}
+.duelo-selector--compacto {
+  margin: 10px 0 0;
+  padding: 18px;
+}
+.duelo-selector__head h2 {
+  margin: 0 0 6px;
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+  color: var(--texto);
+}
+.duelo-selector__sub {
+  margin: 0 0 16px;
+  color: var(--texto-suave);
+  font-size: 0.96rem;
+}
+.duelo-selector__grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  margin-bottom: 16px;
+}
+.duelo-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.duelo-campo label {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--texto);
+}
+.duelo-campo input,
+.duelo-campo select {
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background: #fff;
+  font-family: inherit;
+  color: var(--texto);
+}
+.duelo-selector__resultado {
+  background: #fff;
+  border: 1px solid #e2ddd7;
+  border-radius: 12px;
+  padding: 18px;
+}
+.duelo-selector__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 10px;
+}
+.duelo-selector__resumen {
+  margin: 0 0 10px;
+  font-size: 0.94rem;
+  color: var(--texto-suave);
+}
+.duelo-selector__cita {
+  margin: 0 0 14px;
+  padding: 12px 16px;
+  border-left: 3px solid #6b7280;
+  background: #f8f7f5;
+  border-radius: 0 8px 8px 0;
+  font-family: var(--fuente-display);
+  font-size: 1.04rem;
+  line-height: 1.65;
+  color: var(--texto);
+}
+.duelo-selector__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.duelo-selector__estado {
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #374151;
+}
+.herr-agenda-item--duelo {
+  background: #faf9f7;
+  border-left: 3px solid #6b7280;
+}
+
+/* Calendario Evergreen (sin anio) */
+.cal-layout {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: 1fr;
+  align-items: start;
+  margin-bottom: 30px;
+}
+@media (min-width: 960px) {
+  .cal-layout {
+    grid-template-columns: minmax(310px, 380px) 1fr;
+  }
+}
+.cal-panel-selector {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: var(--sombra);
+}
+.cal-meses {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.cal-mes-btn {
+  padding: 8px 6px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--papel);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--texto);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.cal-mes-btn:hover {
+  border-color: var(--rosa);
+}
+.cal-mes-btn.activo {
+  background: var(--rosa);
+  color: #fff;
+  border-color: var(--rosa);
+}
+.cal-cuadricula-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.cal-cuadricula-head h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+.cal-btn-hoy {
+  padding: 5px 10px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--superficie);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--rosa-oscuro);
+  cursor: pointer;
+}
+.cal-btn-hoy:hover {
+  border-color: var(--rosa);
+}
+.cal-dias-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.cal-dia-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 44px;
+  padding: 4px 2px;
+  border: 1px solid var(--borde-suave);
+  border-radius: 9px;
+  background: var(--papel);
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.cal-dia-btn:hover {
+  border-color: var(--rosa);
+  background: #fff;
+}
+.cal-dia-btn.activo {
+  background: var(--rosa);
+  border-color: var(--rosa);
+  color: #fff;
+}
+.cal-dia-btn.activo .cal-dia-num {
+  color: #fff;
+}
+.cal-dia-btn.activo .cal-dot {
+  background: #fff;
+}
+.cal-dia-num {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--texto);
+  font-variant-numeric: tabular-nums;
+}
+.cal-dia-dots {
+  display: flex;
+  gap: 3px;
+  min-height: 6px;
+}
+.cal-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.cal-dot--hito { background: #0284c7; }
+.cal-dot--especial { background: var(--rosa); }
+.cal-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--borde-suave);
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+.cal-leyenda span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cal-panel-detalle {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: var(--sombra);
+}
+.cal-detalle-header {
+  border-bottom: 1px solid var(--borde-suave);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+.cal-detalle-header h2 {
+  margin: 0 0 6px;
+  font-size: clamp(1.45rem, 2.5vw, 1.95rem);
+}
+.cal-detalle-sub {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.95rem;
+}
+.cal-bloques {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.cal-seccion h3 {
+  margin: 0 0 10px;
+  font-size: 1.12rem;
+  color: var(--texto);
+}
+.cal-cards {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+.cal-cards--dos {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.cal-card {
+  padding: 14px 16px;
+  border: 1px solid var(--borde);
+  border-radius: 11px;
+  background: var(--papel);
+}
+.cal-card--hito {
+  border-left: 3px solid #0284c7;
+}
+.cal-card--global {
+  border-left: 3px solid #0d9488;
+}
+.cal-card--especial {
+  border-left: 3px solid var(--rosa);
+}
+.cal-card--duelo {
+  background: #faf9f7;
+  border-left: 3px solid #6b7280;
+}
+.cal-card h4 {
+  margin: 4px 0 6px;
+  font-size: 1.02rem;
+}
+.cal-card p {
+  margin: 0 0 8px;
+  font-size: 0.93rem;
+  color: var(--texto-suave);
+  line-height: 1.55;
+}
+.cal-card__meta {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--rosa-oscuro);
+}
+.cal-card__extra {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--texto);
+}
+.cal-card__link {
+  display: inline-block;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--rosa-oscuro);
+}
+.cal-card__link:hover {
+  text-decoration: underline;
+}
+.cal-vacio {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--texto-suave);
+  padding: 12px 14px;
+  background: var(--superficie);
+  border-radius: 9px;
+}
+.cal-acciones-fecha {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--borde-suave);
+}
+.cal-acciones-fecha h3 {
+  margin: 0 0 6px;
+  font-size: 1.08rem;
+}
+.cal-guardar-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.cal-guardar-form input,
+.cal-guardar-form select {
+  min-height: 40px;
+  padding: 8px 11px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--papel);
+  font-family: inherit;
+  color: var(--texto);
+}
+.cal-guardar-form input {
+  flex: 1 1 200px;
+}
+.cal-guardar-estado {
+  margin: 8px 0 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--rosa-oscuro);
+}
+.cal-explorar-mas {
+  margin: 26px 0;
+}
+
+/* Hitos Historicos Mundiales (/hitos-historicos/ y /hitos-historicos/[pais]/) */
+.hitos-hoy-card {
+  background: linear-gradient(135deg, #fff 0%, #fdf2f8 100%);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 0 0 22px;
+}
+.hitos-hoy-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.hitos-hoy-card__etiqueta {
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+}
+.hitos-hoy-card__lista {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.hitos-hoy-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--texto);
+}
+.hitos-hoy-item:hover {
+  border-color: var(--rosa);
+}
+.hitos-hoy-vacio {
+  margin: 0;
+  font-size: 0.93rem;
+  color: var(--texto-suave);
+}
+
+.hitos-filtros {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.hitos-filtros__barra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.hitos-buscar {
+  flex: 1 1 260px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: var(--papel);
+  font-family: inherit;
+  color: var(--texto);
+}
+.hitos-mes-select {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: var(--papel);
+  font-family: inherit;
+  color: var(--texto);
+}
+.hitos-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.hitos-tab {
+  padding: 7px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background: var(--papel);
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--texto);
+  cursor: pointer;
+}
+.hitos-tab.activo {
+  background: var(--rosa);
+  color: #fff;
+  border-color: var(--rosa);
+}
+.hitos-contador {
+  margin: 0;
+  font-size: 0.86rem;
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+
+.hitos-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  margin-bottom: 30px;
+}
+.hito-pais-card {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.hito-pais-card:hover {
+  border-color: var(--rosa);
+  transform: translateY(-1px);
+}
+.hito-pais-card__link {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+}
+.hito-pais-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.hito-pais-card__bandera {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.hito-pais-card__fecha {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+  background: #fdf2f8;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.hito-pais-card__nombre {
+  margin: 2px 0 0;
+  font-size: 1.12rem;
+  color: var(--texto);
+}
+.hito-pais-card__titulo {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+}
+.hito-pais-card__sub {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+}
+.hito-pais-card__resumen {
+  margin: 4px 0 0;
+  font-size: 0.88rem;
+  color: var(--texto-suave);
+  line-height: 1.5;
+}
+.hito-pais-card__cta {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+}
+
+.hitos-globales {
+  margin: 30px 0;
+}
+.hitos-globales__grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  margin-top: 14px;
+}
+.hito-global-card {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 16px;
+}
+.hito-global-card__meta {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+}
+.hito-global-card h3 {
+  margin: 6px 0 6px;
+  font-size: 1.04rem;
+}
+.hito-global-card p {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+}
+.hito-global-card__link {
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--rosa-oscuro);
+}
+
+/* Ficha Individual de Pais (/hitos-historicos/[pais]/) */
+.pais-hito-hero {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 24px 22px;
+  margin-bottom: 22px;
+  box-shadow: var(--sombra);
+}
+.pais-hito-hero__bandera {
+  font-size: 2.8rem;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.pais-ficha {
+  display: grid;
+  gap: 10px 16px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-top: 18px;
+  padding: 14px 16px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 11px;
+}
+.pais-ficha__dato {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pais-ficha__dato span {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--texto-suave);
+}
+.pais-ficha__dato strong {
+  font-size: 0.98rem;
+  color: var(--texto);
+}
+.pais-bloque-editorial {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 18px;
+}
+.pais-bloque-editorial h2 {
+  margin: 0 0 10px;
+  font-size: 1.32rem;
+}
+.pais-bloque-editorial p {
+  margin: 0 0 12px;
+  line-height: 1.72;
+}
+.pais-bloque-editorial p:last-child {
+  margin-bottom: 0;
+}
+.pais-dato-curioso {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: #fff7ed;
+  border-left: 3px solid #ea580c;
+  border-radius: 0 10px 10px 0;
+  font-size: 0.95rem;
+}
+.pais-saludo-box {
+  background: linear-gradient(135deg, #fdf2f8 0%, #fff7ed 100%);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+}
+.pais-saludo-box h2 {
+  margin: 0 0 10px;
+  font-size: 1.24rem;
+}
+.pais-saludo-box blockquote {
+  margin: 0 0 14px;
+  padding: 14px 16px;
+  background: #fff;
+  border-left: 3px solid var(--rosa);
+  border-radius: 0 10px 10px 0;
+  font-family: var(--fuente-display);
+  font-size: 1.08rem;
+  line-height: 1.6;
+}
+.pais-saludo-box__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pais-saludo-estado {
+  margin: 8px 0 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--rosa-oscuro);
+}
+.pais-secundarios {
+  margin-bottom: 18px;
+}
+.pais-secundarios__lista {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.pais-sec-card {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 16px;
+}
+.pais-sec-card__fecha {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+}
+.pais-sec-card h3 {
+  margin: 4px 0 6px;
+  font-size: 1.04rem;
+}
+.pais-sec-card p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--texto-suave);
+}
+.pais-conexiones,
+.pais-relacionados,
+.pais-faqs {
+  margin: 22px 0;
+}
+.pais-conexiones__grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.pais-enlace-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--texto);
+}
+.pais-enlace-card:hover {
+  border-color: var(--rosa);
+}
+.pais-enlace-card strong {
+  color: var(--rosa-oscuro);
+}
+.pais-enlace-card span {
+  font-size: 0.88rem;
+  color: var(--texto-suave);
+}
+.pais-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.pais-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--texto);
+}
+.pais-chip:hover {
+  border-color: var(--rosa);
+  color: var(--rosa-oscuro);
+}
+.pais-chip--todos {
+  background: var(--superficie);
+  color: var(--rosa-oscuro);
+}
+
+/* Creador de Banderines para Imprimir (A4) */
+.banderines-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.banderines-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--papel);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+}
+.banderin-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.banderin-svg {
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  display: block;
+}
+
+@media print {
+  .banderines-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10mm !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .banderin-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .banderin-svg {
+    max-width: 92mm !important;
+    width: 92mm !important;
+    height: auto !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+
 

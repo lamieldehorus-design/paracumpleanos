@@ -1769,11 +1769,14 @@ function esAnioBisiesto(anio: number): boolean {
   return anio % 4 === 0 && (anio % 100 !== 0 || anio % 400 === 0);
 }
 
+export type TipoEventoAgenda = 'cumpleanos' | 'duelo';
+
 export interface EventoAgendaIcs {
   nombre: string;
   mes: number;
   dia: number;
   relacion?: string;
+  tipo?: TipoEventoAgenda;
 }
 
 function construirBloqueVeventIcs(params: EventoAgendaIcs & { anioBase?: number; stamp: string }): string {
@@ -1803,12 +1806,31 @@ function construirBloqueVeventIcs(params: EventoAgendaIcs & { anioBase?: number;
   const mesSlug = MESES_CON_SIGNOS[params.mes - 1].slug;
   const signo = resolverSignoPorDiaMes(params.mes, params.dia);
   const relTxt = params.relacion ? ` (${params.relacion})` : '';
-  const summary = escaparIcs(`Cumpleaños de ${nombre}${relTxt}`);
-  const desc = escaparIcs(
-    `Recordatorio anual de ParaCumpleanos.com (${signo.nombre} ${signo.simbolo}). Ideas listas en https://paracumpleanos.com/${mesSlug}/ y https://paracumpleanos.com/horoscopo/${signo.slug}/`
-  );
-  const uidBase = nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'cumple';
-  const uid = `cumple-${uidBase}-${mm}${dd}@paracumpleanos.com`;
+  const esDuelo = params.tipo === 'duelo';
+  const summary = esDuelo
+    ? escaparIcs(`En memoria de ${nombre}${relTxt}`)
+    : escaparIcs(`Cumpleaños de ${nombre}${relTxt}`);
+  const desc = esDuelo
+    ? escaparIcs(
+        `Recordatorio respetuoso de fecha de duelo creado en ParaCumpleanos.com. Palabras de condolencias y acompañamiento en https://paracumpleanos.com/condolencias/`
+      )
+    : escaparIcs(
+        `Recordatorio anual de ParaCumpleanos.com (${signo.nombre} ${signo.simbolo}). Ideas listas en https://paracumpleanos.com/${mesSlug}/ y https://paracumpleanos.com/horoscopo/${signo.slug}/`
+      );
+  const uidBase =
+    nombre
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || (esDuelo ? 'recuerdo' : 'cumple');
+  const uid = `${esDuelo ? 'duelo' : 'cumple'}-${uidBase}-${mm}${dd}@paracumpleanos.com`;
+  const alarmaPrevia = esDuelo
+    ? `Faltan 2 días para la fecha de recuerdo de ${nombre}`
+    : `Faltan 2 días para el cumpleaños de ${nombre}`;
+  const alarmaDia = esDuelo
+    ? `Fecha de recuerdo en memoria de ${nombre}`
+    : `Hoy cumple años ${nombre}`;
 
   return [
     'BEGIN:VEVENT',
@@ -1822,12 +1844,12 @@ function construirBloqueVeventIcs(params: EventoAgendaIcs & { anioBase?: number;
     'BEGIN:VALARM',
     'TRIGGER:-P2D',
     'ACTION:DISPLAY',
-    `DESCRIPTION:${escaparIcs(`Faltan 2 días para el cumpleaños de ${nombre}`)}`,
+    `DESCRIPTION:${escaparIcs(alarmaPrevia)}`,
     'END:VALARM',
     'BEGIN:VALARM',
     'TRIGGER;RELATED=START:PT9H',
     'ACTION:DISPLAY',
-    `DESCRIPTION:${escaparIcs(`Hoy cumple años ${nombre}`)}`,
+    `DESCRIPTION:${escaparIcs(alarmaDia)}`,
     'END:VALARM',
     'END:VEVENT'
   ].join('\r\n');
@@ -1856,7 +1878,7 @@ export function construirIcsAgendaCompleta(items: EventoAgendaIcs[], anioBase?: 
     'VERSION:2.0',
     'PRODID:-//ParaCumpleanos//Agenda Cumpleanos//ES',
     'CALSCALE:GREGORIAN',
-    'X-WR-CALNAME:Agenda de Cumpleanos - ParaCumpleanos',
+    'X-WR-CALNAME:Agenda de Fechas - ParaCumpleanos',
     ...eventos,
     'END:VCALENDAR'
   ].join('\r\n');
@@ -1875,8 +1897,13 @@ export function construirUrlGoogleCalendar(params: EventoAgendaIcs & { anioBase?
   const mesSlug = MESES_CON_SIGNOS[params.mes - 1].slug;
   const signo = resolverSignoPorDiaMes(params.mes, params.dia);
   const relTxt = params.relacion ? ` (${params.relacion})` : '';
-  const titulo = `Cumpleaños de ${params.nombre}${relTxt}`;
-  const detalles = `Recordatorio anual de ParaCumpleanos.com (${signo.nombre} ${signo.simbolo}). Ideas listas en https://paracumpleanos.com/${mesSlug}/ y https://paracumpleanos.com/horoscopo/${signo.slug}/`;
+  const esDuelo = params.tipo === 'duelo';
+  const titulo = esDuelo
+    ? `En memoria de ${params.nombre}${relTxt}`
+    : `Cumpleaños de ${params.nombre}${relTxt}`;
+  const detalles = esDuelo
+    ? `Recordatorio respetuoso de fecha de duelo creado en ParaCumpleanos.com. Palabras de condolencias y acompañamiento en https://paracumpleanos.com/condolencias/`
+    : `Recordatorio anual de ParaCumpleanos.com (${signo.nombre} ${signo.simbolo}). Ideas listas en https://paracumpleanos.com/${mesSlug}/ y https://paracumpleanos.com/horoscopo/${signo.slug}/`;
   return (
     'https://calendar.google.com/calendar/render?action=TEMPLATE' +
     '&text=' + encodeURIComponent(titulo) +
@@ -1885,4 +1912,5 @@ export function construirUrlGoogleCalendar(params: EventoAgendaIcs & { anioBase?
     '&details=' + encodeURIComponent(detalles)
   );
 }
+
 

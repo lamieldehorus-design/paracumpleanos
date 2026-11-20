@@ -6,6 +6,7 @@ import { GRUPOS, hubs, todosMensajes, hubsPorGrupo, mensajesDe, nombreHub, SITIO
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { TEMAS_TARJETA } from '../lib/personalizador.ts';
 import { ZODIACOS } from '../lib/horoscopo.ts';
+import { PAISES_HITOS } from '../data/hitos-historicos.ts';
 
 // Muestras representativas de distintas secciones para que la portada refleje todo el portal
 const muestraSlugsCats = [
@@ -27,7 +28,13 @@ const muestraMensajes = muestraSlugsCats
   .filter(Boolean);
 
 const guiasLead = GUIAS_EDITORIALES[0];
-const guiasSecundarias = GUIAS_EDITORIALES.slice(1, 5);
+const slugsGuiasDestacadas = new Set([
+  'banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas',
+  'tematicas-de-cumpleanos-ideas-originales-para-fiestas',
+  'invitaciones-y-postales-de-cumpleanos-para-imprimir-y-editar',
+  'como-escribir-condolencias-y-palabras-de-pesame-respetuosas'
+]);
+const guiasSecundarias = GUIAS_EDITORIALES.filter((g) => slugsGuiasDestacadas.has(g.slug));
 
 // Indice liviano de todas las categorías + guías para el buscador universal del portal
 const indiceBuscador = hubs
@@ -49,11 +56,32 @@ const indiceBuscador = hubs
   )
   .concat([
     {
-      titulo: 'Calculadora de edad exacta, 10.000 días, acróstico y agenda .ics',
+      titulo: 'Calculadora de edad, banderines para imprimir, acróstico, fecha de duelo y agenda .ics',
       slug: '/herramientas/',
       tipo: 'Herramienta',
       emoji: '🛠️',
-      q: 'herramientas calculadora edad exacta dias vividos 10000 acrostico nombre armador dedicatoria agenda recordatorios ics'.toLowerCase()
+      q: 'herramientas calculadora edad exacta dias vividos 10000 acrostico nombre armador dedicatoria agenda recordatorios ics banderines para imprimir bordes recortar fecha de duelo'.toLowerCase()
+    },
+    {
+      titulo: 'Creador de banderines de cumpleaños para imprimir (A4)',
+      slug: '/herramientas/#banderines-imprimir',
+      tipo: 'Herramienta',
+      emoji: '🎏',
+      q: 'banderines de cumpleanos para imprimir gratis letras feliz cumpleanos happy birthday bordes plantilla a4 recortar'.toLowerCase()
+    },
+    {
+      titulo: 'Calendario de fechas y celebraciones (sin año)',
+      slug: '/calendario/',
+      tipo: 'Calendario',
+      emoji: '📅',
+      q: 'calendario fechas celebraciones efemerides hoy dia mes hitos historicos signo motivacion duelo sin ano'.toLowerCase()
+    },
+    {
+      titulo: 'Hitos históricos mundiales: los 195 países del mundo',
+      slug: '/hitos-historicos/',
+      tipo: 'Hitos históricos',
+      emoji: '🌍',
+      q: 'hitos historicos mundiales paises independencia fiesta nacional fecha patria efemerides mundo historia'.toLowerCase()
     },
     {
       titulo: 'Horóscopo de cumpleaños: fechas, signos y meses del año',
@@ -68,6 +96,13 @@ const indiceBuscador = hubs
       tipo: 'Signo zodiacal',
       emoji: s.simbolo,
       q: `horoscopo ${s.nombre} ${s.rangoTexto} ${s.mesesNombres.join(' ')} ${s.elemento}`.toLowerCase()
+    })),
+    ...PAISES_HITOS.map((p) => ({
+      titulo: `${p.nombre}: ${p.hitoPrincipal.titulo} (${p.hitoPrincipal.dia}/${p.hitoPrincipal.mes})`,
+      slug: `/hitos-historicos/${p.slug}/`,
+      tipo: 'Hito histórico',
+      emoji: p.bandera,
+      q: `hito historico ${p.nombre} ${p.capital} ${p.hitoPrincipal.titulo} ${p.continente} fecha patria independencia`.toLowerCase()
     }))
   ]);
 
@@ -89,28 +124,28 @@ const jsonld = [
 ];
 ---
 <Base
-  titulo="ParaCumpleanos — Portal de felicitaciones, cartas y guías originales"
-  descripcion={`Buscá entre ${hubs.length} colecciones, ${GUIAS_EDITORIALES.length} guías prácticas y ${todosMensajes.length.toLocaleString('es-AR')} dedicatorias inéditas en español para mamá, papá, pareja, motivaciones o duelo.`}
+  titulo="Frases y mensajes de feliz cumpleaños, postales y calendario - ParaCumpleanos"
+  descripcion={`Buscá entre ${hubs.length} colecciones, ${todosMensajes.length.toLocaleString('es-AR')} frases de feliz cumpleaños, condolencias, banderines para imprimir, calendario sin año y 195 hitos históricos mundiales.`}
   jsonld={jsonld}
   esPortal={true}
 >
   <section class="portal-hero" aria-labelledby="portal-h1">
     <div class="portal-hero-texto">
       <p class="portal-kicker">
-        Portal editorial en español · {hubs.length} colecciones · {todosMensajes.length.toLocaleString('es-AR')} textos únicos
+        Portal editorial en español · {hubs.length} colecciones · {todosMensajes.length.toLocaleString('es-AR')} textos únicos · 195 países
       </p>
-      <h1 id="portal-h1">Palabras reales para celebrar a quien más querés</h1>
+      <h1 id="portal-h1">Frases y mensajes reales para cada cumpleaños, fecha y recuerdo</h1>
       <p class="portal-sub">
-        Elegí entre {hubs.length} destinatarios y momentos reales, personalizá el saludo con nombre, posdata y firma en segundos, y compartilo por WhatsApp, Instagram o en tarjeta PNG sin registrarte.
+        Elegí entre {hubs.length} colecciones de feliz cumpleaños, condolencias, invitaciones y fechas especiales, creá tarjetas PNG o banderines A4 para imprimir, y explorá el calendario anual con los hitos históricos de los 195 países.
       </p>
 
       <div class="portal-buscador-caja">
-        <label for="portal-buscador" class="portal-buscador-label">Buscá destinatario, edad o ocasión en toda la web</label>
+        <label for="portal-buscador" class="portal-buscador-label">Buscá destinatario, país, banderines, condolencias o fecha en toda la web</label>
         <div class="portal-buscador-fila">
           <input
             id="portal-buscador"
             type="search"
-            placeholder="Ej.: mamá, 15 años, junio, navidad, san valentín…"
+            placeholder="Ej.: amiga, esposo, banderines, condolencias, Argentina, calendario…"
             autocomplete="off"
           />
           <a class="btn btn-copiar" href="#secciones-portal">Explorar secciones</a>
@@ -120,19 +155,21 @@ const jsonld = [
 
       <div class="portal-accesos-rapidos" aria-label="Accesos directos frecuentes">
         <span class="accesos-titulo">Más buscados hoy:</span>
-        <a href="/feliz-cumpleanos-mama/">Mamá</a>
-        <span aria-hidden="true">·</span>
-        <a href="/feliz-cumpleanos-papa/">Papá</a>
-        <span aria-hidden="true">·</span>
         <a href="/feliz-cumpleanos-amiga/">Amiga</a>
         <span aria-hidden="true">·</span>
-        <a href="/motivaciones/">Motivaciones diarias ✨</a>
+        <a href="/feliz-cumpleanos-mama/">Mamá</a>
         <span aria-hidden="true">·</span>
-        <a href="/categorias/#fechas_especiales">Fechas especiales 🎉</a>
+        <a href="/feliz-cumpleanos-para-mi-esposo/">Esposo</a>
         <span aria-hidden="true">·</span>
-        <a href="/feliz-aniversario-mi-amor/">Aniversario</a>
+        <a href="/feliz-cumpleanos-para-mi-esposa/">Esposa</a>
         <span aria-hidden="true">·</span>
-        <a href="/felicitaciones-a-madre-fallecida/">En el cielo</a>
+        <a href="/herramientas/#banderines-imprimir">Banderines A4 🎏</a>
+        <span aria-hidden="true">·</span>
+        <a href="/calendario/">Calendario 📅</a>
+        <span aria-hidden="true">·</span>
+        <a href="/hitos-historicos/">Hitos históricos 🌍</a>
+        <span aria-hidden="true">·</span>
+        <a href="/condolencias/">Condolencias 🕊️</a>
       </div>
     </div>
 
@@ -172,21 +209,36 @@ const jsonld = [
     </div>
   </section>
 
-  <section class="portal-herramientas-tira" aria-label="Herramientas interactivas y horóscopo">
+  <section class="portal-herramientas-tira" aria-label="Calendario, hitos históricos, condolencias y herramientas">
+    <a class="portal-util-card" href="/calendario/">
+      <span class="portal-util-kicker">Sin año · 366 días</span>
+      <span class="portal-util-titulo">📅 Calendario universal de fechas</span>
+      <span class="portal-util-desc">Elegí cualquier día y mes para ver celebraciones, hitos históricos, signo zodiacal, motivación y fecha de duelo.</span>
+    </a>
+    <a class="portal-util-card" href="/hitos-historicos/">
+      <span class="portal-util-kicker">195 países del mundo</span>
+      <span class="portal-util-titulo">🌍 Hitos históricos mundiales</span>
+      <span class="portal-util-desc">Descubrí qué celebra cada país en su fiesta nacional o independencia, su historia, tradiciones y saludos.</span>
+    </a>
+    <a class="portal-util-card" href="/condolencias/">
+      <span class="portal-util-kicker">Acompañamiento respetuoso</span>
+      <span class="portal-util-titulo">🕊️ Condolencias y fecha de duelo</span>
+      <span class="portal-util-desc">40 mensajes sobrios de pésame y selector interactivo para honrar una fecha de duelo con recordatorio anual .ics.</span>
+    </a>
+    <a class="portal-util-card" href="/herramientas/#banderines-imprimir">
+      <span class="portal-util-kicker">Imprimible gratis A4</span>
+      <span class="portal-util-titulo">🎏 Banderines para imprimir</span>
+      <span class="portal-util-desc">Armá banderines de feliz cumpleaños con el nombre que quieras, bordes para recortar y descarga lista para A4.</span>
+    </a>
     <a class="portal-util-card" href="/herramientas/">
       <span class="portal-util-kicker">Herramientas gratuitas</span>
       <span class="portal-util-titulo">🎂 Edad exacta, acróstico y agenda .ics</span>
       <span class="portal-util-desc">Calculá días vividos e hito de 10.000 días, creá acrósticos por nombre y descargá alertas anuales.</span>
     </a>
     <a class="portal-util-card" href="/horoscopo/">
-      <span class="portal-util-kicker">Zodíaco y calendario</span>
+      <span class="portal-util-kicker">Zodíaco y meses</span>
       <span class="portal-util-titulo">♈ Horóscopo de cumpleaños</span>
       <span class="portal-util-desc">Consultá frases, perfil festivo y regalos para los 12 signos enlazados con su mes exacto.</span>
-    </a>
-    <a class="portal-util-card" href="/categorias/#fechas_especiales">
-      <span class="portal-util-kicker">Calendario del año</span>
-      <span class="portal-util-titulo">🎉 Fechas especiales y meses</span>
-      <span class="portal-util-desc">Navidad, San Valentín, Reyes, Pascuas, Madre, Padre, Niño y cumpleaños de enero a diciembre.</span>
     </a>
   </section>
 

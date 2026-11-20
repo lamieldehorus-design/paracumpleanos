@@ -14,6 +14,12 @@ const jsonld = [migasLd([
   <p class="lead">Explorá las <strong>{hubs.length} categorías</strong> y sus <strong>{todosMensajes.length.toLocaleString('es-AR')} felicitaciones originales</strong> listas para copiar y enviar por WhatsApp.</p>
   <label for="filtro-cats" style="display:block;font-weight:600;margin-top:12px;">Buscar categoría o destinatario:</label>
   <input id="filtro-cats" class="buscador-cats" type="search" placeholder="Ej.: mamá, navidad, san valentín, pascuas, 15 años, carta…" autocomplete="off" />
+  <div class="chips" style="margin-top:12px;">
+    <a class="chip" href="/calendario/">📅 Calendario (sin año)</a>
+    <a class="chip" href="/hitos-historicos/">🌍 Hitos históricos (195 países)</a>
+    <a class="chip" href="/condolencias/">🕊️ Condolencias y fecha de duelo</a>
+    <a class="chip" href="/herramientas/#banderines-imprimir">🎏 Banderines para imprimir</a>
+  </div>
   <div class="chips">
     {GRUPOS.map(function (g) {
       const lista = hubsPorGrupo.get(g.id) || [];

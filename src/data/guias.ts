@@ -1,6 +1,7 @@
 import { GUIAS_PARTE_1 } from './guias-parte1.ts';
 import { GUIAS_PARTE_2 } from './guias-parte2.ts';
 import { GUIAS_PARTE_3 } from './guias-parte3.ts';
+import { GUIAS_PARTE_4 } from './guias-parte4.ts';
 import type { GuiaEditorial } from './guias-tipos.ts';
 
 export type {
@@ -18,7 +19,8 @@ export type {
 export const GUIAS_EDITORIALES: GuiaEditorial[] = [
   ...GUIAS_PARTE_1,
   ...GUIAS_PARTE_2,
-  ...GUIAS_PARTE_3
+  ...GUIAS_PARTE_3,
+  ...GUIAS_PARTE_4
 ];
 
 export function guiaPorSlug(slug: string): GuiaEditorial | undefined {

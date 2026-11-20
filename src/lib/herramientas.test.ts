@@ -169,3 +169,30 @@ test('construirDedicatoriaGuiada y construirIcsCumpleanos producen salidas valid
   assert.ok(gcalUrl.includes('20260605%2F20260606') || gcalUrl.includes('dates=20260605/20260606'));
   assert.ok(gcalUrl.includes('RRULE%3AFREQ%3DYEARLY'));
 });
+
+test('construirIcsCumpleanos y construirUrlGoogleCalendar con tipo duelo generan recordatorio sobrio sin palabras festivas', () => {
+  const icsDuelo = construirIcsCumpleanos({
+    nombre: 'Abuelo Carlos',
+    mes: 11,
+    dia: 2,
+    relacion: 'abuelo',
+    anioBase: 2026,
+    tipo: 'duelo'
+  });
+  assert.ok(icsDuelo.includes('SUMMARY:En memoria de Abuelo Carlos (abuelo)'));
+  assert.ok(icsDuelo.includes('https://paracumpleanos.com/condolencias/'));
+  assert.ok(icsDuelo.includes('UID:duelo-abuelo-carlos-1102@paracumpleanos.com'));
+  assert.ok(!/(torta|pastel|fiesta|festej|brindis|cumple años)/i.test(icsDuelo));
+
+  const gcalDuelo = construirUrlGoogleCalendar({
+    nombre: 'Abuelo Carlos',
+    mes: 11,
+    dia: 2,
+    relacion: 'abuelo',
+    anioBase: 2026,
+    tipo: 'duelo'
+  });
+  assert.ok(gcalDuelo.includes('En%20memoria%20de%20Abuelo%20Carlos'));
+  assert.ok(gcalDuelo.includes('condolencias'));
+});
+

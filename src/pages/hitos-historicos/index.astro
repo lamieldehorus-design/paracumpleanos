@@ -1,0 +1,297 @@
+---
+import Base from '../../layouts/Base.astro';
+import {
+  CONTINENTES_META,
+  ETIQUETAS_TIPO_HITO,
+  HITOS_MUNDIALES,
+  MESES_NOMBRES_HITOS,
+  PAISES_HITOS,
+  formatearAnioHistorico,
+  formatearFechaHitoSinAnio,
+  paisesPorContinente
+} from '../../data/hitos-historicos.ts';
+import { SITIO } from '../../lib/contenido.ts';
+
+const totalPaises = PAISES_HITOS.length;
+const totalEventos = PAISES_HITOS.reduce(
+  (acc, p) => acc + 1 + (p.hitosSecundarios?.length ?? 0),
+  0
+);
+
+const conteoContinentes = CONTINENTES_META.map((c) => ({
+  ...c,
+  total: paisesPorContinente(c.id).length
+}));
+
+const indiceHoy = PAISES_HITOS.flatMap((p) => {
+  const todos = [p.hitoPrincipal, ...(p.hitosSecundarios ?? [])];
+  return todos.map((e) => ({
+    slug: p.slug,
+    nombre: p.nombre,
+    bandera: p.bandera,
+    mes: e.mes,
+    dia: e.dia,
+    anio: formatearAnioHistorico(e.anioHistorico),
+    titulo: e.titulo,
+    resumen: e.resumen
+  }));
+});
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Hitos Históricos Mundiales por País y Fecha',
+    description: `Enciclopedia histórica con las fechas patrias, independencias y días nacionales de ${totalPaises} países del mundo y qué se festeja en cada jornada.`,
+    url: `${SITIO}/hitos-historicos/`,
+    inLanguage: 'es'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITIO}/` },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Hitos históricos mundiales',
+        item: `${SITIO}/hitos-historicos/`
+      }
+    ]
+  }
+];
+---
+
+<Base
+  titulo={`Hitos Históricos Mundiales: ${totalPaises} Países y sus Fechas`}
+  descripcion={`Explorá los hitos históricos, independencias y días nacionales de los ${totalPaises} países del mundo con su fecha exacta, contexto histórico, tradiciones y saludos.`}
+  jsonld={jsonLd}
+>
+  <nav class="migas" aria-label="Ruta de navegación">
+    <a href="/">Inicio</a>
+    <span>/</span>
+    <span>Hitos históricos mundiales</span>
+  </nav>
+
+  <header class="hub-hero">
+    <p class="eyebrow">Atlas histórico mundial · {totalPaises} países soberanos</p>
+    <h1>Hitos históricos mundiales: qué se festeja en cada país</h1>
+    <p class="lead">
+      Consultá las independencias, constituciones, unificaciones y días nacionales de los {totalPaises} Estados soberanos del planeta ({totalEventos} hitos nacionales y {HITOS_MUNDIALES.length} efemérides globales). Cada país cuenta con su propia publicación histórica explicando qué ocurrió, por qué se conmemora esa fecha y cómo se celebra hoy.
+    </p>
+    <div class="hub-acciones-rapidas">
+      <a class="btn btn--primario" href="/calendario/">Abrir calendario sin año</a>
+      <a class="btn btn--secundario" href="/condolencias/">Condolencias y fecha de duelo</a>
+    </div>
+  </header>
+
+  <section class="hitos-hoy-card" id="hitos-hoy" aria-label="Hitos históricos de hoy">
+    <div class="hitos-hoy-card__head">
+      <span class="hitos-hoy-card__etiqueta">Hoy en la historia</span>
+      <strong id="hitos-hoy-fecha">Consultando fecha actual…</strong>
+    </div>
+    <div id="hitos-hoy-lista" class="hitos-hoy-card__lista"></div>
+  </section>
+
+  <section class="hitos-filtros" aria-label="Filtrar países e hitos históricos">
+    <div class="hitos-filtros__barra">
+      <label class="hitos-buscar">
+        <span>Buscar país, capital o hecho histórico</span>
+        <input
+          type="search"
+          id="hitos-q"
+          placeholder="Ej.: Argentina, Francia, Japón, 15 de septiembre, independencia…"
+          autocomplete="off"
+        />
+      </label>
+
+      <label class="hitos-mes-select">
+        <span>Filtrar por mes</span>
+        <select id="hitos-mes">
+          <option value="0">Todos los meses</option>
+          {MESES_NOMBRES_HITOS.map((m, i) => (
+            <option value={i + 1}>{m.charAt(0).toUpperCase() + m.slice(1)}</option>
+          ))}
+        </select>
+      </label>
+    </div>
+
+    <div class="hitos-tabs" role="tablist" aria-label="Filtrar por continente">
+      <button type="button" class="hitos-tab activo" data-cont="todos" role="tab" aria-selected="true">
+        Todos ({totalPaises})
+      </button>
+      {conteoContinentes.map((c) => (
+        <button type="button" class="hitos-tab" data-cont={c.id} role="tab" aria-selected="false">
+          {c.icono} {c.nombre} ({c.total})
+        </button>
+      ))}
+    </div>
+    <p class="hitos-contador" id="hitos-contador">
+      Mostrando {totalPaises} países soberanos con guía histórica completa.
+    </p>
+  </section>
+
+  <section class="hitos-grid" id="hitos-grid" aria-label="Listado de países">
+    {PAISES_HITOS.map((pais) => {
+      const fechaTexto = formatearFechaHitoSinAnio(pais.hitoPrincipal.dia, pais.hitoPrincipal.mes);
+      const anioTexto = formatearAnioHistorico(pais.hitoPrincipal.anioHistorico);
+      const mesesPais = Array.from(
+        new Set([pais.hitoPrincipal.mes, ...(pais.hitosSecundarios ?? []).map((s) => s.mes)])
+      ).join(',');
+      const textoBusqueda = `${pais.nombre} ${pais.capital} ${pais.subregion} ${pais.hitoPrincipal.titulo} ${fechaTexto} ${anioTexto}`
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+      return (
+        <article
+          class="hito-pais-card"
+          data-cont={pais.continente}
+          data-meses={mesesPais}
+          data-q={textoBusqueda}
+        >
+          <a href={`/hitos-historicos/${pais.slug}/`} class="hito-pais-card__link">
+            <div class="hito-pais-card__top">
+              <span class="hito-pais-card__bandera" aria-hidden="true">{pais.bandera}</span>
+              <div>
+                <h2 class="hito-pais-card__nombre">{pais.nombre}</h2>
+                <span class="hito-pais-card__sub">{pais.subregion} · {pais.capital}</span>
+              </div>
+            </div>
+            <p class="hito-pais-card__fecha">
+              <strong>{fechaTexto}</strong> ({anioTexto}) · {ETIQUETAS_TIPO_HITO[pais.hitoPrincipal.tipo]}
+            </p>
+            <p class="hito-pais-card__titulo">{pais.hitoPrincipal.titulo}</p>
+            <p class="hito-pais-card__resumen">{pais.hitoPrincipal.resumen}</p>
+            <span class="hito-pais-card__cta">Leer explicación histórica completa →</span>
+          </a>
+        </article>
+      );
+    })}
+  </section>
+
+  <section class="hitos-globales" aria-label="Efemérides históricas mundiales">
+    <p class="eyebrow">Fechas universales</p>
+    <h2>Grandes efemérides históricas mundiales</h2>
+    <p class="lead">
+      Además de los días nacionales de cada país, estas fechas marcaron hitos compartidos por toda la humanidad y aparecen automáticamente en nuestro <a href="/calendario/">calendario sin año</a>.
+    </p>
+    <div class="hitos-globales__grid">
+      {HITOS_MUNDIALES.map((g) => (
+        <article class="hito-global-card">
+          <div class="hito-global-card__meta">
+            <span aria-hidden="true">{g.icono}</span>
+            <strong>{formatearFechaHitoSinAnio(g.dia, g.mes)}</strong>
+            <span>· {formatearAnioHistorico(g.anioHistorico)} · {g.ambito}</span>
+          </div>
+          <h3>{g.titulo}</h3>
+          <p>{g.explicacion}</p>
+          <a href={`/calendario/?mes=${g.mes}&dia=${g.dia}`} class="hito-global-card__link">
+            Ver el {formatearFechaHitoSinAnio(g.dia, g.mes)} en el calendario →
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <script is:inline define:vars={{ indiceHoy, mesesNombres: MESES_NOMBRES_HITOS }}>
+    (function () {
+      var hoy = new Date();
+      var mesHoy = hoy.getMonth() + 1;
+      var diaHoy = hoy.getDate();
+      var etiquetaHoy = diaHoy + ' de ' + mesesNombres[mesHoy - 1];
+      var elFecha = document.getElementById('hitos-hoy-fecha');
+      var elLista = document.getElementById('hitos-hoy-lista');
+
+      if (elFecha && elLista) {
+        elFecha.textContent = etiquetaHoy;
+        var coincidencias = indiceHoy.filter(function (item) {
+          return item.mes === mesHoy && item.dia === diaHoy;
+        });
+        if (coincidencias.length > 0) {
+          elLista.innerHTML = coincidencias
+            .map(function (c) {
+              return (
+                '<a class="hitos-hoy-item" href="/hitos-historicos/' +
+                c.slug +
+                '/"><span>' +
+                c.bandera +
+                ' <strong>' +
+                c.nombre +
+                '</strong> (' +
+                c.anio +
+                ')</span><span>' +
+                c.titulo +
+                '</span></a>'
+              );
+            })
+            .join('');
+        } else {
+          elLista.innerHTML =
+            '<p class="hitos-hoy-vacio">Hoy (' +
+            etiquetaHoy +
+            ') podés explorar el calendario completo para ver signo, cumpleaños del mes, motivación del día e hitos históricos cercanos. <a href="/calendario/?mes=' +
+            mesHoy +
+            '&dia=' +
+            diaHoy +
+            '">Abrir ' +
+            etiquetaHoy +
+            ' en el calendario →</a></p>';
+        }
+      }
+
+      var inputQ = document.getElementById('hitos-q');
+      var selectMes = document.getElementById('hitos-mes');
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('.hitos-tab'));
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.hito-pais-card'));
+      var contador = document.getElementById('hitos-contador');
+      var contActivo = 'todos';
+
+      function norm(t) {
+        return String(t || '')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .trim();
+      }
+
+      function filtrar() {
+        var q = norm(inputQ ? inputQ.value : '');
+        var mes = selectMes ? selectMes.value : '0';
+        var visibles = 0;
+        cards.forEach(function (card) {
+          var cCont = card.getAttribute('data-cont') || '';
+          var cMeses = (card.getAttribute('data-meses') || '').split(',');
+          var cQ = card.getAttribute('data-q') || '';
+          var okCont = contActivo === 'todos' || cCont === contActivo;
+          var okMes = mes === '0' || cMeses.indexOf(mes) !== -1;
+          var okQ = !q || cQ.indexOf(q) !== -1;
+          var mostrar = okCont && okMes && okQ;
+          card.style.display = mostrar ? '' : 'none';
+          if (mostrar) visibles += 1;
+        });
+        if (contador) {
+          contador.textContent =
+            visibles === 1
+              ? 'Mostrando 1 país coincidente.'
+              : 'Mostrando ' + visibles + ' países coincidentes.';
+        }
+      }
+
+      tabs.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          contActivo = btn.getAttribute('data-cont') || 'todos';
+          tabs.forEach(function (t) {
+            var activo = t === btn;
+            t.classList.toggle('activo', activo);
+            t.setAttribute('aria-selected', activo ? 'true' : 'false');
+          });
+          filtrar();
+        });
+      });
+
+      if (inputQ) inputQ.addEventListener('input', filtrar);
+      if (selectMes) selectMes.addEventListener('change', filtrar);
+    })();
+  </script>
+</Base>

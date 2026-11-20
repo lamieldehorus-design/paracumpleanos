@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import SelectorFechaDuelo from '../../components/SelectorFechaDuelo.astro';
 import {
   SITIO,
   MARCA,
@@ -15,9 +16,9 @@ import {
 } from '../../lib/horoscopo.ts';
 import { TEMAS_TARJETA } from '../../lib/personalizador.ts';
 
-const titulo = `Herramientas de cumpleaños: edad exacta, acróstico y agenda - ${MARCA}`;
+const titulo = `Herramientas: banderines para imprimir, edad, acróstico y duelo - ${MARCA}`;
 const descripcion =
-  'Calculá tu edad exacta, días vividos e hito de 10.000 días, creá acrósticos con nombre, armá dedicatorias en 3 pasos y guardá cumpleaños con alertas .ics.';
+  'Creá banderines de cumpleaños para imprimir en A4, calculá edad exacta y 10.000 días, armá acrósticos y dedicatorias, y agendá cumpleaños o fechas de duelo (.ics).';
 
 const demoCalc = calcularEstadisticasCumpleanos('1995-06-05');
 const demoAcrostico = generarAcrostico('SOFÍA', 'emotivo');
@@ -45,9 +46,14 @@ const faqs = [
       'No. Tanto tu agenda personal de cumpleaños como las fotos que sumás en el Estudio de Tarjetas funcionan 100% de forma local en tu navegador (localStorage / FileReader), sin cuentas ni envío a servidores externos.'
   },
   {
-    pregunta: '¿Cómo funcionan los recordatorios anuales .ics?',
+    pregunta: '¿Cómo funcionan los recordatorios anuales .ics para cumpleaños y fechas de duelo?',
     respuesta:
-      'Al guardar un cumpleaños en tu agenda podés descargar un archivo estándar de calendario (.ics) con repetición anual automática (RRULE:FREQ=YEARLY) y dos avisos previos: 48 horas antes y a las 9 de la mañana del mismo día, compatible con Google Calendar, Apple Calendar y Outlook.'
+      'Al guardar un cumpleaños o una fecha de duelo en tu agenda podés descargar un archivo estándar de calendario (.ics) con repetición anual automática (RRULE:FREQ=YEARLY) compatible con Google Calendar, Apple Calendar y Outlook. Las fechas de duelo generan avisos sobrios "En memoria de…" enlazados a nuestra sección de condolencias.'
+  },
+  {
+    pregunta: '¿Qué medidas tienen los banderines de cumpleaños para imprimir en hoja A4?',
+    respuesta:
+      'Nuestro creador genera banderines con formato clásico de 14 × 19 cm (2 banderines por hoja A4 en impresión horizontal o vertical con borde punteado de recorte y marcas de perforación). Solo escribís tu frase o nombre, elegís paleta y forma, y tocás Imprimir / Guardar PDF.'
   }
 ];
 
@@ -101,16 +107,18 @@ const signosCliente = ZODIACOS.map((s) => ({
     <a href="/">Inicio</a> › <span>Herramientas</span>
   </nav>
 
-  <h1>Herramientas interactivas de cumpleaños y dedicatorias</h1>
+  <h1>Herramientas de cumpleaños, banderines para imprimir y fechas de duelo</h1>
   <p class="lead">
-    Cuatro utilidades gratuitas pensadas para resolver en un minuto lo que necesitás antes de cada festejo: calcular edad exacta y signo zodiacal, crear un acróstico personalizado, redactar una dedicatoria guiada en tres pasos y agendar cumpleaños con alertas .ics privadas.
+    Seis utilidades gratuitas pensadas para resolver en minutos lo que necesitás: calcular edad exacta y signo, crear acrósticos, redactar dedicatorias en 3 pasos, agendar cumpleaños o fechas de duelo con alertas .ics, diseñar banderines de cumpleaños listos para imprimir en A4 y honrar aniversarios luctuosos.
   </p>
 
   <nav class="herr-nav-saltos no-print" aria-label="Ir a herramienta">
-    <a href="#calculadora-edad">🎂 Calculadora de edad y signo</a>
-    <a href="#generador-acrostico">✍️ Generador de acrósticos</a>
-    <a href="#armador-dedicatoria">💌 Armador en 3 pasos</a>
-    <a href="#agenda-cumpleanos">📅 Agenda y alertas .ics</a>
+    <a href="#calculadora-edad">🎂 Edad y signo</a>
+    <a href="#generador-acrostico">✍️ Acrósticos</a>
+    <a href="#armador-dedicatoria">💌 Dedicatoria en 3 pasos</a>
+    <a href="#agenda-cumpleanos">📅 Agenda .ics</a>
+    <a href="#banderines-imprimir">🎏 Banderines para imprimir</a>
+    <a href="#fecha-duelo">🕊️ Fecha de duelo</a>
   </nav>
 
   <!-- 1. CALCULADORA DE EDAD EXACTA, 10.000 DIAS Y HOROSCOPO -->
@@ -394,22 +402,29 @@ const signosCliente = ZODIACOS.map((s) => ({
   <!-- 4. AGENDA PRIVADA CON RECORDATORIOS ANUALES .ICS -->
   <section id="agenda-cumpleanos" class="herr-modulo" aria-labelledby="tit-ag">
     <p class="herr-modulo-kicker">Utilidad 04 · Calendario local</p>
-    <h2 id="tit-ag">Agenda privada de cumpleaños con recordatorios .ics</h2>
+    <h2 id="tit-ag">Agenda privada de cumpleaños y fechas de duelo (.ics)</h2>
     <p class="herr-modulo-intro">
-      Anotá las fechas importantes de tu familia y amigos en este dispositivo. Calculamos cuántos días faltan, enlazamos su signo y mes correspondiente, y podés bajar cada evento o toda tu agenda junta en formato universal <code>.ics</code>.
+      Anotá cumpleaños y fechas de recuerdo importantes en este dispositivo. Calculamos cuántos días faltan, enlazamos el signo o las condolencias según corresponda, y podés bajar cada evento o toda tu agenda junta en formato universal <code>.ics</code>.
     </p>
 
     <details class="ics-explicacion no-print" open>
-      <summary>¿Qué es un archivo <strong>.ics</strong> y para qué sirve en tus cumpleaños?</summary>
+      <summary>¿Qué es un archivo <strong>.ics</strong> y para qué sirve en tus fechas importantes?</summary>
       <p>
-        Un archivo <strong>.ics</strong> (estándar <em>iCalendar</em>) es un recordatorio universal que aceptan <strong>Google Calendar</strong>, <strong>Apple Calendario</strong> (iPhone/Mac) y <strong>Outlook</strong>. Al descargarlo y abrirlo una sola vez en tu celular o computadora, agenda el cumpleaños automáticamente con <strong>repetición todos los años</strong> y dos avisos (48 horas antes y a las 09:00 hs del día), funcionando incluso cuando cerrás este sitio. Si usás Google Calendar desde el navegador, también tenés botón directo sin descargar archivo.
+        Un archivo <strong>.ics</strong> (estándar <em>iCalendar</em>) es un recordatorio universal que aceptan <strong>Google Calendar</strong>, <strong>Apple Calendario</strong> (iPhone/Mac) y <strong>Outlook</strong>. Al descargarlo y abrirlo una sola vez en tu celular o computadora, agenda la fecha automáticamente con <strong>repetición todos los años</strong> y avisos previos, funcionando incluso cuando cerrás este sitio. Si elegís <strong>Fecha de duelo</strong>, el recordatorio se crea con tono sobrio y enlace directo a <a href="/condolencias/">Condolencias</a>.
       </p>
     </details>
 
     <form id="herr-ag-form" class="herr-form-grid no-print" novalidate>
       <div class="herr-campo">
+        <label for="herr-ag-tipo">Tipo de fecha</label>
+        <select id="herr-ag-tipo">
+          <option value="cumpleanos" selected>🎂 Cumpleaños</option>
+          <option value="duelo">🕊️ Fecha de duelo / En memoria</option>
+        </select>
+      </div>
+      <div class="herr-campo">
         <label for="herr-ag-nombre">Nombre de la persona</label>
-        <input id="herr-ag-nombre" type="text" required maxlength="40" placeholder="Ej.: Mamá, Juan, Prima Carla" />
+        <input id="herr-ag-nombre" type="text" required maxlength="40" placeholder="Ej.: Mamá, Juan, Abuelo Carlos" />
       </div>
       <div class="herr-campo">
         <label for="herr-ag-relacion">Vínculo o nota</label>
@@ -421,7 +436,7 @@ const signosCliente = ZODIACOS.map((s) => ({
         </select>
       </div>
       <div class="herr-campo">
-        <label for="herr-ag-mes">Mes de cumpleaños</label>
+        <label for="herr-ag-mes">Mes</label>
         <select id="herr-ag-mes">
           {MESES_CON_SIGNOS.map((m) => (
             <option value={m.mesNum}>{m.nombreCap}</option>
@@ -445,8 +460,78 @@ const signosCliente = ZODIACOS.map((s) => ({
 
     <ul id="herr-ag-lista" class="herr-agenda-lista" aria-live="polite"></ul>
     <p id="herr-ag-vacio" class="texto-ayuda">
-      Todavía no cargaste fechas en este navegador. Probá sumar tu primer cumpleaños arriba para agendarlo en Google Calendar o descargar su alerta anual <code>.ics</code>.
+      Todavía no cargaste fechas en este navegador. Probá sumar tu primer cumpleaños o fecha de duelo arriba para agendarlo en Google Calendar o descargar su alerta anual <code>.ics</code>.
     </p>
+  </section>
+
+  <!-- 5. CREADOR DE BANDERINES DE CUMPLEANOS PARA IMPRIMIR (A4) -->
+  <section id="banderines-imprimir" class="herr-modulo" aria-labelledby="tit-banderines">
+    <p class="herr-modulo-kicker">Utilidad 05 · Imprimible gratis en A4</p>
+    <h2 id="tit-banderines">Creador de banderines de cumpleaños para imprimir y recortar</h2>
+    <p class="herr-modulo-intro">
+      Escribí el texto o nombre que quieras (por ejemplo <strong>FELIZ CUMPLEAÑOS</strong>, <strong>HAPPY BIRTHDAY</strong> o el nombre del agasajado), elegí forma, paleta de color y bordes punteados de corte, e imprimí tus banderines gratis en hojas A4 o guardalos como PDF.
+    </p>
+
+    <div class="herr-form-grid no-print">
+      <div class="herr-campo" style="grid-column: 1 / -1;">
+        <label for="band-texto">Texto de los banderines (cada letra genera 1 banderín)</label>
+        <input id="band-texto" type="text" maxlength="26" value="FELIZ CUMPLEAÑOS" placeholder="Ej.: FELIZ CUMPLE SOFÍA" autocomplete="off" />
+      </div>
+      <div class="herr-campo">
+        <label for="band-forma">Forma del banderín</label>
+        <select id="band-forma">
+          <option value="triangulo" selected>Triángulo clásico (14 × 19 cm)</option>
+          <option value="golondrina">Cola de golondrina (doble punta)</option>
+        </select>
+      </div>
+      <div class="herr-campo">
+        <label for="band-paleta">Paleta de colores</label>
+        <select id="band-paleta">
+          <option value="rosa-fiesta" selected>Rosa fiesta y crema editorial</option>
+          <option value="dorado">Dorado y negro elegante</option>
+          <option value="pastel-cielo">Pastel cielo, menta y durazno</option>
+          <option value="botanico">Verde salvia y terracota</option>
+          <option value="arcoiris">Arcoíris infantil vivo</option>
+          <option value="colorear">Blanco y negro (listo para colorear)</option>
+        </select>
+      </div>
+      <div class="herr-campo">
+        <label for="band-borde">Borde de recorte</label>
+        <select id="band-borde">
+          <option value="si" selected>Con borde punteado para recortar y perforar</option>
+          <option value="no">Sin borde exterior</option>
+        </select>
+      </div>
+      <div class="herr-campo">
+        <label>Frases rápidas</label>
+        <div class="banderines-presets">
+          <button type="button" class="pers-chip-btn pers-chip-texto" data-band-preset="FELIZ CUMPLEAÑOS">FELIZ CUMPLEAÑOS</button>
+          <button type="button" class="pers-chip-btn pers-chip-texto" data-band-preset="HAPPY BIRTHDAY">HAPPY BIRTHDAY</button>
+          <button type="button" class="pers-chip-btn pers-chip-texto" data-band-preset="FELIZ DÍA">FELIZ DÍA</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="acciones no-print">
+      <button type="button" class="btn btn-imprimir">Imprimir / Guardar PDF (A4)</button>
+      <a class="btn btn-descargar" href="/guias/banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas/">Ver guía de medidas, papel y armado →</a>
+    </div>
+
+    <p id="band-resumen" class="texto-ayuda no-print">
+      15 banderines listos (aprox. 8 hojas A4 en tamaño estándar). En el cuadro de impresión activá "Gráficos de fondo" para conservar los colores.
+    </p>
+
+    <div id="band-preview" class="banderines-grid" aria-live="polite"></div>
+  </section>
+
+  <!-- 6. SELECTOR DE FECHA DE DUELO Y RECORDATORIO SERENO -->
+  <section id="fecha-duelo" class="herr-modulo no-print" aria-labelledby="tit-duelo-herr">
+    <p class="herr-modulo-kicker">Utilidad 06 · Memoria respetuosa</p>
+    <h2 id="tit-duelo-herr">Selector de fecha de duelo y aniversario luctuoso</h2>
+    <p class="herr-modulo-intro">
+      Elegí una fecha de duelo para generar un mensaje sereno de recuerdo, conocer cuánto tiempo pasó si sumás el año (opcional) y guardar un recordatorio respetuoso en tu calendario. También podés explorar nuestra colección completa de <a href="/condolencias/">40 condolencias y palabras de pésame</a>.
+    </p>
+    <SelectorFechaDuelo compacto={true} />
   </section>
 
   <!-- CONTENIDO INFORMATIVO SEO Y FAQS -->
@@ -883,8 +968,15 @@ const signosCliente = ZODIACOS.map((s) => ({
         var mesObj = MESES[item.mes - 1] || MESES[0];
         var signo = resolverSigno(item.mes, item.dia);
         var rel = item.relacion ? ' (' + item.relacion + ')' : '';
-        var uidBase = item.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'cumple';
-        var uid = 'cumple-' + uidBase + '-' + mm + dd + '@paracumpleanos.com';
+        var esDuelo = item.tipo === 'duelo';
+        var uidBase = item.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'fecha';
+        var uid = (esDuelo ? 'duelo-' : 'cumple-') + uidBase + '-' + mm + dd + '@paracumpleanos.com';
+        var resumen = esDuelo ? 'En memoria de ' + item.nombre + rel : 'Cumpleaños de ' + item.nombre + rel;
+        var desc = esDuelo
+          ? 'Fecha de recuerdo y homenaje en ParaCumpleanos.com. Palabras serenas en https://paracumpleanos.com/condolencias/'
+          : 'Recordatorio anual ParaCumpleanos.com (' + signo.nombre + '). Ideas en https://paracumpleanos.com/' + mesObj.slug + '/ y https://paracumpleanos.com/horoscopo/' + signo.slug + '/';
+        var avisoPrevio = esDuelo ? 'En 2 días se cumple una fecha de recuerdo por ' + item.nombre : 'Faltan 2 días para el cumpleaños de ' + item.nombre;
+        var avisoDia = esDuelo ? 'En memoria de ' + item.nombre : 'Hoy cumple años ' + item.nombre;
         return [
           'BEGIN:VEVENT',
           'UID:' + uid,
@@ -892,17 +984,17 @@ const signosCliente = ZODIACOS.map((s) => ({
           'DTSTART;VALUE=DATE:' + dt,
           'DTEND;VALUE=DATE:' + dtEnd,
           'RRULE:FREQ=YEARLY',
-          'SUMMARY:' + escaparIcsCli('Cumpleaños de ' + item.nombre + rel),
-          'DESCRIPTION:' + escaparIcsCli('Recordatorio anual ParaCumpleanos.com (' + signo.nombre + '). Ideas en https://paracumpleanos.com/' + mesObj.slug + '/ y https://paracumpleanos.com/horoscopo/' + signo.slug + '/'),
+          'SUMMARY:' + escaparIcsCli(resumen),
+          'DESCRIPTION:' + escaparIcsCli(desc),
           'BEGIN:VALARM',
           'TRIGGER:-P2D',
           'ACTION:DISPLAY',
-          'DESCRIPTION:' + escaparIcsCli('Faltan 2 días para el cumpleaños de ' + item.nombre),
+          'DESCRIPTION:' + escaparIcsCli(avisoPrevio),
           'END:VALARM',
           'BEGIN:VALARM',
           'TRIGGER;RELATED=START:PT9H',
           'ACTION:DISPLAY',
-          'DESCRIPTION:' + escaparIcsCli('Hoy cumple años ' + item.nombre),
+          'DESCRIPTION:' + escaparIcsCli(avisoDia),
           'END:VALARM',
           'END:VEVENT'
         ].join('\r\n');
@@ -930,7 +1022,7 @@ const signosCliente = ZODIACOS.map((s) => ({
           'VERSION:2.0',
           'PRODID:-//ParaCumpleanos//Agenda Cumpleanos//ES',
           'CALSCALE:GREGORIAN',
-          'X-WR-CALNAME:Agenda de Cumpleanos - ParaCumpleanos'
+          'X-WR-CALNAME:Agenda Personal - ParaCumpleanos'
         ].concat(bloques, ['END:VCALENDAR']).join('\r\n');
       }
 
@@ -946,8 +1038,11 @@ const signosCliente = ZODIACOS.map((s) => ({
         var mesObj = MESES[item.mes - 1] || MESES[0];
         var signo = resolverSigno(item.mes, item.dia);
         var rel = item.relacion ? ' (' + item.relacion + ')' : '';
-        var titulo = 'Cumpleaños de ' + item.nombre + rel;
-        var detalles = 'Recordatorio anual de ParaCumpleanos.com (' + signo.nombre + ' ' + signo.simbolo + '). Ideas listas en https://paracumpleanos.com/' + mesObj.slug + '/ y https://paracumpleanos.com/horoscopo/' + signo.slug + '/';
+        var esDuelo = item.tipo === 'duelo';
+        var titulo = esDuelo ? 'En memoria de ' + item.nombre + rel : 'Cumpleaños de ' + item.nombre + rel;
+        var detalles = esDuelo
+          ? 'Fecha de recuerdo y homenaje en ParaCumpleanos.com. Palabras serenas en https://paracumpleanos.com/condolencias/'
+          : 'Recordatorio anual de ParaCumpleanos.com (' + signo.nombre + ' ' + signo.simbolo + '). Ideas listas en https://paracumpleanos.com/' + mesObj.slug + '/ y https://paracumpleanos.com/horoscopo/' + signo.slug + '/';
         return (
           'https://calendar.google.com/calendar/render?action=TEMPLATE' +
           '&text=' + encodeURIComponent(titulo) +
@@ -986,23 +1081,32 @@ const signosCliente = ZODIACOS.map((s) => ({
           var mesObj = MESES[item.mes - 1] || MESES[0];
           var signo = resolverSigno(item.mes, item.dia);
           var falta = diasHasta(item.mes, item.dia);
+          var esDuelo = item.tipo === 'duelo';
           var li = document.createElement('li');
-          li.className = 'herr-agenda-item';
+          li.className = 'herr-agenda-item' + (esDuelo ? ' herr-agenda-item--duelo' : '');
 
           var info = document.createElement('div');
           info.className = 'herr-agenda-info';
 
           var nom = document.createElement('span');
           nom.className = 'herr-agenda-nombre';
-          nom.textContent = item.nombre + (item.relacion ? ' (' + item.relacion + ')' : '');
+          nom.textContent = (esDuelo ? '🕊️ En memoria de ' : '🎂 ') + item.nombre + (item.relacion ? ' (' + item.relacion + ')' : '');
 
           var meta = document.createElement('span');
           meta.className = 'herr-agenda-meta';
-          meta.innerHTML =
-            item.dia + ' de ' + mesObj.nombreCap + ' · ' +
-            (falta === 0 ? '¡Hoy cumple años! 🎉' : 'Faltan ' + falta + ' días') +
-            ' · <a href="/horoscopo/' + signo.slug + '/">' + signo.simbolo + ' ' + signo.nombre + '</a>' +
-            ' · <a href="/' + mesObj.slug + '/">Frases de ' + mesObj.nombreCap + '</a>';
+          if (esDuelo) {
+            meta.innerHTML =
+              item.dia + ' de ' + mesObj.nombreCap + ' · ' +
+              (falta === 0 ? 'Hoy es esta fecha de recuerdo' : 'En ' + falta + ' días') +
+              ' · <a href="/condolencias/">Condolencias y palabras de recuerdo</a>' +
+              ' · <a href="/calendario/?mes=' + item.mes + '&dia=' + item.dia + '">Ver en calendario</a>';
+          } else {
+            meta.innerHTML =
+              item.dia + ' de ' + mesObj.nombreCap + ' · ' +
+              (falta === 0 ? '¡Hoy cumple años! 🎉' : 'Faltan ' + falta + ' días') +
+              ' · <a href="/horoscopo/' + signo.slug + '/">' + signo.simbolo + ' ' + signo.nombre + '</a>' +
+              ' · <a href="/' + mesObj.slug + '/">Frases de ' + mesObj.nombreCap + '</a>';
+          }
 
           info.appendChild(nom);
           info.appendChild(meta);
@@ -1024,7 +1128,11 @@ const signosCliente = ZODIACOS.map((s) => ({
           btnIcs.addEventListener('click', function () {
             var icsText = generarContenidoIcs(item);
             var slugNombre = item.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'persona';
-            descargarArchivoIcs(icsText, 'cumple-' + slugNombre + '.ics', '✓ Archivo .ics descargado: abrilo para agendar el aviso anual.');
+            descargarArchivoIcs(
+              icsText,
+              (esDuelo ? 'memoria-' : 'cumple-') + slugNombre + '.ics',
+              '✓ Archivo .ics descargado: abrilo para agendar el aviso anual.'
+            );
           });
 
           var btnDel = document.createElement('button');
@@ -1053,7 +1161,7 @@ const signosCliente = ZODIACOS.map((s) => ({
           if (!lista.length) return;
           descargarArchivoIcs(
             generarIcsAgendaCompleta(lista),
-            'agenda-cumpleanos-paracumpleanos.ics',
+            'agenda-paracumpleanos.ics',
             '✓ Agenda completa (' + lista.length + ' fechas) descargada en un solo archivo .ics.'
           );
         });
@@ -1072,6 +1180,8 @@ const signosCliente = ZODIACOS.map((s) => ({
       if (formAg) {
         formAg.addEventListener('submit', function (ev) {
           ev.preventDefault();
+          var tipoEl = document.getElementById('herr-ag-tipo');
+          var tipo = (tipoEl && tipoEl.value) === 'duelo' ? 'duelo' : 'cumpleanos';
           var nomEl = document.getElementById('herr-ag-nombre');
           var nom = String((nomEl || {}).value || '').trim();
           var rel = String((document.getElementById('herr-ag-relacion') || {}).value || 'Familia');
@@ -1080,7 +1190,7 @@ const signosCliente = ZODIACOS.map((s) => ({
 
           if (!nom) {
             if (errAg) {
-              errAg.textContent = 'Ingresá un nombre (ej.: Mamá o Primo Lucas) antes de guardar.';
+              errAg.textContent = 'Ingresá un nombre (ej.: Mamá o Abuelo Carlos) antes de guardar.';
               errAg.hidden = false;
             }
             if (nomEl) nomEl.focus();
@@ -1104,6 +1214,7 @@ const signosCliente = ZODIACOS.map((s) => ({
           var lista = cargarAgenda();
           lista.push({
             id: String(Date.now()) + '-' + Math.random().toString(36).slice(2, 6),
+            tipo: tipo,
             nombre: nom,
             relacion: rel,
             mes: mes,
@@ -1115,12 +1226,117 @@ const signosCliente = ZODIACOS.map((s) => ({
           if (diaEl) diaEl.value = '15';
           renderAgenda();
           if (window.pcMostrarToast) {
-            window.pcMostrarToast('✓ Cumpleaños de ' + nom + ' guardado en tu agenda privada.');
+            window.pcMostrarToast(
+              tipo === 'duelo'
+                ? '✓ Fecha de recuerdo de ' + nom + ' guardada en tu agenda privada.'
+                : '✓ Cumpleaños de ' + nom + ' guardado en tu agenda privada.'
+            );
           }
         });
       }
 
       renderAgenda();
+
+      // 5. CREADOR DE BANDERINES DE CUMPLEANOS PARA IMPRIMIR (A4)
+      var bandTextoEl = document.getElementById('band-texto');
+      var bandFormaEl = document.getElementById('band-forma');
+      var bandPaletaEl = document.getElementById('band-paleta');
+      var bandBordeEl = document.getElementById('band-borde');
+      var bandPreviewEl = document.getElementById('band-preview');
+      var bandResumenEl = document.getElementById('band-resumen');
+
+      var PALETAS_BAND = {
+        'rosa-fiesta': [
+          { bg: '#fdf2f8', border: '#e11d74', text: '#9f1239' },
+          { bg: '#fff7ed', border: '#ea580c', text: '#9a3412' },
+          { bg: '#fef2f2', border: '#be123c', text: '#881337' }
+        ],
+        dorado: [
+          { bg: '#1f1b18', border: '#d97706', text: '#fde68a' },
+          { bg: '#fffbeb', border: '#b45309', text: '#78350f' }
+        ],
+        'pastel-cielo': [
+          { bg: '#e0f2fe', border: '#0284c7', text: '#075985' },
+          { bg: '#dcfce7', border: '#16a34a', text: '#166534' },
+          { bg: '#ffedd5', border: '#ea580c', text: '#9a3412' },
+          { bg: '#f3e8ff', border: '#9333ea', text: '#6b21a8' }
+        ],
+        botanico: [
+          { bg: '#ecfdf5', border: '#059669', text: '#065f46' },
+          { bg: '#fef3c7', border: '#d97706', text: '#92400e' },
+          { bg: '#fff1f2', border: '#e11d48', text: '#9f1239' }
+        ],
+        arcoiris: [
+          { bg: '#ffe4e6', border: '#e11d48', text: '#9f1239' },
+          { bg: '#ffedd5', border: '#ea580c', text: '#9a3412' },
+          { bg: '#fef9c3', border: '#ca8a04', text: '#854d0e' },
+          { bg: '#dcfce7', border: '#16a34a', text: '#166534' },
+          { bg: '#dbeafe', border: '#2563eb', text: '#1e40af' },
+          { bg: '#f3e8ff', border: '#9333ea', text: '#6b21a8' }
+        ],
+        colorear: [
+          { bg: '#ffffff', border: '#1f2937', text: '#111827' }
+        ]
+      };
+
+      function renderBanderines() {
+        if (!bandPreviewEl) return;
+        var raw = String((bandTextoEl && bandTextoEl.value) || 'FELIZ CUMPLEAÑOS').toUpperCase().trim();
+        var letras = Array.from(raw).filter(function (ch) { return ch.trim().length > 0; });
+        if (!letras.length) letras = ['★'];
+        var forma = (bandFormaEl && bandFormaEl.value) || 'triangulo';
+        var palId = (bandPaletaEl && bandPaletaEl.value) || 'rosa-fiesta';
+        var conBorde = !bandBordeEl || bandBordeEl.value !== 'no';
+        var colores = PALETAS_BAND[palId] || PALETAS_BAND['rosa-fiesta'];
+
+        var hojas = Math.ceil(letras.length / 2);
+        if (bandResumenEl) {
+          bandResumenEl.textContent =
+            letras.length + ' banderines listos (aprox. ' + hojas + (hojas === 1 ? ' hoja A4' : ' hojas A4') + ' a 2 por hoja). En el cuadro de impresión activá "Gráficos de fondo" para conservar los colores.';
+        }
+
+        bandPreviewEl.innerHTML = '';
+        var poly = forma === 'golondrina'
+          ? '10,12 190,12 190,255 100,205 10,255'
+          : '10,12 190,12 100,258';
+        var innerPoly = forma === 'golondrina'
+          ? '20,22 180,22 180,238 100,192 20,238'
+          : '22,22 178,22 100,236';
+
+        letras.forEach(function (letra, idx) {
+          var c = colores[idx % colores.length];
+          var wrap = document.createElement('div');
+          wrap.className = 'banderin-item';
+          var dashAttr = conBorde ? ' stroke-dasharray="6,5"' : '';
+          var svg =
+            '<svg viewBox="0 0 200 270" class="banderin-svg" role="img" aria-label="Banderín letra ' + letra + '">' +
+            '<polygon points="' + poly + '" fill="' + c.bg + '" stroke="' + c.border + '" stroke-width="4"' + dashAttr + ' />' +
+            '<polygon points="' + innerPoly + '" fill="none" stroke="' + c.border + '" stroke-opacity="0.45" stroke-width="1.5" />' +
+            '<circle cx="28" cy="28" r="5" fill="#ffffff" stroke="' + c.border + '" stroke-width="2" />' +
+            '<circle cx="172" cy="28" r="5" fill="#ffffff" stroke="' + c.border + '" stroke-width="2" />' +
+            '<text x="100" y="140" text-anchor="middle" dominant-baseline="central" font-family="Fraunces, Georgia, serif" font-size="94" font-weight="700" fill="' + c.text + '">' +
+            letra.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') +
+            '</text>' +
+            '</svg>';
+          wrap.innerHTML = svg;
+          bandPreviewEl.appendChild(wrap);
+        });
+      }
+
+      [bandTextoEl, bandFormaEl, bandPaletaEl, bandBordeEl].forEach(function (el) {
+        if (!el) return;
+        el.addEventListener('input', renderBanderines);
+        el.addEventListener('change', renderBanderines);
+      });
+      document.querySelectorAll('[data-band-preset]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (bandTextoEl) {
+            bandTextoEl.value = btn.getAttribute('data-band-preset') || 'FELIZ CUMPLEAÑOS';
+            renderBanderines();
+          }
+        });
+      });
+      renderBanderines();
     })();
   </script>
 </Base>

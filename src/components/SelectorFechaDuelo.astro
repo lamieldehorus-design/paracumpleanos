@@ -1,0 +1,389 @@
+---
+interface Props {
+  titulo?: string;
+  compacto?: boolean;
+}
+
+const {
+  titulo = 'Elegí una fecha de duelo para recordar y acompañar',
+  compacto = false
+} = Astro.props;
+
+const MESES = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre'
+];
+---
+
+<section
+  class:list={['duelo-selector', compacto && 'duelo-selector--compacto']}
+  id="fecha-duelo"
+  aria-label="Selector de fecha de duelo"
+>
+  <div class="duelo-selector__head">
+    <p class="eyebrow">Acompañamiento y memoria 🕊️</p>
+    <h2>{titulo}</h2>
+    <p class="duelo-selector__sub">
+      Seleccioná el día y el mes de una fecha sensible (el año es opcional) para generar un mensaje sereno de recuerdo, guardar un recordatorio anual respetuoso en tu calendario o consultar qué más figura ese día en nuestro calendario.
+    </p>
+  </div>
+
+  <div class="duelo-selector__grid">
+    <label class="duelo-campo">
+      <span>Nombre del ser querido (opcional)</span>
+      <input
+        type="text"
+        id="duelo-nombre"
+        placeholder="Ej.: Marta, Carlos, abuelo José"
+        maxlength="60"
+        autocomplete="off"
+      />
+    </label>
+
+    <label class="duelo-campo">
+      <span>Vínculo</span>
+      <select id="duelo-vinculo">
+        <option value="ser querido">Ser querido</option>
+        <option value="mamá">Mamá</option>
+        <option value="papá">Papá</option>
+        <option value="abuela">Abuela</option>
+        <option value="abuelo">Abuelo</option>
+        <option value="hermano/a">Hermano/a</option>
+        <option value="pareja">Pareja</option>
+        <option value="amigo/a">Amigo/a</option>
+        <option value="familiar">Familiar</option>
+      </select>
+    </label>
+
+    <label class="duelo-campo">
+      <span>Mes de la fecha de duelo</span>
+      <select id="duelo-mes">
+        {MESES.map((m, idx) => <option value={idx + 1}>{m}</option>)}
+      </select>
+    </label>
+
+    <label class="duelo-campo">
+      <span>Día</span>
+      <select id="duelo-dia">
+        {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => <option value={d}>{d}</option>)}
+      </select>
+    </label>
+
+    <label class="duelo-campo">
+      <span>Año del fallecimiento (opcional)</span>
+      <input
+        type="number"
+        id="duelo-anio"
+        placeholder="Sin año"
+        min="1900"
+        max="2100"
+        inputmode="numeric"
+      />
+    </label>
+  </div>
+
+  <div class="duelo-selector__resultado" id="duelo-resultado" aria-live="polite">
+    <div class="duelo-selector__resumen">
+      <strong id="duelo-resumen-titulo">Fecha de recuerdo: 1 de enero</strong>
+      <span id="duelo-resumen-detalle" class="duelo-selector__meta"></span>
+    </div>
+    <blockquote id="duelo-mensaje-preview" class="duelo-selector__cita"></blockquote>
+
+    <div class="duelo-selector__acciones">
+      <button type="button" class="btn btn--primario" id="duelo-btn-copiar">
+        Copiar mensaje de recuerdo
+      </button>
+      <a
+        href="#"
+        class="btn btn--secundario"
+        id="duelo-btn-wa"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Enviar por WhatsApp
+      </a>
+      <button type="button" class="btn btn--secundario" id="duelo-btn-ics">
+        Guardar recordatorio anual (.ics)
+      </button>
+      <a
+        href="#"
+        class="btn btn--secundario"
+        id="duelo-btn-gcal"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Google Calendar
+      </a>
+      <button type="button" class="btn btn--secundario" id="duelo-btn-agenda">
+        Guardar en mi agenda local
+      </button>
+      <a href="/calendario/" class="btn btn--secundario" id="duelo-btn-calendario">
+        Ver esta fecha en el calendario
+      </a>
+    </div>
+    <p class="duelo-selector__estado" id="duelo-estado" role="status"></p>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var root = document.getElementById('fecha-duelo');
+    if (!root || root.dataset.pcDueloInit) return;
+    root.dataset.pcDueloInit = '1';
+
+    var MESES = [
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ];
+    var DIAS_MES = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    var STORAGE_KEY = 'pc_agenda_cumples_v1';
+
+    var elNombre = document.getElementById('duelo-nombre');
+    var elVinculo = document.getElementById('duelo-vinculo');
+    var elMes = document.getElementById('duelo-mes');
+    var elDia = document.getElementById('duelo-dia');
+    var elAnio = document.getElementById('duelo-anio');
+    var elTitulo = document.getElementById('duelo-resumen-titulo');
+    var elDetalle = document.getElementById('duelo-resumen-detalle');
+    var elPreview = document.getElementById('duelo-mensaje-preview');
+    var elEstado = document.getElementById('duelo-estado');
+    var btnCopiar = document.getElementById('duelo-btn-copiar');
+    var btnWa = document.getElementById('duelo-btn-wa');
+    var btnIcs = document.getElementById('duelo-btn-ics');
+    var btnGcal = document.getElementById('duelo-btn-gcal');
+    var btnAgenda = document.getElementById('duelo-btn-agenda');
+    var btnCal = document.getElementById('duelo-btn-calendario');
+
+    var hoy = new Date();
+    var params = new URLSearchParams(window.location.search);
+    var mesInicial = parseInt(params.get('mes') || String(hoy.getMonth() + 1), 10);
+    var diaInicial = parseInt(params.get('dia') || String(hoy.getDate()), 10);
+    if (isNaN(mesInicial) || mesInicial < 1 || mesInicial > 12) mesInicial = hoy.getMonth() + 1;
+    if (isNaN(diaInicial) || diaInicial < 1 || diaInicial > 31) diaInicial = hoy.getDate();
+
+    elMes.value = String(mesInicial);
+    ajustarDias(mesInicial, diaInicial);
+
+    function ajustarDias(mes, diaSeleccionado) {
+      var max = DIAS_MES[mes - 1] || 31;
+      var actual = Math.min(max, Math.max(1, diaSeleccionado || 1));
+      elDia.innerHTML = '';
+      for (var d = 1; d <= max; d++) {
+        var opt = document.createElement('option');
+        opt.value = String(d);
+        opt.textContent = String(d);
+        if (d === actual) opt.selected = true;
+        elDia.appendChild(opt);
+      }
+    }
+
+    function pad2(n) {
+      return String(n).padStart(2, '0');
+    }
+
+    function proximaOcurrencia(mes, dia) {
+      var ahora = new Date();
+      var base = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+      var anio = ahora.getFullYear();
+      var esBis = function (a) { return (a % 4 === 0 && a % 100 !== 0) || a % 400 === 0; };
+      var diaEfectivo = mes === 2 && dia === 29 && !esBis(anio) ? 28 : dia;
+      var objetivo = new Date(anio, mes - 1, diaEfectivo);
+      if (objetivo < base) {
+        anio += 1;
+        diaEfectivo = mes === 2 && dia === 29 && !esBis(anio) ? 28 : dia;
+        objetivo = new Date(anio, mes - 1, diaEfectivo);
+      }
+      var diasFaltan = Math.round((objetivo.getTime() - base.getTime()) / 86400000);
+      return { anio: anio, diaEfectivo: diaEfectivo, diasFaltan: diasFaltan };
+    }
+
+    function construirEstado() {
+      var nombre = (elNombre.value || '').trim();
+      var vinculo = elVinculo.value || 'ser querido';
+      var mes = parseInt(elMes.value, 10) || 1;
+      var dia = parseInt(elDia.value, 10) || 1;
+      var anioVal = parseInt(elAnio.value || '', 10);
+      var tieneAnio = !isNaN(anioVal) && anioVal >= 1900 && anioVal <= new Date().getFullYear();
+      var etiquetaSinAnio = dia + ' de ' + MESES[mes - 1];
+      var sujeto = nombre ? nombre : ('tu ' + vinculo);
+      var sujetoTercera = nombre ? nombre : ('nuestro ' + vinculo);
+      var prox = proximaOcurrencia(mes, dia);
+
+      var infoTiempo = '';
+      if (prox.diasFaltan === 0) {
+        infoTiempo = 'Hoy es esta fecha de recuerdo en el calendario.';
+      } else if (prox.diasFaltan === 1) {
+        infoTiempo = 'Mañana se cumple esta fecha de recuerdo.';
+      } else {
+        infoTiempo = 'Faltan ' + prox.diasFaltan + ' días para el próximo recuerdo anual (' + etiquetaSinAnio + ').';
+      }
+
+      var aniosTranscurridos = null;
+      if (tieneAnio) {
+        var ahora = new Date();
+        var ref = new Date(anioVal, mes - 1, dia);
+        var diffDias = Math.floor((ahora.getTime() - ref.getTime()) / 86400000);
+        if (diffDias >= 0) {
+          var anios = ahora.getFullYear() - anioVal;
+          var yaPaso = ahora.getMonth() + 1 > mes || (ahora.getMonth() + 1 === mes && ahora.getDate() >= dia);
+          if (!yaPaso) anios = Math.max(0, anios - 1);
+          aniosTranscurridos = anios;
+          var textoAnios =
+            anios === 0
+              ? 'Transcurrieron ' + diffDias + ' días desde aquella fecha.'
+              : anios === 1
+                ? 'Se cumple 1 año de ausencia (' + diffDias.toLocaleString('es-AR') + ' días de memoria).'
+                : 'Han pasado ' + anios + ' años de memoria serena (' + diffDias.toLocaleString('es-AR') + ' días).';
+          infoTiempo = textoAnios + ' ' + infoTiempo;
+        }
+      }
+
+      var encabezadoFecha =
+        aniosTranscurridos && aniosTranscurridos >= 1
+          ? 'En este ' + etiquetaSinAnio + ', al cumplirse ' + (aniosTranscurridos === 1 ? '1 año' : aniosTranscurridos + ' años') + ' desde la partida de ' + sujetoTercera + ', '
+          : 'En este ' + etiquetaSinAnio + ', fecha sensible dedicada a la memoria de ' + sujetoTercera + ', ';
+
+      var mensaje =
+        encabezadoFecha +
+        'quiero enviarte un abrazo sereno y respetuoso. Aunque el paso del tiempo cambia la forma de la ausencia, el cariño, los valores y los recuerdos verdaderos permanecen intactos.\n\nNo hace falta que respondas este mensaje; solo quería que supieras que hoy ' +
+        (nombre ? nombre + ' sigue' : 'su nombre sigue') +
+        ' muy presente con afecto y gratitud.';
+
+      elTitulo.textContent =
+        'Fecha de duelo: ' + etiquetaSinAnio + (nombre ? ' · En memoria de ' + nombre : '');
+      elDetalle.textContent = infoTiempo;
+      elPreview.textContent = mensaje;
+
+      btnWa.href = 'https://wa.me/?text=' + encodeURIComponent(mensaje);
+      btnCal.href = '/calendario/?mes=' + mes + '&dia=' + dia;
+
+      var inicio = prox.anio + pad2(mes) + pad2(prox.diaEfectivo);
+      var siguiente = new Date(prox.anio, mes - 1, prox.diaEfectivo + 1);
+      var fin = siguiente.getFullYear() + pad2(siguiente.getMonth() + 1) + pad2(siguiente.getDate());
+      var tituloEvento = 'En memoria de ' + (nombre || vinculo) + ' (' + etiquetaSinAnio + ')';
+      var detallesEvento =
+        'Recordatorio respetuoso de fecha de duelo creado en ParaCumpleanos.\nMensajes de condolencias y acompañamiento: https://paracumpleanos.com/condolencias/';
+
+      var gcalParams = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: tituloEvento,
+        dates: inicio + '/' + fin,
+        details: detallesEvento,
+        recur: 'RRULE:FREQ=YEARLY'
+      });
+      btnGcal.href = 'https://calendar.google.com/calendar/render?' + gcalParams.toString();
+
+      return {
+        nombre: nombre || ('Recuerdo de ' + vinculo),
+        vinculo: vinculo,
+        mes: mes,
+        dia: dia,
+        etiquetaSinAnio: etiquetaSinAnio,
+        prox: prox,
+        mensaje: mensaje,
+        tituloEvento: tituloEvento,
+        inicio: inicio,
+        fin: fin
+      };
+    }
+
+    var actual = construirEstado();
+
+    elMes.addEventListener('change', function () {
+      var mes = parseInt(elMes.value, 10) || 1;
+      ajustarDias(mes, parseInt(elDia.value, 10) || 1);
+      actual = construirEstado();
+    });
+
+    [elNombre, elVinculo, elDia, elAnio].forEach(function (el) {
+      el.addEventListener('input', function () {
+        actual = construirEstado();
+      });
+      el.addEventListener('change', function () {
+        actual = construirEstado();
+      });
+    });
+
+    btnCopiar.addEventListener('click', function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(actual.mensaje).then(function () {
+          elEstado.textContent = 'Mensaje de recuerdo copiado al portapapeles.';
+        });
+      }
+    });
+
+    btnIcs.addEventListener('click', function () {
+      var esc = function (t) {
+        return String(t).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+      };
+      var now = new Date();
+      var dtstamp =
+        now.getUTCFullYear() + pad2(now.getUTCMonth() + 1) + pad2(now.getUTCDate()) +
+        'T' + pad2(now.getUTCHours()) + pad2(now.getUTCMinutes()) + pad2(now.getUTCSeconds()) + 'Z';
+      var ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//ParaCumpleanos.com//Recordatorio Duelo//ES',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'BEGIN:VEVENT',
+        'UID:duelo-' + actual.mes + '-' + actual.dia + '-' + Date.now() + '@paracumpleanos.com',
+        'DTSTAMP:' + dtstamp,
+        'DTSTART;VALUE=DATE:' + actual.inicio,
+        'DTEND;VALUE=DATE:' + actual.fin,
+        'RRULE:FREQ=YEARLY',
+        'SUMMARY:' + esc(actual.tituloEvento),
+        'DESCRIPTION:' + esc('Fecha de duelo y recuerdo (' + actual.etiquetaSinAnio + '). Textos de condolencias: https://paracumpleanos.com/condolencias/'),
+        'URL:https://paracumpleanos.com/condolencias/',
+        'BEGIN:VALARM',
+        'ACTION:DISPLAY',
+        'TRIGGER:-PT9H',
+        'DESCRIPTION:' + esc(actual.tituloEvento),
+        'END:VALARM',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+
+      var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'recuerdo-duelo-' + actual.mes + '-' + actual.dia + '.ics';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      elEstado.textContent = 'Archivo de recordatorio anual (.ics) descargado.';
+    });
+
+    btnAgenda.addEventListener('click', function () {
+      try {
+        var lista = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        if (!Array.isArray(lista)) lista = [];
+        lista.push({
+          id: 'duelo-' + Date.now(),
+          nombre: actual.nombre,
+          mes: actual.mes,
+          dia: actual.dia,
+          vinculo: actual.vinculo,
+          tipo: 'duelo',
+          nota: 'Fecha de duelo y recuerdo (' + actual.etiquetaSinAnio + ')'
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+        elEstado.textContent = 'Guardado en tu agenda local de fechas (podés consultarla en Herramientas).';
+      } catch (err) {
+        elEstado.textContent = 'No se pudo acceder al almacenamiento local del navegador.';
+      }
+    });
+  })();
+</script>

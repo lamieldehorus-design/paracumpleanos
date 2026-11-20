@@ -15,6 +15,7 @@ import {
 } from '../lib/contenido.ts';
 import { generarUrlsSitio, generarSitemapXml } from '../lib/catalogo.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
+import { PAISES_HITOS } from '../data/hitos-historicos.ts';
 import { ZODIACOS } from '../lib/horoscopo.ts';
 
 export const GET: APIRoute = () => {
@@ -34,7 +35,8 @@ export const GET: APIRoute = () => {
       hermanasDe
     },
     GUIAS_EDITORIALES.map((g) => g.slug),
-    ZODIACOS.map((s) => s.slug)
+    ZODIACOS.map((s) => s.slug),
+    PAISES_HITOS.map((p) => p.slug)
   );
 
   // No se informa lastmod mientras el proyecto no disponga de fechas

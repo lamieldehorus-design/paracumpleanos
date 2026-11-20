@@ -123,12 +123,12 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         <span class="logo-fallback" style="display:none">ParaCumpleanos 🎂</span>
       </a>
       <nav class="nav-principal" aria-label="Navegación principal">
+        <a href="/calendario/">Calendario</a>
+        <a href="/hitos-historicos/">Hitos históricos</a>
+        <a href="/condolencias/">Condolencias</a>
         <a href="/herramientas/">Herramientas</a>
         <a href="/horoscopo/">Horóscopo</a>
-        <a href="/motivaciones/">Motivaciones</a>
-        <a href="/categorias/#meses">Meses</a>
         <a href="/guias/">Guías</a>
-        <a href="/contacto/">Contacto</a>
       </nav>
       <a class="nav-cta" href="/categorias/">{hubs.length} categorías</a>
     </div>
@@ -193,6 +193,9 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
     <p>ParaCumpleanos — {hubs.length} colecciones, {GUIAS_EDITORIALES.length} guías prácticas y {todosMensajes.length.toLocaleString('es-AR')} textos originales en español.</p>
     <nav aria-label="Páginas institucionales">
       <a href="/">Inicio</a>
+      <a href="/calendario/">Calendario sin año</a>
+      <a href="/hitos-historicos/">Hitos históricos</a>
+      <a href="/condolencias/">Condolencias</a>
       <a href="/herramientas/">Herramientas</a>
       <a href="/horoscopo/">Horóscopo</a>
       <a href="/categorias/#meses">Meses</a>

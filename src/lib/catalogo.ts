@@ -184,10 +184,13 @@ export function construirSetIndexables(todosMensajes: any[]): Set<string> {
 export function generarUrlsSitio(
   catalogo: ReturnType<typeof crearCatalogo>,
   slugsGuias: string[] = [],
-  slugsSignos: string[] = []
+  slugsSignos: string[] = [],
+  slugsPaises: string[] = []
 ): string[] {
   const urls: string[] = [
     `${SITIO}/`,
+    `${SITIO}/calendario/`,
+    `${SITIO}/hitos-historicos/`,
     `${SITIO}/categorias/`,
     `${SITIO}/herramientas/`,
     `${SITIO}/horoscopo/`,
@@ -197,6 +200,10 @@ export function generarUrlsSitio(
     `${SITIO}/privacidad/`,
     `${SITIO}/terminos-de-uso/`
   ];
+
+  for (const slugPais of slugsPaises) {
+    urls.push(`${SITIO}/hitos-historicos/${slugPais}/`);
+  }
 
   for (const slugSigno of slugsSignos) {
     urls.push(`${SITIO}/horoscopo/${slugSigno}/`);
