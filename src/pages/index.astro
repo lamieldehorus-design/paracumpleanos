@@ -2,41 +2,67 @@
 import Base from '../layouts/Base.astro';
 import TarjetaMensaje from '../components/TarjetaMensaje.astro';
 import AlertaMotivacionDiaria from '../components/AlertaMotivacionDiaria.astro';
-import { GRUPOS, hubs, todosMensajes, hubsPorGrupo, mensajesDe, nombreHub, SITIO, MARCA } from '../lib/contenido.ts';
+import {
+  catalogo,
+  GRUPOS,
+  hubs,
+  todosMensajes,
+  hubsPorGrupo,
+  mensajesDe,
+  nombreHub,
+  SITIO,
+  MARCA
+} from '../lib/contenido.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { TEMAS_TARJETA } from '../lib/personalizador.ts';
 import { ZODIACOS } from '../lib/horoscopo.ts';
-import { PAISES_HITOS } from '../data/hitos-historicos.ts';
+import { PAISES_HITOS, HITOS_MUNDIALES } from '../data/hitos-historicos.ts';
+import { rankearGuiasPorPopularidad, seleccionarPoolPopularMixto } from '../lib/popularidad.ts';
+import { ETIQUETAS_SEGMENTOS, type SegmentoTono } from '../lib/editorial.ts';
 
-// Muestras representativas de distintas secciones para que la portada refleje todo el portal
-const muestraSlugsCats = [
-  'feliz-cumpleanos-mama',
-  'feliz-cumpleanos-papa',
-  'feliz-cumpleanos-amiga',
-  'feliz-cumpleanos-hermana',
-  'feliz-cumpleanos-jefe',
-  'feliz-cumpleanos-cristiano',
-  'feliz-cumpleanos-a-distancia',
-  'feliz-aniversario-mi-amor',
-  'feliz-cumpleanos-15-anos',
-  'feliz-cumpleanos-50-anos',
-  'carta-para-mi-hija',
-  'feliz-cumpleanos-gracioso'
+// Pool mixto de las publicaciones mas populares de TODAS las categorias del sitio
+const poolPopular = seleccionarPoolPopularMixto(catalogo, 32);
+const segmentosHomeDisponibles: SegmentoTono[] = [
+  'corto',
+  'emotivo',
+  'recuerdo',
+  'gratitud',
+  'reflexivo',
+  'carta',
+  'divertido',
+  'fe',
+  'formal',
+  'duelo'
 ];
-const muestraMensajes = muestraSlugsCats
-  .map((s) => (mensajesDe(s) || [])[0])
-  .filter(Boolean);
+const filtrosHome = [
+  { id: 'todos', label: 'Más populares', count: poolPopular.length },
+  ...segmentosHomeDisponibles
+    .map((seg) => ({
+      id: seg,
+      label: ETIQUETAS_SEGMENTOS[seg],
+      count: poolPopular.filter((it) => it.segmentos.includes(seg)).length
+    }))
+    .filter((f) => f.count > 0)
+];
 
-const guiasLead = GUIAS_EDITORIALES[0];
-const slugsGuiasDestacadas = new Set([
-  'banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas',
-  'tematicas-de-cumpleanos-ideas-originales-para-fiestas',
-  'invitaciones-y-postales-de-cumpleanos-para-imprimir-y-editar',
-  'como-escribir-condolencias-y-palabras-de-pesame-respetuosas'
-]);
-const guiasSecundarias = GUIAS_EDITORIALES.filter((g) => slugsGuiasDestacadas.has(g.slug));
+// Guias ordenadas por popularidad (con re-ranking dinamico segun visitas acumuladas)
+const guiasRankeadas = rankearGuiasPorPopularidad(GUIAS_EDITORIALES);
+const guiasLead = guiasRankeadas[0];
+const guiasSecundarias = guiasRankeadas.slice(1, 5);
+const guiasIndiceJson = guiasRankeadas.map((g) => ({
+  slug: g.slug,
+  titulo: g.titulo,
+  h1: g.h1,
+  descripcion: g.descripcion,
+  resumen: g.resumen,
+  emoji: g.emoji,
+  tiempoLectura: g.tiempoLectura,
+  fechaPublicacion: g.fechaPublicacion,
+  citaDestacada: g.citaDestacada,
+  scoreBase: g.scorePopularidad
+}));
 
-// Indice liviano de todas las categorías + guías para el buscador universal del portal
+// Indice liviano de todas las categorías + guías + hitos para el buscador universal del portal
 const indiceBuscador = hubs
   .map((h) => ({
     titulo: nombreHub(h),
@@ -107,6 +133,7 @@ const indiceBuscador = hubs
   ]);
 
 const temas = Object.values(TEMAS_TARJETA);
+const totalPublicacionesPortal = todosMensajes.length + PAISES_HITOS.length + GUIAS_EDITORIALES.length;
 
 const jsonld = [
   {
@@ -125,27 +152,27 @@ const jsonld = [
 ---
 <Base
   titulo="Frases y mensajes de feliz cumpleaños, postales y calendario - ParaCumpleanos"
-  descripcion={`Buscá entre ${hubs.length} colecciones, ${todosMensajes.length.toLocaleString('es-AR')} frases de feliz cumpleaños, condolencias, banderines para imprimir, calendario sin año y 195 hitos históricos mundiales.`}
+  descripcion={`Buscá entre ${hubs.length} colecciones, ${todosMensajes.length.toLocaleString('es-AR')} frases de feliz cumpleaños, condolencias, nostalgia, aniversarios, banderines A4, calendario sin año y ${PAISES_HITOS.length} hitos históricos mundiales.`}
   jsonld={jsonld}
   esPortal={true}
 >
   <section class="portal-hero" aria-labelledby="portal-h1">
     <div class="portal-hero-texto">
       <p class="portal-kicker">
-        Portal editorial en español · {hubs.length} colecciones · {todosMensajes.length.toLocaleString('es-AR')} textos únicos · 195 países
+        Portal editorial en español · {hubs.length} colecciones · {totalPublicacionesPortal.toLocaleString('es-AR')} publicaciones únicas · {PAISES_HITOS.length} países
       </p>
       <h1 id="portal-h1">Frases y mensajes reales para cada cumpleaños, fecha y recuerdo</h1>
       <p class="portal-sub">
-        Elegí entre {hubs.length} colecciones de feliz cumpleaños, condolencias, invitaciones y fechas especiales, creá tarjetas PNG o banderines A4 para imprimir, y explorá el calendario anual con los hitos históricos de los 195 países.
+        Elegí entre {hubs.length} colecciones de feliz cumpleaños, aniversarios de 1 mes a +10 años personalizables, condolencias, nostalgia y banderines A4 para imprimir, o explorá el calendario anual con los hitos históricos de los {PAISES_HITOS.length} países.
       </p>
 
       <div class="portal-buscador-caja">
-        <label for="portal-buscador" class="portal-buscador-label">Buscá destinatario, país, banderines, condolencias o fecha en toda la web</label>
+        <label for="portal-buscador" class="portal-buscador-label">Buscá destinatario, país, banderines, condolencias, aniversario o fecha en toda la web</label>
         <div class="portal-buscador-fila">
           <input
             id="portal-buscador"
             type="search"
-            placeholder="Ej.: amiga, esposo, banderines, condolencias, Argentina, calendario…"
+            placeholder="Ej.: amiga, 5 años de novios, nostalgia, banderines, condolencias, Argentina…"
             autocomplete="off"
           />
           <a class="btn btn-copiar" href="#secciones-portal">Explorar secciones</a>
@@ -159,17 +186,17 @@ const jsonld = [
         <span aria-hidden="true">·</span>
         <a href="/feliz-cumpleanos-mama/">Mamá</a>
         <span aria-hidden="true">·</span>
-        <a href="/feliz-cumpleanos-para-mi-esposo/">Esposo</a>
+        <a href="/mas-de-10-anos-de-novios/">+10 años novios 💞</a>
         <span aria-hidden="true">·</span>
-        <a href="/feliz-cumpleanos-para-mi-esposa/">Esposa</a>
+        <a href="/banderines-de-cumpleanos-para-imprimir/">Banderines A4 🎏</a>
         <span aria-hidden="true">·</span>
-        <a href="/herramientas/#banderines-imprimir">Banderines A4 🎏</a>
+        <a href="/frases-tristes-para-recordar-momentos/">Recuerdos y nostalgia 🌧️</a>
+        <span aria-hidden="true">·</span>
+        <a href="/condolencias/">Condolencias 🕊️</a>
         <span aria-hidden="true">·</span>
         <a href="/calendario/">Calendario 📅</a>
         <span aria-hidden="true">·</span>
         <a href="/hitos-historicos/">Hitos históricos 🌍</a>
-        <span aria-hidden="true">·</span>
-        <a href="/condolencias/">Condolencias 🕊️</a>
       </div>
     </div>
 
@@ -216,14 +243,19 @@ const jsonld = [
       <span class="portal-util-desc">Elegí cualquier día y mes para ver celebraciones, hitos históricos, signo zodiacal, motivación y fecha de duelo.</span>
     </a>
     <a class="portal-util-card" href="/hitos-historicos/">
-      <span class="portal-util-kicker">195 países del mundo</span>
+      <span class="portal-util-kicker">{PAISES_HITOS.length} países del mundo</span>
       <span class="portal-util-titulo">🌍 Hitos históricos mundiales</span>
       <span class="portal-util-desc">Descubrí qué celebra cada país en su fiesta nacional o independencia, su historia, tradiciones y saludos.</span>
     </a>
     <a class="portal-util-card" href="/condolencias/">
       <span class="portal-util-kicker">Acompañamiento respetuoso</span>
       <span class="portal-util-titulo">🕊️ Condolencias y fecha de duelo</span>
-      <span class="portal-util-desc">40 mensajes sobrios de pésame y selector interactivo para honrar una fecha de duelo con recordatorio anual .ics.</span>
+      <span class="portal-util-desc">40 mensajes sobrios de pésame, nostalgia y selector interactivo para honrar una fecha de duelo con alerta anual .ics.</span>
+    </a>
+    <a class="portal-util-card" href="/mas-de-10-anos-de-novios/">
+      <span class="portal-util-kicker">11 a 80 años a medida</span>
+      <span class="portal-util-titulo">💞 Aniversario +10 años personalizable</span>
+      <span class="portal-util-desc">Elegí el número exacto de años juntos y adaptá al instante 40 frases y cartas, además de los 1–11 meses y 1–10 años.</span>
     </a>
     <a class="portal-util-card" href="/herramientas/#banderines-imprimir">
       <span class="portal-util-kicker">Imprimible gratis A4</span>
@@ -235,11 +267,6 @@ const jsonld = [
       <span class="portal-util-titulo">🎂 Edad exacta, acróstico y agenda .ics</span>
       <span class="portal-util-desc">Calculá días vividos e hito de 10.000 días, creá acrósticos por nombre y descargá alertas anuales.</span>
     </a>
-    <a class="portal-util-card" href="/horoscopo/">
-      <span class="portal-util-kicker">Zodíaco y meses</span>
-      <span class="portal-util-titulo">♈ Horóscopo de cumpleaños</span>
-      <span class="portal-util-desc">Consultá frases, perfil festivo y regalos para los 12 signos enlazados con su mes exacto.</span>
-    </a>
   </section>
 
   <AlertaMotivacionDiaria />
@@ -248,9 +275,9 @@ const jsonld = [
     <div class="banda-cabecera">
       <div>
         <p class="banda-kicker">Mapa completo del portal</p>
-        <h2 id="titulo-secciones-portal">Navegá las {GRUPOS.length} secciones temáticas ({hubs.length} colecciones)</h2>
+        <h2 id="titulo-secciones-portal">Navegá las {GRUPOS.length} secciones temáticas ({hubs.length} colecciones) + Hitos del Mundo</h2>
       </div>
-      <a class="enlace-directorio" href="/categorias/">Ver listado alfabético completo →</a>
+      <a class="enlace-directorio" href="/categorias/">Ver directorio completo ({hubs.length} categorías) →</a>
     </div>
 
     <div class="portal-secciones-grid">
@@ -284,36 +311,58 @@ const jsonld = [
           </article>
         );
       })}
+
+      <article class="portal-seccion-card">
+        <div class="portal-seccion-top">
+          <h3><a href="/hitos-historicos/">🌍 Hitos históricos mundiales y Calendario</a></h3>
+          <p class="card-meta">
+            <span>{PAISES_HITOS.length} países + {HITOS_MUNDIALES.length} globales</span>
+            <span aria-hidden="true">·</span>
+            <span>366 días sin año</span>
+          </p>
+        </div>
+        <ul class="portal-seccion-links">
+          <li><a href="/calendario/">Calendario perpetuo (sin año)</a></li>
+          <li><a href="/hitos-historicos/">Todos los {PAISES_HITOS.length} países del mundo</a></li>
+          <li><a href="/hitos-historicos/argentina/">Argentina · 9 de julio</a></li>
+          <li><a href="/hitos-historicos/mexico/">México · 16 de septiembre</a></li>
+          <li><a href="/hitos-historicos/espana/">España · 12 de octubre</a></li>
+          <li><a href="/horoscopo/">Horóscopo de cumpleaños (12 signos)</a></li>
+        </ul>
+        <p class="portal-seccion-pie">
+          <a href="/hitos-historicos/">Explorar los {PAISES_HITOS.length} hitos históricos →</a>
+        </p>
+      </article>
     </div>
   </section>
 
   <section class="portal-banda portal-banda-guias" aria-labelledby="titulo-guias-portal">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Redacción con método propio</p>
+        <p class="banda-kicker">Más visitadas y actualizadas</p>
         <h2 id="titulo-guias-portal">Guías prácticas para escribir mejor y regalar con criterio</h2>
       </div>
       <a class="enlace-directorio" href="/guias/">Leer las {GUIAS_EDITORIALES.length} guías →</a>
     </div>
 
-    <div class="portal-guias-salience">
-      <article class="card guia-destacada">
+    <div class="portal-guias-salience" id="portal-guias-populares">
+      <article class="card guia-destacada" id="guia-popular-lead">
         <p class="card-meta">
-          <span>{guiasLead.emoji} Guía principal</span>
+          <span id="guia-lead-etiqueta">{guiasLead.emoji} Guía más visitada</span>
           <span aria-hidden="true">·</span>
-          <span>{guiasLead.tiempoLectura}</span>
+          <span id="guia-lead-tiempo">{guiasLead.tiempoLectura}</span>
           <span aria-hidden="true">·</span>
-          <time datetime={guiasLead.fechaPublicacion}>{guiasLead.fechaPublicacion}</time>
+          <time id="guia-lead-fecha" datetime={guiasLead.fechaPublicacion}>{guiasLead.fechaPublicacion}</time>
         </p>
-        <h3><a href={`/guias/${guiasLead.slug}/`}>{guiasLead.h1}</a></h3>
-        <p>{guiasLead.descripcion}</p>
-        <blockquote class="cita-editorial">
-          Las dedicatorias que se releen años después no usan palabras difíciles: nombran una escena real compartida y hablan como hablás vos.
+        <h3><a id="guia-lead-link" href={`/guias/${guiasLead.slug}/`}>{guiasLead.h1}</a></h3>
+        <p id="guia-lead-desc">{guiasLead.descripcion}</p>
+        <blockquote class="cita-editorial" id="guia-lead-cita">
+          {guiasLead.citaDestacada}
         </blockquote>
-        <p class="guia-leer"><a href={`/guias/${guiasLead.slug}/`}>Abrir guía completa paso a paso →</a></p>
+        <p class="guia-leer"><a id="guia-lead-cta" href={`/guias/${guiasLead.slug}/`}>Abrir guía completa paso a paso →</a></p>
       </article>
 
-      <div class="guias-secundarias-lista">
+      <div class="guias-secundarias-lista" id="guias-populares-lista">
         {guiasSecundarias.map(function (g) {
           return (
             <article class="guia-fila">
@@ -334,22 +383,41 @@ const jsonld = [
   <section class="portal-banda" aria-labelledby="titulo-muestra-portal">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Muestra curada de todo el catálogo</p>
+        <p class="banda-kicker">Más populares de todas las categorías · Mezcla de todo el portal</p>
         <h2 id="titulo-muestra-portal">Textos listos para copiar según el momento</h2>
       </div>
+      <a class="enlace-directorio" href="/categorias/">Explorar las {todosMensajes.length.toLocaleString('es-AR')} publicaciones →</a>
     </div>
 
-    <div class="filtros-tono" role="toolbar" aria-label="Filtrar muestra por tono">
-      <button type="button" class="filtro-btn activo" data-home-filtro="todos" aria-pressed="true">Todos (12)</button>
-      <button type="button" class="filtro-btn" data-home-filtro="emotivo" aria-pressed="false">Emotivos</button>
-      <button type="button" class="filtro-btn" data-home-filtro="carta" aria-pressed="false">Carta larga</button>
-      <button type="button" class="filtro-btn" data-home-filtro="formal" aria-pressed="false">Trabajo / Formal</button>
-      <button type="button" class="filtro-btn" data-home-filtro="fe" aria-pressed="false">Con fe</button>
-      <button type="button" class="filtro-btn" data-home-filtro="divertido" aria-pressed="false">Con humor</button>
+    <div class="filtros-tono" role="toolbar" aria-label="Filtrar textos populares de todas las categorías por estilo">
+      {filtrosHome.map(function (f, idx) {
+        return (
+          <button
+            type="button"
+            class={'filtro-btn' + (idx === 0 ? ' activo' : '')}
+            data-home-filtro={f.id}
+            aria-pressed={idx === 0 ? 'true' : 'false'}
+          >
+            {f.label} ({f.count})
+          </button>
+        );
+      })}
     </div>
 
     <div class="grilla" id="home-muestra-grilla">
-      {muestraMensajes.map(function (m) { return <TarjetaMensaje m={m} />; })}
+      {poolPopular.map(function (it, idx) {
+        return (
+          <div class="home-pub-slot" data-home-idx={idx} data-home-slug={it.mensaje.slug} data-home-score={it.scoreBase} data-home-segmentos={it.segmentos.join(',')} style={idx >= 12 ? 'display:none' : undefined}>
+            <TarjetaMensaje m={it.mensaje} hub={it.hub} mostrarCategoria={true} scoreBase={it.scoreBase} />
+          </div>
+        );
+      })}
+    </div>
+
+    <div class="home-mas-wrap">
+      <button type="button" class="btn btn-copiar home-mas-btn" id="home-ver-mas-populares">
+        Mostrar más publicaciones populares ({poolPopular.length - 12} más)
+      </button>
     </div>
   </section>
 
@@ -357,21 +425,22 @@ const jsonld = [
     <h2 id="titulo-criterio-portal">Por qué miles de lectores eligen ParaCumpleanos</h2>
     <div class="estandares-grid">
       <div class="estandar-item">
-        <h3>01. {todosMensajes.length.toLocaleString('es-AR')} textos únicos sin copias</h3>
-        <p>Cada publicación tiene redacción original en voseo cercano o trato formal según el vínculo, evitando repetir párrafos entre categorías.</p>
+        <h3>01. {totalPublicacionesPortal.toLocaleString('es-AR')} publicaciones únicas sin copias</h3>
+        <p>Cada dedicatoria, guía y reseña histórica tiene redacción original en español cercano o formal según el vínculo, sin párrafos reciclados.</p>
       </div>
       <div class="estandar-item">
         <h3>02. Contexto respetado al detalle</h3>
-        <p>Separamos fechas sensibles de duelo, aniversarios de pareja, motivaciones diarias, entornos laborales y edades hito para cuidar siempre el tono justo.</p>
+        <p>Separamos fechas sensibles de duelo y nostalgia, aniversarios de 1 mes a +10 años personalizables, entornos laborales, motivaciones y efemérides mundiales.</p>
       </div>
       <div class="estandar-item">
-        <h3>03. Personalización y Story IG al instante</h3>
-        <p>Sumá nombre, posdata, ícono y tipografía en {temas.length} paletas, compartí en WhatsApp o Instagram y bajá tarjetas cuadradas o Story 1080×1920. Conocé más en <a href="/sobre-nosotros/">Sobre nosotros</a>.</p>
+        <h3>03. Personalización, Banderines A4 y Story IG</h3>
+        <p>Sumá nombre, firma, años exactos, posdata y tipografía en {temas.length} paletas, descargá tarjetas 1080×1920 o banderines A4. Conocé más en <a href="/sobre-nosotros/">Sobre nosotros</a>.</p>
       </div>
     </div>
   </section>
 
   <script id="portal-indice-json" type="application/json" set:html={JSON.stringify(indiceBuscador)} />
+  <script id="portal-guias-json" type="application/json" set:html={JSON.stringify(guiasIndiceJson)} />
   <script is:inline>
     (function () {
       var inputBusq = document.getElementById('portal-buscador');
@@ -461,24 +530,135 @@ const jsonld = [
         });
       });
 
-      // Filtros de la muestra curada
+      // Re-ranking dinamico de "Guias practicas..." segun visitas acumuladas
+      try {
+        var visitasGuias = JSON.parse(localStorage.getItem('pc_visitas_guias_v1') || '{}');
+        var guiasDataEl = document.getElementById('portal-guias-json');
+        if (visitasGuias && Object.keys(visitasGuias).length > 0 && guiasDataEl) {
+          var todasGuias = JSON.parse(guiasDataEl.textContent || '[]');
+          todasGuias.sort(function (a, b) {
+            var sa = Number(a.scoreBase || 0) + Number(visitasGuias[a.slug] || 0) * 25;
+            var sb = Number(b.scoreBase || 0) + Number(visitasGuias[b.slug] || 0) * 25;
+            return sb - sa;
+          });
+          var topLead = todasGuias[0];
+          var topSec = todasGuias.slice(1, 5);
+          if (topLead) {
+            var elEt = document.getElementById('guia-lead-etiqueta');
+            var elTi = document.getElementById('guia-lead-tiempo');
+            var elFe = document.getElementById('guia-lead-fecha');
+            var elLk = document.getElementById('guia-lead-link');
+            var elDe = document.getElementById('guia-lead-desc');
+            var elCi = document.getElementById('guia-lead-cita');
+            var elCt = document.getElementById('guia-lead-cta');
+            if (elEt) elEt.textContent = topLead.emoji + ' Guía más visitada';
+            if (elTi) elTi.textContent = topLead.tiempoLectura;
+            if (elFe) { elFe.textContent = topLead.fechaPublicacion; elFe.setAttribute('datetime', topLead.fechaPublicacion); }
+            if (elLk) { elLk.href = '/guias/' + topLead.slug + '/'; elLk.textContent = topLead.h1; }
+            if (elDe) elDe.textContent = topLead.descripcion;
+            if (elCi) elCi.textContent = topLead.citaDestacada;
+            if (elCt) elCt.href = '/guias/' + topLead.slug + '/';
+          }
+          var secCont = document.getElementById('guias-populares-lista');
+          if (secCont && topSec.length) {
+            secCont.innerHTML = '';
+            topSec.forEach(function (g) {
+              var art = document.createElement('article');
+              art.className = 'guia-fila';
+              var meta = document.createElement('p');
+              meta.className = 'card-meta';
+              meta.innerHTML = '<span>' + g.emoji + ' ' + g.tiempoLectura + '</span><span aria-hidden="true">·</span><time datetime="' + g.fechaPublicacion + '">' + g.fechaPublicacion + '</time>';
+              var h3 = document.createElement('h3');
+              var a = document.createElement('a');
+              a.href = '/guias/' + g.slug + '/';
+              a.textContent = g.titulo;
+              h3.appendChild(a);
+              var p = document.createElement('p');
+              p.textContent = g.resumen;
+              art.appendChild(meta);
+              art.appendChild(h3);
+              art.appendChild(p);
+              secCont.appendChild(art);
+            });
+          }
+        }
+      } catch (_) {}
+
+      // Ranking dinamico + filtros multi-segmento + "Ver mas" en Textos populares mixtos
       var homeBtns = document.querySelectorAll('[data-home-filtro]');
       var homeGrilla = document.getElementById('home-muestra-grilla');
-      if (homeBtns.length && homeGrilla) {
+      var btnVerMas = document.getElementById('home-ver-mas-populares');
+      var filtroActivo = 'todos';
+      var expandido = false;
+
+      if (homeGrilla) {
+        // Reordenar slots segun popularidad local acumulada (vistas + copias + compartidos)
+        try {
+          var popMap = JSON.parse(localStorage.getItem('pc_popularidad_pubs_v1') || '{}');
+          if (popMap && Object.keys(popMap).length > 0) {
+            var slots = Array.prototype.slice.call(homeGrilla.querySelectorAll('.home-pub-slot'));
+            slots.sort(function (a, b) {
+              var sa = Number(a.getAttribute('data-home-score') || 0) + Number(popMap[a.getAttribute('data-home-slug') || ''] || 0) * 12;
+              var sb = Number(b.getAttribute('data-home-score') || 0) + Number(popMap[b.getAttribute('data-home-slug') || ''] || 0) * 12;
+              return sb - sa;
+            });
+            slots.forEach(function (s) { homeGrilla.appendChild(s); });
+          }
+        } catch (_) {}
+
+        function refrescarPopularesHome() {
+          var slots = homeGrilla.querySelectorAll('.home-pub-slot');
+          var visibles = 0;
+          var totalCoinc = 0;
+          slots.forEach(function (slot) {
+            var segs = (slot.getAttribute('data-home-segmentos') || '').split(',');
+            var match = filtroActivo === 'todos' || segs.indexOf(filtroActivo) !== -1;
+            if (!match) {
+              slot.style.display = 'none';
+              return;
+            }
+            totalCoinc++;
+            var limite = filtroActivo === 'todos' && !expandido ? 12 : 99;
+            if (visibles < limite) {
+              slot.style.display = '';
+              visibles++;
+            } else {
+              slot.style.display = 'none';
+            }
+          });
+          if (btnVerMas) {
+            if (filtroActivo === 'todos' && !expandido && totalCoinc > 12) {
+              btnVerMas.hidden = false;
+              btnVerMas.textContent = 'Mostrar más publicaciones populares (' + (totalCoinc - 12) + ' más)';
+            } else if (filtroActivo === 'todos' && expandido && totalCoinc > 12) {
+              btnVerMas.hidden = false;
+              btnVerMas.textContent = 'Mostrar solo las 12 principales';
+            } else {
+              btnVerMas.hidden = true;
+            }
+          }
+        }
+
         homeBtns.forEach(function (btn) {
           btn.addEventListener('click', function () {
-            var f = btn.getAttribute('data-home-filtro') || 'todos';
+            filtroActivo = btn.getAttribute('data-home-filtro') || 'todos';
             homeBtns.forEach(function (b) {
               var ac = b === btn;
               b.classList.toggle('activo', ac);
               b.setAttribute('aria-pressed', ac ? 'true' : 'false');
             });
-            homeGrilla.querySelectorAll('[data-card-personalizable]').forEach(function (card) {
-              var tono = card.getAttribute('data-tono') || '';
-              card.style.display = f === 'todos' || tono === f ? '' : 'none';
-            });
+            refrescarPopularesHome();
           });
         });
+
+        if (btnVerMas) {
+          btnVerMas.addEventListener('click', function () {
+            expandido = !expandido;
+            refrescarPopularesHome();
+          });
+        }
+
+        refrescarPopularesHome();
       }
     })();
   </script>

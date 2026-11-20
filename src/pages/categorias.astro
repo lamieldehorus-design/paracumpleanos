@@ -1,44 +1,74 @@
 ---
 import Base from '../layouts/Base.astro';
 import { GRUPOS, hubs, todosMensajes, hubsPorGrupo, mensajesDe, nombreHub, SITIO, migasLd } from '../lib/contenido.ts';
+import { PAISES_HITOS, HITOS_MUNDIALES } from '../data/hitos-historicos.ts';
+import { GUIAS_EDITORIALES } from '../data/guias.ts';
+import { ZODIACOS } from '../lib/horoscopo.ts';
+
+const totalPublicacionesWeb = todosMensajes.length + PAISES_HITOS.length + GUIAS_EDITORIALES.length;
+const continentes = [
+  { id: 'america', nombre: 'América' },
+  { id: 'europa', nombre: 'Europa' },
+  { id: 'asia', nombre: 'Asia' },
+  { id: 'africa', nombre: 'África' },
+  { id: 'oceania', nombre: 'Oceanía' }
+];
+const nombreContinente = Object.fromEntries(continentes.map((c) => [c.id, c.nombre]));
+const conteoCont = Object.fromEntries(
+  continentes.map((c) => [c.id, PAISES_HITOS.filter((p) => p.continente === c.id).length])
+);
+const paisesDestacados = ['argentina', 'mexico', 'espana', 'colombia', 'chile', 'peru', 'uruguay', 'estados-unidos', 'brasil', 'italia', 'francia', 'japon']
+  .map((s) => PAISES_HITOS.find((p) => p.slug === s))
+  .filter(Boolean) as typeof PAISES_HITOS;
+
 const jsonld = [migasLd([
   { name: 'Inicio', url: SITIO + '/' },
   { name: 'Categorías', url: SITIO + '/categorias/' }
 ])];
 ---
-<Base titulo={`${hubs.length} Categorías de felicitaciones - ParaCumpleanos`} descripcion={`Todas las ${hubs.length} categorías y ${todosMensajes.length.toLocaleString('es-AR')} textos originales: mamá, fechas especiales, meses, horóscopo, cartas y más.`} jsonld={jsonld}>
+<Base
+  titulo={`${hubs.length} Categorías, Hitos Históricos y Calendario - ParaCumpleanos`}
+  descripcion={`Explorá las ${hubs.length} categorías temáticas (${todosMensajes.length.toLocaleString('es-AR')} textos originales), ${PAISES_HITOS.length} hitos históricos mundiales, ${GUIAS_EDITORIALES.length} guías y el calendario anual sin año.`}
+  jsonld={jsonld}
+>
   <nav class="migas" aria-label="Migas de pan">
     <a href="/">Inicio</a> › <span>Categorías</span>
   </nav>
-  <h1>Todas las categorías ({hubs.length})</h1>
-  <p class="lead">Explorá las <strong>{hubs.length} categorías</strong> y sus <strong>{todosMensajes.length.toLocaleString('es-AR')} felicitaciones originales</strong> listas para copiar y enviar por WhatsApp.</p>
-  <label for="filtro-cats" style="display:block;font-weight:600;margin-top:12px;">Buscar categoría o destinatario:</label>
-  <input id="filtro-cats" class="buscador-cats" type="search" placeholder="Ej.: mamá, navidad, san valentín, pascuas, 15 años, carta…" autocomplete="off" />
+  <h1>Todas las categorías y secciones ({hubs.length} colecciones)</h1>
+  <p class="lead">
+    Explorá las <strong>{hubs.length} categorías temáticas</strong> organizadas en <strong>{GRUPOS.length} secciones</strong> con <strong>{todosMensajes.length.toLocaleString('es-AR')} dedicatorias y textos únicos</strong>, además de <strong>{PAISES_HITOS.length} publicaciones de hitos históricos mundiales</strong>, <strong>{GUIAS_EDITORIALES.length} guías prácticas</strong> y el <strong>calendario perpetuo de 366 días sin año</strong> ({totalPublicacionesWeb.toLocaleString('es-AR')} publicaciones originales en total).
+  </p>
+
+  <label for="filtro-cats" style="display:block;font-weight:600;margin-top:12px;">Buscar categoría, destinatario, país o herramienta:</label>
+  <input id="filtro-cats" class="buscador-cats" type="search" placeholder="Ej.: mamá, condolencias, nostalgia, 5 años de novios, banderines, Argentina, calendario…" autocomplete="off" />
+
   <div class="chips" style="margin-top:12px;">
-    <a class="chip" href="/calendario/">📅 Calendario (sin año)</a>
-    <a class="chip" href="/hitos-historicos/">🌍 Hitos históricos (195 países)</a>
-    <a class="chip" href="/condolencias/">🕊️ Condolencias y fecha de duelo</a>
-    <a class="chip" href="/herramientas/#banderines-imprimir">🎏 Banderines para imprimir</a>
-  </div>
-  <div class="chips">
     {GRUPOS.map(function (g) {
       const lista = hubsPorGrupo.get(g.id) || [];
       return <a class="chip" href={'#' + g.id}>{g.emoji} {g.nombre} ({lista.length})</a>;
     })}
+    <a class="chip" href="#hitos-historicos-seccion">🌍 Hitos históricos mundiales ({PAISES_HITOS.length})</a>
+    <a class="chip" href="#calendario-herramientas-seccion">📅 Calendario, Horóscopo y Herramientas</a>
   </div>
+
   <div id="lista-categorias">
     {GRUPOS.map(function (g) {
       const lista = hubsPorGrupo.get(g.id) || [];
       if (!lista.length) return null;
+      const totalGrupo = lista.reduce((acc, h) => acc + mensajesDe(h.slug).length, 0);
       return (
         <section class="cat-grupo-bloque" id={g.id}>
-          <h2>{g.emoji} {g.nombre} ({lista.length})</h2>
+          <h2>{g.emoji} {g.nombre} ({lista.length} categorías · {totalGrupo.toLocaleString('es-AR')} publicaciones)</h2>
           <ul class="cat-lista">
             {lista.map(function (h) {
               const cant = mensajesDe(h.slug).length;
+              const esSereno = g.id === 'duelo_recuerdos';
+              const esAniv = g.id === 'aniversarios';
+              const etiquetaTipo = esSereno ? 'textos serenos' : esAniv ? 'dedicatorias' : 'publicaciones';
               return (
-                <li data-cat={nombreHub(h).toLowerCase() + ' ' + (h.destinatario || '').toLowerCase()}>
-                  <a href={'/' + h.slug + '/'}>{h.emoji} {nombreHub(h)}</a> — {cant} felicitaciones
+                <li data-cat={nombreHub(h).toLowerCase() + ' ' + (h.destinatario || '').toLowerCase() + ' ' + g.nombre.toLowerCase()}>
+                  <a href={'/' + h.slug + '/'}>{h.emoji} {nombreHub(h)}</a> — {cant} {etiquetaTipo}
+                  {h.slug === 'mas-de-10-anos-de-novios' ? ' (personalizable 11–80 años)' : ''}
                 </li>
               );
             })}
@@ -46,7 +76,56 @@ const jsonld = [migasLd([
         </section>
       );
     })}
+
+    <section class="cat-grupo-bloque" id="hitos-historicos-seccion">
+      <h2>🌍 Hitos históricos mundiales ({PAISES_HITOS.length} países · {HITOS_MUNDIALES.length} efemérides globales)</h2>
+      <ul class="cat-lista">
+        <li data-cat="hitos historicos mundiales paises independencia fiesta nacional mundo historia">
+          <a href="/hitos-historicos/">🌍 Directorio completo de los {PAISES_HITOS.length} países y sus fiestas nacionales</a> — {PAISES_HITOS.length} artículos históricos + {HITOS_MUNDIALES.length} hitos globales
+        </li>
+        {continentes.map(function (c) {
+          return (
+            <li data-cat={`hitos historicos ${c.nombre.toLowerCase()} ${c.id} paises fechas patrias`}>
+              <a href={`/hitos-historicos/#filtro-continente`}>🗺️ Hitos históricos de {c.nombre}</a> — {conteoCont[c.id]} países documentados
+            </li>
+          );
+        })}
+        {paisesDestacados.map(function (p) {
+          const nomCont = nombreContinente[p.continente] || p.continente;
+          return (
+            <li data-cat={`hito historico ${p.nombre.toLowerCase()} ${nomCont.toLowerCase()} ${p.hitoPrincipal.titulo.toLowerCase()}`}>
+              <a href={`/hitos-historicos/${p.slug}/`}>{p.bandera} {p.nombre}: {p.hitoPrincipal.titulo}</a> — {p.hitoPrincipal.dia}/{p.hitoPrincipal.mes} ({nomCont})
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+
+    <section class="cat-grupo-bloque" id="calendario-herramientas-seccion">
+      <h2>📅 Calendario perpetuo sin año, Horóscopo y Herramientas interactivas</h2>
+      <ul class="cat-lista">
+        <li data-cat="calendario perpetuo sin ano 366 dias fechas celebraciones hitos historicos duelo">
+          <a href="/calendario/">📅 Calendario de fechas y celebraciones (sin año)</a> — 366 días con celebraciones, hitos mundiales, signo, motivación y fecha de duelo
+        </li>
+        <li data-cat="banderines de cumpleanos para imprimir a4 bordes recortar generador gratis">
+          <a href="/herramientas/#banderines-imprimir">🎏 Generador de banderines de cumpleaños para imprimir (A4)</a> — 6 paletas + versión para colorear
+        </li>
+        <li data-cat="fecha de duelo recordatorio anual ics calendario condolencias homenaje">
+          <a href="/herramientas/#fecha-duelo">🕯️ Selector de fecha de duelo y homenaje anual (.ics / Google Calendar)</a>
+        </li>
+        <li data-cat="calculadora edad exacta dias vividos 10000 acrostico agenda recordatorios herramientas">
+          <a href="/herramientas/">🛠️ Todas las herramientas gratuitas</a> — Edad exacta, acróstico por nombre, armador de dedicatorias y agenda .ics
+        </li>
+        <li data-cat="horoscopo zodiaco 12 signos cumpleanos aries tauro geminis cancer leo virgo libra escorpio sagitario capricornio acuario piscis">
+          <a href="/horoscopo/">♈ Horóscopo de cumpleaños ({ZODIACOS.length} signos)</a> — Perfil, fechas exactas y regalos por signo
+        </li>
+        <li data-cat="guias editoriales practicas escribir cartas regalos banderines tematicas condolencias">
+          <a href="/guias/">📚 Guías prácticas editoriales ({GUIAS_EDITORIALES.length} guías completas)</a> — Redacción, regalos, fiestas y etiquetas
+        </li>
+      </ul>
+    </section>
   </div>
+
   <script is:inline>
     (function () {
       var input = document.getElementById('filtro-cats');

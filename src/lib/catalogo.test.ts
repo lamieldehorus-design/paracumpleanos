@@ -5,6 +5,8 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {
   crearCatalogo,
+  ordenarMasRecientePrimero,
+  GRUPOS,
   metaDe,
   nombreHub,
   migasLd,
@@ -20,6 +22,15 @@ import { ZODIACOS, MESES_CON_SIGNOS } from './horoscopo';
 import { PAISES_HITOS, HITOS_MUNDIALES, hitosPaisesPorDiaMes } from '../data/hitos-historicos';
 import { obtenerResumenFechaSinAnio, generarIndiceCalendarioAnualSinAnio } from './calendario';
 import {
+  normalizarAniosAniversario,
+  adaptarTextoAniosAniversario,
+  construirEtiquetaAnios
+} from './aniversario-personalizable';
+import {
+  rankearGuiasPorPopularidad,
+  seleccionarPoolPopularMixto
+} from './popularidad';
+import {
   TEMAS_TARJETA,
   ICONOS_TARJETA,
   TIPOGRAFIAS_TARJETA,
@@ -31,6 +42,7 @@ import {
 } from './personalizador';
 import {
   clasificarMensaje,
+  calcularFiltrosHub,
   extraerCitaDestacada,
   guiaRelacionadaParaHub,
   editorialHubCompleto,
@@ -70,20 +82,28 @@ function cargarDatosCompletos() {
   return all;
 }
 
-test('catalogo contiene 391 categorias (incl. condolencias, 60 mensajes por mes, 40 en el resto) y 15880 mensajes todos unicos', () => {
+test('catalogo contiene 416 categorias en 14 grupos (60 por mes, 40 en el resto) y 16880 mensajes todos unicos', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
-  assert.equal(cat.hubs.length, 391, `Se esperaban 391 hubs, hay ${cat.hubs.length}`);
+  assert.equal(GRUPOS.length, 14, `Se esperaban 14 grupos tematicos, hay ${GRUPOS.length}`);
+  assert.equal(cat.hubs.length, 416, `Se esperaban 416 hubs, hay ${cat.hubs.length}`);
   assert.ok(cat.hubsPorSlug.has('motivaciones'), 'Debe existir el hub /motivaciones/');
   assert.ok(cat.hubsPorSlug.has('condolencias'), 'Debe existir el hub /condolencias/');
+  assert.ok(cat.hubsPorSlug.has('frases-tristes-para-recordar-momentos'), 'Debe existir hub recuerdos tristes');
+  assert.ok(cat.hubsPorSlug.has('frases-de-nostalgia-y-recuerdos'), 'Debe existir hub nostalgia y recuerdos');
+  assert.ok(cat.hubsPorSlug.has('mensajes-cuando-extranas-a-alguien'), 'Debe existir hub cuando extranas a alguien');
+  assert.ok(cat.hubsPorSlug.has('banderines-de-cumpleanos-para-imprimir'), 'Debe existir hub banderines');
+  assert.ok(cat.hubsPorSlug.has('mas-de-10-anos-de-novios'), 'Debe existir hub personalizable +10 anos de novios');
   assert.ok(cat.hubsPorSlug.has('cumpleanos-en-junio'), 'Debe existir el hub /cumpleanos-en-junio/');
   assert.ok(cat.hubsPorSlug.has('feliz-san-valentin'), 'Debe existir el hub /feliz-san-valentin/');
-  assert.equal(cat.todosMensajes.length, 15880, `Se esperaban 15880 mensajes, hay ${cat.todosMensajes.length}`);
+  assert.equal((cat.hubsPorGrupo.get('duelo_recuerdos') || []).length, 9, 'duelo_recuerdos debe tener 9 categorias');
+  assert.equal((cat.hubsPorGrupo.get('aniversarios') || []).length, 27, 'aniversarios debe tener 27 categorias');
+  assert.equal(cat.todosMensajes.length, 16880, `Se esperaban 16880 mensajes, hay ${cat.todosMensajes.length}`);
   assert.equal(
     new Set(cat.todosMensajes.map((m) => String(m.texto || '').trim())).size,
-    15880,
-    'Todos los 15880 mensajes deben tener cuerpo unico sin duplicados'
+    16880,
+    'Todos los 16880 mensajes deben tener cuerpo unico sin duplicados'
   );
 
   for (const hub of cat.hubs) {
@@ -131,10 +151,10 @@ test('descripciones lead, seoTitulo y seoTexto son unicos y ningun titulo queda 
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
-  assert.equal(new Set(cat.hubs.map((h) => h.lead)).size, 391, 'Cada categoria debe tener una descripcion lead unica');
-  assert.equal(new Set(cat.hubs.map((h) => h.seoTitulo)).size, 391, 'Cada categoria debe tener un seoTitulo unico');
-  assert.equal(new Set(cat.hubs.map((h) => h.seoTexto)).size, 391, 'Cada categoria debe tener un seoTexto unico');
-  assert.equal(new Set(cat.hubs.map((h) => h.titulo)).size, 391, 'Cada categoria debe tener un titulo unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.lead)).size, 416, 'Cada categoria debe tener una descripcion lead unica');
+  assert.equal(new Set(cat.hubs.map((h) => h.seoTitulo)).size, 416, 'Cada categoria debe tener un seoTitulo unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.seoTexto)).size, 416, 'Cada categoria debe tener un seoTexto unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.titulo)).size, 416, 'Cada categoria debe tener un titulo unico');
 
   const cortePrep = /(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(de|del|en|con|a|al|para|por|sin|y|el|la|los|las|un|una|tu|su)$/i;
   for (const h of cat.hubs) {
@@ -143,9 +163,9 @@ test('descripciones lead, seoTitulo y seoTexto son unicos y ningun titulo queda 
     assert.ok((h.lead || '').split('\n\n').length >= 2, `Hub ${h.slug} lead debe tener al menos 2 parrafos`);
     assert.ok((h.seoTexto || '').length >= 400, `Hub ${h.slug} seoTexto demasiado corto: ${(h.seoTexto || '').length}`);
     assert.ok((h.seoTexto || '').split('\n\n').length >= 3, `Hub ${h.slug} seoTexto debe tener 3 parrafos`);
-    if (/fallecid|hasta-el-cielo|condolencias/.test(h.slug)) {
+    if (/fallecid|hasta-el-cielo|condolencias|tristes|nostalgia|extranas/.test(h.slug) || h.grupo === 'duelo_recuerdos') {
       const seoBlob = `${h.lead} ${h.seoTitulo} ${h.seoTexto}`;
-      assert.ok(!/(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(torta|pastel|soplá|velas|fiesta|festej\w*|brindis|regalos)(?![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])/i.test(seoBlob), `Hub de duelo ${h.slug} contiene palabra festiva en lead/seo`);
+      assert.ok(!/(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(torta|pastel|soplá|velas|fiesta|festej\w*|brindis|regalos)(?![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])/i.test(seoBlob), `Hub de duelo/recuerdos ${h.slug} contiene palabra festiva en lead/seo`);
     }
     if (/(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(h.slug)) {
       const seoBlob = `${h.lead} ${h.seoTitulo} ${h.seoTexto}`;
@@ -175,7 +195,7 @@ test('cartas largas, poemas en estrofas, duelo respetuoso y aniversarios coheren
     cat.hubs.filter((h) => /^poema|poesia/.test(h.slug) || /-poema/.test(h.slug)).map((h) => h.slug)
   );
   const dueloHubs = new Set(
-    cat.hubs.filter((h) => /fallecid|hasta-el-cielo|condolencias/.test(h.slug)).map((h) => h.slug)
+    cat.hubs.filter((h) => /fallecid|hasta-el-cielo|condolencias|tristes|nostalgia|extranas/.test(h.slug) || h.grupo === 'duelo_recuerdos').map((h) => h.slug)
   );
   const anivHubs = new Set(
     cat.hubs.filter((h) => /(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(h.slug)).map((h) => h.slug)
@@ -222,7 +242,7 @@ test('modulo editorial genera 20 perfiles distintos, citas, FAQs y posdatas cohe
     assert.equal(ed.faqs.length, 3);
     assert.ok(ed.claves.length >= 3);
 
-    const isDuelo = /fallecid|hasta-el-cielo|condolencias/.test(hub.slug);
+    const isDuelo = /fallecid|hasta-el-cielo|condolencias|tristes|nostalgia|extranas/.test(hub.slug) || hub.grupo === 'duelo_recuerdos';
     const isAniv = /(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(hub.slug);
 
     if (isDuelo) {
@@ -278,7 +298,7 @@ test('construirSetIndexables prioriza contenido real y unicidad sin minimo artif
   const cat = crearCatalogo(datos);
   const indexables = construirSetIndexables(cat.todosMensajes);
 
-  assert.equal(indexables.size, 15880, `Se esperaban 15880 mensajes con contenido y slug unicos, hay ${indexables.size}`);
+  assert.equal(indexables.size, 16880, `Se esperaban 16880 mensajes con contenido y slug unicos, hay ${indexables.size}`);
   const cuerpos = new Set<string>();
   for (const m of cat.todosMensajes) {
     assert.ok(indexables.has(m.slug), `Mensaje con contenido valido excluido: ${m.slug}`);
@@ -432,7 +452,7 @@ test('personalizador adapta saludos, cartas, bilingues, poemas y firma sin corta
   assert.equal(Object.keys(FORMATOS_TARJETA).length, 2);
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren las 17714 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
+test('generarUrlsSitio y generarSitemapXml cubren las 18814 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
@@ -440,8 +460,8 @@ test('generarUrlsSitio y generarSitemapXml cubren las 17714 URLs indexables sin 
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
   const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises);
 
-  assert.equal(urls.length, 17714, `Se esperaban 17714 URLs indexables, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 17714, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(urls.length, 18814, `Se esperaban 18814 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 18814, 'Las URLs del sitemap deben ser todas unicas');
   assert.ok(urls.every((url) => url.startsWith('https://paracumpleanos.com/')));
   assert.ok(urls.every((url) => !/[?#]/.test(url)));
   assert.ok(urls.includes('https://paracumpleanos.com/'));
@@ -452,6 +472,9 @@ test('generarUrlsSitio y generarSitemapXml cubren las 17714 URLs indexables sin 
   assert.ok(urls.includes('https://paracumpleanos.com/hitos-historicos/espana/'));
   assert.ok(urls.includes('https://paracumpleanos.com/hitos-historicos/japon/'));
   assert.ok(urls.includes('https://paracumpleanos.com/condolencias/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/frases-tristes-para-recordar-momentos/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/mas-de-10-anos-de-novios/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/banderines-de-cumpleanos-para-imprimir/'));
   assert.ok(urls.includes('https://paracumpleanos.com/herramientas/'));
   assert.ok(urls.includes('https://paracumpleanos.com/horoscopo/'));
   assert.ok(urls.includes('https://paracumpleanos.com/horoscopo/geminis/'));
@@ -486,17 +509,17 @@ test('generarUrlsSitio y generarSitemapXml cubren las 17714 URLs indexables sin 
   }
 
   const indexables = construirSetIndexables(cat.todosMensajes);
-  assert.equal(indexables.size, 15880);
+  assert.equal(indexables.size, 16880);
 
   const xml = generarSitemapXml(urls);
   assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xml.match(/<loc>/g) || [];
-  assert.equal(locs.length, 17714);
+  assert.equal(locs.length, 18814);
   assert.ok(!xml.includes('<lastmod>'), 'No agregar lastmod sin fechas reales por URL');
 });
 
-test('Bing IndexNow cubre las 17714 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre las 18814 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -509,13 +532,13 @@ test('Bing IndexNow cubre las 17714 URLs en lotes validos de hasta 10000 y tiene
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
   const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises));
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 17714);
+  assert.equal(extraidas.length, 18814);
 
   const payloads = construirPayloadsIndexNow(extraidas);
   assert.equal(payloads.length, 2);
-  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 17714);
+  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 18814);
   assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
-  assert.equal(payloads[1].urlList.length, 7714);
+  assert.equal(payloads[1].urlList.length, 8814);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);
@@ -720,6 +743,68 @@ test('hitos historicos cubre los 195 paises soberanos y calendario sin anio inte
   const indice = generarIndiceCalendarioAnualSinAnio(cat.hubsPorSlug, motivs);
   assert.equal(Object.keys(indice).length, 366, 'El indice anual sin anio debe cubrir los 366 dias (incl. 29/2)');
 });
+
+test('orden mas reciente primero, filtros universales en las 416 categorias, aniversario +10 anos personalizable y popularidad dinamica', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+
+  // 1. Orden mas reciente primero
+  const ordenPrueba = ordenarMasRecientePrimero([
+    { id: 'viejo', actualizado: '2026-11-15' },
+    { id: 'medio', actualizado: '2026-11-19' },
+    { id: 'nuevo1', actualizado: '2026-11-20' },
+    { id: 'nuevo2', actualizado: '2026-11-20' }
+  ]);
+  assert.deepEqual(
+    ordenPrueba.map((x) => x.id),
+    ['nuevo2', 'nuevo1', 'medio', 'viejo'],
+    'Las publicaciones mas recientes deben aparecer primero de arriba hacia abajo'
+  );
+  assert.equal(cat.hubs[0].actualizado, '2026-11-20', 'El primer hub del catalogo debe ser de la fecha mas reciente');
+
+  // 2. Filtros de segmentacion en TODAS las 416 categorias (incluyendo cartas, cristiano, profesionales y duelo_recuerdos)
+  for (const hub of cat.hubs) {
+    const msgs = cat.mensajesDe(hub.slug);
+    const filtros = calcularFiltrosHub(msgs, hub, Math.min(12, msgs.length));
+    assert.ok(filtros.length >= 2, `La categoria ${hub.slug} debe tener filtros de segmentacion visibles, tiene ${filtros.length}`);
+  }
+  const filtrosCartas = calcularFiltrosHub(cat.mensajesDe('cartas-para-mi-madre'), cat.hubsPorSlug.get('cartas-para-mi-madre'), 12);
+  assert.ok(filtrosCartas.length >= 4, `cartas-para-mi-madre debe tener >= 4 segmentos activos, tiene ${filtrosCartas.length}`);
+
+  // 3. Aniversarios completos: meses 2..11, anos 1..10 y +10 anos personalizable
+  for (let m = 2; m <= 11; m++) {
+    assert.ok(cat.hubsPorSlug.has(`felices-${m}-meses-de-novios`), `Falta hub felices-${m}-meses-de-novios`);
+  }
+  assert.ok(cat.hubsPorSlug.has('feliz-1-ano-de-novios'), 'Falta hub feliz-1-ano-de-novios');
+  for (let a = 2; a <= 10; a++) {
+    assert.ok(cat.hubsPorSlug.has(`felices-${a}-anos-de-novios`), `Falta hub felices-${a}-anos-de-novios`);
+  }
+  const msgsMas10 = cat.mensajesDe('mas-de-10-anos-de-novios');
+  assert.equal(msgsMas10.length, 40);
+  for (const m of msgsMas10) {
+    assert.ok(m.titulo.includes('12 años') && m.texto.includes('12 años'), `Mensaje ${m.slug} debe contener "12 años" para adaptarse en vivo`);
+    const adaptado = adaptarTextoAniosAniversario(m.texto, 25);
+    assert.ok(adaptado.includes('25 años') && !adaptado.includes('12 años'), `Adaptacion a 25 anos fallo en ${m.slug}`);
+  }
+  assert.equal(normalizarAniosAniversario(5), 11);
+  assert.equal(normalizarAniosAniversario(99), 80);
+  assert.equal(normalizarAniosAniversario(20), 20);
+  assert.equal(construirEtiquetaAnios(25), '25 años de novios (Bodas de Plata)');
+
+  // 4. Ranking dinamico de guias mas visitadas y pool mixto popular en portada
+  const baseGuias = rankearGuiasPorPopularidad(GUIAS_EDITORIALES);
+  const ultimaGuia = baseGuias[baseGuias.length - 1];
+  const conVisitas = rankearGuiasPorPopularidad(GUIAS_EDITORIALES, { [ultimaGuia.slug]: 20 });
+  assert.equal(conVisitas[0].slug, ultimaGuia.slug, 'Una guia con mas visitas acumuladas debe subir al puesto #1');
+
+  const poolMixto = seleccionarPoolPopularMixto(cat, 32);
+  assert.equal(poolMixto.length, 32, 'El pool popular de portada debe traer 32 publicaciones');
+  const gruposEnPool = new Set(poolMixto.map((it) => it.hub.grupo));
+  assert.ok(gruposEnPool.size >= 8, `El pool popular debe mezclar >= 8 secciones distintas, mezcla ${gruposEnPool.size}`);
+  assert.ok(gruposEnPool.has('duelo_recuerdos'), 'El pool popular debe incluir publicaciones de condolencias/recuerdos');
+  assert.ok(gruposEnPool.has('aniversarios'), 'El pool popular debe incluir publicaciones de aniversarios');
+});
+
 
 
 

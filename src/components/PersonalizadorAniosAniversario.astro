@@ -1,0 +1,276 @@
+---
+import {
+  ANIOS_DEFECTO,
+  ANIOS_MIN,
+  ANIOS_MAX,
+  CHIPS_ANIOS_RAPIDOS
+} from '../lib/aniversario-personalizable.ts';
+
+interface Props {
+  modo?: 'hub' | 'mensaje';
+}
+const { modo = 'hub' } = Astro.props;
+---
+<section class="selector-anios-aniv" aria-labelledby="titulo-selector-anios" data-modo-anios={modo}>
+  <div class="selector-anios-top">
+    <div>
+      <p class="banda-kicker">Aniversario a medida · Más de 10 años de novios</p>
+      <h2 id="titulo-selector-anios">💞 Elegí la cantidad exacta de años que cumplen</h2>
+    </div>
+    <span class="selector-anios-badge" id="aniv-anios-badge" aria-live="polite">
+      Adaptado para 12 años de novios
+    </span>
+  </div>
+
+  <p class="selector-anios-desc">
+    {modo === 'mensaje'
+      ? 'Ingresá los años exactos de su relación (de 11 a 80 años) y este mensaje, su título, WhatsApp, Instagram y la tarjeta PNG se adaptarán automáticamente.'
+      : 'Elegí cuántos años cumplen hoy (11, 15, 20, 25 o cualquier número entre 11 y 80): las 40 publicaciones de esta sección se actualizan en vivo y conservan tu número al abrir cada dedicatoria.'}
+  </p>
+
+  <div class="selector-anios-controles">
+    <div class="selector-anios-input-wrap">
+      <label for="aniv-anios-input">Cantidad de años:</label>
+      <input
+        id="aniv-anios-input"
+        type="number"
+        min={ANIOS_MIN}
+        max={ANIOS_MAX}
+        value={ANIOS_DEFECTO}
+        inputmode="numeric"
+        aria-label="Cantidad exacta de años de novios"
+      />
+      <span class="selector-anios-unidad">años juntos</span>
+    </div>
+
+    <div class="selector-anios-chips" role="group" aria-label="Accesos rápidos de años">
+      {CHIPS_ANIOS_RAPIDOS.map(function (n) {
+        return (
+          <button
+            type="button"
+            class={'anios-chip-btn' + (n === ANIOS_DEFECTO ? ' activo' : '')}
+            data-anios-chip={n}
+            aria-pressed={n === ANIOS_DEFECTO ? 'true' : 'false'}
+          >
+            {n} años
+          </button>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    function iniciarAniosAniversario() {
+      var input = document.getElementById('aniv-anios-input');
+      var badge = document.getElementById('aniv-anios-badge');
+      var chips = document.querySelectorAll('[data-anios-chip]');
+      if (!input) return;
+
+      var STORAGE_KEY = 'pc_anios_novios_v1';
+      var BASE = 12;
+
+      function normalizar(val) {
+        var n = Math.floor(Number(val));
+        if (!isFinite(n)) return BASE;
+        if (n < 11) return 11;
+        if (n > 80) return 80;
+        return n;
+      }
+
+      function adaptarTexto(str, anios) {
+        var s = String(str || '');
+        if (!s) return s;
+        return s
+          .replace(/\b12(\s+a(?:ñ|n)os)\b/gi, anios + '$1')
+          .replace(/\b12\.(?:º|°|o)\b/gi, anios + '.º')
+          .replace(/\bdoce(\s+años)\b/gi, anios + '$1');
+      }
+
+      function etiquetaAnios(n) {
+        if (n === 15) return '15 años de novios (Bodas de Cristal)';
+        if (n === 20) return '20 años de novios (Bodas de Porcelana)';
+        if (n === 25) return '25 años de novios (Bodas de Plata)';
+        if (n === 30) return '30 años de novios (Bodas de Perla)';
+        if (n === 40) return '40 años de novios (Bodas de Rubí)';
+        if (n === 50) return '50 años de novios (Bodas de Oro)';
+        return n + ' años de novios';
+      }
+
+      var aniosActual = BASE;
+
+      function aplicarAniosEnDOM(anios) {
+        aniosActual = normalizar(anios);
+        input.value = String(aniosActual);
+        if (badge) badge.textContent = 'Adaptado para ' + etiquetaAnios(aniosActual);
+
+        chips.forEach(function (btn) {
+          var es = Number(btn.getAttribute('data-anios-chip')) === aniosActual;
+          btn.classList.toggle('activo', es);
+          btn.setAttribute('aria-pressed', es ? 'true' : 'false');
+        });
+
+        // 1. Adaptar tarjetas del hub o pagina paginada
+        document.querySelectorAll('[data-card-personalizable]').forEach(function (card) {
+          if (!card.getAttribute('data-base-titulo')) {
+            card.setAttribute('data-base-titulo', card.getAttribute('data-orig-titulo') || '');
+            card.setAttribute('data-base-texto', card.getAttribute('data-orig-texto') || '');
+            card.setAttribute('data-base-resumen', card.getAttribute('data-orig-resumen') || '');
+          }
+          var titNew = adaptarTexto(card.getAttribute('data-base-titulo'), aniosActual);
+          var txtNew = adaptarTexto(card.getAttribute('data-base-texto'), aniosActual);
+          var resNew = adaptarTexto(card.getAttribute('data-base-resumen'), aniosActual);
+
+          card.setAttribute('data-orig-titulo', titNew);
+          card.setAttribute('data-orig-texto', txtNew);
+          card.setAttribute('data-orig-resumen', resNew);
+
+          var link = card.querySelector('h3 a');
+          if (link) {
+            link.textContent = titNew;
+            var baseHref = link.getAttribute('data-base-href') || link.getAttribute('href') || '';
+            if (!link.getAttribute('data-base-href')) link.setAttribute('data-base-href', baseHref.split('?')[0]);
+            var cleanHref = link.getAttribute('data-base-href') || baseHref;
+            link.setAttribute('href', aniosActual !== BASE ? cleanHref + '?anios=' + aniosActual : cleanHref);
+          }
+          var resEl = card.querySelector('.card-resumen');
+          if (resEl) resEl.textContent = resNew;
+
+          var btnCop = card.querySelector('.btn-copiar');
+          if (btnCop) btnCop.setAttribute('data-text', txtNew);
+          var btnWa = card.querySelector('.btn-wa');
+          if (btnWa) btnWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(txtNew));
+          var btnIg = card.querySelector('.btn-ig');
+          if (btnIg) {
+            btnIg.setAttribute('data-ig-title', titNew);
+            btnIg.setAttribute('data-ig-body', txtNew);
+            btnIg.setAttribute('data-ig-text', txtNew);
+          }
+        });
+
+        // 2. Adaptar vista de mensaje individual
+        var cuerpo = document.getElementById('mensaje-cuerpo');
+        if (cuerpo) {
+          if (!cuerpo.getAttribute('data-base-texto')) {
+            cuerpo.setAttribute('data-base-texto', cuerpo.getAttribute('data-orig-texto') || '');
+            cuerpo.setAttribute('data-base-titulo', cuerpo.getAttribute('data-orig-titulo') || '');
+          }
+          var titMsg = adaptarTexto(cuerpo.getAttribute('data-base-titulo'), aniosActual);
+          var txtMsg = adaptarTexto(cuerpo.getAttribute('data-base-texto'), aniosActual);
+
+          cuerpo.setAttribute('data-orig-titulo', titMsg);
+          cuerpo.setAttribute('data-orig-texto', txtMsg);
+
+          var h1 = document.querySelector('main h1');
+          if (h1) h1.textContent = titMsg;
+
+          cuerpo.innerHTML = '';
+          txtMsg.split(/\n{2,}/).forEach(function (p) {
+            var pEl = document.createElement('p');
+            pEl.textContent = p.trim();
+            cuerpo.appendChild(pEl);
+          });
+
+          var root = document.getElementById('mensaje-detalle-bloque');
+          if (root) {
+            var vTit = root.querySelector('.tarjeta-visual-titulo');
+            if (vTit) vTit.textContent = titMsg;
+            var vExt = root.querySelector('.tarjeta-visual-extracto');
+            if (vExt) {
+              vExt.innerHTML = '';
+              txtMsg.split(/\n{2,}/).forEach(function (p) {
+                var pEl = document.createElement('p');
+                pEl.textContent = p.trim();
+                vExt.appendChild(pEl);
+              });
+            }
+            var bCop = root.querySelector('.btn-copiar');
+            if (bCop) bCop.setAttribute('data-text', txtMsg);
+            var bWa = root.querySelector('.btn-wa');
+            if (bWa) bWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(txtMsg));
+            var bDl = root.querySelector('.btn-descargar');
+            if (bDl) {
+              bDl.setAttribute('data-title', titMsg);
+              bDl.setAttribute('data-body', txtMsg);
+            }
+            var bIg = root.querySelector('.btn-ig');
+            if (bIg) {
+              bIg.setAttribute('data-ig-title', titMsg);
+              bIg.setAttribute('data-ig-body', txtMsg);
+              bIg.setAttribute('data-ig-text', txtMsg);
+            }
+          }
+
+          // Adaptar enlaces relacionados dentro de +10 años de novios
+          document.querySelectorAll('section.relacionadas a').forEach(function (a) {
+            if (!a.getAttribute('data-base-titulo')) {
+              a.setAttribute('data-base-titulo', a.textContent || '');
+              a.setAttribute('data-base-href', (a.getAttribute('href') || '').split('?')[0]);
+            }
+            a.textContent = adaptarTexto(a.getAttribute('data-base-titulo'), aniosActual);
+            var baseH = a.getAttribute('data-base-href') || '';
+            a.setAttribute('href', aniosActual !== BASE ? baseH + '?anios=' + aniosActual : baseH);
+          });
+        }
+
+        // 3. Reaplicar personalizador de nombre/firma si el visitante ingreso datos
+        if (typeof window.__pcReaplicarPersonalizador === 'function') {
+          window.__pcReaplicarPersonalizador();
+        }
+      }
+
+      function guardarYAplicar(valor) {
+        var n = normalizar(valor);
+        try {
+          localStorage.setItem(STORAGE_KEY, String(n));
+        } catch (_) {}
+        aplicarAniosEnDOM(n);
+      }
+
+      window.__pcReaplicarAniosAniv = function () {
+        aplicarAniosEnDOM(aniosActual);
+      };
+
+      input.addEventListener('input', function () {
+        var val = Number(input.value);
+        if (val >= 11 && val <= 80) {
+          guardarYAplicar(val);
+        }
+      });
+      input.addEventListener('change', function () {
+        guardarYAplicar(input.value);
+      });
+
+      chips.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          guardarYAplicar(btn.getAttribute('data-anios-chip'));
+        });
+      });
+
+      // Inicializar desde ?anios=N o localStorage
+      var inicial = BASE;
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var qp = params.get('anios');
+        if (qp) {
+          inicial = normalizar(qp);
+          localStorage.setItem(STORAGE_KEY, String(inicial));
+        } else {
+          var saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) inicial = normalizar(saved);
+        }
+      } catch (_) {}
+
+      if (inicial !== BASE) {
+        aplicarAniosEnDOM(inicial);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', iniciarAniosAniversario);
+    } else {
+      iniciarAniosAniversario();
+    }
+  })();
+</script>

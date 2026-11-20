@@ -1,0 +1,208 @@
+---
+import { SITIO } from '../lib/contenido.ts';
+import { calcularFiltrosHub, clasificarMensaje } from '../lib/editorial.ts';
+
+interface Props {
+  mensajesTodos: any[];
+  hub: any;
+  cantPaginaActual: number;
+}
+
+const { mensajesTodos, hub, cantPaginaActual } = Astro.props;
+const filtros = calcularFiltrosHub(mensajesTodos, hub, cantPaginaActual);
+
+const datosCompactos = mensajesTodos.map((m) => {
+  const c = clasificarMensaje(m, hub);
+  const bloques = String(m.texto || '').split('\n\n').map((b) => b.trim()).filter(Boolean);
+  const bloquePrincipal = bloques.find((b) => !(b.length < 55 && /[:,]$/.test(b))) || bloques[0] || '';
+  const plano = bloquePrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  const resumen = plano.length <= 130 ? plano : plano.slice(0, 130).replace(/\s+\S*$/, '') + '…';
+  return {
+    slug: m.slug,
+    titulo: m.titulo,
+    texto: m.texto,
+    resumen,
+    tono: c.claseTono,
+    segmentos: c.segmentos,
+    tonoLabel: c.tonoLabel,
+    canalLabel: c.canalLabel,
+    palabras: c.palabras
+  };
+});
+
+const emojiHub = hub?.emoji || '🎂';
+---
+<section class="filtros-segmentacion-wrap" aria-label="Filtrar todas las publicaciones de esta categoría">
+  <div class="filtros-tono" role="toolbar" aria-label="Filtrar dedicatorias de toda la categoría por tono o extensión">
+    {filtros.map(function (f, idx) {
+      return (
+        <button
+          type="button"
+          class={'filtro-btn' + (idx === 0 ? ' activo' : '')}
+          data-filtro-segmento={f.id}
+          data-filtro-label={f.label}
+          aria-pressed={idx === 0 ? 'true' : 'false'}
+        >
+          {f.label} ({f.count})
+        </button>
+      );
+    })}
+  </div>
+  <p class="filtros-estado" id="pc-filtros-estado" aria-live="polite" hidden></p>
+</section>
+
+<script id="pc-cat-mensajes-json" type="application/json" set:html={JSON.stringify({ emoji: emojiHub, sitio: SITIO, items: datosCompactos })} />
+<script is:inline>
+  (function () {
+    function iniciarFiltrosSegmentacion() {
+      var btns = document.querySelectorAll('[data-filtro-segmento]');
+      var grilla = document.getElementById('grilla-mensajes');
+      var estadoEl = document.getElementById('pc-filtros-estado');
+      var pagNav = document.querySelector('nav.paginacion');
+      var dataEl = document.getElementById('pc-cat-mensajes-json');
+      if (!btns.length || !grilla || !dataEl) return;
+
+      var payload = { emoji: '🎂', sitio: 'https://paracumpleanos.com', items: [] };
+      try {
+        payload = JSON.parse(dataEl.textContent || '{}');
+      } catch (_) {}
+
+      var htmlOriginal = grilla.innerHTML;
+
+      function crearTarjeta(item) {
+        var art = document.createElement('article');
+        art.className = 'card';
+        art.setAttribute('data-card-personalizable', '1');
+        art.setAttribute('data-slug', item.slug);
+        art.setAttribute('data-tono', item.tono);
+        art.setAttribute('data-segmentos', (item.segmentos || []).join(','));
+        art.setAttribute('data-palabras', String(item.palabras || 0));
+        art.setAttribute('data-orig-titulo', item.titulo);
+        art.setAttribute('data-orig-texto', item.texto);
+        art.setAttribute('data-orig-resumen', item.resumen);
+
+        var pMeta = document.createElement('p');
+        pMeta.className = 'card-meta';
+        var s1 = document.createElement('span');
+        s1.textContent = item.tonoLabel;
+        var sep1 = document.createElement('span');
+        sep1.setAttribute('aria-hidden', 'true');
+        sep1.textContent = '·';
+        var s2 = document.createElement('span');
+        s2.textContent = item.canalLabel;
+        var sep2 = document.createElement('span');
+        sep2.setAttribute('aria-hidden', 'true');
+        sep2.textContent = '·';
+        var s3 = document.createElement('span');
+        s3.textContent = item.palabras + ' palabras';
+        pMeta.appendChild(s1);
+        pMeta.appendChild(sep1);
+        pMeta.appendChild(s2);
+        pMeta.appendChild(sep2);
+        pMeta.appendChild(s3);
+        art.appendChild(pMeta);
+
+        var h3 = document.createElement('h3');
+        var a = document.createElement('a');
+        a.href = '/' + item.slug + '/';
+        a.textContent = item.titulo;
+        h3.appendChild(a);
+        art.appendChild(h3);
+
+        var pRes = document.createElement('p');
+        pRes.className = 'card-resumen';
+        pRes.textContent = item.resumen;
+        art.appendChild(pRes);
+
+        var acc = document.createElement('div');
+        acc.className = 'acciones';
+
+        var aWa = document.createElement('a');
+        aWa.className = 'btn btn-wa';
+        aWa.href = 'https://wa.me/?text=' + encodeURIComponent(item.texto);
+        aWa.target = '_blank';
+        aWa.rel = 'noopener noreferrer';
+        aWa.textContent = 'WhatsApp';
+        acc.appendChild(aWa);
+
+        var btnIg = document.createElement('button');
+        btnIg.className = 'btn btn-ig';
+        btnIg.type = 'button';
+        btnIg.setAttribute('data-ig-title', item.titulo);
+        btnIg.setAttribute('data-ig-body', item.texto);
+        btnIg.setAttribute('data-ig-text', item.texto);
+        btnIg.setAttribute('data-ig-emoji', payload.emoji || '🎂');
+        btnIg.setAttribute('data-ig-url', (payload.sitio || 'https://paracumpleanos.com') + '/' + item.slug + '/');
+        btnIg.textContent = 'Instagram';
+        acc.appendChild(btnIg);
+
+        var btnCop = document.createElement('button');
+        btnCop.className = 'btn btn-copiar';
+        btnCop.type = 'button';
+        btnCop.setAttribute('data-text', item.texto);
+        btnCop.textContent = 'Copiar';
+        acc.appendChild(btnCop);
+
+        art.appendChild(acc);
+        return art;
+      }
+
+      function aplicarSegmento(segId, label) {
+        btns.forEach(function (b) {
+          var ac = b.getAttribute('data-filtro-segmento') === segId;
+          b.classList.toggle('activo', ac);
+          b.setAttribute('aria-pressed', ac ? 'true' : 'false');
+        });
+
+        if (segId === 'todos') {
+          grilla.innerHTML = htmlOriginal;
+          if (pagNav) pagNav.hidden = false;
+          if (estadoEl) estadoEl.hidden = true;
+        } else {
+          var filtrados = (payload.items || []).filter(function (it) {
+            return Array.isArray(it.segmentos) && it.segmentos.indexOf(segId) !== -1;
+          });
+          grilla.innerHTML = '';
+          var frag = document.createDocumentFragment();
+          filtrados.forEach(function (it) {
+            frag.appendChild(crearTarjeta(it));
+          });
+          grilla.appendChild(frag);
+          if (pagNav) pagNav.hidden = true;
+          if (estadoEl) {
+            estadoEl.textContent =
+              'Mostrando ' +
+              filtrados.length +
+              ' de ' +
+              (payload.items || []).length +
+              ' publicaciones de toda la categoría en «' +
+              label +
+              '» (ordenadas de más reciente a más antigua).';
+            estadoEl.hidden = false;
+          }
+        }
+
+        if (typeof window.__pcReaplicarAniosAniv === 'function') {
+          window.__pcReaplicarAniosAniv();
+        }
+        if (typeof window.__pcReaplicarPersonalizador === 'function') {
+          window.__pcReaplicarPersonalizador();
+        }
+      }
+
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var segId = btn.getAttribute('data-filtro-segmento') || 'todos';
+          var label = btn.getAttribute('data-filtro-label') || segId;
+          aplicarSegmento(segId, label);
+        });
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', iniciarFiltrosSegmentacion);
+    } else {
+      iniciarFiltrosSegmentacion();
+    }
+  })();
+</script>

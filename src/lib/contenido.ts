@@ -44,6 +44,7 @@ export const {
 } = catalogo;
 
 export {
+  catalogo,
   SITIO,
   MARCA,
   POR_PAGINA,

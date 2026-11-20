@@ -484,6 +484,10 @@ const formatos = Object.values(FORMATOS_TARJETA);
       }
     }
 
+    window.__pcReaplicarPersonalizador = function () {
+      aplicarTodo(false);
+    };
+
     inputNombre.addEventListener('input', function () { aplicarTodo(true); });
     inputFirma.addEventListener('input', function () { aplicarTodo(true); });
     if (inputSub) inputSub.addEventListener('input', function () { aplicarTodo(true); });

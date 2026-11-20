@@ -2,6 +2,9 @@
 import Base from '../../layouts/Base.astro';
 import { GUIAS_EDITORIALES } from '../../data/guias.ts';
 import { MARCA, SITIO, hubs, migasLd } from '../../lib/contenido.ts';
+import { ordenarMasRecientePrimero } from '../../lib/catalogo.ts';
+
+const guiasOrdenadas = ordenarMasRecientePrimero(GUIAS_EDITORIALES, (g) => g.fechaActualizacion);
 
 const jsonld = [
   migasLd([
@@ -26,7 +29,7 @@ const jsonld = [
     <a href="/">Inicio</a> › <span>Guías editoriales</span>
   </nav>
   <h1>{GUIAS_EDITORIALES.length} Guías prácticas para escribir y celebrar mejor</h1>
-  <p class="lead">Además de miles de mensajes listos para personalizar, acá reunimos {GUIAS_EDITORIALES.length} guías completas escritas por nuestro equipo editorial para ayudarte a encontrar el tono justo, elegir un regalo con criterio, redactar cartas memorables y aprovechar tarjetas Stories e Instagram.</p>
+  <p class="lead">Además de miles de mensajes listos para personalizar, acá reunimos {GUIAS_EDITORIALES.length} guías completas escritas por nuestro equipo editorial (ordenadas de la más reciente a la más clásica) para ayudarte a encontrar el tono justo, elegir un regalo con criterio, redactar cartas memorables y aprovechar tarjetas Stories e Instagram.</p>
 
   <div class="buscador-inline">
     <input
@@ -39,7 +42,7 @@ const jsonld = [
   </div>
 
   <div class="guias-grid" id="grid-guias">
-    {GUIAS_EDITORIALES.map(function (guia) {
+    {guiasOrdenadas.map(function (guia) {
       const searchBlob = `${guia.titulo} ${guia.resumen} ${guia.keywordPrincipal} ${guia.keywordsSecundarias.join(' ')}`.toLowerCase();
       return (
         <article class="card guia-card" data-guia-search={searchBlob}>

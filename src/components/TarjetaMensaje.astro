@@ -1,12 +1,14 @@
 ---
 import Compartir from './Compartir.astro';
-import { SITIO, hubDe } from '../lib/contenido.ts';
+import { SITIO, hubDe, nombreHub } from '../lib/contenido.ts';
 import { clasificarMensaje } from '../lib/editorial.ts';
 interface Props {
   m: any;
   hub?: any;
+  mostrarCategoria?: boolean;
+  scoreBase?: number;
 }
-const { m, hub } = Astro.props;
+const { m, hub, mostrarCategoria = false, scoreBase } = Astro.props;
 const hubRef = hub || hubDe(m);
 const clasif = clasificarMensaje(m, hubRef);
 const bloques = (m.texto || '').split('\n\n').map((b: string) => b.trim()).filter(Boolean);
@@ -17,12 +19,22 @@ const resumen = plano.length <= 130 ? plano : plano.slice(0, 130).replace(/\s+\S
 <article
   class="card"
   data-card-personalizable="1"
+  data-slug={m.slug}
   data-tono={clasif.claseTono}
+  data-segmentos={clasif.segmentos.join(',')}
   data-palabras={clasif.palabras}
+  data-score-base={typeof scoreBase === 'number' ? String(scoreBase) : undefined}
   data-orig-titulo={m.titulo}
   data-orig-texto={m.texto}
   data-orig-resumen={resumen}
 >
+  {mostrarCategoria && hubRef ? (
+    <p class="card-cat-row">
+      <a class="card-cat-link" href={'/' + hubRef.slug + '/'}>
+        {hubRef.emoji || '🎂'} {nombreHub(hubRef)}
+      </a>
+    </p>
+  ) : null}
   <p class="card-meta">
     <span>{clasif.tonoLabel}</span>
     <span aria-hidden="true">·</span>

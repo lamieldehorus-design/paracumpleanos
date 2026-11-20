@@ -2676,5 +2676,149 @@ input, textarea, select { font-size: 16px; }
   }
 }
 
+/* Selector personalizable de +10 anos de novios */
+.selector-anios-aniv {
+  background: linear-gradient(135deg, #fdf2f8 0%, #fff7ed 100%);
+  border: 1px solid #f3c4d8;
+  border-left: 4px solid var(--rosa);
+  border-radius: 14px;
+  padding: 20px 22px;
+  margin: 18px 0 24px;
+}
+.selector-anios-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+.selector-anios-top h2 {
+  margin: 2px 0 6px;
+  font-size: clamp(1.18rem, 2.2vw, 1.48rem);
+}
+.selector-anios-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #f3c4d8;
+  color: var(--rosa-oscuro);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+.selector-anios-desc {
+  margin: 0 0 14px;
+  color: var(--texto-suave);
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+.selector-anios-controles {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.selector-anios-input-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.selector-anios-input-wrap label {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--texto);
+}
+.selector-anios-input-wrap input {
+  width: 92px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 2px solid var(--rosa);
+  border-radius: 9px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.selector-anios-unidad {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+.selector-anios-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.anios-chip-btn {
+  padding: 7px 13px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--texto);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.anios-chip-btn:hover {
+  border-color: var(--rosa);
+  color: var(--rosa-oscuro);
+}
+.anios-chip-btn.activo {
+  background: var(--rosa);
+  border-color: var(--rosa);
+  color: #fff;
+}
+
+/* Filtros de segmentacion en toda la categoria y tarjetas populares mixtas en Home */
+.filtros-segmentacion-wrap {
+  margin: 14px 0 6px;
+}
+.filtros-estado {
+  margin: 8px 0 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--rosa-oscuro);
+}
+.card-cat-row {
+  margin: 0 0 6px;
+}
+.card-cat-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: #fdf2f8;
+  border: 1px solid #f5d0e3;
+  color: var(--rosa-oscuro);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.card-cat-link:hover {
+  background: #fce7f3;
+  text-decoration: underline;
+}
+.home-pub-slot {
+  display: flex;
+}
+.home-pub-slot > .card {
+  width: 100%;
+}
+.home-mas-wrap {
+  margin-top: 20px;
+  text-align: center;
+}
+.home-mas-btn {
+  min-width: 260px;
+}
+
+
 
 

@@ -24,33 +24,68 @@ export const GRUPOS: GrupoInfo[] = [
   { id: 'meses', nombre: 'Cumpleaños por mes y signo', emoji: '🗓️' },
   { id: 'fechas_especiales', nombre: 'Fechas especiales del año', emoji: '🎉' },
   { id: 'fechas_hitos', nombre: 'Hitos y momentos de vida', emoji: '💐' },
+  { id: 'duelo_recuerdos', nombre: 'Condolencias, duelo y recuerdos', emoji: '🕊️' },
   { id: 'especiales', nombre: 'Ocasiones especiales', emoji: '✨' }
 ];
 
+function fechaOrdenRegistro(r: any, fechaHub?: string): string {
+  return String(r?.actualizado || r?.creado || fechaHub || '2026-11-15');
+}
+
+export function ordenarMasRecientePrimero<T extends Record<string, any>>(
+  lista: T[],
+  fechaPorItem?: (item: T) => string
+): T[] {
+  const indexMap = new Map<T, number>();
+  for (let i = 0; i < lista.length; i++) indexMap.set(lista[i], i);
+  return [...lista].sort((a, b) => {
+    const fa = fechaPorItem ? fechaPorItem(a) : fechaOrdenRegistro(a);
+    const fb = fechaPorItem ? fechaPorItem(b) : fechaOrdenRegistro(b);
+    if (fb !== fa) return fb.localeCompare(fa);
+    return (indexMap.get(b) ?? 0) - (indexMap.get(a) ?? 0);
+  });
+}
+
 export function crearCatalogo(contenido: any[]) {
-  const hubs: any[] = [];
-  const todosMensajes: any[] = [];
+  const hubsRaw: any[] = [];
+  const todosMensajesRaw: any[] = [];
   const hubsPorSlug = new Map<string, any>();
-  const mensajesPorCategoria = new Map<string, any[]>();
-  const hubsPorGrupo = new Map<string, any[]>();
+  const mensajesPorCategoriaRaw = new Map<string, any[]>();
+  const hubsPorGrupoRaw = new Map<string, any[]>();
   const hubsPorDestinatario = new Map<string, any[]>();
 
   for (let i = 0; i < contenido.length; i++) {
     const r = contenido[i];
     if (r.tipo === 'hub') {
-      hubs.push(r);
+      hubsRaw.push(r);
       hubsPorSlug.set(r.slug, r);
       const g = r.grupo || 'destinatarios';
-      if (!hubsPorGrupo.has(g)) hubsPorGrupo.set(g, []);
-      hubsPorGrupo.get(g)!.push(r);
+      if (!hubsPorGrupoRaw.has(g)) hubsPorGrupoRaw.set(g, []);
+      hubsPorGrupoRaw.get(g)!.push(r);
       const d = r.destinatario || '';
       if (!hubsPorDestinatario.has(d)) hubsPorDestinatario.set(d, []);
       hubsPorDestinatario.get(d)!.push(r);
     } else if (r.tipo === 'mensaje') {
-      todosMensajes.push(r);
-      if (!mensajesPorCategoria.has(r.categoria)) mensajesPorCategoria.set(r.categoria, []);
-      mensajesPorCategoria.get(r.categoria)!.push(r);
+      todosMensajesRaw.push(r);
+      if (!mensajesPorCategoriaRaw.has(r.categoria)) mensajesPorCategoriaRaw.set(r.categoria, []);
+      mensajesPorCategoriaRaw.get(r.categoria)!.push(r);
     }
+  }
+
+  // Ordenar siempre de mas reciente a mas antiguo (arriba hacia abajo)
+  const hubs = ordenarMasRecientePrimero(hubsRaw);
+  const hubsPorGrupo = new Map<string, any[]>();
+  for (const [g, arr] of hubsPorGrupoRaw.entries()) {
+    hubsPorGrupo.set(g, ordenarMasRecientePrimero(arr));
+  }
+  const fechaDeMsg = (m: any) => {
+    const h = hubsPorSlug.get(m.categoria);
+    return fechaOrdenRegistro(m, h ? fechaOrdenRegistro(h) : undefined);
+  };
+  const todosMensajes = ordenarMasRecientePrimero(todosMensajesRaw, fechaDeMsg);
+  const mensajesPorCategoria = new Map<string, any[]>();
+  for (const [catSlug, arr] of mensajesPorCategoriaRaw.entries()) {
+    mensajesPorCategoria.set(catSlug, ordenarMasRecientePrimero(arr, fechaDeMsg));
   }
 
   const ordenPreferido = [

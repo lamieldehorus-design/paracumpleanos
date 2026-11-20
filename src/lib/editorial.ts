@@ -11,6 +11,50 @@ export type ClaseTono =
   | 'divertido'
   | 'formal';
 
+export type SegmentoTono =
+  | 'corto'
+  | 'emotivo'
+  | 'recuerdo'
+  | 'gratitud'
+  | 'reflexivo'
+  | 'estado'
+  | 'divertido'
+  | 'fe'
+  | 'carta'
+  | 'poema'
+  | 'formal'
+  | 'duelo';
+
+export const ETIQUETAS_SEGMENTOS: Record<SegmentoTono, string> = {
+  corto: 'Breves WhatsApp',
+  emotivo: 'Emotivos',
+  recuerdo: 'Nostalgia y recuerdos',
+  gratitud: 'Agradecimiento',
+  reflexivo: 'Reflexivos',
+  estado: 'Para estados / IG',
+  divertido: 'Con humor',
+  fe: 'Con fe',
+  carta: 'Cartas largas',
+  poema: 'Poéticos / En verso',
+  formal: 'Formales / Trabajo',
+  duelo: 'Serenos / Duelo'
+};
+
+export const ORDEN_SEGMENTOS: SegmentoTono[] = [
+  'corto',
+  'emotivo',
+  'recuerdo',
+  'gratitud',
+  'reflexivo',
+  'estado',
+  'divertido',
+  'fe',
+  'carta',
+  'poema',
+  'formal',
+  'duelo'
+];
+
 export type PerfilEditorial =
   | 'motivaciones'
   | 'meses'
@@ -40,10 +84,17 @@ export type PerfilEditorial =
 
 export interface ClasificacionMensaje {
   claseTono: ClaseTono;
+  segmentos: SegmentoTono[];
   tonoLabel: string;
   canalLabel: string;
   palabras: number;
   tiempoLectura: string;
+}
+
+export interface FiltroSegmentoHub {
+  id: string;
+  label: string;
+  count: number;
 }
 
 export interface FilaDecisionHub {
@@ -81,7 +132,7 @@ export interface GuiaAdaptacionMensaje {
   guia: GuiaEditorial;
 }
 
-const REGEX_DUELO = /fallecid|hasta-el-cielo|condolencias|pesame|duelo/;
+const REGEX_DUELO = /fallecid|hasta-el-cielo|condolencias|pesame|duelo|tristes|nostalgia|extranas/;
 const REGEX_ANIV = /(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/;
 const REGEX_POEMA = /^poema|poesia|-poema/;
 
@@ -219,17 +270,27 @@ export function detectarPerfilEditorial(hub?: any, msg?: any): PerfilEditorial {
 export function clasificarMensaje(m: any, hub?: any): ClasificacionMensaje {
   const slugCat = String((hub && hub.slug) || m.categoria || '');
   const grupo = String((hub && hub.grupo) || '');
-  const palabras = contarPalabras(m.texto || '');
+  const textoPlano = String(m.texto || '');
+  const textoYTit = `${m.titulo || ''} ${textoPlano}`;
+  const palabras = contarPalabras(textoPlano);
+  const parrafos = textoPlano.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean).length;
+  const saltosSimples = (textoPlano.match(/\n/g) || []).length;
   const seg = Math.max(15, Math.round((palabras / 180) * 60));
   const tiempoLectura = seg < 60 ? `${seg} seg de lectura` : '1 min de lectura';
 
   let claseTono: ClaseTono = 'emotivo';
   let tonoLabel = 'Emotivo y cercano';
 
+  const esDuelo = REGEX_DUELO.test(slugCat) || grupo === 'duelo_recuerdos';
+  const esPoema = REGEX_POEMA.test(slugCat) || (saltosSimples >= 4 && parrafos >= 2 && palabras <= 130);
+  const esFormalDest = ['formal', 'doctor', 'doctora', 'jefe', 'jefa', 'profesor', 'profesora', 'maestra', 'pastor', 'sacerdote', 'ex-suegra'].includes(
+    String((hub && hub.destinatario) || m.destinatario || '')
+  );
+
   if (slugCat === 'motivaciones' || slugCat.includes('motivacion')) {
-    claseTono = palabras <= 65 ? 'corto' : 'emotivo';
+    claseTono = palabras <= 75 ? 'corto' : 'emotivo';
     tonoLabel = 'Inspiración práctica';
-  } else if (REGEX_DUELO.test(slugCat)) {
+  } else if (esDuelo) {
     claseTono = 'duelo';
     tonoLabel = 'Recuerdo sereno';
   } else if (REGEX_POEMA.test(slugCat)) {
@@ -244,23 +305,78 @@ export function clasificarMensaje(m: any, hub?: any): ClasificacionMensaje {
   } else if (/gracioso|humor|divertido|chist|risa/.test(slugCat)) {
     claseTono = 'divertido';
     tonoLabel = 'Con humor';
-  } else if (
-    grupo === 'profesionales' ||
-    ['formal', 'doctor', 'doctora', 'jefe', 'jefa', 'profesor', 'profesora', 'maestra', 'pastor', 'sacerdote', 'ex-suegra'].includes(
-      String((hub && hub.destinatario) || m.destinatario || '')
-    )
-  ) {
+  } else if (grupo === 'profesionales' || esFormalDest) {
     claseTono = 'formal';
     tonoLabel = 'Cordial y formal';
-  } else if (palabras <= 65) {
+  } else if (palabras <= 75) {
     claseTono = 'corto';
     tonoLabel = 'Breve y directo';
   }
 
+  // Segmentacion multi-etiqueta real basada en el contenido del texto
+  const segSet = new Set<SegmentoTono>();
+  segSet.add(claseTono);
+
+  if (palabras <= 75) segSet.add('corto');
+  if (palabras <= 85 || (parrafos <= 2 && palabras <= 95)) segSet.add('estado');
+  if (palabras >= 110 || parrafos >= 4) segSet.add('carta');
+  if (esPoema) segSet.add('poema');
+
+  if (
+    /\b(recuerd\w*|nostalgi\w*|memori\w*|pasado|extrañ\w*|infancia|ayer|fotos?\b|añor\w*|huella|melancol\w*|triste\w*|ausencia|aquella|aquel|historia)\b/i.test(
+      textoYTit
+    )
+  ) {
+    segSet.add('recuerdo');
+  }
+  if (/\b(gracias|agrade\w*|gratitud|valor\w*|reconoc\w*|atesor\w*)\b/i.test(textoYTit)) {
+    segSet.add('gratitud');
+  }
+  if (
+    /\b(aprend\w*|camino|tiempo|vida|silencio|calma|sabidur\w*|etapa|propósito|sentido|paciencia|enseñ\w*|madurez|seren\w*|paso a paso|futuro)\b/i.test(
+      textoYTit
+    )
+  ) {
+    segSet.add('reflexivo');
+  }
+  if (
+    /\b(corazón|alma|abrazo|cariño|ternura|emoci\w*|amor|querid\w*|te quiero|te amo|orgullo|hogar|especial|cerca)\b/i.test(
+      textoYTit
+    )
+  ) {
+    segSet.add('emotivo');
+  }
+  if (
+    !esDuelo &&
+    (/gracioso|humor|divertido|chist|risa/.test(slugCat) ||
+      /\b(risas?|reír\w*|chiste|broma|manías|divert\w*|cómplice|sonrisa|alegr\w*)\b/i.test(textoYTit))
+  ) {
+    segSet.add('divertido');
+  }
+  if (
+    grupo === 'cristiano' ||
+    /\b(dios|bendic\w*|bendiga|oración|fe\b|señor|cielo|espiritual|luz divina|gracia divina)\b/i.test(textoYTit)
+  ) {
+    segSet.add('fe');
+  }
+  if (
+    grupo === 'profesionales' ||
+    esFormalDest ||
+    /\b(usted|cordial|estimad\w*|profesional|equipo|liderazgo|éxito|vocación|trabajo|proyecto\w*)\b/i.test(textoYTit)
+  ) {
+    segSet.add('formal');
+  }
+  if (esDuelo) {
+    segSet.add('duelo');
+    segSet.delete('divertido');
+  }
+
+  const segmentos = ORDEN_SEGMENTOS.filter((s) => segSet.has(s));
+
   const canalLabel =
     slugCat === 'motivaciones'
       ? 'Estado, Story o nota diaria'
-      : palabras <= 65
+      : palabras <= 75
       ? 'WhatsApp o estado'
       : palabras >= 120 || claseTono === 'carta' || claseTono === 'poema'
       ? 'Carta impresa o lectura larga'
@@ -268,11 +384,52 @@ export function clasificarMensaje(m: any, hub?: any): ClasificacionMensaje {
 
   return {
     claseTono,
+    segmentos,
     tonoLabel,
     canalLabel,
     palabras,
     tiempoLectura
   };
+}
+
+export function calcularFiltrosHub(mensajes: any[], hub?: any, cantPaginaActual?: number): FiltroSegmentoHub[] {
+  const total = mensajes.length;
+  const pag = typeof cantPaginaActual === 'number' ? cantPaginaActual : Math.min(12, total);
+  const counts = new Map<SegmentoTono, number>();
+
+  for (const m of mensajes) {
+    const c = clasificarMensaje(m, hub);
+    for (const s of c.segmentos) {
+      counts.set(s, (counts.get(s) || 0) + 1);
+    }
+  }
+
+  const filtros: FiltroSegmentoHub[] = [
+    { id: 'todos', label: 'Todos en esta página', count: pag }
+  ];
+
+  // Mostrar todos los segmentos con publicaciones reales.
+  // Si un segmento cubre el 100% (ej. 'duelo' en condolencias), lo incluimos si hay pocos filtros o lo dejamos util al final.
+  const diferenciadores = ORDEN_SEGMENTOS.filter((s) => {
+    const n = counts.get(s) || 0;
+    return n > 0 && n < total;
+  });
+
+  for (const s of diferenciadores) {
+    filtros.push({ id: s, label: ETIQUETAS_SEGMENTOS[s], count: counts.get(s) || 0 });
+  }
+
+  // Si una categoria muy homogenea tuviera menos de 3 filtros diferenciadores, agregar tambien los de cobertura total
+  if (filtros.length < 4) {
+    for (const s of ORDEN_SEGMENTOS) {
+      const n = counts.get(s) || 0;
+      if (n === total && !filtros.some((f) => f.id === s)) {
+        filtros.push({ id: s, label: ETIQUETAS_SEGMENTOS[s], count: n });
+      }
+    }
+  }
+
+  return filtros;
 }
 
 export function extraerCitaDestacada(m: any): string {
@@ -344,7 +501,14 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     )
   ) {
     target = 'regalos-economicos-con-valor-emocional-y-tarjeta-personalizada';
-  } else if (slug === 'condolencias') {
+  } else if (slug === 'banderines-de-cumpleanos-para-imprimir') {
+    target = 'banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas';
+  } else if (
+    slug === 'condolencias' ||
+    slug === 'frases-tristes-para-recordar-momentos' ||
+    slug === 'frases-de-nostalgia-y-recuerdos' ||
+    slug === 'mensajes-cuando-extranas-a-alguien'
+  ) {
     target = 'como-escribir-condolencias-y-palabras-de-pesame-respetuosas';
   } else if (REGEX_DUELO.test(slug)) {
     target = 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido';

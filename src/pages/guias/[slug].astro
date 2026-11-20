@@ -298,6 +298,15 @@ const indiceItems = [
       var box = document.querySelector('[data-guia-checklist]');
       if (!box) return;
       var slug = box.getAttribute('data-guia-checklist') || 'guia';
+
+      // Registrar visita para el ranking dinamico de "Guias mas visitadas" en portada
+      try {
+        var vKey = 'pc_visitas_guias_v1';
+        var vMap = JSON.parse(localStorage.getItem(vKey) || '{}');
+        vMap[slug] = (Number(vMap[slug]) || 0) + 1;
+        localStorage.setItem(vKey, JSON.stringify(vMap));
+      } catch (_) {}
+
       var key = 'pc_checklist_' + slug;
       var inputs = box.querySelectorAll('input[type="checkbox"][data-checklist-idx]');
       var prog = document.getElementById('guia-checklist-progreso');

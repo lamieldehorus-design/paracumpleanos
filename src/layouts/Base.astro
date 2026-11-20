@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { GRUPOS, hubs, hubsPorGrupo, nombreHub, todosMensajes } from '../lib/contenido.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
+import { PAISES_HITOS } from '../data/hitos-historicos.ts';
 interface Props {
   titulo: string;
   descripcion: string;
@@ -167,6 +168,22 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
             </details>
           );
         })}
+        <details class="sidebar-grupo" open={grupoActual === 'hitos_calendario'}>
+          <summary>
+            <span>🌍 Hitos históricos y calendario</span>
+            <span class="sidebar-count">{PAISES_HITOS.length + 1}</span>
+          </summary>
+          <ul>
+            <li><a href="/hitos-historicos/">Hitos históricos ({PAISES_HITOS.length} países)</a></li>
+            <li><a href="/calendario/">Calendario perpetuo (366 días)</a></li>
+            <li><a href="/hitos-historicos/argentina/">Argentina · 9 de julio</a></li>
+            <li><a href="/hitos-historicos/mexico/">México · 16 de septiembre</a></li>
+            <li><a href="/hitos-historicos/espana/">España · 12 de octubre</a></li>
+            <li><a href="/hitos-historicos/colombia/">Colombia · 20 de julio</a></li>
+            <li><a href="/hitos-historicos/chile/">Chile · 18 de septiembre</a></li>
+            <li><a href="/herramientas/#banderines-imprimir">Banderines A4 para imprimir</a></li>
+          </ul>
+        </details>
       </aside>
       <main class="contenido">
         <slot />
@@ -190,7 +207,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         <span class="logo-fallback" style="display:none">ParaCumpleanos 🎂</span>
       </a>
     </div>
-    <p>ParaCumpleanos — {hubs.length} colecciones, {GUIAS_EDITORIALES.length} guías prácticas y {todosMensajes.length.toLocaleString('es-AR')} textos originales en español.</p>
+    <p>ParaCumpleanos — {hubs.length} colecciones, {PAISES_HITOS.length} hitos históricos mundiales, {GUIAS_EDITORIALES.length} guías prácticas y {todosMensajes.length.toLocaleString('es-AR')} textos originales en español.</p>
     <nav aria-label="Páginas institucionales">
       <a href="/">Inicio</a>
       <a href="/calendario/">Calendario sin año</a>
@@ -452,9 +469,36 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         return { canvas: canvas, formato: formato };
       }
 
+      window.pcRegistrarPopularidadPub = function (slug, peso) {
+        if (!slug) return;
+        try {
+          var key = 'pc_popularidad_pubs_v1';
+          var map = JSON.parse(localStorage.getItem(key) || '{}');
+          map[slug] = (Number(map[slug]) || 0) + (Number(peso) || 1);
+          localStorage.setItem(key, JSON.stringify(map));
+        } catch (_) {}
+      };
+
+      function detectarSlugDesdeNodo(nodo) {
+        if (!nodo || !nodo.closest) return '';
+        var card = nodo.closest('[data-slug]');
+        if (card) return card.getAttribute('data-slug') || '';
+        var det = document.getElementById('mensaje-cuerpo');
+        if (det) return det.getAttribute('data-slug') || '';
+        return '';
+      }
+
       document.addEventListener('click', function (e) {
+        var wa = e.target.closest ? e.target.closest('.btn-wa') : null;
+        if (wa) {
+          var slugWa = detectarSlugDesdeNodo(wa);
+          if (slugWa && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugWa, 3);
+        }
+
         var btn = e.target.closest ? e.target.closest('.btn-copiar') : null;
         if (btn) {
+          var slugCop = detectarSlugDesdeNodo(btn);
+          if (slugCop && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugCop, 3);
           var texto = btn.getAttribute('data-text') || '';
           var original = btn.textContent;
           copiarAlPortapapeles(texto).then(function (ok) {
@@ -467,6 +511,8 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
         var dl = e.target.closest ? e.target.closest('.btn-descargar') : null;
         if (dl) {
+          var slugDl = detectarSlugDesdeNodo(dl);
+          if (slugDl && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugDl, 4);
           var visualDl = (dl.closest && dl.closest('.herr-modulo') && dl.closest('.herr-modulo').querySelector('.tarjeta-visual')) || document.querySelector('.tarjeta-visual');
           var resDl = generarCanvasTarjeta({
             title: dl.getAttribute('data-title') || 'Feliz cumpleaños',

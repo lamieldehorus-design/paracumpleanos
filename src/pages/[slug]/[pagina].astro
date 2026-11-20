@@ -3,6 +3,8 @@ import Base from '../../layouts/Base.astro';
 import TarjetaMensaje from '../../components/TarjetaMensaje.astro';
 import Hermanas from '../../components/Hermanas.astro';
 import PersonalizadorTarjeta from '../../components/PersonalizadorTarjeta.astro';
+import FiltrosSegmentacion from '../../components/FiltrosSegmentacion.astro';
+import PersonalizadorAniosAniversario from '../../components/PersonalizadorAniosAniversario.astro';
 import { hubs, POR_PAGINA, SITIO, MARCA, mensajesDe, nombreHub, migasLd } from '../../lib/contenido.ts';
 import { guiaRelacionadaParaHub } from '../../lib/editorial.ts';
 export function getStaticPaths() {
@@ -24,6 +26,7 @@ const urlPrev = prev === 1 ? '/' + hub.slug + '/' : '/' + hub.slug + '/' + prev 
 const titulo = nombreHub(hub) + ' (página ' + pagina + ') - ' + MARCA;
 const descripcion = nombreHub(hub) + ': página ' + pagina + ' de ' + total + '. Más mensajes originales listos para copiar y enviar por WhatsApp o escribir en su tarjeta.';
 const guia = guiaRelacionadaParaHub(hub);
+const esAnivPersonalizable = hub.slug === 'mas-de-10-anos-de-novios';
 const jsonld = [migasLd([
   { name: 'Inicio', url: SITIO + '/' },
   { name: nombreHub(hub), url: SITIO + '/' + hub.slug + '/' },
@@ -51,8 +54,10 @@ const jsonld = [migasLd([
     <span>Personalización en vivo</span>
   </p>
   <p class="lead">{hub.meta}</p>
+  {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="hub" /> : null}
   <PersonalizadorTarjeta modo="hub" />
-  <div class="grilla">
+  <FiltrosSegmentacion mensajesTodos={msj} hub={hub} cantPaginaActual={lote.length} />
+  <div class="grilla" id="grilla-mensajes">
     {lote.map(function (m) { return <TarjetaMensaje m={m} hub={hub} />; })}
   </div>
   <nav class="paginacion" aria-label="Paginación">

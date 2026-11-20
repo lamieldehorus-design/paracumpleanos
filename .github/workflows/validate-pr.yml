@@ -34,7 +34,7 @@ jobs:
           ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
           assert root.tag == "{http://www.sitemaps.org/schemas/sitemap/0.9}urlset", "Raíz XML incorrecta"
           urls = [node.text or "" for node in root.findall("sm:url/sm:loc", ns)]
-          assert len(urls) == 17714, f"Se esperaban 17714 URLs; hay {len(urls)}"
+          assert len(urls) == 18814, f"Se esperaban 18814 URLs; hay {len(urls)}"
           assert len(set(urls)) == len(urls), "Hay URLs duplicadas"
           for url in urls:
               parsed = urlparse(url)

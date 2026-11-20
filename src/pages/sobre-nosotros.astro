@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { MARCA, SITIO, GRUPOS, hubs, todosMensajes, migasLd } from '../lib/contenido.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
+import { PAISES_HITOS } from '../data/hitos-historicos.ts';
 
 const jsonld = [
   migasLd([
@@ -12,25 +13,25 @@ const jsonld = [
 ---
 <Base
   titulo={`Sobre nosotros - ${MARCA}`}
-  descripcion={`Conocé cómo trabaja el Equipo Editorial de ${MARCA}: ${hubs.length} categorías, guías prácticas y textos originales escritos y revisados para celebrar cada vínculo.`}
+  descripcion={`Conocé cómo trabaja el Equipo Editorial de ${MARCA}: ${hubs.length} categorías, ${PAISES_HITOS.length} hitos históricos mundiales, ${GUIAS_EDITORIALES.length} guías prácticas y ${todosMensajes.length.toLocaleString('es-AR')} textos originales.`}
   jsonld={jsonld}
 >
   <nav class="migas" aria-label="Migas de pan">
     <a href="/">Inicio</a> › <span>Sobre nosotros</span>
   </nav>
   <h1>Sobre nosotros</h1>
-  <p class="lead"><strong>{MARCA}</strong> nació de una idea simple: nadie debería quedarse sin palabras o mandar una frase fría de apuro en el cumpleaños o aniversario de alguien que quiere.</p>
+  <p class="lead"><strong>{MARCA}</strong> nació de una idea simple: nadie debería quedarse sin palabras o mandar una frase fría de apuro en el cumpleaños, aniversario, fecha patria o momento sensible de alguien que quiere.</p>
 
   <h2>Qué hacemos y cómo redactamos</h2>
-  <p>Reunimos <strong>{hubs.length} categorías especializadas</strong> organizadas en {GRUPOS.length} secciones temáticas —desde familia cercana y amistad hasta cartas largas, cumpleaños cristianos, edades hito, aniversarios y homenajes respetuosos— junto con <a href="/guias/">guías prácticas de redacción y celebración</a>.</p>
+  <p>Reunimos <strong>{hubs.length} categorías especializadas</strong> organizadas en {GRUPOS.length} secciones temáticas —desde familia cercana y amistad hasta cartas largas, cumpleaños cristianos, edades hito, aniversarios de 1 mes a +10 años personalizables, condolencias y recuerdos serenos— junto con <a href="/hitos-historicos/">{PAISES_HITOS.length} publicaciones de hitos históricos mundiales</a>, el <a href="/calendario/">calendario perpetuo sin año</a> y <a href="/guias/">{GUIAS_EDITORIALES.length} guías prácticas de redacción y celebración</a>.</p>
   <p>Todo el material es editado y revisado por nuestro Equipo Editorial en español rioplatense y neutro cercano, buscando un tono humano, cálido y fácil de adaptar con nuestro personalizador en vivo.</p>
 
   <h2 id="criterio-editorial">Nuestro estándar editorial y verificación</h2>
   <p>Cada categoría y cada guía publicada en {MARCA} pasa por doble control: revisión de estilo en español rioplatense/neutro cercano y chequeo estructural automatizado sobre todo el catálogo.</p>
   <ul class="lista-editorial">
-    <li><strong>Cuidado real del contexto:</strong> separamos estrictamente cada vínculo y situación. Nunca mezclamos tonos festivos en fechas de recuerdo a seres queridos fallecidos, ni confundimos aniversarios de pareja con cumpleaños.</li>
+    <li><strong>Cuidado real del contexto:</strong> separamos estrictamente cada vínculo y situación. Nunca mezclamos tonos festivos en fechas de recuerdo, nostalgia o duelo, ni confundimos aniversarios de pareja con cumpleaños.</li>
     <li><strong>Registro y concordancia verificados:</strong> mantenemos trato de usted en mensajes formales o laborales, estructura en estrofas para poemas y concordancia gramatical cuidada en cartas dirigidas a madres, hijas o hermanas.</li>
-    <li><strong>Cero contenido duplicado e indexación responsable:</strong> las {hubs.length} categorías, {GUIAS_EDITORIALES.length} guías y {todosMensajes.length.toLocaleString('es-AR')} dedicatorias tienen textos únicos, y aplicamos criterio editorial estricto para destacar solo las URLs más completas en buscadores.</li>
+    <li><strong>Cero contenido duplicado e indexación responsable:</strong> las {hubs.length} categorías, {PAISES_HITOS.length} reseñas de hitos históricos, {GUIAS_EDITORIALES.length} guías y {todosMensajes.length.toLocaleString('es-AR')} dedicatorias tienen textos únicos, y aplicamos criterio editorial estricto para destacar solo las URLs más completas en buscadores.</li>
     <li><strong>Personalización antes de copiar:</strong> creemos que una buena base solo brilla cuando le sumás el nombre de quien cumple y tu firma real, por eso sumamos herramientas interactivas gratuitas en cada categoría y tarjeta.</li>
     <li><strong>Revisión continua:</strong> corregimos ortografía, claridad y ejemplos periódicamente gracias a las sugerencias que llegan por nuestra sección de <a href="/contacto/">Contacto</a>.</li>
   </ul>

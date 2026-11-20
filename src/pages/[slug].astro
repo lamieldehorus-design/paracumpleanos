@@ -6,6 +6,8 @@ import Hermanas from '../components/Hermanas.astro';
 import PersonalizadorTarjeta from '../components/PersonalizadorTarjeta.astro';
 import AlertaMotivacionDiaria from '../components/AlertaMotivacionDiaria.astro';
 import SelectorFechaDuelo from '../components/SelectorFechaDuelo.astro';
+import FiltrosSegmentacion from '../components/FiltrosSegmentacion.astro';
+import PersonalizadorAniosAniversario from '../components/PersonalizadorAniosAniversario.astro';
 import {
   contenido,
   POR_PAGINA,
@@ -20,7 +22,6 @@ import {
   esMensajeIndexable
 } from '../lib/contenido.ts';
 import {
-  clasificarMensaje,
   editorialHubCompleto,
   guiaAdaptacionMensaje
 } from '../lib/editorial.ts';
@@ -48,34 +49,7 @@ const noindexPagina = !esHub && !esMensajeIndexable(registro);
 const editorialHub = esHub ? editorialHubCompleto(registro, mensajesCat) : null;
 const mesZodiaco = esHub && hub.grupo === 'meses' ? mesInfoPorSlug(hub.slug) : undefined;
 const guiaMsg = !esHub ? guiaAdaptacionMensaje(registro, hub) : null;
-
-const filtrosHub: { id: string; label: string; count: number }[] = [];
-if (esHub) {
-  const counts = new Map<string, number>();
-  mensajesPagina.forEach((m) => {
-    const c = clasificarMensaje(m, hub);
-    counts.set(c.claseTono, (counts.get(c.claseTono) || 0) + 1);
-    if (c.palabras <= 65 && c.claseTono !== 'corto') {
-      counts.set('corto', (counts.get('corto') || 0) + 1);
-    }
-  });
-  filtrosHub.push({ id: 'todos', label: 'Todos en esta página', count: mensajesPagina.length });
-  const etiquetas: Record<string, string> = {
-    corto: 'Breves WhatsApp',
-    emotivo: 'Emotivos',
-    divertido: 'Con humor',
-    formal: 'Formales',
-    fe: 'Con fe',
-    poema: 'En verso',
-    carta: 'Cartas largas',
-    duelo: 'Serenos'
-  };
-  for (const [k, v] of counts.entries()) {
-    if (v > 0 && v < mensajesPagina.length && etiquetas[k]) {
-      filtrosHub.push({ id: k, label: etiquetas[k], count: v });
-    }
-  }
-}
+const esAnivPersonalizable = hub.slug === 'mas-de-10-anos-de-novios';
 
 const migas = [{ name: 'Inicio', url: SITIO + '/' }, { name: nombreHub(hub), url: urlHub }]
   .concat(esHub ? [] : [{ name: registro.titulo, url: SITIO + '/' + registro.slug + '/' }]);
@@ -447,13 +421,64 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
     ]
   },
   'condolencias': {
-    texto: 'Otras colecciones serenas de recuerdo y acompañamiento:',
+    texto: 'Otras colecciones serenas de recuerdo, nostalgia y acompañamiento:',
     enlaces: [
+      { href: '/frases-tristes-para-recordar-momentos/', label: 'Frases tristes para recordar momentos' },
+      { href: '/frases-de-nostalgia-y-recuerdos/', label: 'Frases de nostalgia y recuerdos' },
+      { href: '/mensajes-cuando-extranas-a-alguien/', label: 'Mensajes cuando extrañas a alguien' },
       { href: '/frases-para-una-persona-fallecida/', label: 'Frases para una persona fallecida' },
       { href: '/feliz-cumpleanos-hasta-el-cielo/', label: 'Mensajes hasta el cielo' },
-      { href: '/felicitaciones-a-madre-fallecida/', label: 'Recuerdo para madre fallecida' },
-      { href: '/frases-lindas-para-mi-padre-fallecido-que-esta-en-el-cielo/', label: 'Recuerdo para padre fallecido' },
       { href: '/calendario/', label: 'Ver calendario de fechas' }
+    ]
+  },
+  'frases-tristes-para-recordar-momentos': {
+    texto: 'Más textos serenos de nostalgia, memoria y acompañamiento:',
+    enlaces: [
+      { href: '/frases-de-nostalgia-y-recuerdos/', label: 'Frases de nostalgia y recuerdos' },
+      { href: '/mensajes-cuando-extranas-a-alguien/', label: 'Cuando extrañas a alguien' },
+      { href: '/condolencias/', label: 'Condolencias y fecha de duelo' }
+    ]
+  },
+  'frases-de-nostalgia-y-recuerdos': {
+    texto: 'Seguí explorando recuerdos y palabras honestas:',
+    enlaces: [
+      { href: '/frases-tristes-para-recordar-momentos/', label: 'Frases tristes para recordar momentos' },
+      { href: '/mensajes-cuando-extranas-a-alguien/', label: 'Cuando extrañas a alguien' },
+      { href: '/condolencias/', label: 'Condolencias y acompañamiento' }
+    ]
+  },
+  'mensajes-cuando-extranas-a-alguien': {
+    texto: 'Otras colecciones para expresar nostalgia o ausencia:',
+    enlaces: [
+      { href: '/frases-tristes-para-recordar-momentos/', label: 'Frases tristes para recordar momentos' },
+      { href: '/frases-de-nostalgia-y-recuerdos/', label: 'Frases de nostalgia y recuerdos' },
+      { href: '/feliz-cumpleanos-a-distancia/', label: 'Saludos a distancia' },
+      { href: '/condolencias/', label: 'Condolencias y fecha de duelo' }
+    ]
+  },
+  'mas-de-10-anos-de-novios': {
+    texto: 'Todos los aniversarios y meses de novios:',
+    enlaces: [
+      { href: '/felices-10-anos-de-novios/', label: 'Felices 10 años de novios' },
+      { href: '/felices-5-anos-de-novios/', label: 'Felices 5 años de novios' },
+      { href: '/feliz-1-ano-de-novios/', label: 'Feliz 1 año de novios' },
+      { href: '/categorias/#aniversarios', label: 'Ver todos los meses y años (27 colecciones)' }
+    ]
+  },
+  'felices-10-anos-de-novios': {
+    texto: '¿Cumplen más de 10 años juntos?',
+    enlaces: [
+      { href: '/mas-de-10-anos-de-novios/', label: 'Más de 10 años (elegí tu número exacto de años)' },
+      { href: '/felices-9-anos-de-novios/', label: 'Felices 9 años de novios' },
+      { href: '/categorias/#aniversarios', label: 'Ver todos los meses y años de novios' }
+    ]
+  },
+  'banderines-de-cumpleanos-para-imprimir': {
+    texto: 'Armá e imprimí tus banderines ahora mismo:',
+    enlaces: [
+      { href: '/herramientas/#banderines-imprimir', label: 'Abrir generador interactivo de banderines A4' },
+      { href: '/guias/banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas/', label: 'Guía de medidas y papeles' },
+      { href: '/frases-para-invitacion-de-cumpleanos/', label: 'Invitaciones de cumpleaños' }
     ]
   },
   'frases-para-una-persona-fallecida': {
@@ -496,6 +521,7 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
     texto: 'Completá tu fiesta con decoración y postales:',
     enlaces: [
       { href: '/herramientas/#banderines-imprimir', label: 'Crear banderines para imprimir A4' },
+      { href: '/banderines-de-cumpleanos-para-imprimir/', label: '40 ideas de banderines para imprimir' },
       { href: '/tarjetas-bonitas-para-felicitar-en-un-cumpleanos/', label: 'Postales y tarjetas para imprimir' },
       { href: '/guias/tematicas-de-cumpleanos-ideas-originales-para-fiestas/', label: '24 temáticas de cumpleaños' }
     ]
@@ -504,6 +530,7 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
     texto: 'Más recursos para imprimir y celebrar:',
     enlaces: [
       { href: '/herramientas/#banderines-imprimir', label: 'Generador de banderines para imprimir' },
+      { href: '/banderines-de-cumpleanos-para-imprimir/', label: '40 ideas de banderines para imprimir' },
       { href: '/frases-para-invitacion-de-cumpleanos/', label: 'Invitaciones de cumpleaños' },
       { href: '/guias/banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas/', label: 'Medidas y plantillas de banderines' }
     ]
@@ -511,7 +538,7 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
   'feliz-cumpleanos-general': {
     texto: 'Recursos populares para tu festejo:',
     enlaces: [
-      { href: '/herramientas/#banderines-imprimir', label: 'Banderines para imprimir' },
+      { href: '/banderines-de-cumpleanos-para-imprimir/', label: 'Banderines para imprimir (40 ideas)' },
       { href: '/calendario/', label: 'Calendario de fechas e hitos' },
       { href: '/guias/tematicas-de-cumpleanos-ideas-originales-para-fiestas/', label: 'Ideas de temáticas de cumpleaños' }
     ]
@@ -601,6 +628,8 @@ const textoEnviar = esHub ? '' : registro.texto;
 
       {editorialHub.perfil === 'duelo' ? <SelectorFechaDuelo /> : null}
 
+      {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="hub" /> : null}
+
       <PersonalizadorTarjeta modo="hub" />
 
       <div class="tarjeta-visual" role="img" aria-label={'Tarjeta destacada de ' + (registro.keyword || registro.h1)}>
@@ -614,22 +643,11 @@ const textoEnviar = esHub ? '' : registro.texto;
         <p class="tarjeta-visual-marca">paracumpleanos.com</p>
       </div>
 
-      {filtrosHub.length > 1 ? (
-        <div class="filtros-tono" role="toolbar" aria-label="Filtrar dedicatorias visibles por tono o extensión">
-          {filtrosHub.map(function (f, idx) {
-            return (
-              <button
-                type="button"
-                class={'filtro-btn' + (idx === 0 ? ' activo' : '')}
-                data-filtro-tono={f.id}
-                aria-pressed={idx === 0 ? 'true' : 'false'}
-              >
-                {f.label} ({f.count})
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
+      <FiltrosSegmentacion
+        mensajesTodos={mensajesCat}
+        hub={hub}
+        cantPaginaActual={mensajesPagina.length}
+      />
 
       <div class="grilla" id="grilla-mensajes">
         {mensajesPagina.map(function (m) { return <TarjetaMensaje m={m} hub={hub} />; })}
@@ -724,10 +742,12 @@ const textoEnviar = esHub ? '' : registro.texto;
         <span>{guiaMsg.clasificacion.palabras} palabras ({guiaMsg.clasificacion.tiempoLectura})</span>
       </p>
 
+      {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="mensaje" /> : null}
+
       <PersonalizadorTarjeta modo="mensaje" />
 
       <div id="mensaje-detalle-bloque">
-        <div id="mensaje-cuerpo" class="mensaje" data-orig-texto={registro.texto} data-orig-titulo={registro.titulo}>
+        <div id="mensaje-cuerpo" class="mensaje" data-slug={registro.slug} data-orig-texto={registro.texto} data-orig-titulo={registro.titulo}>
           {parrafosMsg.map(function (p) {
             const lineas = p.split('\n');
             return (
@@ -818,29 +838,12 @@ const textoEnviar = esHub ? '' : registro.texto;
 
 <script is:inline>
   (function () {
-    var btns = document.querySelectorAll('[data-filtro-tono]');
-    var grilla = document.getElementById('grilla-mensajes');
-    if (!btns.length || !grilla) return;
-
-    btns.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var filtro = btn.getAttribute('data-filtro-tono') || 'todos';
-        btns.forEach(function (b) {
-          var activo = b === btn;
-          b.classList.toggle('activo', activo);
-          b.setAttribute('aria-pressed', activo ? 'true' : 'false');
-        });
-        var cards = grilla.querySelectorAll('[data-card-personalizable]');
-        cards.forEach(function (card) {
-          var tono = card.getAttribute('data-tono') || '';
-          var palabras = Number(card.getAttribute('data-palabras') || '0');
-          var visible =
-            filtro === 'todos' ||
-            tono === filtro ||
-            (filtro === 'corto' && palabras <= 65);
-          card.style.display = visible ? '' : 'none';
-        });
-      });
-    });
+    var det = document.getElementById('mensaje-cuerpo');
+    if (det) {
+      var slug = det.getAttribute('data-slug') || '';
+      if (slug && window.pcRegistrarPopularidadPub) {
+        window.pcRegistrarPopularidadPub(slug, 1);
+      }
+    }
   })();
 </script>
