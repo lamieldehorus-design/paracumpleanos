@@ -1688,15 +1688,32 @@ input, textarea, select { font-size: 16px; }
   .horoscopo-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
+@page {
+  margin: 12mm;
+}
+
 @media print {
   body {
     background: #fff !important;
     color: #111827 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   .cabecera,
   .sidebar,
   .migas,
+  .meta-linea-editorial,
+  .lead,
+  .lead-bloque,
+  .enlace-par-contextual,
+  .enlace-horoscopo-mes,
+  .alerta-motivacion,
+  .selector-duelo,
+  .selector-anios-aniv,
   .personalizador,
+  .filtros-segmentacion-wrap,
+  .grilla,
+  .paginacion,
   .acciones,
   .mensaje,
   .cita-editorial,
@@ -1704,33 +1721,67 @@ input, textarea, select { font-size: 16px; }
   .relacionadas,
   .hermanas,
   .ver-tambien,
+  .fechas-meta,
+  .firma,
   .pie,
   .pc-toast,
   .faqs-hub,
   .guia-categoria,
   .bloque-tabla-hub,
   .herr-nav-saltos,
+  .herr-dedicatoria-salida,
+  .herr-arm-estilo,
   .no-print {
     display: none !important;
   }
-  .contenedor {
+  .contenedor,
+  .contenedor-portal,
+  .contenido {
     display: block !important;
+    max-width: none !important;
+    width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
+  }
+  /* Ocultar H1 en cualquier pagina que imprime postal, acrostico o banderines */
+  main:has(.tarjeta-visual) h1,
+  main:has(.banderines-print-area) h1,
+  body.pc-print-postal h1,
+  body.pc-print-banderines h1,
+  body.pc-print-con-solo h1 {
+    display: none !important;
   }
   .tarjeta-visual,
   .herr-acrostico-hoja {
     box-shadow: none !important;
-    border: 2px dashed #be185d !important;
-    margin: 20px auto !important;
-    max-width: 680px !important;
-    padding: 36px 28px !important;
+    border: 2.5px solid #be185d !important;
+    margin: 14mm auto !important;
+    max-width: 165mm !important;
+    padding: 28px 26px !important;
     break-inside: avoid;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  /* Modo impresion solo postal (incluye paginas de banderines cuando se pide imprimir la postal) */
+  body.pc-print-postal .estudio-banderines {
+    display: none !important;
+  }
+  /* Modo impresion solo banderines A4 (boton o Ctrl+P en pagina de banderines) */
+  body.pc-print-banderines #mensaje-detalle-bloque,
+  body.pc-print-banderines .tarjeta-visual,
+  body:not(.pc-print-postal):not(.pc-print-con-solo) main:has(.banderines-print-area) #mensaje-detalle-bloque {
+    display: none !important;
   }
   body.pc-print-con-solo .herr-modulo:not(.pc-print-solo) {
     display: none !important;
+  }
+  body.pc-print-con-solo .herr-modulo {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
   }
   body.pc-print-con-solo .herr-modulo-kicker,
   body.pc-print-con-solo .herr-modulo > h2,
@@ -2625,54 +2676,494 @@ input, textarea, select { font-size: 16px; }
   color: var(--rosa-oscuro);
 }
 
-/* Creador de Banderines para Imprimir (A4) */
-.banderines-presets {
+/* Estudio Online de Banderines (inspirado en galeria de plantillas + configurador A4) */
+.estudio-banderines {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  padding: 22px;
+  margin: 20px 0 28px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+}
+.band-estudio-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 18px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--borde);
+}
+.band-estudio-head h2 {
+  margin: 4px 0 6px;
+  font-size: clamp(1.22rem, 2.3vw, 1.56rem);
+}
+.band-estudio-desc {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.94rem;
+  line-height: 1.55;
+  max-width: 68ch;
+}
+.band-specs-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: #fdf2f8;
+  border: 1px solid #f5c2d9;
+  color: var(--rosa-oscuro);
+  font-size: 0.84rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.band-galeria-bloque,
+.band-controles-bloque,
+.band-escena-bloque {
+  margin-bottom: 22px;
+}
+.band-galeria-top,
+.band-escena-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 14px;
+  margin-bottom: 12px;
+}
+.band-galeria-top h3,
+.band-controles-bloque h3,
+.band-escena-head h3 {
+  margin: 0;
+  font-size: 1.04rem;
+  color: var(--texto);
+}
+.band-controles-bloque h3 {
+  margin-bottom: 12px;
+}
+.band-filtros-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
-.banderines-grid {
-  display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  margin-top: 16px;
-  padding: 16px;
-  background: var(--papel);
+.band-filtro-btn {
+  padding: 6px 12px;
   border: 1px solid var(--borde);
-  border-radius: 12px;
+  border-radius: 8px;
+  background: var(--papel);
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
-.banderin-item {
+.band-filtro-btn:hover {
+  border-color: var(--rosa);
+  color: var(--rosa-oscuro);
+}
+.band-filtro-btn.activo {
+  background: var(--rosa);
+  border-color: var(--rosa);
+  color: #fff;
+}
+.band-galeria-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(156px, 1fr));
+  gap: 12px;
+}
+.band-card {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 12px 10px;
+  background: var(--papel);
+  border: 1.5px solid var(--borde);
+  border-radius: 12px;
+  color: var(--texto);
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.banderin-svg {
+.band-card:hover {
+  border-color: var(--rosa);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(159, 18, 57, 0.08);
+}
+.band-card.activo {
+  border-color: var(--rosa);
+  background: #fff5f8;
+  box-shadow: 0 0 0 2px rgba(225, 29, 116, 0.18);
+}
+.band-card--accion {
+  justify-content: center;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-style: dashed;
+  border-color: #94a3b8;
+  min-height: 152px;
+}
+.band-card--accion:hover {
+  border-style: solid;
+  border-color: var(--rosa);
+  background: #fff8fb;
+}
+.band-card--upload {
+  position: relative;
+  overflow: hidden;
+}
+.band-upload-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.band-card-accion-ico {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+.band-card-preview {
+  display: block;
   width: 100%;
-  max-width: 150px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 4px;
+}
+.band-mini-svg {
+  width: 100%;
   height: auto;
   display: block;
 }
+.band-card-nombre {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--texto);
+  line-height: 1.25;
+}
+.band-card-sub {
+  font-size: 0.75rem;
+  color: var(--texto-suave);
+  line-height: 1.3;
+}
+.band-foto-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  color: #166534;
+}
+.band-foto-barra select {
+  padding: 6px 10px;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+.band-frase-fila {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.band-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.band-campo label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--texto);
+}
+.band-campo input[type="text"],
+.band-campo select {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1.5px solid var(--borde);
+  border-radius: 9px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--texto);
+}
+.band-campo--frase input[type="text"] {
+  font-size: 1.06rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-color: var(--rosa);
+}
+.band-presets-rapidos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.band-grid-controles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.band-colores-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+  padding: 12px 14px;
+  background: var(--papel);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+.band-color-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.band-color-item input[type="color"] {
+  width: 34px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+.band-check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.band-escena-meta {
+  font-size: 0.84rem;
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+.band-guirnalda-escena {
+  background: linear-gradient(180deg, #fffdf9 0%, #fdf2f8 100%);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 20px 14px 28px;
+  overflow-x: auto;
+}
+.band-guirnalda-fila {
+  position: relative;
+  padding-top: 8px;
+  margin-bottom: 14px;
+}
+.band-guirnalda-fila:last-child {
+  margin-bottom: 0;
+}
+.band-cordon {
+  position: absolute;
+  top: 12px;
+  left: 6px;
+  right: 6px;
+  height: 3px;
+  background: linear-gradient(90deg, #a16207, #d97706, #a16207);
+  border-radius: 99px;
+  opacity: 0.72;
+}
+.band-guirnalda-piezas {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+  min-width: min-content;
+}
+.band-guirnalda-pieza {
+  width: clamp(46px, 6.8vw, 76px);
+  flex: 0 0 auto;
+  transition: transform 0.2s ease;
+}
+.band-pieza-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.band-acciones-panel {
+  background: var(--papel);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.band-acciones-panel .acciones {
+  margin-top: 0;
+}
+.btn-band-guirnalda {
+  background: var(--rosa);
+  color: #fff;
+  border-color: var(--rosa);
+}
+.btn-band-guirnalda:hover {
+  background: var(--rosa-oscuro);
+  border-color: var(--rosa-oscuro);
+}
+.btn-band-hoja {
+  background: #0f766e;
+  color: #fff;
+  border-color: #0f766e;
+}
+.btn-band-hoja:hover {
+  background: #115e59;
+  border-color: #115e59;
+}
+.btn-band-todas {
+  background: #1e293b;
+  color: #fff;
+  border-color: #1e293b;
+}
+.btn-band-todas:hover {
+  background: #0f172a;
+  border-color: #0f172a;
+}
+.band-hoja-selector-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--borde);
+  font-size: 0.85rem;
+}
+.band-hoja-selector-fila label {
+  font-weight: 700;
+}
+.band-hoja-selector-fila select {
+  padding: 6px 10px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+.band-tip-print {
+  color: var(--texto-suave);
+  font-size: 0.83rem;
+}
+.band-hojas-details {
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #fff;
+}
+.band-hojas-details > summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+  font-size: 0.92rem;
+}
+.banderines-print-area {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 14px;
+}
+.band-hoja-a4 {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 14px;
+}
+.band-hoja-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--texto-suave);
+  margin-bottom: 10px;
+}
+.band-hoja-par {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  justify-items: center;
+  align-items: start;
+}
+.band-hoja-pieza {
+  width: 100%;
+  max-width: 240px;
+}
+
+/* Core Web Vitals: deferred rendering para bloques pesados debajo del pliegue */
+.faqs-hub,
+.guia-categoria,
+.hermanas {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 420px;
+}
 
 @media print {
-  .banderines-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10mm !important;
+  .estudio-banderines {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
     background: transparent !important;
+  }
+  .band-hojas-details {
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: block !important;
+  }
+  .band-hojas-details::details-content {
+    display: block !important;
+    content-visibility: visible !important;
+  }
+  .band-hojas-details:not([open]) > .banderines-print-area,
+  .band-hojas-details > .banderines-print-area {
+    display: block !important;
+    margin: 0 !important;
+  }
+  .band-hoja-a4 {
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;
-  }
-  .banderin-item {
+    break-after: page;
+    page-break-after: always;
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  .banderin-svg {
-    max-width: 92mm !important;
-    width: 92mm !important;
+  .band-hoja-a4:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+  .band-hoja-par {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8mm !important;
+    padding-top: 8mm !important;
+  }
+  .band-hoja-pieza {
+    max-width: 90mm !important;
+    width: 90mm !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .band-pieza-svg {
+    width: 100% !important;
     height: auto !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
 

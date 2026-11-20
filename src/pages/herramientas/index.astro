@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import SelectorFechaDuelo from '../../components/SelectorFechaDuelo.astro';
+import EstudioBanderines from '../../components/EstudioBanderines.astro';
 import {
   SITIO,
   MARCA,
@@ -240,6 +241,7 @@ const signosCliente = ZODIACOS.map((s) => ({
         type="button"
         class="btn btn-descargar"
         data-title="Acróstico para SOFÍA"
+        data-mostrar-titulo="1"
         data-body={demoAcrosticoTexto}
         data-emoji="✍️"
       >
@@ -467,61 +469,16 @@ const signosCliente = ZODIACOS.map((s) => ({
   <!-- 5. CREADOR DE BANDERINES DE CUMPLEANOS PARA IMPRIMIR (A4) -->
   <section id="banderines-imprimir" class="herr-modulo" aria-labelledby="tit-banderines">
     <p class="herr-modulo-kicker">Utilidad 05 · Imprimible gratis en A4</p>
-    <h2 id="tit-banderines">Creador de banderines de cumpleaños para imprimir y recortar</h2>
+    <h2 id="tit-banderines">Estudio online de banderines de cumpleaños para imprimir y descargar</h2>
     <p class="herr-modulo-intro">
-      Escribí el texto o nombre que quieras (por ejemplo <strong>FELIZ CUMPLEAÑOS</strong>, <strong>HAPPY BIRTHDAY</strong> o el nombre del agasajado), elegí forma, paleta de color y bordes punteados de corte, e imprimí tus banderines gratis en hojas A4 o guardalos como PDF.
+      Elegí entre 12 plantillas visuales o empezá desde cero, subí tu propia foto o logo local, personalizá la frase, forma y colores, y descargá la guirnalda completa en PNG HD o imprimí hojas A4 listas para recortar (2 banderines de 14 × 19 cm por hoja).
     </p>
 
-    <div class="herr-form-grid no-print">
-      <div class="herr-campo" style="grid-column: 1 / -1;">
-        <label for="band-texto">Texto de los banderines (cada letra genera 1 banderín)</label>
-        <input id="band-texto" type="text" maxlength="26" value="FELIZ CUMPLEAÑOS" placeholder="Ej.: FELIZ CUMPLE SOFÍA" autocomplete="off" />
-      </div>
-      <div class="herr-campo">
-        <label for="band-forma">Forma del banderín</label>
-        <select id="band-forma">
-          <option value="triangulo" selected>Triángulo clásico (14 × 19 cm)</option>
-          <option value="golondrina">Cola de golondrina (doble punta)</option>
-        </select>
-      </div>
-      <div class="herr-campo">
-        <label for="band-paleta">Paleta de colores</label>
-        <select id="band-paleta">
-          <option value="rosa-fiesta" selected>Rosa fiesta y crema editorial</option>
-          <option value="dorado">Dorado y negro elegante</option>
-          <option value="pastel-cielo">Pastel cielo, menta y durazno</option>
-          <option value="botanico">Verde salvia y terracota</option>
-          <option value="arcoiris">Arcoíris infantil vivo</option>
-          <option value="colorear">Blanco y negro (listo para colorear)</option>
-        </select>
-      </div>
-      <div class="herr-campo">
-        <label for="band-borde">Borde de recorte</label>
-        <select id="band-borde">
-          <option value="si" selected>Con borde punteado para recortar y perforar</option>
-          <option value="no">Sin borde exterior</option>
-        </select>
-      </div>
-      <div class="herr-campo">
-        <label>Frases rápidas</label>
-        <div class="banderines-presets">
-          <button type="button" class="pers-chip-btn pers-chip-texto" data-band-preset="FELIZ CUMPLEAÑOS">FELIZ CUMPLEAÑOS</button>
-          <button type="button" class="pers-chip-btn pers-chip-texto" data-band-preset="HAPPY BIRTHDAY">HAPPY BIRTHDAY</button>
-          <button type="button" class="pers-chip-btn pers-chip-texto" data-band-preset="FELIZ DÍA">FELIZ DÍA</button>
-        </div>
-      </div>
-    </div>
+    <EstudioBanderines modo="herramientas" />
 
-    <div class="acciones no-print">
-      <button type="button" class="btn btn-imprimir">Imprimir / Guardar PDF (A4)</button>
-      <a class="btn btn-descargar" href="/guias/banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas/">Ver guía de medidas, papel y armado →</a>
-    </div>
-
-    <p id="band-resumen" class="texto-ayuda no-print">
-      15 banderines listos (aprox. 8 hojas A4 en tamaño estándar). En el cuadro de impresión activá "Gráficos de fondo" para conservar los colores.
+    <p class="ver-tambien no-print">
+      ¿Querés ver las 40 ideas prearmadas por estilo? Visitá <a href="/banderines-de-cumpleanos-para-imprimir/">Banderines de cumpleaños para imprimir (40 diseños) →</a> o leé la <a href="/guias/banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas/">guía de medidas y papeles →</a>.
     </p>
-
-    <div id="band-preview" class="banderines-grid" aria-live="polite"></div>
   </section>
 
   <!-- 6. SELECTOR DE FECHA DE DUELO Y RECORDATORIO SERENO -->
@@ -1236,107 +1193,6 @@ const signosCliente = ZODIACOS.map((s) => ({
       }
 
       renderAgenda();
-
-      // 5. CREADOR DE BANDERINES DE CUMPLEANOS PARA IMPRIMIR (A4)
-      var bandTextoEl = document.getElementById('band-texto');
-      var bandFormaEl = document.getElementById('band-forma');
-      var bandPaletaEl = document.getElementById('band-paleta');
-      var bandBordeEl = document.getElementById('band-borde');
-      var bandPreviewEl = document.getElementById('band-preview');
-      var bandResumenEl = document.getElementById('band-resumen');
-
-      var PALETAS_BAND = {
-        'rosa-fiesta': [
-          { bg: '#fdf2f8', border: '#e11d74', text: '#9f1239' },
-          { bg: '#fff7ed', border: '#ea580c', text: '#9a3412' },
-          { bg: '#fef2f2', border: '#be123c', text: '#881337' }
-        ],
-        dorado: [
-          { bg: '#1f1b18', border: '#d97706', text: '#fde68a' },
-          { bg: '#fffbeb', border: '#b45309', text: '#78350f' }
-        ],
-        'pastel-cielo': [
-          { bg: '#e0f2fe', border: '#0284c7', text: '#075985' },
-          { bg: '#dcfce7', border: '#16a34a', text: '#166534' },
-          { bg: '#ffedd5', border: '#ea580c', text: '#9a3412' },
-          { bg: '#f3e8ff', border: '#9333ea', text: '#6b21a8' }
-        ],
-        botanico: [
-          { bg: '#ecfdf5', border: '#059669', text: '#065f46' },
-          { bg: '#fef3c7', border: '#d97706', text: '#92400e' },
-          { bg: '#fff1f2', border: '#e11d48', text: '#9f1239' }
-        ],
-        arcoiris: [
-          { bg: '#ffe4e6', border: '#e11d48', text: '#9f1239' },
-          { bg: '#ffedd5', border: '#ea580c', text: '#9a3412' },
-          { bg: '#fef9c3', border: '#ca8a04', text: '#854d0e' },
-          { bg: '#dcfce7', border: '#16a34a', text: '#166534' },
-          { bg: '#dbeafe', border: '#2563eb', text: '#1e40af' },
-          { bg: '#f3e8ff', border: '#9333ea', text: '#6b21a8' }
-        ],
-        colorear: [
-          { bg: '#ffffff', border: '#1f2937', text: '#111827' }
-        ]
-      };
-
-      function renderBanderines() {
-        if (!bandPreviewEl) return;
-        var raw = String((bandTextoEl && bandTextoEl.value) || 'FELIZ CUMPLEAÑOS').toUpperCase().trim();
-        var letras = Array.from(raw).filter(function (ch) { return ch.trim().length > 0; });
-        if (!letras.length) letras = ['★'];
-        var forma = (bandFormaEl && bandFormaEl.value) || 'triangulo';
-        var palId = (bandPaletaEl && bandPaletaEl.value) || 'rosa-fiesta';
-        var conBorde = !bandBordeEl || bandBordeEl.value !== 'no';
-        var colores = PALETAS_BAND[palId] || PALETAS_BAND['rosa-fiesta'];
-
-        var hojas = Math.ceil(letras.length / 2);
-        if (bandResumenEl) {
-          bandResumenEl.textContent =
-            letras.length + ' banderines listos (aprox. ' + hojas + (hojas === 1 ? ' hoja A4' : ' hojas A4') + ' a 2 por hoja). En el cuadro de impresión activá "Gráficos de fondo" para conservar los colores.';
-        }
-
-        bandPreviewEl.innerHTML = '';
-        var poly = forma === 'golondrina'
-          ? '10,12 190,12 190,255 100,205 10,255'
-          : '10,12 190,12 100,258';
-        var innerPoly = forma === 'golondrina'
-          ? '20,22 180,22 180,238 100,192 20,238'
-          : '22,22 178,22 100,236';
-
-        letras.forEach(function (letra, idx) {
-          var c = colores[idx % colores.length];
-          var wrap = document.createElement('div');
-          wrap.className = 'banderin-item';
-          var dashAttr = conBorde ? ' stroke-dasharray="6,5"' : '';
-          var svg =
-            '<svg viewBox="0 0 200 270" class="banderin-svg" role="img" aria-label="Banderín letra ' + letra + '">' +
-            '<polygon points="' + poly + '" fill="' + c.bg + '" stroke="' + c.border + '" stroke-width="4"' + dashAttr + ' />' +
-            '<polygon points="' + innerPoly + '" fill="none" stroke="' + c.border + '" stroke-opacity="0.45" stroke-width="1.5" />' +
-            '<circle cx="28" cy="28" r="5" fill="#ffffff" stroke="' + c.border + '" stroke-width="2" />' +
-            '<circle cx="172" cy="28" r="5" fill="#ffffff" stroke="' + c.border + '" stroke-width="2" />' +
-            '<text x="100" y="140" text-anchor="middle" dominant-baseline="central" font-family="Fraunces, Georgia, serif" font-size="94" font-weight="700" fill="' + c.text + '">' +
-            letra.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') +
-            '</text>' +
-            '</svg>';
-          wrap.innerHTML = svg;
-          bandPreviewEl.appendChild(wrap);
-        });
-      }
-
-      [bandTextoEl, bandFormaEl, bandPaletaEl, bandBordeEl].forEach(function (el) {
-        if (!el) return;
-        el.addEventListener('input', renderBanderines);
-        el.addEventListener('change', renderBanderines);
-      });
-      document.querySelectorAll('[data-band-preset]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          if (bandTextoEl) {
-            bandTextoEl.value = btn.getAttribute('data-band-preset') || 'FELIZ CUMPLEAÑOS';
-            renderBanderines();
-          }
-        });
-      });
-      renderBanderines();
     })();
   </script>
 </Base>

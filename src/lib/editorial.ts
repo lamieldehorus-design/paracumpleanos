@@ -56,6 +56,7 @@ export const ORDEN_SEGMENTOS: SegmentoTono[] = [
 ];
 
 export type PerfilEditorial =
+  | 'banderines'
   | 'motivaciones'
   | 'meses'
   | 'fecha_especial'
@@ -173,7 +174,8 @@ const DEST_GENERICOS = new Set([
   'invitación',
   'para mí',
   'gatos',
-  'perros'
+  'perros',
+  'banderines'
 ]);
 
 const DEST_FRASES_NATURALES: Record<string, { frase: string; vocativo: string }> = {
@@ -230,6 +232,7 @@ export function detectarPerfilEditorial(hub?: any, msg?: any): PerfilEditorial {
   const grupo = String((hub && hub.grupo) || '').toLowerCase();
   const dest = String((hub && hub.destinatario) || (msg && msg.destinatario) || '').toLowerCase();
 
+  if (slug === 'banderines-de-cumpleanos-para-imprimir' || slug.includes('banderin')) return 'banderines';
   if (slug === 'motivaciones' || slug.includes('motivacion')) return 'motivaciones';
   if (grupo === 'meses' || /^cumpleanos-en-/.test(slug)) return 'meses';
   if (/jubilacion/.test(slug)) return 'jubilacion';
@@ -577,8 +580,30 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
   const esDuelo = perfil === 'duelo';
   const esAniv = perfil === 'aniv_meses' || perfil === 'aniv_anos';
   const esMotiv = perfil === 'motivaciones';
+  const esBand = perfil === 'banderines';
 
-  const tabla: FilaDecisionHub[] = [
+  const tabla: FilaDecisionHub[] = esBand
+    ? [
+        {
+          formato: 'Frases cortas (6 a 10 piezas · 3-5 hojas A4)',
+          cantidad: Math.max(12, cortos),
+          idealPara: 'Mesas dulces chicas, puertas de entrada o guirnaldas rápidas',
+          consejo: 'Usá 1 sola fila con triángulo clásico o escudo curvo en cartulina de 200 g.'
+        },
+        {
+          formato: 'Frases medias (11 a 16 piezas · 6-8 hojas A4)',
+          cantidad: Math.max(16, medios),
+          idealPara: 'Pared principal de fotos o fondo detrás de la torta',
+          consejo: 'Colgalas en dos filas ordenadas por palabra para que se lean nítidas en fotos.'
+        },
+        {
+          formato: 'Guirnaldas con nombre o edad (17+ piezas · 9+ hojas A4)',
+          cantidad: Math.max(12, largos),
+          idealPara: 'Festejos familiares, salones, jardines o sorpresas personalizadas',
+          consejo: 'Sumá tu foto o logo en las puntas y calculá 70 cm extra de cordón para atar.'
+        }
+      ]
+    : [
     {
       formato: 'Breves (hasta 65 palabras)',
       cantidad: cortos,
@@ -1145,6 +1170,33 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
       ];
       break;
 
+    case 'banderines':
+      subtituloClaves = 'Claves prácticas para diseñar, imprimir y colgar tus banderines A4';
+      claves = [
+        'Elegí primero la plantilla o subí tu foto/logo local y verificá en la vista previa cuántas hojas A4 necesita tu frase (2 banderines de 14 × 19 cm por hoja).',
+        'Imprimí sobre cartulina mate u opalina de 180 a 240 gramos con la opción "Gráficos de fondo" activa para que los bordes y colores queden firmes y nítidos.',
+        'Perforá los círculos superiores ya marcados y pasá cordón de algodón, hilo rústico o cinta satinada dejando 35 cm extra en cada punta para atar sin tironear.'
+      ];
+      citaClave = 'Una guirnalda armada con el nombre real y la paleta elegida transforma cualquier pared casera en el mejor fondo de fotos del festejo.';
+      faqs = [
+        {
+          pregunta: '¿Qué tamaño tiene cada banderín al imprimir en hoja A4?',
+          respuesta:
+            'Cada hoja A4 organiza 2 banderines nítidos de aproximadamente 14 × 19 cm con línea punteada de corte y marcas de perforación superiores, listos para recortar con tijera o guillotina.'
+        },
+        {
+          pregunta: '¿Puedo descargar la guirnalda completa o las hojas A4 en PNG sin instalar programas?',
+          respuesta:
+            'Sí. Desde el estudio online podés bajar la guirnalda completa en PNG HD para compartir o enviar por WhatsApp, y también descargar una hoja A4 específica o todas las hojas listas para llevar a una imprenta.'
+        },
+        {
+          pregunta: '¿Qué pasa si subo una foto o logo propio a los banderines?',
+          respuesta:
+            'La imagen se procesa 100% de forma local en tu navegador (no se sube a ningún servidor) y podés ubicarla en los banderines decorativos de las puntas o como medallón en cada letra.'
+        }
+      ];
+      break;
+
     case 'motivaciones':
       subtituloClaves = 'Cómo convertir frases motivacionales diarias en impulso real';
       claves = [
@@ -1334,6 +1386,18 @@ export function guiaAdaptacionMensaje(m: any, hub: any): GuiaAdaptacionMensaje {
   const esDuelo = perfil === 'duelo';
 
   const bancoPorPerfil: Record<PerfilEditorial, VarianteEjemplo[]> = {
+    banderines: [
+      {
+        generico: 'Imprimir banderines genéricos sin revisar el largo de la pared ni el gramaje del papel.',
+        concreto: 'Personalizar la frase con el nombre y la edad en el estudio online, imprimir 2 banderines por hoja A4 en opalina de 200 g y colgar en dos filas prolijas.',
+        posdata: 'Tip de armado: «Dejá 35 cm extra de cordón a cada lado para atar fácil y combiná el saludo impreso con la tarjeta de mesa.»'
+      },
+      {
+        generico: 'Usar papel común de 75 gramos que se dobla apenas pasás el hilo por las esquinas.',
+        concreto: 'Elegir cartulina mate u opalina de 180-240 g, activar las guías punteadas de corte y reforzar el reverso con cinta si la guirnalda va al aire libre.',
+        posdata: 'Tip de armado: «Probá sumar una foto del homenajeado en las puntas desde el botón Cargar foto / logo (100% local).»'
+      }
+    ],
     motivaciones: [
       {
         generico: 'Creé en vos mismo y nunca te rindas porque todo va a salir bien.',
@@ -1639,7 +1703,9 @@ export function guiaAdaptacionMensaje(m: any, hub: any): GuiaAdaptacionMensaje {
   const variante = elegirVariante(bancoPorPerfil[perfil], slugMsg);
 
   const mejorHorario =
-    perfil === 'motivaciones'
+    perfil === 'banderines'
+      ? 'Imprimí y armá la guirnalda la tarde anterior al festejo para colgarla en 5 minutos antes de que lleguen los invitados.'
+      : perfil === 'motivaciones'
       ? 'Temprano antes de abrir correos o redes (entre las 7:00 y las 9:00 hs) para marcar calma y foco.'
       : perfil === 'profesionales'
       ? 'A media mañana (entre las 9:00 y las 11:30 hs) por correo o chat laboral.'
@@ -1654,7 +1720,13 @@ export function guiaAdaptacionMensaje(m: any, hub: any): GuiaAdaptacionMensaje {
       : 'Al despertar con el desayuno o al cierre del día para que se destaque entre el resto.';
 
   const pasos =
-    perfil === 'motivaciones'
+    perfil === 'banderines'
+      ? [
+          'Ajustá arriba en el estudio online la frase exacta, el nombre o la edad del homenajeado.',
+          'Elegí una de las 12 plantillas (o subí tu foto/logo local) y revisá cuántas hojas A4 ocupa.',
+          'Tocá "Imprimir / Guardar PDF (solo hojas A4)" o descargá las hojas A4 en PNG HD para llevar a la gráfica.'
+        ]
+      : perfil === 'motivaciones'
       ? [
           'Leé esta reflexión con calma y elegí una sola acción simple para hoy.',
           'Personalizá arriba un apodo o dedicatoria si la enviás a alguien que necesita aliento.',

@@ -12,6 +12,7 @@ import {
   migasLd,
   construirSetIndexables,
   generarUrlsSitio,
+  construirMapaLastmodSitemap,
   generarSitemapXml,
   POR_PAGINA,
   RELACIONADAS,
@@ -257,6 +258,11 @@ test('modulo editorial genera 20 perfiles distintos, citas, FAQs y posdatas cohe
       assert.equal(ed.perfil, 'motivaciones', 'Hub motivaciones debe tener perfil propio');
       assert.ok(!/soplar velas|regalo de cumpleaños/i.test(ed.citaClave + ed.claves.join(' ')), 'Editorial motivaciones con contaminacion de cumpleaños');
     }
+    if (hub.slug === 'banderines-de-cumpleanos-para-imprimir') {
+      assert.equal(ed.perfil, 'banderines', 'Hub banderines debe tener perfil editorial propio');
+      const blobBand = `${ed.subtituloClaves} ${ed.citaClave} ${ed.claves.join(' ')} ${ed.tabla.map((t) => t.consejo).join(' ')}`;
+      assert.ok(!/tu banderines/i.test(blobBand), 'Editorial banderines no debe contener "tu banderines"');
+    }
 
     const adapt0 = guiaAdaptacionMensaje(msgs[0], hub);
     ejConcretos.add(adapt0.ejemploConcreto);
@@ -348,7 +354,21 @@ test('guias editoriales cumplen checklist completo SEO y GEO 2026 para guias act
     assert.ok(g.comparacionPractica.evitar.length >= 30 && g.comparacionPractica.mejor.length >= 30);
     assert.equal(g.tablaComparativa.columnas.length, 3);
     assert.ok(g.tablaComparativa.filas.length >= 3, `Guia ${g.slug} tabla con pocas filas`);
-    assert.ok(g.ejemplosAdaptables.length >= 2, `Guia ${g.slug} requiere al menos 2 plantillas adaptables`);
+    assert.ok(g.ejemplosAdaptables.length >= 10, `Guia ${g.slug} requiere al menos 10 plantillas adaptables, tiene ${g.ejemplosAdaptables.length}`);
+    assert.equal(
+      new Set(g.ejemplosAdaptables.map((e) => e.etiqueta.trim().toLowerCase())).size,
+      g.ejemplosAdaptables.length,
+      `Guia ${g.slug} tiene etiquetas de plantillas duplicadas`
+    );
+    assert.equal(
+      new Set(g.ejemplosAdaptables.map((e) => e.texto.trim().toLowerCase())).size,
+      g.ejemplosAdaptables.length,
+      `Guia ${g.slug} tiene textos de plantillas duplicados`
+    );
+    assert.ok(
+      g.ejemplosAdaptables.every((e) => e.etiqueta.trim().length >= 8 && e.texto.trim().length >= 35),
+      `Guia ${g.slug} contiene alguna plantilla demasiado corta`
+    );
     assert.equal(g.faqs.length, 3, `Guia ${g.slug} requiere 3 FAQs`);
 
     assert.match(g.fechaPublicacion, /^\d{4}-\d{2}-\d{2}$/);
@@ -511,12 +531,22 @@ test('generarUrlsSitio y generarSitemapXml cubren las 18814 URLs indexables sin 
   const indexables = construirSetIndexables(cat.todosMensajes);
   assert.equal(indexables.size, 16880);
 
-  const xml = generarSitemapXml(urls);
-  assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
-  assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
-  const locs = xml.match(/<loc>/g) || [];
+  const xmlSinLastmod = generarSitemapXml(urls);
+  assert.ok(xmlSinLastmod.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
+  assert.ok(xmlSinLastmod.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
+  const locs = xmlSinLastmod.match(/<loc>/g) || [];
   assert.equal(locs.length, 18814);
-  assert.ok(!xml.includes('<lastmod>'), 'No agregar lastmod sin fechas reales por URL');
+  assert.ok(!xmlSinLastmod.includes('<lastmod>'), 'Sin mapa lastmod no debe emitir etiquetas lastmod');
+
+  const mapaLastmod = construirMapaLastmodSitemap(cat, GUIAS_EDITORIALES, slugsSignos, slugsPaises, '2026-11-20');
+  const xmlConLastmod = generarSitemapXml(urls, mapaLastmod);
+  const lastmods = xmlConLastmod.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || [];
+  assert.equal(lastmods.length, 18814, 'Cada una de las 18814 URLs debe recibir su lastmod real YYYY-MM-DD');
+  assert.ok(
+    xmlConLastmod.includes('<loc>https://paracumpleanos.com/banderines-de-cumpleanos-para-imprimir/</loc><lastmod>2026-11-20</lastmod>'),
+    'El sitemap debe reflejar el lastmod real de banderines'
+  );
+  assert.throws(() => generarSitemapXml(['https://paracumpleanos.com/'], { 'https://paracumpleanos.com/': '2026-02-31' }));
 });
 
 test('Bing IndexNow cubre las 18814 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
@@ -805,7 +835,39 @@ test('orden mas reciente primero, filtros universales en las 416 categorias, ani
   assert.ok(gruposEnPool.has('aniversarios'), 'El pool popular debe incluir publicaciones de aniversarios');
 });
 
+test('impresion aisla solo la postal o banderines, descargas omiten titulo SEO y personalizador general queda intacto', () => {
+  const baseSrc = fs.readFileSync(path.resolve('src/layouts/Base.astro'), 'utf8');
+  const slugSrc = fs.readFileSync(path.resolve('src/pages/[slug].astro'), 'utf8');
+  const cssSrc = fs.readFileSync(path.resolve('src/styles/global.css'), 'utf8');
+  const persSrc = fs.readFileSync(path.resolve('src/components/PersonalizadorTarjeta.astro'), 'utf8');
 
+  // 1. Descarga PNG / Instagram omite titulo SEO salvo mostrarTitulo explicito (Acrostico)
+  assert.ok(
+    baseSrc.includes('var mostrarTitulo = Boolean(opts.mostrarTitulo);') &&
+      baseSrc.includes("var tituloCard = mostrarTitulo ? String(opts.title || '').trim() : '';"),
+    'generarCanvasTarjeta debe omitir el titulo SEO por defecto al descargar tarjetas'
+  );
+  assert.ok(
+    baseSrc.includes("dl.getAttribute('data-mostrar-titulo') === '1'") &&
+      baseSrc.includes("ig.getAttribute('data-mostrar-titulo') === '1'"),
+    'Los handlers de descarga PNG e Instagram deben activar titulo solo cuando data-mostrar-titulo="1"'
+  );
 
+  // 2. Vista postal en [slug].astro no imprime titulo SEO dentro de .tarjeta-visual
+  assert.ok(
+    !slugSrc.includes('<p class="tarjeta-visual-titulo">{registro.titulo}</p>'),
+    'La postal de detalle no debe mostrar el titulo SEO dentro de .tarjeta-visual'
+  );
 
+  // 3. EstudioBanderines solo en la categoria banderines; PersonalizadorTarjeta intacto en las demas
+  assert.ok(slugSrc.includes("const esBanderines = hub.slug === 'banderines-de-cumpleanos-para-imprimir';"));
+  assert.ok(slugSrc.includes('<EstudioBanderines'));
+  assert.ok(slugSrc.includes('<PersonalizadorTarjeta'));
+  assert.ok(persSrc.includes('class="personalizador"'), 'PersonalizadorTarjeta debe seguir intacto para el resto de categorias');
 
+  // 4. @media print oculta h1, meta, selectores y formularios dejando solo postal o hojas A4 de banderines
+  assert.ok(cssSrc.includes('@media print'), 'Debe existir bloque @media print');
+  assert.ok(cssSrc.includes('.selector-anios-aniv'), '@media print debe ocultar .selector-anios-aniv');
+  assert.ok(cssSrc.includes('.meta-linea-editorial'), '@media print debe ocultar .meta-linea-editorial');
+  assert.ok(cssSrc.includes('.banderines-print-area'), '@media print debe formatear las hojas A4 de banderines');
+});

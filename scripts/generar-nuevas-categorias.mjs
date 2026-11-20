@@ -568,47 +568,501 @@ function generarHubBanderines(existentes) {
     modificador: 'para imprimir',
     grupo: 'tono',
     keyword: 'banderines de cumpleaños para imprimir',
-    titulo: 'Banderines de cumpleaños para imprimir - 40 Ideas',
-    h1: 'Banderines de cumpleaños para imprimir: 40 frases y textos 🎏',
-    meta: 'Banderines de cumpleaños para imprimir en A4: 40 textos listos para guirnaldas, medidas recomendadas y acceso al generador gratis con bordes de recorte.',
+    titulo: 'Banderines de cumpleaños para imprimir - 40 Diseños',
+    h1: 'Banderines de cumpleaños para imprimir: estudio online y 40 diseños 🎏',
+    meta: 'Creá y descargá banderines de cumpleaños para imprimir en A4 gratis: elegí diseño, forma, colores o foto propia, adaptá tu frase y bajá en PNG o PDF.',
     emoji: '🎏',
-    lead: '¿Buscás frases cortas y originales para armar banderines de cumpleaños para imprimir en casa? Reunimos 40 propuestas listas para guirnaldas, mesas dulces, carteles con nombre y saludos complementarios para tarjetas.\n\nAdemás, podés abrir nuestro creador gratuito de banderines A4 en Herramientas para escribir cualquier frase, elegir colores o versión para colorear e imprimir dos banderines por hoja con bordes punteados.',
+    lead: 'Armá tu guirnalda de cumpleaños online en menos de dos minutos sin instalar programas. En nuestro estudio interactivo de banderines podés elegir entre 12 plantillas visuales (fiesta, gala dorada, infantil pastel, botánico, kraft o blanco y negro para colorear), cargar tu propia foto o logo, cambiar la forma del banderín y escribir el nombre o frase que necesites.\n\nAdemás, cada una de las 40 ideas de esta colección abre el estudio ya precargado con su frase, paleta, forma y trama recomendadas, listo para descargar en PNG de alta definición o imprimir a dos banderines por hoja A4 con guías de recorte.',
     creado: FECHA_HOY,
     actualizado: FECHA_HOY,
-    seoTitulo: 'Cómo elegir medidas, papel y frases para banderines de cumpleaños',
-    seoTexto: 'El tamaño clásico más cómodo para imprimir en casa es de 14 × 19 cm, lo que permite ubicar dos banderines nítidos por cada hoja A4 y recortarlos rápido con tijera o guillotina.\n\nPara que la guirnalda no se doble al colgarla conviene usar cartulina mate u opalina de entre 180 y 240 gramos, perforar las dos esquinas superiores a 1,5 cm del borde y pasar cordón de algodón o cinta satinada.\n\nEn estas 40 ideas combinamos títulos breves de alto impacto visual para los banderines junto con mensajes cálidos de cumpleaños para copiar en invitaciones, sobres o tarjetas de mesa.'
+    seoTitulo: 'Cómo diseñar, imprimir y colgar banderines de cumpleaños con acabado profesional',
+    seoTexto: 'El formato más versátil para imprimir banderines de cumpleaños en casa o en gráfica rápida es de 14 × 19 cm, ya que permite distribuir dos piezas nítidas por cada hoja A4 sin desperdiciar papel ni perder visibilidad en las fotos del festejo.\n\nPara conseguir caída firme y colores limpios elegí cartulina mate u opalina de 180 a 240 gramos (o papel kraft si buscás estética artesanal), activá las marcas de recorte y perforación en el estudio superior y pasá cordón de algodón, yute o cinta satinada dejando 35 cm extra en cada extremo para atar con comodidad.\n\nCada una de las 40 publicaciones siguientes combina una frase pensada para un tipo de celebración distinto, una configuración visual recomendada en el estudio interactivo y consejos concretos de montaje, papel y dedicatoria complementaria.'
   };
 
   const registros = [hub];
-  const estilos = [
-    'en tonos rosa fiesta y crema editorial',
-    'con paleta dorada y negra elegante',
-    'en versión pastel cielo y menta para mesas infantiles',
-    'en estilo botánico verde salvia y terracota',
-    'con arcoíris vivo ideal para patios y jardines',
-    'en blanco y negro listo para que los chicos coloreen',
-    'en formato cola de golondrina con doble punta decorativa',
-    'en triángulo clásico de 14 × 19 cm sobre cartulina opalina'
-  ];
-  const usos = [
-    'sobre la mesa principal de la torta',
-    'como fondo luminoso para las fotos del festejo',
-    'en la puerta de entrada para recibir a los invitados',
-    'en una guirnalda corta junto a la ventana del comedor',
-    'combinado con fotos impresas de cada año vivido',
-    'en un festejo sorpresa armado en diez minutos',
-    'en un picnic al aire libre con cordón de yute',
-    'para acompañar una tarjeta impresa con el mismo diseño'
-  ];
-  const lemas = [
-    'FELIZ CUMPLEAÑOS',
-    'HAPPY BIRTHDAY',
-    'FELIZ DÍA',
-    'BIENVENIDO NUEVO AÑO',
-    'A CELEBRAR',
-    'FELIZ VUELTA AL SOL',
-    'HOY SE FESTEJA',
-    'QUE SEAN MUCHOS MÁS'
+
+  // 40 configuraciones unicas (40 frases distintas + estilo + papel + consejo + dedicatoria)
+  const SPECS_40 = [
+    {
+      frase: 'FELIZ CUMPLEAÑOS',
+      plantillaId: 'rosa-fiesta',
+      forma: 'triangulo',
+      patron: 'marco',
+      fuente: 'editorial',
+      iconoPunta: '★',
+      papel: 'cartulina opalina blanca de 220 g con tinta a color',
+      espacio: 'sobre la mesa principal de la torta centrada a 1,80 m de altura',
+      consejo: 'Alterná dos centímetros de separación entre cada letra para que la frase se lea completa incluso en fotos verticales con celular.',
+      dedicatoria: 'Que este nuevo año de vida llegue con salud serena, mesas compartidas y motivos sinceros para brindar junto a quienes te quieren.'
+    },
+    {
+      frase: 'HAPPY BIRTHDAY',
+      plantillaId: 'gala-dorada',
+      forma: 'golondrina',
+      patron: 'franja',
+      fuente: 'editorial',
+      iconoPunta: '✦',
+      papel: 'cartulina satinada marfil de 240 g para resaltar el contraste negro y oro',
+      espacio: 'detrás del rincón de brindis en cenas nocturnas o festejos de adultos',
+      consejo: 'Pasá cinta de raso dorada de 6 mm por detrás de las perforaciones para ocultar el nudo y lograr un efecto de librería boutique.',
+      dedicatoria: 'Brindamos por una vuelta al sol llena de proyectos cumplidos, noches tranquilas y afectos fieles alrededor de tu mesa.'
+    },
+    {
+      frase: 'FELIZ DÍA',
+      plantillaId: 'pastel-cielo',
+      forma: 'triangulo',
+      patron: 'puntos',
+      fuente: 'moderna',
+      iconoPunta: '♥',
+      papel: 'papel ilustración mate de 200 g que evita reflejos con el flash',
+      espacio: 'encima de una mesa dulce infantil o desayunador luminoso',
+      consejo: 'Como lleva solo 8 letras, se imprime en apenas 5 hojas A4 (con puntas decorativas) y queda armada en menos de diez minutos.',
+      dedicatoria: 'Hoy celebramos tu alegría cotidiana y te deseamos doce meses livianos, llenos de juego, abrazos y sueños cumplidos.'
+    },
+    {
+      frase: 'FELIZ CUMPLE',
+      plantillaId: 'coral-confeti',
+      forma: 'golondrina',
+      patron: 'puntos',
+      fuente: 'moderna',
+      iconoPunta: '★',
+      papel: 'cartulina blanca lisa de 200 g recortada con tijera recta',
+      espacio: 'en el marco de la puerta de entrada para recibir al homenajeado',
+      consejo: 'Si querés doble altura visual, colgá la palabra FELIZ en un hilo superior y CUMPLE diez centímetros más abajo.',
+      dedicatoria: 'Te deseamos un cumpleaños luminoso, sencillo y feliz, rodeado de risas reales y gente que celebra cada paso tuyo.'
+    },
+    {
+      frase: 'A CELEBRAR',
+      plantillaId: 'pastel-cielo',
+      forma: 'escudo',
+      patron: 'estrellas',
+      fuente: 'moderna',
+      iconoPunta: '★',
+      papel: 'opalina suave de 180 g compatible con impresoras domésticas',
+      espacio: 'en un living o balcón chico donde no entra una frase larga',
+      consejo: 'Las guirnaldas de 9 letras miden alrededor de 1,80 m y se lucen muy bien en departamentos sin recargar la pared.',
+      dedicatoria: 'Que nunca falten excusas lindas para reunirse, agradecer lo vivido y festejar con calma todo lo bueno que viene.'
+    },
+    {
+      frase: 'FELIZ VUELTA AL SOL',
+      plantillaId: 'botanico-salvia',
+      forma: 'escudo',
+      patron: 'marco',
+      fuente: 'editorial',
+      iconoPunta: '✿',
+      papel: 'cartulina texturada crema o papel reciclado de 210 g',
+      espacio: 'en paredes claras con plantas naturales o flores secas',
+      consejo: 'Dividila en dos tramos ("FELIZ VUELTA" arriba y "AL SOL" abajo) con cordón de yute para equilibrar el peso de las 16 letras.',
+      dedicatoria: 'Que esta nueva vuelta al sol te encuentre con paz interior, claridad en tus proyectos y mucho cariño cerca.'
+    },
+    {
+      frase: 'HOY SE FESTEJA',
+      plantillaId: 'botanico-salvia',
+      forma: 'banderola',
+      patron: 'franja',
+      fuente: 'editorial',
+      iconoPunta: '✿',
+      papel: 'cartulina mate de 220 g en impresión de calidad estándar alta',
+      espacio: 'en la barra de bebidas o mesa de picada durante una reunión informal',
+      consejo: 'El formato banderola rectangular aporta un aire más editorial y permite apoyar cinta doble faz en el reverso si hay corriente de aire.',
+      dedicatoria: 'Hoy frenamos la rutina para celebrar tu vida y agradecer lo bien que hace compartir charlas y risas con vos.'
+    },
+    {
+      frase: 'QUE SEAN MUCHOS MÁS',
+      plantillaId: 'rosa-fiesta',
+      forma: 'golondrina',
+      patron: 'marco',
+      fuente: 'editorial',
+      iconoPunta: '♥',
+      papel: 'cartulina opalina de 220 g con corte limpio en la muesca inferior',
+      espacio: 'como telón de fondo detrás del sillón donde se sacan las fotos familiares',
+      consejo: 'Intercalá dos fotos polaroid en los extremos del hilo para conectar la guirnalda con recuerdos reales de otros cumpleaños.',
+      dedicatoria: 'Por muchos años más compartiendo sobremesas largas, abrazos sin apuro y nuevas anécdotas para atesorar.'
+    },
+    {
+      frase: 'FELIZ CUMPLE MAMÁ',
+      plantillaId: 'lavanda-dulce',
+      forma: 'escudo',
+      patron: 'estrellas',
+      fuente: 'calida',
+      iconoPunta: '♥',
+      papel: 'cartulina perlada o mate crema de 230 g',
+      espacio: 'en el comedor antes del desayuno sorpresa o almuerzo del domingo',
+      consejo: 'Reemplazá MAMÁ por su apodo familiar directo en el campo superior del estudio y descargá las hojas A4 listas en segundos.',
+      dedicatoria: 'Gracias por tu entrega diaria y tu forma cálida de hacer hogar; deseamos que este año te devuelva en calma todo el amor que das.'
+    },
+    {
+      frase: 'PINTÁ TU CUMPLE',
+      plantillaId: 'colorear-bn',
+      forma: 'triangulo',
+      patron: 'marco',
+      fuente: 'moderna',
+      iconoPunta: '☆',
+      papel: 'hoja gruesa de dibujo o cartulina escolar blanca de 180 g',
+      espacio: 'en una mesa creativa con lápices, crayones o acuarelas antes de soplar las velas',
+      consejo: 'Imprimilo en escala de grises ahorrando tinta a color y entregá una letra a cada chico invitado para armar juntos la guirnalda.',
+      dedicatoria: 'Que tu nuevo año tenga todos los colores que elijas pintar, mucha imaginación y tardes llenas de risas compartidas.'
+    },
+    {
+      frase: 'FELIZ CUMPLE PAPÁ',
+      plantillaId: 'marino-banderola',
+      forma: 'banderola',
+      patron: 'franja',
+      fuente: 'editorial',
+      iconoPunta: '✦',
+      papel: 'cartulina mate blanca de 240 g para lograr negros y azules profundos',
+      espacio: 'en el quincho, parrilla techada o mesa del almuerzo familiar',
+      consejo: 'Reforzá las perforaciones con una tirita de cinta transparente en el dorso si el festejo es al aire libre con brisa.',
+      dedicatoria: 'Feliz cumpleaños, papá: gracias por tu ejemplo firme, tus consejos honestos y la tranquilidad que nos da tenerte cerca.'
+    },
+    {
+      frase: 'FIESTA EN CASA',
+      plantillaId: 'arcoiris-alegre',
+      forma: 'triangulo',
+      patron: 'estrellas',
+      fuente: 'moderna',
+      iconoPunta: '★',
+      papel: 'papel fotográfico mate de 200 g que realza los seis colores vivos',
+      espacio: 'cruzando el patio, galería o jardín de extremo a extremo',
+      consejo: 'Usá piolín grueso de algodón y hacé un nudito simple detrás de cada pieza para evitar que se deslicen hacia el centro.',
+      dedicatoria: 'No hace falta salón grande cuando sobra alegría: que esta celebración casera quede guardada entre tus mejores recuerdos.'
+    },
+    {
+      frase: 'BIENVENIDOS',
+      plantillaId: 'kraft-artesanal',
+      forma: 'escudo',
+      patron: 'diagonales',
+      fuente: 'calida',
+      iconoPunta: '✿',
+      papel: 'cartulina kraft natural o papel crema de 210 g',
+      espacio: 'en la entrada del jardín, pasillo o mesa de recepción de regalos',
+      consejo: 'Combiná este cartel con una canasta de tarjetas en blanco para que cada invitado deje un deseo escrito al llegar.',
+      dedicatoria: 'Qué lindo recibir a quienes queremos para celebrar juntos una vida tan valiosa y llena de historias compartidas.'
+    },
+    {
+      frase: 'FELIZ PRIMER AÑO',
+      plantillaId: 'pastel-cielo',
+      forma: 'escudo',
+      patron: 'puntos',
+      fuente: 'calida',
+      iconoPunta: '♥',
+      papel: 'cartulina opalina crema de 220 g suave al tacto',
+      espacio: 'en el respaldo de la sillita alta o sobre la mesa del primer añito',
+      consejo: 'Podés subir una foto del bebé en el botón "Cargar foto / logo propio" del estudio para estampar un detalle único en los banderines.',
+      dedicatoria: 'Un año entero llenando la casa de sonrisas nuevas y descubrimientos: que crezcas siempre cuidado, sano y rodeado de ternura.'
+    },
+    {
+      frase: 'MIS 15 AÑOS',
+      plantillaId: 'gala-dorada',
+      forma: 'golondrina',
+      patron: 'marco',
+      fuente: 'editorial',
+      iconoPunta: '✦',
+      papel: 'cartulina marfil de 250 g cortada con regla metálica y cúter',
+      espacio: 'en el sector del libro de firmas o cabina de fotos del festejo',
+      consejo: 'Editá la frase para sumar el nombre propio (por ejemplo "15 AÑOS CAMILA") y coordiná los colores con los tonos del vestido o ambientación.',
+      dedicatoria: 'Que tus quince marquen el inicio de una etapa luminosa, libre y fiel a tus sueños, rodeada de amistades verdaderas.'
+    },
+    {
+      frase: 'FELICES 18',
+      plantillaId: 'rojo-bistro',
+      forma: 'banderola',
+      patron: 'diagonales',
+      fuente: 'moderna',
+      iconoPunta: '★',
+      papel: 'papel ilustración mate de 220 g',
+      espacio: 'sobre la mesa de snacks o pared principal del encuentro con amigos',
+      consejo: 'Solo ocupa 5 hojas A4 (incluyendo extremos decorativos), ideal para preparar a último momento con gran impacto visual.',
+      dedicatoria: 'Llegan los dieciocho con nuevos caminos por elegir: que nunca pierdas tu curiosidad, tu humor ni la valentía de intentar.'
+    },
+    {
+      frase: 'FELICES 30',
+      plantillaId: 'marino-banderola',
+      forma: 'banderola',
+      patron: 'marco',
+      fuente: 'editorial',
+      iconoPunta: '✦',
+      papel: 'cartulina blanca mate de 240 g con acabado sobrio',
+      espacio: 'en la pared de la cena o brunch de cambio de década',
+      consejo: 'Cambiá el número 30 por 25, 40 o 50 en un clic y guardá el PNG de la guirnalda para usarlo también como encabezado de la invitación digital.',
+      dedicatoria: 'Bienvenida una nueva década con más claridad, mejores elecciones y la misma capacidad de disfrutar las cosas simples.'
+    },
+    {
+      frase: 'FELICES 40',
+      plantillaId: 'gala-dorada',
+      forma: 'escudo',
+      patron: 'franja',
+      fuente: 'editorial',
+      iconoPunta: '✦',
+      papel: 'cartulina gruesa de 240 g con bordes prolijos',
+      espacio: 'junto al rincón de vinos, tortas y brindis con familia y amigos',
+      consejo: 'Acompañalo con velas cálidas en la mesa baja para potenciar el brillo visual de la paleta negra y dorada sin gastar en cotillón plástico.',
+      dedicatoria: 'Cuarenta años cosechando historias reales, aprendizajes profundos y vínculos que valen oro: ¡salud por todo lo que viene!'
+    },
+    {
+      frase: 'FELICES 50',
+      plantillaId: 'kraft-artesanal',
+      forma: 'golondrina',
+      patron: 'marco',
+      fuente: 'editorial',
+      iconoPunta: '✿',
+      papel: 'cartulina crema de 240 g o papel kraft claro de 220 g',
+      espacio: 'en un almuerzo familiar largo o festejo de medio siglo',
+      consejo: 'Sumá debajo del banderín una segunda cuerda con diez fotos representativas de cada década para emocionar a todos los invitados.',
+      dedicatoria: 'Medio siglo caminado con generosidad, esfuerzo y cariño: celebrar tus cincuenta es agradecer la huella linda que dejás en cada persona.'
+    },
+    {
+      frase: 'FELICES 60',
+      plantillaId: 'botanico-salvia',
+      forma: 'escudo',
+      patron: 'marco',
+      fuente: 'editorial',
+      iconoPunta: '✿',
+      papel: 'cartulina opalina natural de 230 g',
+      espacio: 'presidiendo el comedor familiar o galería con luz de día',
+      consejo: 'La tipografía editorial serif en tamaño grande se lee sin esfuerzo desde el otro extremo del salón y luce impecable en retratos.',
+      dedicatoria: 'Sesenta años de sabiduría serena, afectos cosechados y alegría genuina: que esta nueva etapa llegue repleta de salud y disfrute.'
+    },
+    {
+      frase: 'FELIZ CUMPLE AMOR',
+      plantillaId: 'rosa-fiesta',
+      forma: 'escudo',
+      patron: 'puntos',
+      fuente: 'calida',
+      iconoPunta: '♥',
+      papel: 'cartulina blanca satinada de 220 g',
+      espacio: 'sobre el respaldo de la cama o mesa del desayuno sorpresa en pareja',
+      consejo: 'Cambiá el ícono de punta a corazón y elegí cinta roja o rosa fina para armar una sorpresa romántica en menos de quince minutos.',
+      dedicatoria: 'Celebrar tu vida es celebrar la suerte de caminar a tu lado: que este nuevo año nos regale paz, viajes y muchas risas juntos.'
+    },
+    {
+      frase: 'TE QUEREMOS MUCHO',
+      plantillaId: 'coral-confeti',
+      forma: 'triangulo',
+      patron: 'puntos',
+      fuente: 'editorial',
+      iconoPunta: '♥',
+      papel: 'cartulina blanca mate de 200 g',
+      espacio: 'en un festejo sorpresa grupal de familia o amigos cercanos',
+      consejo: 'Pedile a cada invitado que firme el reverso de una letra antes de colgar la guirnalda para que después quede como recuerdo guardado.',
+      dedicatoria: 'Más allá de los regalos, hoy queremos que sientas cuánto te valoramos y lo importante que es tu presencia en nuestras vidas.'
+    },
+    {
+      frase: 'SOPLÁ LAS VELAS',
+      plantillaId: 'rojo-bistro',
+      forma: 'golondrina',
+      patron: 'franja',
+      fuente: 'moderna',
+      iconoPunta: '★',
+      papel: 'papel ilustración de 210 g con colores nítidos',
+      espacio: 'exactamente detrás del momento de cantar el cumpleaños feliz',
+      consejo: 'Colocalo a unos 40 cm por encima de la cabeza del homenajeado sentado para que salga encuadrado justo sobre la torta.',
+      dedicatoria: 'Pedí tres deseos valientes al soplar las velas: ojalá este año te sorprenda cumpliendo incluso los que todavía no te animás a decir.'
+    },
+    {
+      frase: 'PEDÍ UN DESEO',
+      plantillaId: 'lavanda-dulce',
+      forma: 'golondrina',
+      patron: 'estrellas',
+      fuente: 'calida',
+      iconoPunta: '★',
+      papel: 'cartulina mate blanca de 220 g',
+      espacio: 'junto a una mesa de postres, cupcakes o merienda de tarde',
+      consejo: 'Esta frase corta de 11 letras queda muy equilibrada en una sola línea de 2 metros y se recorta rapidísimo.',
+      dedicatoria: 'Que cada deseo que guardás en silencio encuentre camino abierto, salud firme y buena compañía durante todo este nuevo ciclo.'
+    },
+    {
+      frase: '¡SORPRESA!',
+      plantillaId: 'arcoiris-alegre',
+      forma: 'banderola',
+      patron: 'diagonales',
+      fuente: 'moderna',
+      iconoPunta: '★',
+      papel: 'cartulina brillante o mate de 220 g',
+      espacio: 'en la primera pared visible apenas se abre la puerta de casa',
+      consejo: 'Solo requiere 5 hojas A4: podés imprimirla a escondidas en la oficina o en casa y colgarla en cinco minutos con cinta de pintor.',
+      dedicatoria: '¡Sorpresa! Guardar el secreto costó trabajo, pero ver tu cara al entrar vale todo el esfuerzo: ¡muy feliz cumpleaños!'
+    },
+    {
+      frase: 'UN AÑO MÁS',
+      plantillaId: 'minimal-tinta',
+      forma: 'banderola',
+      patron: 'liso',
+      fuente: 'moderna',
+      iconoPunta: '✦',
+      papel: 'cartulina crema o blanca de 240 g con estética nórdica',
+      espacio: 'en celebraciones minimalistas, cafés de especialidad o cenas íntimas',
+      consejo: 'El diseño liso consume muy poca tinta y combina con cualquier mantel de lino, madera natural o vajilla blanca.',
+      dedicatoria: 'Un año más sumando calma, aprendizajes reales y gente buena alrededor: que los próximos meses sean todavía más plenos.'
+    },
+    {
+      frase: 'BUEN DÍA CUMPLE',
+      plantillaId: 'coral-confeti',
+      forma: 'triangulo',
+      patron: 'franja',
+      fuente: 'editorial',
+      iconoPunta: '★',
+      papel: 'cartulina de 180 a 200 g de secado rápido',
+      espacio: 'sobre la bandeja del desayuno o barra de la cocina bien temprano',
+      consejo: 'Atá los extremos a dos palitos de brochette clavados en frascos con flores para crear un mini cartel de mesa sin tocar la pared.',
+      dedicatoria: 'Arrancá tu cumpleaños con café rico, abrazos temprano y la certeza de que te espera un día hermoso desde la primera hora.'
+    },
+    {
+      frase: 'MERIENDA FESTIVA',
+      plantillaId: 'kraft-artesanal',
+      forma: 'triangulo',
+      patron: 'marco',
+      fuente: 'calida',
+      iconoPunta: '✿',
+      papel: 'papel kraft claro o cartulina ahuesada de 200 g',
+      espacio: 'en cumpleaños de tarde con mates, budines y torta casera',
+      consejo: 'Agregá ramitas de eucalipto o romero atadas en los nudos del hilo para sumar perfume y textura natural sin gastar de más.',
+      dedicatoria: 'Nada supera una tarde larga de mates, charla tranquila y torta casera para festejar tu vida como te merecés.'
+    },
+    {
+      frase: 'FELIZ CUMPLE HIJA',
+      plantillaId: 'rosa-fiesta',
+      forma: 'escudo',
+      patron: 'estrellas',
+      fuente: 'calida',
+      iconoPunta: '♥',
+      papel: 'cartulina opalina blanca de 220 g',
+      espacio: 'en su habitación al despertar o sobre el rincón de regalos',
+      consejo: 'Personalizá la frase con su nombre exacto en el estudio y bajá además la imagen panorámica de la guirnalda para enviarla al grupo familiar.',
+      dedicatoria: 'Verte crecer con esa luz propia es nuestro mayor orgullo; que nunca te falten sueños valientes ni abrazos donde descansar.'
+    },
+    {
+      frase: 'FELIZ CUMPLE HIJO',
+      plantillaId: 'marino-banderola',
+      forma: 'triangulo',
+      patron: 'diagonales',
+      fuente: 'moderna',
+      iconoPunta: '★',
+      papel: 'cartulina blanca mate de 220 g',
+      espacio: 'sobre la mesa principal o cabecera del dormitorio como sorpresa matinal',
+      consejo: 'Usá el selector de color del estudio si querés adaptar el azul marino a los colores exactos de su club o temática favorita.',
+      dedicatoria: 'Qué orgullo acompañarte otro año más: que la vida te encuentre sano, entusiasta y rodeado de amistades leales.'
+    },
+    {
+      frase: 'FELIZ CUMPLE ABUELA',
+      plantillaId: 'lavanda-dulce',
+      forma: 'escudo',
+      patron: 'marco',
+      fuente: 'editorial',
+      iconoPunta: '✿',
+      papel: 'cartulina crema de 240 g de excelente lectura',
+      espacio: 'en el comedor del almuerzo familiar con toda la familia reunida',
+      consejo: 'Elegí la fuente editorial serif para que las letras se vean grandes, claras y elegantes en todas las fotos con los nietos.',
+      dedicatoria: 'Abuela, tus abrazos y tus historias son el corazón de esta familia: deseamos que disfrutes un cumpleaños sereno y muy mimado.'
+    },
+    {
+      frase: 'FELIZ CUMPLE ABUELO',
+      plantillaId: 'kraft-artesanal',
+      forma: 'banderola',
+      patron: 'franja',
+      fuente: 'editorial',
+      iconoPunta: '✦',
+      papel: 'cartulina ahuesada de 230 g con borde firme',
+      espacio: 'en la galería o salón del encuentro familiar del fin de semana',
+      consejo: 'La paleta kraft y madera queda armoniosa tanto en interiores cálidos como en patios con mesas de madera.',
+      dedicatoria: 'Abuelo, gracias por enseñarnos con paciencia y buen humor: celebramos tu vida pidiendo mucha salud y tardes compartidas.'
+    },
+    {
+      frase: 'PINTEMOS JUNTOS',
+      plantillaId: 'colorear-bn',
+      forma: 'escudo',
+      patron: 'puntos',
+      fuente: 'moderna',
+      iconoPunta: '☆',
+      papel: 'hoja gruesa mate de 180 g apta para fibrones sin traspasar',
+      espacio: 'en una estación de arte infantil durante cumpleaños en casa o jardín',
+      consejo: 'Al imprimir solo contorno negro en A4 ahorrás hasta 85 % de tinta y transformás la decoración en una actividad grupal entretenida.',
+      dedicatoria: 'Que tu infancia siga llena de juegos compartidos, manos pintadas de colores y tardes inolvidables con tus amigos.'
+    },
+    {
+      frase: 'NOCHE DE BRINDIS',
+      plantillaId: 'gala-dorada',
+      forma: 'banderola',
+      patron: 'diagonales',
+      fuente: 'editorial',
+      iconoPunta: '✦',
+      papel: 'cartulina gruesa de 250 g con impresión intensa',
+      espacio: 'sobre una mesa de copas, luces cálidas y música tranquila',
+      consejo: 'Sumá una guirnalda de microleds a pilas entrelazada en el mismo hilo para destacar los detalles dorados en ambientes tenues.',
+      dedicatoria: 'Levantamos la copa por tu presente, por lo que superaste este año y por todos los proyectos buenos que empiezan hoy.'
+    },
+    {
+      frase: 'HECHO CON AMOR',
+      plantillaId: 'rosa-fiesta',
+      forma: 'triangulo',
+      patron: 'marco',
+      fuente: 'calida',
+      iconoPunta: '♥',
+      papel: 'cartulina texturada de 210 g',
+      espacio: 'sobre una mesa de tortas caseras y preparaciones artesanales',
+      consejo: 'Esta leyenda versátil sirve tanto para cumpleaños familiares como para baby showers, aniversarios o mesas dulces caseras.',
+      dedicatoria: 'Cada detalle de esta mesa fue pensado para recordarte cuánto te queremos y lo lindo que es celebrar tu presencia.'
+    },
+    {
+      frase: 'PICNIC DE CUMPLE',
+      plantillaId: 'botanico-salvia',
+      forma: 'golondrina',
+      patron: 'puntos',
+      fuente: 'moderna',
+      iconoPunta: '✿',
+      papel: 'cartulina resistente de 240 g o plastificada en frío',
+      espacio: 'atada entre dos árboles del parque o pérgola del patio',
+      consejo: 'Usá cordón de yute doble y dejá un metro libre a cada lado para rodear troncos anchos sin tensar las puntas del papel.',
+      dedicatoria: 'Sol, aire libre, mantas en el pasto y buena compañía: que este nuevo año tenga siempre esa misma frescura y libertad.'
+    },
+    {
+      frase: 'MESA DULCE',
+      plantillaId: 'coral-confeti',
+      forma: 'escudo',
+      patron: 'estrellas',
+      fuente: 'editorial',
+      iconoPunta: '★',
+      papel: 'cartulina opalina de 220 g recortada en curva prolija',
+      espacio: 'justo en el frente del mantel o pared detrás de la torta y los postres',
+      consejo: 'Con solo 9 letras se imprime en 5 o 6 hojas A4 y podés guardarla plana en una carpeta para reutilizarla en todos los festejos del año.',
+      dedicatoria: 'Que tu año sea tan dulce como esta mesa y tan alegre como el abrazo de todos los que vinieron hoy a celebrarte.'
+    },
+    {
+      frase: 'TORTA Y RISAS',
+      plantillaId: 'arcoiris-alegre',
+      forma: 'golondrina',
+      patron: 'puntos',
+      fuente: 'moderna',
+      iconoPunta: '★',
+      papel: 'papel ilustración mate de 200 g',
+      espacio: 'encima del rincón de la torta casera en meriendas alegres',
+      consejo: 'Su largo compacto permite colgarla incluso en cocinas chicas o comedores diarios sin ocupar toda la pared.',
+      dedicatoria: 'La fórmula imbatible de cualquier gran cumpleaños: una buena torta, risas honestas y gente que suma luz a tus días.'
+    },
+    {
+      frase: 'RECUERDO FELIZ',
+      plantillaId: 'minimal-tinta',
+      forma: 'escudo',
+      patron: 'marco',
+      fuente: 'editorial',
+      iconoPunta: '✦',
+      papel: 'cartulina algodón o opalina crema de 240 g',
+      espacio: 'en el rincón de fotos instantáneas o mural de recuerdos del festejo',
+      consejo: 'Al terminar el cumpleaños guardá los banderines apilados dentro de un sobre A4 seco: te duran impecables varios años.',
+      dedicatoria: 'Ojalá cuando mires las fotos de hoy dentro de muchos años vuelvas a sentir exactamente esta alegría y este cariño.'
+    },
+    {
+      frase: 'VIVA EL CUMPLE',
+      plantillaId: 'rojo-bistro',
+      forma: 'triangulo',
+      patron: 'franja',
+      fuente: 'editorial',
+      iconoPunta: '★',
+      papel: 'cartulina blanca de 220 g en impresión a color estándar',
+      espacio: 'en el centro del comedor familiar para una celebración clásica y alegre',
+      consejo: 'Combiná los tonos rojo y crema del diseño con servilletas lisas del mismo tono para lograr una mesa coordinada sin gastar de más.',
+      dedicatoria: '¡Que viva tu cumpleaños y todo lo bueno que construís cada día! Salud, calma y muchos abrazos en este nuevo capítulo.'
+    }
   ];
 
   const PLANTILLAS_BANDERIN = [
@@ -656,9 +1110,7 @@ function generarHubBanderines(existentes) {
 
   for (let i = 0; i < 40; i++) {
     const ap = APERTURAS_BANDERINES_40[i];
-    const est = estilos[i % estilos.length];
-    const uso = usos[(i + 3) % usos.length];
-    const lema = lemas[i % lemas.length];
+    const sp = SPECS_40[i];
 
     let tituloMsg = PLANTILLAS_BANDERIN[i](ap);
     if (normalizar(tituloMsg).includes(normalizar(hub.keyword))) {
@@ -674,7 +1126,7 @@ function generarHubBanderines(existentes) {
     existentes.slugs.add(slugMsg);
     existentes.titulosNorm.add(normalizar(tituloMsg));
 
-    const texto = `${ap} una guirnalda con la frase "${lema}" ${est}, pensada especialmente para lucirse ${uso}. Al imprimir dos banderines por hoja A4 en papel de 200 gramos lográs un acabado prolijo, firme y económico.\n\n¡Muy feliz cumpleaños! Que cada detalle preparado con cariño en este festejo refleje lo especial que sos y traiga un año nuevo repleto de alegría, salud y abrazos compartidos.`;
+    const texto = `Prepará esta guirnalda con la frase "${sp.frase}" usando ${sp.papel}, ideal para lucirse ${sp.espacio}. ${sp.consejo}\n\n${sp.dedicatoria}`;
 
     const clave = texto.normalize('NFC').replace(/\s+/g, ' ').trim().toLocaleLowerCase('es');
     if (existentes.textosNorm.has(clave)) throw new Error(`Texto duplicado en ${slugMsg}`);
@@ -688,7 +1140,16 @@ function generarHubBanderines(existentes) {
       titulo: tituloMsg,
       texto,
       creado: FECHA_HOY,
-      actualizado: FECHA_HOY
+      actualizado: FECHA_HOY,
+      banderinConfig: {
+        frase: sp.frase,
+        plantillaId: sp.plantillaId,
+        forma: sp.forma,
+        patron: sp.patron,
+        fuente: sp.fuente,
+        incluirPuntas: true,
+        iconoPunta: sp.iconoPunta
+      }
     });
   }
   return registros;

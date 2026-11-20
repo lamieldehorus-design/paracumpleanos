@@ -277,7 +277,8 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       }
 
       function generarCanvasTarjeta(opts) {
-        var tituloCard = opts.title || 'Feliz cumpleaños';
+        var mostrarTitulo = Boolean(opts.mostrarTitulo);
+        var tituloCard = mostrarTitulo ? String(opts.title || '').trim() : '';
         var textoCard = opts.body || '';
         var emojiCard = opts.emoji || '🎂';
         var subtitulo = opts.subtitulo || '';
@@ -337,7 +338,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         var famTit = fuente === 'moderna' ? 'system-ui, -apple-system, sans-serif' : 'Georgia, serif';
         var famCuerpo = fuente === 'calida' ? 'Georgia, serif' : 'system-ui, -apple-system, sans-serif';
         var titleFont = (fuente === 'calida' ? 'italic bold ' : 'bold ') + (formato === 'story' ? '48px ' : '44px ') + famTit;
-        var tLines = wrapLineas(tituloCard, 860, titleFont);
+        var tLines = tituloCard ? wrapLineas(tituloCard, 860, titleFont) : [];
         var titleLineH = formato === 'story' ? 62 : 56;
         var baseTopEmoji = formato === 'story' ? 210 : 145;
         var baseTopSub = subtitulo ? baseTopEmoji + 68 : baseTopEmoji;
@@ -346,7 +347,9 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         var baseTopTitle = fotoImg
           ? fotoTop + fotoSize + 64
           : (subtitulo ? baseTopSub + 66 : baseTopEmoji + 85);
-        var yStartBody = baseTopTitle + tLines.length * titleLineH + 30;
+        var yStartBody = tLines.length
+          ? baseTopTitle + tLines.length * titleLineH + 30
+          : (fotoImg ? fotoTop + fotoSize + 68 : (subtitulo ? baseTopSub + 76 : baseTopEmoji + 92));
         var bottomReserved = formato === 'story' ? 180 : 150;
 
         var candidatos = formato === 'story' ? [36, 32, 28] : [32, 28, 25];
@@ -437,17 +440,19 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           ctx.restore();
         }
 
-        ctx.font = titleFont;
-        ctx.fillStyle = cAcento;
-        var y = baseTopTitle;
-        for (var i = 0; i < tLines.length; i++) {
-          ctx.fillText(tLines[i], W / 2, y);
-          y += titleLineH;
+        var y = yStartBody;
+        if (tLines.length) {
+          ctx.font = titleFont;
+          ctx.fillStyle = cAcento;
+          var yt = baseTopTitle;
+          for (var i = 0; i < tLines.length; i++) {
+            ctx.fillText(tLines[i], W / 2, yt);
+            yt += titleLineH;
+          }
+          y = yt + 30;
         }
-
-        y += 30;
-        if (yStartBody + elegida.hCuerpo + bottomReserved < H) {
-          var extra = (H - (y + elegida.hCuerpo + bottomReserved)) * 0.38;
+        if (y + elegida.hCuerpo + bottomReserved < H) {
+          var extra = (H - (y + elegida.hCuerpo + bottomReserved)) * 0.42;
           y += Math.round(Math.max(0, extra));
         }
 
@@ -515,7 +520,8 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           if (slugDl && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugDl, 4);
           var visualDl = (dl.closest && dl.closest('.herr-modulo') && dl.closest('.herr-modulo').querySelector('.tarjeta-visual')) || document.querySelector('.tarjeta-visual');
           var resDl = generarCanvasTarjeta({
-            title: dl.getAttribute('data-title') || 'Feliz cumpleaños',
+            title: dl.getAttribute('data-title') || '',
+            mostrarTitulo: dl.getAttribute('data-mostrar-titulo') === '1',
             body: dl.getAttribute('data-body') || '',
             emoji: dl.getAttribute('data-emoji') || '🎂',
             fuente: dl.getAttribute('data-fuente') || '',
@@ -546,6 +552,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
           var resIg = generarCanvasTarjeta({
             title: igTitulo,
+            mostrarTitulo: ig.getAttribute('data-mostrar-titulo') === '1',
             body: igCuerpo,
             emoji: igEmoji,
             fuente: ig.getAttribute('data-fuente') || '',
@@ -597,19 +604,29 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
         var imp = e.target.closest ? e.target.closest('.btn-imprimir') : null;
         if (imp) {
+          var printMode = imp.getAttribute('data-print-mode') || '';
           var mod = imp.closest ? imp.closest('.herr-modulo') : null;
+          document.body.classList.remove('pc-print-con-solo', 'pc-print-postal', 'pc-print-banderines');
           document.querySelectorAll('.herr-modulo.pc-print-solo').forEach(function (el) {
             el.classList.remove('pc-print-solo');
           });
-          if (mod) {
+          if (printMode === 'banderines') {
+            document.body.classList.add('pc-print-banderines');
+            if (mod) {
+              document.body.classList.add('pc-print-con-solo');
+              mod.classList.add('pc-print-solo');
+            }
+          } else if (mod) {
             document.body.classList.add('pc-print-con-solo');
             mod.classList.add('pc-print-solo');
-            window.addEventListener('afterprint', function limpiarSoloPrint() {
-              document.body.classList.remove('pc-print-con-solo');
-              mod.classList.remove('pc-print-solo');
-              window.removeEventListener('afterprint', limpiarSoloPrint);
-            });
+          } else {
+            document.body.classList.add('pc-print-postal');
           }
+          window.addEventListener('afterprint', function limpiarSoloPrint() {
+            document.body.classList.remove('pc-print-con-solo', 'pc-print-postal', 'pc-print-banderines');
+            if (mod) mod.classList.remove('pc-print-solo');
+            window.removeEventListener('afterprint', limpiarSoloPrint);
+          });
           if (typeof window.print === 'function') {
             window.print();
           }

@@ -5,6 +5,7 @@ import Hermanas from '../../components/Hermanas.astro';
 import PersonalizadorTarjeta from '../../components/PersonalizadorTarjeta.astro';
 import FiltrosSegmentacion from '../../components/FiltrosSegmentacion.astro';
 import PersonalizadorAniosAniversario from '../../components/PersonalizadorAniosAniversario.astro';
+import EstudioBanderines from '../../components/EstudioBanderines.astro';
 import { hubs, POR_PAGINA, SITIO, MARCA, mensajesDe, nombreHub, migasLd } from '../../lib/contenido.ts';
 import { guiaRelacionadaParaHub } from '../../lib/editorial.ts';
 export function getStaticPaths() {
@@ -27,6 +28,7 @@ const titulo = nombreHub(hub) + ' (página ' + pagina + ') - ' + MARCA;
 const descripcion = nombreHub(hub) + ': página ' + pagina + ' de ' + total + '. Más mensajes originales listos para copiar y enviar por WhatsApp o escribir en su tarjeta.';
 const guia = guiaRelacionadaParaHub(hub);
 const esAnivPersonalizable = hub.slug === 'mas-de-10-anos-de-novios';
+const esBanderines = hub.slug === 'banderines-de-cumpleanos-para-imprimir';
 const jsonld = [migasLd([
   { name: 'Inicio', url: SITIO + '/' },
   { name: nombreHub(hub), url: SITIO + '/' + hub.slug + '/' },
@@ -55,7 +57,7 @@ const jsonld = [migasLd([
   </p>
   <p class="lead">{hub.meta}</p>
   {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="hub" /> : null}
-  <PersonalizadorTarjeta modo="hub" />
+  {esBanderines ? <EstudioBanderines modo="hub" /> : <PersonalizadorTarjeta modo="hub" />}
   <FiltrosSegmentacion mensajesTodos={msj} hub={hub} cantPaginaActual={lote.length} />
   <div class="grilla" id="grilla-mensajes">
     {lote.map(function (m) { return <TarjetaMensaje m={m} hub={hub} />; })}

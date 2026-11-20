@@ -278,26 +278,121 @@ function escaparXml(valor: string): string {
     .replace(/'/g, '&apos;');
 }
 
-export function generarSitemapXml(urls: string[], lastmod?: string): string {
-  let fecha: string | undefined;
+function esFechaIsoValida(valor: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(valor)) return false;
+  const fechaParseada = new Date(`${valor}T00:00:00.000Z`);
+  return !Number.isNaN(fechaParseada.getTime()) && fechaParseada.toISOString().slice(0, 10) === valor;
+}
 
-  if (lastmod !== undefined) {
-    const fechaParseada = new Date(`${lastmod}T00:00:00.000Z`);
-    const fechaValida =
-      /^\d{4}-\d{2}-\d{2}$/.test(lastmod) &&
-      !Number.isNaN(fechaParseada.getTime()) &&
-      fechaParseada.toISOString().slice(0, 10) === lastmod;
+export function construirMapaLastmodSitemap(
+  catalogo: ReturnType<typeof crearCatalogo>,
+  guias: { slug: string; fechaActualizacion?: string; fechaPublicacion?: string }[] = [],
+  slugsSignos: string[] = [],
+  slugsPaises: string[] = [],
+  fechaBaseSitio: string = '2026-11-20'
+): Record<string, string> {
+  if (!esFechaIsoValida(fechaBaseSitio)) {
+    throw new Error(`Fecha base lastmod inválida: ${fechaBaseSitio}`);
+  }
 
-    if (!fechaValida) {
+  const mapa: Record<string, string> = {};
+  const fechasGlobales: string[] = [fechaBaseSitio];
+
+  for (const g of guias) {
+    const f = g.fechaActualizacion || g.fechaPublicacion || fechaBaseSitio;
+    const valida = esFechaIsoValida(f) ? f : fechaBaseSitio;
+    mapa[`${SITIO}/guias/${g.slug}/`] = valida;
+    fechasGlobales.push(valida);
+  }
+
+  const maxFechaHub = new Map<string, string>();
+  for (const h of catalogo.hubs) {
+    const fHub = esFechaIsoValida(String(h.actualizado || ''))
+      ? String(h.actualizado)
+      : esFechaIsoValida(String(h.creado || ''))
+      ? String(h.creado)
+      : fechaBaseSitio;
+    let maxF = fHub;
+    const msgs = catalogo.mensajesDe(h.slug);
+    for (const m of msgs) {
+      const fMsg = esFechaIsoValida(String(m.actualizado || ''))
+        ? String(m.actualizado)
+        : esFechaIsoValida(String(m.creado || ''))
+        ? String(m.creado)
+        : fHub;
+      if (fMsg > maxF) maxF = fMsg;
+    }
+    maxFechaHub.set(h.slug, maxF);
+    mapa[`${SITIO}/${h.slug}/`] = maxF;
+    fechasGlobales.push(maxF);
+
+    const totalPags = Math.ceil(msgs.length / POR_PAGINA);
+    for (let p = 2; p <= totalPags; p++) {
+      mapa[`${SITIO}/${h.slug}/${p}/`] = maxF;
+    }
+  }
+
+  const indexables = construirSetIndexables(catalogo.todosMensajes);
+  for (const m of catalogo.todosMensajes) {
+    if (!indexables.has(m.slug)) continue;
+    const fallbackHub = maxFechaHub.get(m.categoria) || fechaBaseSitio;
+    const fMsg = esFechaIsoValida(String(m.actualizado || ''))
+      ? String(m.actualizado)
+      : esFechaIsoValida(String(m.creado || ''))
+      ? String(m.creado)
+      : fallbackHub;
+    mapa[`${SITIO}/${m.slug}/`] = fMsg;
+  }
+
+  const fechaMasRecienteSitio = fechasGlobales.sort().slice(-1)[0] || fechaBaseSitio;
+
+  for (const slugPais of slugsPaises) {
+    mapa[`${SITIO}/hitos-historicos/${slugPais}/`] = fechaBaseSitio;
+  }
+  for (const slugSigno of slugsSignos) {
+    mapa[`${SITIO}/horoscopo/${slugSigno}/`] = fechaBaseSitio;
+  }
+
+  const estaticas = [
+    `${SITIO}/`,
+    `${SITIO}/calendario/`,
+    `${SITIO}/hitos-historicos/`,
+    `${SITIO}/categorias/`,
+    `${SITIO}/herramientas/`,
+    `${SITIO}/horoscopo/`,
+    `${SITIO}/guias/`,
+    `${SITIO}/sobre-nosotros/`,
+    `${SITIO}/contacto/`,
+    `${SITIO}/privacidad/`,
+    `${SITIO}/terminos-de-uso/`
+  ];
+  for (const u of estaticas) {
+    mapa[u] = fechaMasRecienteSitio;
+  }
+
+  return mapa;
+}
+
+export function generarSitemapXml(urls: string[], lastmod?: string | Record<string, string>): string {
+  let fechaGlobal: string | undefined;
+  let mapaFechas: Record<string, string> | undefined;
+
+  if (typeof lastmod === 'string') {
+    if (!esFechaIsoValida(lastmod)) {
       throw new Error(`Fecha lastmod inválida: ${lastmod}. Usá YYYY-MM-DD o no envíes lastmod.`);
     }
-
-    fecha = lastmod;
+    fechaGlobal = lastmod;
+  } else if (lastmod && typeof lastmod === 'object') {
+    mapaFechas = lastmod;
   }
 
   const bloques = urls.map((u) => {
     const loc = `<loc>${escaparXml(u)}</loc>`;
-    const modificacion = fecha ? `<lastmod>${escaparXml(fecha)}</lastmod>` : '';
+    const fechaUrl = mapaFechas ? mapaFechas[u] : fechaGlobal;
+    if (fechaUrl !== undefined && !esFechaIsoValida(fechaUrl)) {
+      throw new Error(`Fecha lastmod inválida para ${u}: ${fechaUrl}. Usá YYYY-MM-DD.`);
+    }
+    const modificacion = fechaUrl ? `<lastmod>${escaparXml(fechaUrl)}</lastmod>` : '';
     return `  <url>${loc}${modificacion}</url>`;
   });
 

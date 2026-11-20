@@ -1,0 +1,1155 @@
+---
+import {
+  PLANTILLAS_BANDERINES,
+  CATEGORIAS_PLANTILLA_BANDERIN,
+  FORMAS_BANDERIN,
+  PATRONES_BANDERIN,
+  FUENTES_BANDERIN,
+  FRASES_RAPIDAS_BANDERIN,
+  obtenerPathFormaSvg,
+  obtenerPathInteriorSvg,
+  parsearPiezasBanderin,
+  calcularEspecificacionesA4,
+  plantillaBanderinPorId,
+  type ConfigBanderin
+} from '../lib/banderines.ts';
+
+interface Props {
+  modo?: 'hub' | 'mensaje' | 'herramientas';
+  configInicial?: Partial<ConfigBanderin> | null;
+  tituloPublicacion?: string;
+}
+
+const { modo = 'hub', configInicial = null, tituloPublicacion = '' } = Astro.props;
+const plantillaBase = plantillaBanderinPorId(configInicial?.plantillaId);
+
+const cfg: ConfigBanderin = {
+  frase: (configInicial?.frase || 'FELIZ CUMPLEAÑOS').toUpperCase(),
+  plantillaId: plantillaBase.id,
+  forma: configInicial?.forma || plantillaBase.forma,
+  patron: configInicial?.patron || plantillaBase.patron,
+  fuente: configInicial?.fuente || plantillaBase.fuente,
+  incluirPuntas: typeof configInicial?.incluirPuntas === 'boolean' ? configInicial.incluirPuntas : true,
+  iconoPunta: configInicial?.iconoPunta || plantillaBase.iconoPunta
+};
+
+const piezasIniciales = parsearPiezasBanderin(cfg.frase, {
+  incluirPuntas: cfg.incluirPuntas,
+  iconoPunta: cfg.iconoPunta
+});
+const specsIniciales = calcularEspecificacionesA4(piezasIniciales.length);
+const colorInicial = plantillaBase.colores[0];
+const uid = `eb-${modo}`;
+
+const payloadDatos = {
+  plantillas: PLANTILLAS_BANDERINES,
+  formas: FORMAS_BANDERIN,
+  fuentes: FUENTES_BANDERIN,
+  configInicial: cfg
+};
+---
+
+<section
+  class="estudio-banderines"
+  data-estudio-banderines={uid}
+  aria-labelledby={`${uid}-titulo`}
+>
+  <div class="band-estudio-head no-print">
+    <div>
+      <p class="herr-modulo-kicker">
+        {modo === 'mensaje'
+          ? 'Estudio de banderines adaptado a esta publicación · 14 × 19 cm A4'
+          : 'Estudio online de banderines · 12 plantillas listas para A4'}
+      </p>
+      <h2 id={`${uid}-titulo`}>
+        {modo === 'mensaje'
+          ? `Armá e imprimí la guirnalda "${cfg.frase}"`
+          : 'Diseñá tus banderines online y descargalos listos para imprimir en A4'}
+      </h2>
+      <p class="band-estudio-desc">
+        {modo === 'mensaje' && tituloPublicacion
+          ? `Esta publicación ya carga su frase y paleta sugerida (${plantillaBase.nombre}). Cambiá el texto, la forma o sumá tu foto/logo local antes de descargar en PNG HD o imprimir 2 banderines por hoja A4.`
+          : 'Elegí una plantilla, empezá desde cero o cargá una foto o logo desde tu equipo (100% privado en tu navegador). Exportá la guirnalda completa en PNG o imprimí hojas A4 con guías de corte y perforación.'}
+      </p>
+    </div>
+    <div class="band-specs-badge" data-band-badge>
+      {specsIniciales.piezas} piezas · {specsIniciales.hojasA4} {specsIniciales.hojasA4 === 1 ? 'hoja A4' : 'hojas A4'} · ~{(specsIniciales.largoGuirnaldaCm / 100).toFixed(1)} m
+    </div>
+  </div>
+
+  <!-- 1. GALERÍA VISUAL DE PLANTILLAS + ACCIONES (INSPIRADO EN ESTUDIO PROFESIONAL) -->
+  <div class="band-galeria-bloque no-print">
+    <div class="band-galeria-top">
+      <h3>1. Elegí un diseño o empezá con tu propia idea</h3>
+      <div class="band-filtros-bar" role="tablist" aria-label="Filtrar plantillas de banderines por estilo">
+        {CATEGORIAS_PLANTILLA_BANDERIN.map((cat, idx) => (
+          <button
+            type="button"
+            role="tab"
+            class={`band-filtro-btn${idx === 0 ? ' activo' : ''}`}
+            data-band-filtro={cat.id}
+            aria-selected={idx === 0 ? 'true' : 'false'}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="band-galeria-grid" data-band-galeria>
+      <button type="button" class="band-card band-card--accion" data-band-libre>
+        <span class="band-card-accion-ico" aria-hidden="true">✏️</span>
+        <span class="band-card-nombre">Crear diseño libre</span>
+        <span class="band-card-sub">Base limpia para elegir tus colores, forma y texto</span>
+      </button>
+
+      <label class="band-card band-card--accion band-card--upload">
+        <input type="file" accept="image/*" class="band-upload-input" data-band-foto-input />
+        <span class="band-card-accion-ico" aria-hidden="true">🖼️</span>
+        <span class="band-card-nombre">Cargar foto / logo</span>
+        <span class="band-card-sub">100% local en tu navegador · puntas o cada banderín</span>
+      </label>
+
+      {PLANTILLAS_BANDERINES.map((p) => {
+        const c0 = p.colores[0];
+        const c1 = p.colores[1] || c0;
+        const pathOut = obtenerPathFormaSvg(p.forma);
+        const pathIn = obtenerPathInteriorSvg(p.forma);
+        const activo = p.id === cfg.plantillaId;
+        return (
+          <button
+            type="button"
+            class={`band-card${activo ? ' activo' : ''}`}
+            data-band-plantilla={p.id}
+            data-band-cat={p.categoria}
+            aria-pressed={activo ? 'true' : 'false'}
+          >
+            <span class="band-card-preview" aria-hidden="true">
+              <svg viewBox="0 0 220 120" class="band-mini-svg">
+                <line x1="8" y1="14" x2="212" y2="14" stroke="#9ca3af" stroke-width="2" />
+                <g transform="translate(14,10) scale(0.38)">
+                  <path d={pathOut} fill={c0.bg} stroke={c0.border} stroke-width="6" />
+                  <path d={pathIn} fill="none" stroke={c0.accent} stroke-width="2.5" stroke-opacity="0.65" />
+                  <text x="100" y="138" text-anchor="middle" dominant-baseline="central" font-size="92" font-weight="700" fill={c0.text}>F</text>
+                </g>
+                <g transform="translate(74,14) scale(0.38)">
+                  <path d={pathOut} fill={c1.bg} stroke={c1.border} stroke-width="6" />
+                  <path d={pathIn} fill="none" stroke={c1.accent} stroke-width="2.5" stroke-opacity="0.65" />
+                  <text x="100" y="138" text-anchor="middle" dominant-baseline="central" font-size="92" font-weight="700" fill={c1.text}>E</text>
+                </g>
+                <g transform="translate(134,10) scale(0.38)">
+                  <path d={pathOut} fill={c0.bg} stroke={c0.border} stroke-width="6" />
+                  <path d={pathIn} fill="none" stroke={c0.accent} stroke-width="2.5" stroke-opacity="0.65" />
+                  <text x="100" y="138" text-anchor="middle" dominant-baseline="central" font-size="92" font-weight="700" fill={c0.text}>{p.iconoPunta}</text>
+                </g>
+              </svg>
+            </span>
+            <span class="band-card-nombre">{p.nombre}</span>
+            <span class="band-card-sub">{p.descripcion}</span>
+          </button>
+        );
+      })}
+    </div>
+
+    <div class="band-foto-barra" data-band-foto-barra hidden>
+      <span data-band-foto-estado>✓ Imagen cargada localmente</span>
+      <select data-band-foto-modo aria-label="Dónde aplicar tu foto o logo">
+        <option value="puntas" selected>En los banderines decorativos de las puntas</option>
+        <option value="todos">Como medallón en todos los banderines</option>
+      </select>
+      <button type="button" class="pers-chip-btn" data-band-foto-quitar>Quitar imagen</button>
+    </div>
+  </div>
+
+  <!-- 2. CONTROLES DE PERSONALIZACIÓN -->
+  <div class="band-controles-bloque no-print">
+    <h3>2. Personalizá la frase, forma, tramado y colores</h3>
+
+    <div class="band-frase-fila">
+      <div class="band-campo band-campo--frase">
+        <label for={`${uid}-frase`}>Frase de la guirnalda (cada letra o número genera 1 banderín)</label>
+        <input
+          id={`${uid}-frase`}
+          type="text"
+          maxlength="32"
+          value={cfg.frase}
+          placeholder="Ej.: FELIZ 30 SOFÍA"
+          autocomplete="off"
+          data-band-frase
+        />
+      </div>
+      <div class="band-presets-rapidos" aria-label="Frases rápidas sugeridas">
+        {FRASES_RAPIDAS_BANDERIN.map((f) => (
+          <button type="button" class="pers-chip-btn pers-chip-texto" data-band-frase-preset={f}>
+            {f}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="band-grid-controles">
+      <div class="band-campo">
+        <label for={`${uid}-forma`}>Forma del banderín (14 × 19 cm)</label>
+        <select id={`${uid}-forma`} data-band-forma>
+          {FORMAS_BANDERIN.map((f) => (
+            <option value={f.id} selected={f.id === cfg.forma}>
+              {f.nombre} ({f.medida})
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div class="band-campo">
+        <label for={`${uid}-patron`}>Trama y acabado interior</label>
+        <select id={`${uid}-patron`} data-band-patron>
+          {PATRONES_BANDERIN.map((p) => (
+            <option value={p.id} selected={p.id === cfg.patron}>
+              {p.nombre}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div class="band-campo">
+        <label for={`${uid}-fuente`}>Tipografía de las letras</label>
+        <select id={`${uid}-fuente`} data-band-fuente>
+          {FUENTES_BANDERIN.map((f) => (
+            <option value={f.id} selected={f.id === cfg.fuente}>
+              {f.nombre}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div class="band-campo">
+        <label for={`${uid}-icono`}>Símbolo en las puntas</label>
+        <select id={`${uid}-icono`} data-band-icono>
+          <option value="★" selected={cfg.iconoPunta === '★'}>★ Estrella clásica</option>
+          <option value="✦" selected={cfg.iconoPunta === '✦'}>✦ Destello gala</option>
+          <option value="♥" selected={cfg.iconoPunta === '♥'}>♥ Corazón</option>
+          <option value="✿" selected={cfg.iconoPunta === '✿'}>✿ Flor botánica</option>
+          <option value="☆" selected={cfg.iconoPunta === '☆'}>☆ Estrella contorno</option>
+          <option value="🎂" selected={cfg.iconoPunta === '🎂'}>🎂 Torta</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="band-colores-fila">
+      <label class="band-color-item">
+        <span>Fondo</span>
+        <input type="color" value={colorInicial.bg} data-band-color-bg />
+      </label>
+      <label class="band-color-item">
+        <span>Borde</span>
+        <input type="color" value={colorInicial.border} data-band-color-border />
+      </label>
+      <label class="band-color-item">
+        <span>Letra</span>
+        <input type="color" value={colorInicial.text} data-band-color-text />
+      </label>
+      <label class="band-check-label">
+        <input type="checkbox" checked={cfg.incluirPuntas} data-band-puntas />
+        <span>Sumar banderines decorativos en las puntas</span>
+      </label>
+      <label class="band-check-label">
+        <input type="checkbox" checked={true} data-band-guias />
+        <span>Guías de recorte y perforación A4</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- 3. VISTA PREVIA EN VIVO DE LA GUIRNALDA COLGADA -->
+  <div class="band-escena-bloque no-print">
+    <div class="band-escena-head">
+      <h3>3. Vista previa de tu guirnalda armada</h3>
+      <span class="band-escena-meta" data-band-escena-meta>
+        Cordón recomendado: {(specsIniciales.cordonSugeridoCm / 100).toFixed(2)} m · Papel sugerido: cartulina u opalina 180-240 g
+      </span>
+    </div>
+    <div class="band-guirnalda-escena" data-band-guirnalda aria-live="polite"></div>
+  </div>
+
+  <!-- 4. ACCIONES DE DESCARGA HD E IMPRESIÓN SOLO BANDERINES A4 -->
+  <div class="band-acciones-panel no-print">
+    <div class="acciones">
+      <button type="button" class="btn btn-imprimir" data-print-mode="banderines">
+        🖨️ Imprimir / Guardar PDF (solo hojas A4)
+      </button>
+      <button type="button" class="btn btn-band-guirnalda" data-band-dl-guirnalda>
+        ⬇️ Descargar guirnalda PNG (HD)
+      </button>
+      <button type="button" class="btn btn-band-hoja" data-band-dl-hoja>
+        📄 Descargar hoja A4 en PNG
+      </button>
+      <button type="button" class="btn btn-band-todas" data-band-dl-todas>
+        📦 Descargar todas las hojas A4
+      </button>
+    </div>
+
+    <div class="band-hoja-selector-fila">
+      <label for={`${uid}-hoja-sel`}>Hoja A4 para descarga individual:</label>
+      <select id={`${uid}-hoja-sel`} data-band-hoja-sel></select>
+      <span class="band-tip-print">
+        Al imprimir, activá «Gráficos de fondo» en el diálogo del navegador para conservar todos los colores.
+      </span>
+    </div>
+  </div>
+
+  <!-- 5. ÁREA DE HOJAS A4 (2 BANDERINES DE 14×19 CM POR HOJA) -->
+  <details class="band-hojas-details" data-band-hojas-details>
+    <summary class="no-print" data-band-hojas-summary>
+      Ver desglose de {specsIniciales.hojasA4} hojas A4 listas para imprimir (2 banderines por hoja)
+    </summary>
+    <div class="banderines-print-area" data-band-print-area></div>
+  </details>
+
+  <script type="application/json" data-band-payload set:html={JSON.stringify(payloadDatos)} />
+</section>
+
+<script is:inline>
+  (function () {
+    if (window.__pcEstudioBanderinesInit) return;
+    window.__pcEstudioBanderinesInit = true;
+
+    function escaparHtml(s) {
+      return String(s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function slugifyFrase(s) {
+      return String(s || 'banderines')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 40) || 'banderines';
+    }
+
+    function obtenerPathForma(forma) {
+      if (forma === 'golondrina') return 'M 10 12 L 190 12 L 190 256 L 100 202 L 10 256 Z';
+      if (forma === 'escudo') return 'M 10 12 L 190 12 L 190 176 Q 190 236 100 258 Q 10 236 10 176 Z';
+      if (forma === 'banderola') return 'M 14 12 L 186 12 L 186 244 Q 186 254 176 254 L 24 254 Q 14 254 14 244 Z';
+      return 'M 10 12 L 190 12 L 100 258 Z';
+    }
+
+    function obtenerPathInterior(forma) {
+      if (forma === 'golondrina') return 'M 20 22 L 180 22 L 180 238 L 100 189 L 20 238 Z';
+      if (forma === 'escudo') return 'M 20 22 L 180 22 L 180 173 Q 180 224 100 245 Q 20 224 20 173 Z';
+      if (forma === 'banderola') return 'M 24 22 L 176 22 L 176 238 Q 176 244 170 244 L 30 244 Q 24 244 24 238 Z';
+      return 'M 23 22 L 177 22 L 100 236 Z';
+    }
+
+    function trazarFormaCanvas(ctx, forma, x, y, w, h) {
+      var sx = w / 200;
+      var sy = h / 270;
+      ctx.beginPath();
+      if (forma === 'golondrina') {
+        ctx.moveTo(x + 10 * sx, y + 12 * sy);
+        ctx.lineTo(x + 190 * sx, y + 12 * sy);
+        ctx.lineTo(x + 190 * sx, y + 256 * sy);
+        ctx.lineTo(x + 100 * sx, y + 202 * sy);
+        ctx.lineTo(x + 10 * sx, y + 256 * sy);
+        ctx.closePath();
+      } else if (forma === 'escudo') {
+        ctx.moveTo(x + 10 * sx, y + 12 * sy);
+        ctx.lineTo(x + 190 * sx, y + 12 * sy);
+        ctx.lineTo(x + 190 * sx, y + 176 * sy);
+        ctx.quadraticCurveTo(x + 190 * sx, y + 236 * sy, x + 100 * sx, y + 258 * sy);
+        ctx.quadraticCurveTo(x + 10 * sx, y + 236 * sy, x + 10 * sx, y + 176 * sy);
+        ctx.closePath();
+      } else if (forma === 'banderola') {
+        ctx.moveTo(x + 14 * sx, y + 12 * sy);
+        ctx.lineTo(x + 186 * sx, y + 12 * sy);
+        ctx.lineTo(x + 186 * sx, y + 244 * sy);
+        ctx.quadraticCurveTo(x + 186 * sx, y + 254 * sy, x + 176 * sx, y + 254 * sy);
+        ctx.lineTo(x + 24 * sx, y + 254 * sy);
+        ctx.quadraticCurveTo(x + 14 * sx, y + 254 * sy, x + 14 * sx, y + 244 * sy);
+        ctx.closePath();
+      } else {
+        ctx.moveTo(x + 10 * sx, y + 12 * sy);
+        ctx.lineTo(x + 190 * sx, y + 12 * sy);
+        ctx.lineTo(x + 100 * sx, y + 258 * sy);
+        ctx.closePath();
+      }
+    }
+
+    function trazarInteriorCanvas(ctx, forma, x, y, w, h) {
+      var sx = w / 200;
+      var sy = h / 270;
+      ctx.beginPath();
+      if (forma === 'golondrina') {
+        ctx.moveTo(x + 20 * sx, y + 22 * sy);
+        ctx.lineTo(x + 180 * sx, y + 22 * sy);
+        ctx.lineTo(x + 180 * sx, y + 238 * sy);
+        ctx.lineTo(x + 100 * sx, y + 189 * sy);
+        ctx.lineTo(x + 20 * sx, y + 238 * sy);
+        ctx.closePath();
+      } else if (forma === 'escudo') {
+        ctx.moveTo(x + 20 * sx, y + 22 * sy);
+        ctx.lineTo(x + 180 * sx, y + 22 * sy);
+        ctx.lineTo(x + 180 * sx, y + 173 * sy);
+        ctx.quadraticCurveTo(x + 180 * sx, y + 224 * sy, x + 100 * sx, y + 245 * sy);
+        ctx.quadraticCurveTo(x + 20 * sx, y + 224 * sy, x + 20 * sx, y + 173 * sy);
+        ctx.closePath();
+      } else if (forma === 'banderola') {
+        ctx.moveTo(x + 24 * sx, y + 22 * sy);
+        ctx.lineTo(x + 176 * sx, y + 22 * sy);
+        ctx.lineTo(x + 176 * sx, y + 238 * sy);
+        ctx.quadraticCurveTo(x + 176 * sx, y + 244 * sy, x + 170 * sx, y + 244 * sy);
+        ctx.lineTo(x + 30 * sx, y + 244 * sy);
+        ctx.quadraticCurveTo(x + 24 * sx, y + 244 * sy, x + 24 * sx, y + 238 * sy);
+        ctx.closePath();
+      } else {
+        ctx.moveTo(x + 23 * sx, y + 22 * sy);
+        ctx.lineTo(x + 177 * sx, y + 22 * sy);
+        ctx.lineTo(x + 100 * sx, y + 236 * sy);
+        ctx.closePath();
+      }
+    }
+
+    function dividirEnFilasGuirnalda(piezas, fraseRaw) {
+      if (piezas.length <= 10) return [piezas];
+      var palabras = String(fraseRaw || '').trim().split(/\s+/).filter(Boolean);
+      if (palabras.length >= 2) {
+        var tienePuntaIni = piezas[0] && piezas[0].esDecorativo;
+        var tienePuntaFin = piezas[piezas.length - 1] && piezas[piezas.length - 1].esDecorativo;
+        var objetivo = piezas.length / 2;
+        var mejorCorte = -1;
+        var mejorDiff = Infinity;
+        var acum = tienePuntaIni ? 1 : 0;
+        for (var p = 0; p < palabras.length - 1; p++) {
+          acum += Array.from(palabras[p]).length;
+          var diff = Math.abs(acum - objetivo);
+          if (diff < mejorDiff && acum > (tienePuntaIni ? 1 : 0) && acum < piezas.length - (tienePuntaFin ? 1 : 0)) {
+            mejorDiff = diff;
+            mejorCorte = acum;
+          }
+        }
+        if (mejorCorte > 0) {
+          return [piezas.slice(0, mejorCorte), piezas.slice(mejorCorte)];
+        }
+      }
+      var mitad = Math.ceil(piezas.length / 2);
+      return [piezas.slice(0, mitad), piezas.slice(mitad)];
+    }
+
+    function inicializarEstudio(root) {
+      var payloadEl = root.querySelector('[data-band-payload]');
+      if (!payloadEl) return;
+      var data;
+      try {
+        data = JSON.parse(payloadEl.textContent || '{}');
+      } catch (_) {
+        return;
+      }
+
+      var plantillas = data.plantillas || [];
+      var fuentes = data.fuentes || [];
+      var cfgIni = data.configInicial || {};
+
+      var elBadge = root.querySelector('[data-band-badge]');
+      var elEscenaMeta = root.querySelector('[data-band-escena-meta]');
+      var elGuirnalda = root.querySelector('[data-band-guirnalda]');
+      var elPrintArea = root.querySelector('[data-band-print-area]');
+      var elHojasSummary = root.querySelector('[data-band-hojas-summary]');
+      var elHojaSel = root.querySelector('[data-band-hoja-sel]');
+
+      var inpFrase = root.querySelector('[data-band-frase]');
+      var selForma = root.querySelector('[data-band-forma]');
+      var selPatron = root.querySelector('[data-band-patron]');
+      var selFuente = root.querySelector('[data-band-fuente]');
+      var selIcono = root.querySelector('[data-band-icono]');
+      var inpColorBg = root.querySelector('[data-band-color-bg]');
+      var inpColorBorder = root.querySelector('[data-band-color-border]');
+      var inpColorText = root.querySelector('[data-band-color-text]');
+      var chkPuntas = root.querySelector('[data-band-puntas]');
+      var chkGuias = root.querySelector('[data-band-guias]');
+
+      var inpFoto = root.querySelector('[data-band-foto-input]');
+      var barraFoto = root.querySelector('[data-band-foto-barra]');
+      var estadoFoto = root.querySelector('[data-band-foto-estado]');
+      var selFotoModo = root.querySelector('[data-band-foto-modo]');
+      var btnFotoQuitar = root.querySelector('[data-band-foto-quitar]');
+      var btnLibre = root.querySelector('[data-band-libre]');
+
+      var btnDlGuirnalda = root.querySelector('[data-band-dl-guirnalda]');
+      var btnDlHoja = root.querySelector('[data-band-dl-hoja]');
+      var btnDlTodas = root.querySelector('[data-band-dl-todas]');
+
+      var estado = {
+        plantillaId: cfgIni.plantillaId || (plantillas[0] && plantillas[0].id) || 'rosa-fiesta',
+        frase: cfgIni.frase || 'FELIZ CUMPLEAÑOS',
+        forma: cfgIni.forma || 'triangulo',
+        patron: cfgIni.patron || 'marco',
+        fuente: cfgIni.fuente || 'editorial',
+        iconoPunta: cfgIni.iconoPunta || '★',
+        incluirPuntas: typeof cfgIni.incluirPuntas === 'boolean' ? cfgIni.incluirPuntas : true,
+        mostrarGuias: true,
+        colorPersonalizado: false,
+        colorBg: '#fdf2f8',
+        colorBorder: '#e11d74',
+        colorText: '#9f1239',
+        fotoDataUrl: '',
+        fotoImg: null,
+        fotoModo: 'puntas'
+      };
+
+      function getPlantillaActual() {
+        for (var i = 0; i < plantillas.length; i++) {
+          if (plantillas[i].id === estado.plantillaId) return plantillas[i];
+        }
+        return plantillas[0];
+      }
+
+      function getFuenteActual() {
+        for (var i = 0; i < fuentes.length; i++) {
+          if (fuentes[i].id === estado.fuente) return fuentes[i];
+        }
+        return fuentes[0] || { cssFamily: 'Georgia, serif', canvasFamily: '700 %SIZE%px Georgia, serif' };
+      }
+
+      function getColorPieza(idx) {
+        if (estado.colorPersonalizado) {
+          return {
+            bg: estado.colorBg,
+            border: estado.colorBorder,
+            text: estado.colorText,
+            accent: estado.colorBorder
+          };
+        }
+        var p = getPlantillaActual();
+        var lista = (p && p.colores && p.colores.length) ? p.colores : [{ bg: '#fdf2f8', border: '#e11d74', text: '#9f1239', accent: '#f472b6' }];
+        return lista[idx % lista.length];
+      }
+
+      function construirPiezas() {
+        var limpia = String(estado.frase || '').replace(/\s+/g, ' ').trim().toUpperCase().slice(0, 32) || 'FELIZ CUMPLEAÑOS';
+        var chars = Array.from(limpia).filter(function (c) { return c.trim().length > 0; });
+        var piezas = [];
+        if (estado.incluirPuntas) {
+          piezas.push({ caracter: estado.iconoPunta || '★', esDecorativo: true });
+        }
+        for (var i = 0; i < chars.length; i++) {
+          piezas.push({ caracter: chars[i], esDecorativo: false });
+        }
+        if (estado.incluirPuntas) {
+          piezas.push({ caracter: estado.iconoPunta || '★', esDecorativo: true });
+        }
+        return { fraseLimpia: limpia, piezas: piezas };
+      }
+
+      function debeMostrarFoto(pieza) {
+        if (!estado.fotoDataUrl) return false;
+        if (estado.fotoModo === 'todos') return true;
+        return Boolean(pieza.esDecorativo);
+      }
+
+      function construirPatronSvg(patron, color, clipId) {
+        if (patron === 'franja') {
+          return (
+            '<g clip-path="url(#' + clipId + ')">' +
+            '<rect x="10" y="12" width="180" height="32" fill="' + color.border + '" fill-opacity="0.16" />' +
+            '<line x1="10" y1="44" x2="190" y2="44" stroke="' + color.accent + '" stroke-width="2.5" stroke-opacity="0.7" />' +
+            '</g>'
+          );
+        }
+        if (patron === 'puntos') {
+          var pts = [[38, 60], [162, 60], [56, 102], [144, 102], [44, 152], [156, 152], [74, 198], [126, 198], [100, 48], [100, 224]];
+          var circles = pts.map(function (pt) {
+            return '<circle cx="' + pt[0] + '" cy="' + pt[1] + '" r="5" fill="' + color.accent + '" fill-opacity="0.34" />';
+          }).join('');
+          return '<g clip-path="url(#' + clipId + ')">' + circles + '</g>';
+        }
+        if (patron === 'estrellas') {
+          var stars = [[45, 64], [155, 64], [52, 160], [148, 160], [100, 50], [100, 212]];
+          var stHtml = stars.map(function (st) {
+            return '<text x="' + st[0] + '" y="' + st[1] + '" text-anchor="middle" font-size="14" fill="' + color.accent + '" fill-opacity="0.55">✦</text>';
+          }).join('');
+          return '<g clip-path="url(#' + clipId + ')">' + stHtml + '</g>';
+        }
+        if (patron === 'diagonales') {
+          var lines = [];
+          for (var d = -120; d <= 260; d += 26) {
+            lines.push('<line x1="' + d + '" y1="0" x2="' + (d + 140) + '" y2="270" stroke="' + color.accent + '" stroke-width="6" stroke-opacity="0.16" />');
+          }
+          return '<g clip-path="url(#' + clipId + ')">' + lines.join('') + '</g>';
+        }
+        return '';
+      }
+
+      function renderPiezaSvg(pieza, idx, uidSuffix) {
+        var c = getColorPieza(idx);
+        var pathOut = obtenerPathForma(estado.forma);
+        var pathIn = obtenerPathInterior(estado.forma);
+        var fuenteObj = getFuenteActual();
+        var clipId = 'bp-clip-' + uidSuffix + '-' + idx;
+        var fotoClipId = 'bp-foto-' + uidSuffix + '-' + idx;
+        var dashAttr = estado.mostrarGuias ? ' stroke-dasharray="6,4"' : '';
+        var yTexto = estado.forma === 'triangulo' ? 124 : 138;
+        var conFoto = debeMostrarFoto(pieza);
+        var fotoMarkup = '';
+
+        if (conFoto) {
+          if (pieza.esDecorativo) {
+            fotoMarkup =
+              '<defs><clipPath id="' + fotoClipId + '"><circle cx="100" cy="120" r="46" /></clipPath></defs>' +
+              '<image href="' + estado.fotoDataUrl + '" x="54" y="74" width="92" height="92" preserveAspectRatio="xMidYMid slice" clip-path="url(#' + fotoClipId + ')" />' +
+              '<circle cx="100" cy="120" r="46" fill="none" stroke="' + c.border + '" stroke-width="3" />';
+          } else {
+            yTexto = estado.forma === 'triangulo' ? 148 : 162;
+            fotoMarkup =
+              '<defs><clipPath id="' + fotoClipId + '"><circle cx="100" cy="64" r="24" /></clipPath></defs>' +
+              '<image href="' + estado.fotoDataUrl + '" x="76" y="40" width="48" height="48" preserveAspectRatio="xMidYMid slice" clip-path="url(#' + fotoClipId + ')" />' +
+              '<circle cx="100" cy="64" r="24" fill="none" stroke="' + c.border + '" stroke-width="2" />';
+          }
+        }
+
+        var textoMarkup = (conFoto && pieza.esDecorativo)
+          ? ''
+          : '<text x="100" y="' + yTexto + '" text-anchor="middle" dominant-baseline="central" font-family="' + escaparHtml(fuenteObj.cssFamily) + '" font-size="' + (pieza.esDecorativo ? 78 : (conFoto ? 76 : 92)) + '" font-weight="700" font-style="' + (estado.fuente === 'calida' ? 'italic' : 'normal') + '" fill="' + c.text + '">' + escaparHtml(pieza.caracter) + '</text>';
+
+        var perforaciones = estado.mostrarGuias
+          ? '<circle cx="28" cy="28" r="5" fill="#ffffff" stroke="' + c.border + '" stroke-width="2" />' +
+            '<circle cx="172" cy="28" r="5" fill="#ffffff" stroke="' + c.border + '" stroke-width="2" />'
+          : '';
+
+        var marcoInterior = estado.patron !== 'liso'
+          ? '<path d="' + pathIn + '" fill="none" stroke="' + c.border + '" stroke-opacity="0.45" stroke-width="1.8" />'
+          : '';
+
+        return (
+          '<svg viewBox="0 0 200 270" class="band-pieza-svg" role="img" aria-label="Banderín ' + escaparHtml(pieza.caracter) + '">' +
+          '<defs><clipPath id="' + clipId + '"><path d="' + pathOut + '" /></clipPath></defs>' +
+          '<path d="' + pathOut + '" fill="' + c.bg + '" stroke="' + c.border + '" stroke-width="4"' + dashAttr + ' />' +
+          construirPatronSvg(estado.patron, c, clipId) +
+          marcoInterior +
+          perforaciones +
+          fotoMarkup +
+          textoMarkup +
+          '</svg>'
+        );
+      }
+
+      function dibujarPiezaCanvas(ctx, pieza, idx, x, y, w, h) {
+        var c = getColorPieza(idx);
+        var sx = w / 200;
+        var sy = h / 270;
+        var fuenteObj = getFuenteActual();
+
+        ctx.save();
+        trazarFormaCanvas(ctx, estado.forma, x, y, w, h);
+        ctx.fillStyle = c.bg;
+        ctx.fill();
+
+        // Patron interior recortado a la forma
+        ctx.save();
+        trazarFormaCanvas(ctx, estado.forma, x, y, w, h);
+        ctx.clip();
+        if (estado.patron === 'franja') {
+          ctx.fillStyle = c.border;
+          ctx.globalAlpha = 0.16;
+          ctx.fillRect(x + 10 * sx, y + 12 * sy, 180 * sx, 32 * sy);
+          ctx.globalAlpha = 0.7;
+          ctx.strokeStyle = c.accent;
+          ctx.lineWidth = 2.5 * sx;
+          ctx.beginPath();
+          ctx.moveTo(x + 10 * sx, y + 44 * sy);
+          ctx.lineTo(x + 190 * sx, y + 44 * sy);
+          ctx.stroke();
+        } else if (estado.patron === 'puntos') {
+          var pts = [[38, 60], [162, 60], [56, 102], [144, 102], [44, 152], [156, 152], [74, 198], [126, 198], [100, 48], [100, 224]];
+          ctx.fillStyle = c.accent;
+          ctx.globalAlpha = 0.34;
+          for (var p = 0; p < pts.length; p++) {
+            ctx.beginPath();
+            ctx.arc(x + pts[p][0] * sx, y + pts[p][1] * sy, 5 * sx, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        } else if (estado.patron === 'estrellas') {
+          var stars = [[45, 64], [155, 64], [52, 160], [148, 160], [100, 50], [100, 212]];
+          ctx.fillStyle = c.accent;
+          ctx.globalAlpha = 0.55;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.font = Math.round(14 * sx) + 'px system-ui, sans-serif';
+          for (var s = 0; s < stars.length; s++) {
+            ctx.fillText('✦', x + stars[s][0] * sx, y + stars[s][1] * sy);
+          }
+        } else if (estado.patron === 'diagonales') {
+          ctx.strokeStyle = c.accent;
+          ctx.globalAlpha = 0.16;
+          ctx.lineWidth = 6 * sx;
+          for (var d = -120; d <= 260; d += 26) {
+            ctx.beginPath();
+            ctx.moveTo(x + d * sx, y);
+            ctx.lineTo(x + (d + 140) * sx, y + 270 * sy);
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+
+        // Contorno exterior (con guias punteadas opcionales)
+        trazarFormaCanvas(ctx, estado.forma, x, y, w, h);
+        ctx.strokeStyle = c.border;
+        ctx.lineWidth = 4 * sx;
+        if (estado.mostrarGuias) ctx.setLineDash([7 * sx, 5 * sx]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Marco interior
+        if (estado.patron !== 'liso') {
+          ctx.save();
+          trazarInteriorCanvas(ctx, estado.forma, x, y, w, h);
+          ctx.strokeStyle = c.border;
+          ctx.globalAlpha = 0.45;
+          ctx.lineWidth = 1.8 * sx;
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Perforaciones para pasar cordon
+        if (estado.mostrarGuias) {
+          [[28, 28], [172, 28]].forEach(function (hole) {
+            ctx.beginPath();
+            ctx.arc(x + hole[0] * sx, y + hole[1] * sy, 5 * sx, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.strokeStyle = c.border;
+            ctx.lineWidth = 2 * sx;
+            ctx.stroke();
+          });
+        }
+
+        // Foto / logo local opcional
+        var conFoto = Boolean(estado.fotoImg && debeMostrarFoto(pieza));
+        var yTexto = estado.forma === 'triangulo' ? 124 : 138;
+        if (conFoto) {
+          var cx = x + 100 * sx;
+          var cy = pieza.esDecorativo ? (y + 120 * sy) : (y + 64 * sy);
+          var rad = (pieza.esDecorativo ? 46 : 24) * sx;
+          if (!pieza.esDecorativo) yTexto = estado.forma === 'triangulo' ? 148 : 162;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+          ctx.clip();
+          var iw = estado.fotoImg.naturalWidth || 1;
+          var ih = estado.fotoImg.naturalHeight || 1;
+          var esc = Math.max((rad * 2) / iw, (rad * 2) / ih);
+          var dw = iw * esc;
+          var dh = ih * esc;
+          ctx.drawImage(estado.fotoImg, cx - dw / 2, cy - dh / 2, dw, dh);
+          ctx.restore();
+
+          ctx.beginPath();
+          ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+          ctx.strokeStyle = c.border;
+          ctx.lineWidth = (pieza.esDecorativo ? 3 : 2) * sx;
+          ctx.stroke();
+        }
+
+        // Caracter / icono
+        if (!(conFoto && pieza.esDecorativo)) {
+          var tamLetra = Math.round((pieza.esDecorativo ? 78 : (conFoto ? 76 : 92)) * sx);
+          ctx.fillStyle = c.text;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.font = fuenteObj.canvasFamily.replace('%SIZE%', String(tamLetra));
+          ctx.fillText(pieza.caracter, x + 100 * sx, y + yTexto * sy);
+        }
+
+        ctx.restore();
+      }
+
+      function renderTodo() {
+        var res = construirPiezas();
+        var piezas = res.piezas;
+        var total = piezas.length;
+        var hojasCount = Math.ceil(total / 2);
+        var largoCm = Math.round(total * 14 + Math.max(0, total - 1) * 2.5);
+        var cordonCm = largoCm + 70;
+
+        if (elBadge) {
+          elBadge.textContent =
+            total + ' piezas · ' + hojasCount + (hojasCount === 1 ? ' hoja A4' : ' hojas A4') + ' · ~' + (largoCm / 100).toFixed(1) + ' m';
+        }
+        if (elEscenaMeta) {
+          elEscenaMeta.textContent =
+            'Cordón recomendado: ' + (cordonCm / 100).toFixed(2) + ' m · Papel sugerido: cartulina u opalina 180-240 g';
+        }
+        if (elHojasSummary) {
+          elHojasSummary.textContent =
+            'Ver desglose de ' + hojasCount + (hojasCount === 1 ? ' hoja A4 lista' : ' hojas A4 listas') + ' para imprimir (2 banderines por hoja)';
+        }
+
+        // Vista previa de guirnalda colgada (con cortes por palabra limpia si supera 10 piezas)
+        if (elGuirnalda) {
+          var filas = dividirEnFilasGuirnalda(piezas, res.fraseLimpia);
+          var htmlFilas = '';
+          var offsetGlobal = 0;
+          for (var f = 0; f < filas.length; f++) {
+            var fila = filas[f];
+            var htmlPiezas = '';
+            for (var i = 0; i < fila.length; i++) {
+              var idxGlobal = offsetGlobal + i;
+              var t = fila.length > 1 ? (i / (fila.length - 1)) * 2 - 1 : 0;
+              var caida = Math.round((1 - t * t) * 14);
+              var rot = (t * 3.5).toFixed(1);
+              htmlPiezas +=
+                '<div class="band-guirnalda-pieza" style="transform:translateY(' + caida + 'px) rotate(' + rot + 'deg)">' +
+                renderPiezaSvg(fila[i], idxGlobal, 'prev') +
+                '</div>';
+            }
+            offsetGlobal += fila.length;
+            htmlFilas +=
+              '<div class="band-guirnalda-fila">' +
+              '<div class="band-cordon" aria-hidden="true"></div>' +
+              '<div class="band-guirnalda-piezas">' + htmlPiezas + '</div>' +
+              '</div>';
+          }
+          elGuirnalda.innerHTML = htmlFilas;
+        }
+
+        // Hojas A4 de impresión (2 banderines de 14x19 cm por hoja)
+        var hojas = [];
+        for (var h = 0; h < piezas.length; h += 2) {
+          hojas.push(piezas.slice(h, h + 2));
+        }
+        if (elPrintArea) {
+          var htmlHojas = '';
+          for (var hi = 0; hi < hojas.length; hi++) {
+            var par = hojas[hi];
+            htmlHojas +=
+              '<div class="band-hoja-a4">' +
+              '<div class="band-hoja-header no-print">Hoja A4 #' + (hi + 1) + ' de ' + hojas.length + ' · 14 × 19 cm cada banderín</div>' +
+              '<div class="band-hoja-par">' +
+              par.map(function (pz, j) {
+                return '<div class="band-hoja-pieza">' + renderPiezaSvg(pz, hi * 2 + j, 'a4') + '</div>';
+              }).join('') +
+              '</div></div>';
+          }
+          elPrintArea.innerHTML = htmlHojas;
+        }
+
+        // Selector de hoja individual para descarga PNG
+        if (elHojaSel) {
+          var prevVal = Number(elHojaSel.value || '1');
+          elHojaSel.innerHTML = '';
+          for (var si = 0; si < hojas.length; si++) {
+            var opt = document.createElement('option');
+            opt.value = String(si + 1);
+            var letrasHoja = hojas[si].map(function (p) { return p.caracter; }).join(' + ');
+            opt.textContent = 'Hoja ' + (si + 1) + ' de ' + hojas.length + ' (' + letrasHoja + ')';
+            elHojaSel.appendChild(opt);
+          }
+          elHojaSel.value = String(Math.min(Math.max(1, prevVal), hojas.length));
+        }
+      }
+
+      function exportarGuirnaldaPng() {
+        var res = construirPiezas();
+        var piezas = res.piezas;
+        var filas = dividirEnFilasGuirnalda(piezas, res.fraseLimpia);
+        var maxPorFila = Math.max.apply(null, filas.map(function (fl) { return fl.length; }));
+        var bw = 180;
+        var bh = 243;
+        var gap = 16;
+        var padX = 70;
+        var padY = 74;
+        var rowGap = 54;
+        var W = Math.max(1200, padX * 2 + maxPorFila * bw + Math.max(0, maxPorFila - 1) * gap);
+        var H = padY * 2 + filas.length * bh + Math.max(0, filas.length - 1) * rowGap + 64;
+
+        var canvas = document.createElement('canvas');
+        canvas.width = W;
+        canvas.height = H;
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        var grad = ctx.createLinearGradient(0, 0, W, H);
+        grad.addColorStop(0, '#fffdf9');
+        grad.addColorStop(1, '#fdf2f8');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        var offsetGlobalG = 0;
+        for (var fIdx = 0; fIdx < filas.length; fIdx++) {
+          var fila = filas[fIdx];
+          var anchoFila = fila.length * bw + Math.max(0, fila.length - 1) * gap;
+          var startX = Math.round((W - anchoFila) / 2);
+          var baseY = padY + fIdx * (bh + rowGap);
+
+          // Cordon curvo
+          ctx.save();
+          ctx.strokeStyle = '#b45309';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(startX - 28, baseY + 12);
+          ctx.quadraticCurveTo(W / 2, baseY + 42, startX + anchoFila + 28, baseY + 12);
+          ctx.stroke();
+          ctx.restore();
+
+          for (var j = 0; j < fila.length; j++) {
+            var idxG = offsetGlobalG + j;
+            var t = fila.length > 1 ? (j / (fila.length - 1)) * 2 - 1 : 0;
+            var drop = Math.round((1 - t * t) * 16);
+            var px = startX + j * (bw + gap);
+            dibujarPiezaCanvas(ctx, fila[j], idxG, px, baseY + drop, bw, bh);
+          }
+          offsetGlobalG += fila.length;
+        }
+
+        ctx.fillStyle = '#9ca3af';
+        ctx.textAlign = 'center';
+        ctx.font = '600 22px system-ui, sans-serif';
+        ctx.fillText('paracumpleanos.com · Banderines A4 (14 × 19 cm)', W / 2, H - 28);
+
+        var link = document.createElement('a');
+        link.download = 'guirnalda-' + slugifyFrase(res.fraseLimpia) + '.png';
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        if (window.pcMostrarToast) {
+          window.pcMostrarToast('✓ Guirnalda completa descargada en PNG de alta resolución.');
+        }
+      }
+
+      function exportarHojaA4Png(numHoja) {
+        var res = construirPiezas();
+        var piezas = res.piezas;
+        var inicio = (numHoja - 1) * 2;
+        var par = piezas.slice(inicio, inicio + 2);
+        if (!par.length) return;
+
+        // A4 vertical a 150 DPI: 1240 x 1754 px (2 banderines 14x19 cm apilados/alineados con margen de corte)
+        var W = 1240;
+        var H = 1754;
+        var canvas = document.createElement('canvas');
+        canvas.width = W;
+        canvas.height = H;
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, W, H);
+
+        // 2 banderines lado a lado grandes (540 x 729 px c/u) centrados en la hoja A4 con guias
+        var bw = 540;
+        var bh = 729;
+        var gapX = 56;
+        var totalW = par.length === 2 ? bw * 2 + gapX : bw;
+        var startX = Math.round((W - totalW) / 2);
+        var startY = Math.round((H - bh) / 2);
+
+        for (var i = 0; i < par.length; i++) {
+          dibujarPiezaCanvas(ctx, par[i], inicio + i, startX + i * (bw + gapX), startY, bw, bh);
+        }
+
+        ctx.fillStyle = '#64748b';
+        ctx.textAlign = 'center';
+        ctx.font = '600 24px system-ui, sans-serif';
+        ctx.fillText(
+          'Hoja A4 ' + numHoja + ' · ' + res.fraseLimpia + ' · Recortar por línea punteada (paracumpleanos.com)',
+          W / 2,
+          H - 54
+        );
+
+        var link = document.createElement('a');
+        link.download = 'banderines-' + slugifyFrase(res.fraseLimpia) + '-hoja-' + numHoja + '-a4.png';
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      function aplicarPlantilla(id) {
+        estado.plantillaId = id;
+        estado.colorPersonalizado = false;
+        var p = getPlantillaActual();
+        if (p) {
+          estado.forma = p.forma;
+          estado.patron = p.patron;
+          estado.fuente = p.fuente;
+          estado.iconoPunta = p.iconoPunta;
+          var c0 = p.colores[0];
+          if (c0) {
+            estado.colorBg = c0.bg;
+            estado.colorBorder = c0.border;
+            estado.colorText = c0.text;
+          }
+          if (selForma) selForma.value = estado.forma;
+          if (selPatron) selPatron.value = estado.patron;
+          if (selFuente) selFuente.value = estado.fuente;
+          if (selIcono) selIcono.value = estado.iconoPunta;
+          if (inpColorBg) inpColorBg.value = estado.colorBg;
+          if (inpColorBorder) inpColorBorder.value = estado.colorBorder;
+          if (inpColorText) inpColorText.value = estado.colorText;
+        }
+        root.querySelectorAll('[data-band-plantilla]').forEach(function (card) {
+          var esAct = card.getAttribute('data-band-plantilla') === id;
+          card.classList.toggle('activo', esAct);
+          card.setAttribute('aria-pressed', esAct ? 'true' : 'false');
+        });
+        renderTodo();
+      }
+
+      // Filtros de galería
+      root.querySelectorAll('[data-band-filtro]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var cat = btn.getAttribute('data-band-filtro') || 'todos';
+          root.querySelectorAll('[data-band-filtro]').forEach(function (b) {
+            var act = b === btn;
+            b.classList.toggle('activo', act);
+            b.setAttribute('aria-selected', act ? 'true' : 'false');
+          });
+          root.querySelectorAll('[data-band-plantilla]').forEach(function (card) {
+            var c = card.getAttribute('data-band-cat') || '';
+            card.style.display = (cat === 'todos' || c === cat) ? '' : 'none';
+          });
+        });
+      });
+
+      // Selección de plantillas
+      root.querySelectorAll('[data-band-plantilla]').forEach(function (card) {
+        card.addEventListener('click', function () {
+          aplicarPlantilla(card.getAttribute('data-band-plantilla') || 'rosa-fiesta');
+        });
+      });
+
+      // Diseño libre
+      if (btnLibre) {
+        btnLibre.addEventListener('click', function () {
+          estado.colorPersonalizado = true;
+          estado.colorBg = '#ffffff';
+          estado.colorBorder = '#e11d74';
+          estado.colorText = '#1f2937';
+          estado.patron = 'marco';
+          if (selPatron) selPatron.value = 'marco';
+          if (inpColorBg) inpColorBg.value = estado.colorBg;
+          if (inpColorBorder) inpColorBorder.value = estado.colorBorder;
+          if (inpColorText) inpColorText.value = estado.colorText;
+          root.querySelectorAll('[data-band-plantilla]').forEach(function (card) {
+            card.classList.remove('activo');
+            card.setAttribute('aria-pressed', 'false');
+          });
+          renderTodo();
+          if (inpFrase) inpFrase.focus();
+          if (window.pcMostrarToast) window.pcMostrarToast('✓ Modo diseño libre activado: elegí tus colores y frase.');
+        });
+      }
+
+      // Carga local de foto/logo
+      if (inpFoto) {
+        inpFoto.addEventListener('change', function () {
+          var archivo = inpFoto.files && inpFoto.files[0];
+          if (!archivo) return;
+          var reader = new FileReader();
+          reader.onload = function () {
+            var url = String(reader.result || '');
+            var img = new Image();
+            img.onload = function () {
+              estado.fotoDataUrl = url;
+              estado.fotoImg = img;
+              if (barraFoto) barraFoto.hidden = false;
+              if (estadoFoto) estadoFoto.textContent = '✓ Imagen cargada localmente: ' + archivo.name;
+              renderTodo();
+              if (window.pcMostrarToast) window.pcMostrarToast('✓ Foto / logo agregado a tus banderines (100% local).');
+            };
+            img.src = url;
+          };
+          reader.readAsDataURL(archivo);
+        });
+      }
+      if (selFotoModo) {
+        selFotoModo.addEventListener('change', function () {
+          estado.fotoModo = selFotoModo.value === 'todos' ? 'todos' : 'puntas';
+          renderTodo();
+        });
+      }
+      if (btnFotoQuitar) {
+        btnFotoQuitar.addEventListener('click', function () {
+          estado.fotoDataUrl = '';
+          estado.fotoImg = null;
+          if (inpFoto) inpFoto.value = '';
+          if (barraFoto) barraFoto.hidden = true;
+          renderTodo();
+        });
+      }
+
+      // Controles de texto, forma, patrón, fuente, icono y colores
+      if (inpFrase) {
+        inpFrase.addEventListener('input', function () {
+          estado.frase = inpFrase.value;
+          renderTodo();
+        });
+      }
+      root.querySelectorAll('[data-band-frase-preset]').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var val = chip.getAttribute('data-band-frase-preset') || 'FELIZ CUMPLEAÑOS';
+          estado.frase = val;
+          if (inpFrase) inpFrase.value = val;
+          renderTodo();
+        });
+      });
+      if (selForma) selForma.addEventListener('change', function () { estado.forma = selForma.value; renderTodo(); });
+      if (selPatron) selPatron.addEventListener('change', function () { estado.patron = selPatron.value; renderTodo(); });
+      if (selFuente) selFuente.addEventListener('change', function () { estado.fuente = selFuente.value; renderTodo(); });
+      if (selIcono) selIcono.addEventListener('change', function () { estado.iconoPunta = selIcono.value; renderTodo(); });
+      if (chkPuntas) chkPuntas.addEventListener('change', function () { estado.incluirPuntas = chkPuntas.checked; renderTodo(); });
+      if (chkGuias) chkGuias.addEventListener('change', function () { estado.mostrarGuias = chkGuias.checked; renderTodo(); });
+
+      [inpColorBg, inpColorBorder, inpColorText].forEach(function (inp) {
+        if (!inp) return;
+        inp.addEventListener('input', function () {
+          estado.colorPersonalizado = true;
+          if (inpColorBg) estado.colorBg = inpColorBg.value;
+          if (inpColorBorder) estado.colorBorder = inpColorBorder.value;
+          if (inpColorText) estado.colorText = inpColorText.value;
+          renderTodo();
+        });
+      });
+
+      // Descargas HD
+      if (btnDlGuirnalda) {
+        btnDlGuirnalda.addEventListener('click', exportarGuirnaldaPng);
+      }
+      if (btnDlHoja) {
+        btnDlHoja.addEventListener('click', function () {
+          var n = Number((elHojaSel && elHojaSel.value) || '1');
+          exportarHojaA4Png(n);
+          if (window.pcMostrarToast) window.pcMostrarToast('✓ Hoja A4 #' + n + ' descargada en PNG listo para imprimir.');
+        });
+      }
+      if (btnDlTodas) {
+        btnDlTodas.addEventListener('click', function () {
+          var res = construirPiezas();
+          var totalHojas = Math.ceil(res.piezas.length / 2);
+          for (var i = 1; i <= totalHojas; i++) {
+            (function (idx) {
+              setTimeout(function () { exportarHojaA4Png(idx); }, (idx - 1) * 220);
+            })(i);
+          }
+          if (window.pcMostrarToast) {
+            window.pcMostrarToast('✓ Descargando las ' + totalHojas + ' hojas A4 en PNG listas para imprimir.');
+          }
+        });
+      }
+
+      // Sincronizar colores iniciales y primer render
+      var pInit = getPlantillaActual();
+      if (pInit && pInit.colores && pInit.colores[0]) {
+        estado.colorBg = pInit.colores[0].bg;
+        estado.colorBorder = pInit.colores[0].border;
+        estado.colorText = pInit.colores[0].text;
+      }
+      renderTodo();
+    }
+
+    document.querySelectorAll('[data-estudio-banderines]').forEach(inicializarEstudio);
+  })();
+</script>

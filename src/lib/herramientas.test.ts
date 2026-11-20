@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
 import {
   ZODIACOS,
   MESES_CON_SIGNOS,
@@ -13,6 +15,20 @@ import {
   signoPorSlug,
   mesInfoPorSlug
 } from './horoscopo';
+import {
+  PLANTILLAS_BANDERINES,
+  FORMAS_BANDERIN,
+  PATRONES_BANDERIN,
+  FUENTES_BANDERIN,
+  plantillaBanderinPorId,
+  limpiarFraseBanderin,
+  parsearPiezasBanderin,
+  dividirEnHojasA4,
+  calcularEspecificacionesA4,
+  obtenerPathFormaSvg,
+  obtenerPathInteriorSvg,
+  resolverConfigBanderin
+} from './banderines';
 
 test('todos los 12 signos y los 12 meses mantienen enlaces bidireccionales consistentes', () => {
   assert.equal(ZODIACOS.length, 12);
@@ -196,3 +212,54 @@ test('construirIcsCumpleanos y construirUrlGoogleCalendar con tipo duelo generan
   assert.ok(gcalDuelo.includes('condolencias'));
 });
 
+test('modulo banderines calcula piezas, hojas A4, formas SVG y las 40 publicaciones de banderines tienen frases y configuracion unicas', () => {
+  assert.equal(PLANTILLAS_BANDERINES.length, 12);
+  assert.equal(new Set(PLANTILLAS_BANDERINES.map((p) => p.id)).size, 12);
+  assert.equal(FORMAS_BANDERIN.length, 4);
+  assert.equal(PATRONES_BANDERIN.length, 6);
+  assert.equal(FUENTES_BANDERIN.length, 3);
+
+  for (const f of FORMAS_BANDERIN) {
+    assert.ok(obtenerPathFormaSvg(f.id).startsWith('M '));
+    assert.ok(obtenerPathInteriorSvg(f.id).startsWith('M '));
+  }
+
+  assert.equal(limpiarFraseBanderin('  feliz   día  '), 'FELIZ DÍA');
+  assert.equal(limpiarFraseBanderin('   '), 'FELIZ CUMPLEAÑOS');
+
+  const piezasConPuntas = parsearPiezasBanderin('FELIZ DÍA', { incluirPuntas: true, iconoPunta: '★' });
+  assert.equal(piezasConPuntas.length, 10, 'FELIZDIA (8 letras) + 2 puntas = 10 piezas');
+  assert.equal(piezasConPuntas[0].esDecorativo, true);
+  assert.equal(piezasConPuntas[9].esDecorativo, true);
+
+  const piezasSinPuntas = parsearPiezasBanderin('FELIZ DÍA', { incluirPuntas: false });
+  assert.equal(piezasSinPuntas.length, 8);
+
+  const hojas = dividirEnHojasA4(piezasConPuntas, 2);
+  assert.equal(hojas.length, 5);
+  assert.equal(hojas[0].length, 2);
+
+  const specs = calcularEspecificacionesA4(10);
+  assert.equal(specs.hojasA4, 5);
+  assert.ok(specs.largoGuirnaldaCm > 150 && specs.cordonSugeridoCm === specs.largoGuirnaldaCm + 70);
+
+  const cfgFallback = resolverConfigBanderin({ texto: 'Probá armar la frase "FELIZ 30 AÑOS" en tu pared.' });
+  assert.equal(cfgFallback.frase, 'FELIZ 30 AÑOS');
+
+  // Verificar las 40 publicaciones reales en data/categorias/g16-banderines.json
+  const datosBanderines = JSON.parse(fs.readFileSync(path.resolve('data/categorias/g16-banderines.json'), 'utf8'));
+  const msgs = datosBanderines.filter((r: any) => r.tipo === 'mensaje');
+  assert.equal(msgs.length, 40, 'La categoria banderines debe tener exactamente 40 publicaciones');
+
+  const idsPlantillas = new Set(PLANTILLAS_BANDERINES.map((p) => p.id));
+  const frasesVistas = new Set<string>();
+  for (const m of msgs) {
+    assert.ok(m.banderinConfig, `Falta banderinConfig en ${m.slug}`);
+    assert.ok(idsPlantillas.has(m.banderinConfig.plantillaId), `Plantilla invalida en ${m.slug}: ${m.banderinConfig.plantillaId}`);
+    const cfg = resolverConfigBanderin(m);
+    assert.ok(cfg.frase.length >= 4, `Frase banderin muy corta en ${m.slug}`);
+    assert.ok(!frasesVistas.has(cfg.frase), `Frase de banderin duplicada en ${m.slug}: ${cfg.frase}`);
+    frasesVistas.add(cfg.frase);
+    assert.ok(plantillaBanderinPorId(cfg.plantillaId).id === cfg.plantillaId);
+  }
+});

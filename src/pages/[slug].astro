@@ -8,6 +8,7 @@ import AlertaMotivacionDiaria from '../components/AlertaMotivacionDiaria.astro';
 import SelectorFechaDuelo from '../components/SelectorFechaDuelo.astro';
 import FiltrosSegmentacion from '../components/FiltrosSegmentacion.astro';
 import PersonalizadorAniosAniversario from '../components/PersonalizadorAniosAniversario.astro';
+import EstudioBanderines from '../components/EstudioBanderines.astro';
 import {
   contenido,
   POR_PAGINA,
@@ -26,6 +27,7 @@ import {
   guiaAdaptacionMensaje
 } from '../lib/editorial.ts';
 import { mesInfoPorSlug } from '../lib/horoscopo.ts';
+import { resolverConfigBanderin } from '../lib/banderines.ts';
 
 export function getStaticPaths() {
   return contenido.map(function (r) {
@@ -50,6 +52,8 @@ const editorialHub = esHub ? editorialHubCompleto(registro, mensajesCat) : null;
 const mesZodiaco = esHub && hub.grupo === 'meses' ? mesInfoPorSlug(hub.slug) : undefined;
 const guiaMsg = !esHub ? guiaAdaptacionMensaje(registro, hub) : null;
 const esAnivPersonalizable = hub.slug === 'mas-de-10-anos-de-novios';
+const esBanderines = hub.slug === 'banderines-de-cumpleanos-para-imprimir';
+const configBanderin = esBanderines ? resolverConfigBanderin(esHub ? null : registro) : null;
 
 const migas = [{ name: 'Inicio', url: SITIO + '/' }, { name: nombreHub(hub), url: urlHub }]
   .concat(esHub ? [] : [{ name: registro.titulo, url: SITIO + '/' + registro.slug + '/' }]);
@@ -630,18 +634,24 @@ const textoEnviar = esHub ? '' : registro.texto;
 
       {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="hub" /> : null}
 
-      <PersonalizadorTarjeta modo="hub" />
+      {esBanderines ? (
+        <EstudioBanderines modo="hub" configInicial={configBanderin} />
+      ) : (
+        <>
+          <PersonalizadorTarjeta modo="hub" />
 
-      <div class="tarjeta-visual" role="img" aria-label={'Tarjeta destacada de ' + (registro.keyword || registro.h1)}>
-        <div class="tarjeta-visual-emoji">{registro.emoji}</div>
-        <p class="tarjeta-visual-subtitulo" hidden></p>
-        <div class="tarjeta-visual-foto-wrap" hidden>
-          <img class="tarjeta-visual-foto" alt="Foto personalizada para la tarjeta" />
-        </div>
-        <p class="tarjeta-visual-titulo">{nombreHub(registro)}</p>
-        <p class="tarjeta-visual-extracto">{mensajesCat.length} textos originales listos para personalizar, copiar o descargar en PNG</p>
-        <p class="tarjeta-visual-marca">paracumpleanos.com</p>
-      </div>
+          <div class="tarjeta-visual" role="img" aria-label={'Tarjeta destacada de ' + (registro.keyword || registro.h1)}>
+            <div class="tarjeta-visual-emoji">{registro.emoji}</div>
+            <p class="tarjeta-visual-subtitulo" hidden></p>
+            <div class="tarjeta-visual-foto-wrap" hidden>
+              <img class="tarjeta-visual-foto" alt="Foto personalizada para la tarjeta" />
+            </div>
+            <p class="tarjeta-visual-titulo">{nombreHub(registro)}</p>
+            <p class="tarjeta-visual-extracto">{mensajesCat.length} textos originales listos para personalizar, copiar o descargar en PNG</p>
+            <p class="tarjeta-visual-marca">paracumpleanos.com</p>
+          </div>
+        </>
+      )}
 
       <FiltrosSegmentacion
         mensajesTodos={mensajesCat}
@@ -744,7 +754,11 @@ const textoEnviar = esHub ? '' : registro.texto;
 
       {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="mensaje" /> : null}
 
-      <PersonalizadorTarjeta modo="mensaje" />
+      {esBanderines ? (
+        <EstudioBanderines modo="mensaje" configInicial={configBanderin} tituloPublicacion={registro.titulo} />
+      ) : (
+        <PersonalizadorTarjeta modo="mensaje" />
+      )}
 
       <div id="mensaje-detalle-bloque">
         <div id="mensaje-cuerpo" class="mensaje" data-slug={registro.slug} data-orig-texto={registro.texto} data-orig-titulo={registro.titulo}>
@@ -765,7 +779,6 @@ const textoEnviar = esHub ? '' : registro.texto;
           <div class="tarjeta-visual-foto-wrap" hidden>
             <img class="tarjeta-visual-foto" alt="Foto personalizada para la tarjeta" />
           </div>
-          <p class="tarjeta-visual-titulo">{registro.titulo}</p>
           <div class="tarjeta-visual-extracto">
             {parrafosMsg.map(function (p) {
               const lineas = p.split('\n');
