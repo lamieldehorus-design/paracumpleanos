@@ -194,6 +194,14 @@ export const FECHAS_ESPECIALES_SITIO: FechaEspecialCalendario[] = [
   }
 ];
 
+export interface PublicacionCalendarioRef {
+  slug: string;
+  titulo: string;
+  extracto: string;
+  categoriaSlug: string;
+  categoriaTitulo: string;
+}
+
 export interface ResumenFechaSinAnio {
   mes: number;
   dia: number;
@@ -205,7 +213,7 @@ export interface ResumenFechaSinAnio {
   fechasEspecialesDelMes: FechaEspecialCalendario[];
   hitosPaises: HitoPaisEnFecha[];
   hitosGlobales: HitoMundialGlobal[];
-  motivacionDelDia: MensajeCalendarioRef | undefined;
+  publicacionesExactas: PublicacionCalendarioRef[];
 }
 
 export function validarMesDiaSinAnio(mes: number, dia: number): { mes: number; dia: number } {
@@ -223,21 +231,19 @@ export function indiceDiaDelAnioSinAnio(mes: number, dia: number): number {
   return total + dia;
 }
 
-export function motivacionPorMesDia(
-  mes: number,
-  dia: number,
-  mensajesMotivacion: MensajeCalendarioRef[] = []
-): MensajeCalendarioRef | undefined {
-  if (!mensajesMotivacion.length) return undefined;
-  const idx = (indiceDiaDelAnioSinAnio(mes, dia) - 1) % mensajesMotivacion.length;
-  return mensajesMotivacion[idx];
+function primerParrafoCorto(texto: string): string {
+  const linea = String(texto || '')
+    .split(/\n+/)
+    .map((s) => s.trim())
+    .find(Boolean) ?? '';
+  return linea.length > 155 ? linea.slice(0, 152).replace(/\s+\S*$/, '') + '…' : linea;
 }
 
 export function obtenerResumenFechaSinAnio(
   mesInput: number,
   diaInput: number,
   hubsPorSlug?: Map<string, HubCalendarioRef>,
-  mensajesMotivacion: MensajeCalendarioRef[] = []
+  obtenerMensajesDeHub?: (slugHub: string) => MensajeCalendarioRef[]
 ): ResumenFechaSinAnio {
   const { mes, dia } = validarMesDiaSinAnio(mesInput, diaInput);
   const nombreMes = MESES_NOMBRES_HITOS[mes - 1] ?? 'enero';
@@ -249,6 +255,17 @@ export function obtenerResumenFechaSinAnio(
   const fechasEspecialesExactas = FECHAS_ESPECIALES_SITIO.filter(
     (f) => f.mes === mes && f.dia === dia
   );
+  // 19 de marzo: Día del Padre en España, Italia, Honduras y Bolivia
+  if (mes === 3 && dia === 19) {
+    fechasEspecialesExactas.push({
+      slug: 'feliz-dia-del-padre',
+      titulo: 'Día del Padre (España y países de tradición San José)',
+      emoji: '💙',
+      notaFecha: '19 de marzo',
+      mes: 3,
+      dia: 19
+    });
+  }
   // 21 de marzo también corresponde al inicio de primavera en el hemisferio norte
   if (mes === 3 && dia === 21) {
     fechasEspecialesExactas.push({
@@ -258,17 +275,6 @@ export function obtenerResumenFechaSinAnio(
       notaFecha: '21 de marzo',
       mes: 3,
       dia: 21
-    });
-  }
-  // 30 de julio: Día Internacional de la Amistad ONU
-  if (mes === 7 && dia === 30) {
-    fechasEspecialesExactas.push({
-      slug: 'feliz-dia-del-amigo',
-      titulo: 'Día Internacional de la Amistad (ONU)',
-      emoji: '🤝',
-      notaFecha: '30 de julio',
-      mes: 7,
-      dia: 30
     });
   }
   // 30 de abril: Día del Niño en México
@@ -282,10 +288,53 @@ export function obtenerResumenFechaSinAnio(
       dia: 30
     });
   }
+  // 30 de julio: Día Internacional de la Amistad ONU
+  if (mes === 7 && dia === 30) {
+    fechasEspecialesExactas.push({
+      slug: 'feliz-dia-del-amigo',
+      titulo: 'Día Internacional de la Amistad (ONU)',
+      emoji: '🤝',
+      notaFecha: '30 de julio',
+      mes: 7,
+      dia: 30
+    });
+  }
+  // 5 de octubre: Día Mundial de los Docentes (UNESCO)
+  if (mes === 10 && dia === 5) {
+    fechasEspecialesExactas.push({
+      slug: 'feliz-dia-del-maestro',
+      titulo: 'Día Mundial de los Docentes (UNESCO)',
+      emoji: '📚',
+      notaFecha: '5 de octubre',
+      mes: 10,
+      dia: 5
+    });
+  }
 
   const fechasEspecialesDelMes = FECHAS_ESPECIALES_SITIO.filter(
     (f) => f.mes === mes && f.dia !== dia
   );
+
+  // Solo adjuntamos publicaciones REALES pertenecientes a las colecciones exactas de esta fecha.
+  // Si no hay celebración exacta para ese día, la lista queda vacía: jamás inventamos URLs ni textos.
+  const publicacionesExactas: PublicacionCalendarioRef[] = [];
+  if (obtenerMensajesDeHub && fechasEspecialesExactas.length > 0) {
+    const vistos = new Set<string>();
+    for (const esp of fechasEspecialesExactas) {
+      const lista = obtenerMensajesDeHub(esp.slug) ?? [];
+      for (const m of lista.slice(0, 4)) {
+        if (!m?.slug || vistos.has(m.slug)) continue;
+        vistos.add(m.slug);
+        publicacionesExactas.push({
+          slug: m.slug,
+          titulo: m.titulo,
+          extracto: primerParrafoCorto(m.texto),
+          categoriaSlug: esp.slug,
+          categoriaTitulo: esp.titulo
+        });
+      }
+    }
+  }
 
   return {
     mes,
@@ -298,7 +347,7 @@ export function obtenerResumenFechaSinAnio(
     fechasEspecialesDelMes,
     hitosPaises: hitosPaisesPorDiaMes(mes, dia),
     hitosGlobales: hitosGlobalesPorDiaMes(mes, dia),
-    motivacionDelDia: motivacionPorMesDia(mes, dia, mensajesMotivacion)
+    publicacionesExactas
   };
 }
 
@@ -341,22 +390,18 @@ export interface DiaCalendarioCompacto {
     emoji: string;
     notaFecha: string;
   }[];
-  motivacion: {
-    slug: string;
-    titulo: string;
-    extracto: string;
-  } | null;
+  publicacionesExactas: PublicacionCalendarioRef[];
 }
 
 export function generarIndiceCalendarioAnualSinAnio(
   hubsPorSlug?: Map<string, HubCalendarioRef>,
-  mensajesMotivacion: MensajeCalendarioRef[] = []
+  obtenerMensajesDeHub?: (slugHub: string) => MensajeCalendarioRef[]
 ): Record<string, DiaCalendarioCompacto> {
   const indice: Record<string, DiaCalendarioCompacto> = {};
   for (let mes = 1; mes <= 12; mes++) {
     const maxDia = DIAS_POR_MES_EVERGREEN[mes - 1] ?? 31;
     for (let dia = 1; dia <= maxDia; dia++) {
-      const r = obtenerResumenFechaSinAnio(mes, dia, hubsPorSlug, mensajesMotivacion);
+      const r = obtenerResumenFechaSinAnio(mes, dia, hubsPorSlug, obtenerMensajesDeHub);
       const clave = `${mes}-${dia}`;
       indice[clave] = {
         mes,
@@ -397,15 +442,25 @@ export function generarIndiceCalendarioAnualSinAnio(
           emoji: f.emoji,
           notaFecha: f.notaFecha
         })),
-        motivacion: r.motivacionDelDia
-          ? {
-              slug: r.motivacionDelDia.slug,
-              titulo: r.motivacionDelDia.titulo,
-              extracto: r.motivacionDelDia.texto.split('\n')[0] ?? ''
-            }
-          : null
+        publicacionesExactas: r.publicacionesExactas
       };
     }
   }
   return indice;
+}
+
+export function generarPublicacionesPorMesCalendario(
+  obtenerMensajesDeHub?: (slugHub: string) => MensajeCalendarioRef[]
+): Record<number, { slug: string; titulo: string; extracto: string }[]> {
+  const mapa: Record<number, { slug: string; titulo: string; extracto: string }[]> = {};
+  for (let mes = 1; mes <= 12; mes++) {
+    const slugMes = SLUGS_MESES[mes - 1];
+    const msgs = obtenerMensajesDeHub && slugMes ? obtenerMensajesDeHub(slugMes) ?? [] : [];
+    mapa[mes] = msgs.slice(0, 3).map((m) => ({
+      slug: m.slug,
+      titulo: m.titulo,
+      extracto: primerParrafoCorto(m.texto)
+    }));
+  }
+  return mapa;
 }

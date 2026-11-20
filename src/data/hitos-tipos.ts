@@ -69,7 +69,7 @@ export const CONTINENTES_META: ContinenteMeta[] = [
   {
     id: 'asia',
     nombre: 'Asia',
-    descripcion: '48 países asiáticos con fundaciones milenarias, independencias modernas y efemérides nacionales.',
+    descripcion: '49 países asiáticos con fundaciones milenarias, independencias modernas y efemérides nacionales.',
     icono: '🌏'
   },
   {

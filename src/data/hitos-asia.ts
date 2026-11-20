@@ -848,6 +848,48 @@ export const HITOS_ASIA: PaisHito[] = [
     datoCurioso: 'El nombre tradicional completo de Bangkok en tailandés (Krung Thep...) posee más de 160 letras y figura como el topónimo ceremonial más largo del mundo.'
   },
   {
+    slug: 'taiwan',
+    nombre: 'Taiwán',
+    capital: 'Taipéi',
+    continente: 'asia',
+    subregion: 'Asia Oriental',
+    bandera: '🇹🇼',
+    hitoPrincipal: {
+      dia: 10,
+      mes: 10,
+      anioHistorico: 1911,
+      titulo: 'Día Nacional de Taiwán (Doble Diez)',
+      tipo: 'republica',
+      resumen:
+        'Conmemoración del Levantamiento de Wuchang del 10 de octubre de 1911, origen histórico del calendario cívico del Doble Diez.',
+      contextoHistorico:
+        'El 10 de octubre de 1911 estalló el Levantamiento de Wuchang, punto de partida de la Revolución de Xinhai que puso fin a más de dos mil años de dinastías imperiales y dio nacimiento a la República de China en 1912. Desde 1949 esa institucionalidad continuó desarrollándose en Taiwán, que a partir de fines del siglo XX consolidó elecciones directas, prensa libre y un ecosistema tecnológico de referencia mundial.',
+      comoSeFesteja:
+        'Cada 10 de octubre Taipéi y las principales ciudades taiwanesas celebran con desfiles cívicos frente al Palacio Presidencial, bandas musicales escolares, muestras de gastronomía callejera en los mercados nocturnos y grandes espectáculos de fuegos artificiales rotativos por región.',
+      saludoSugerido:
+        '¡Feliz Doble Diez a Taiwán! Celebramos su creatividad tecnológica, sus montañas esmeralda y la calidez de su gente.'
+    },
+    hitosSecundarios: [
+      {
+        dia: 28,
+        mes: 2,
+        anioHistorico: 1947,
+        titulo: 'Día Memorial de la Paz (228)',
+        tipo: 'dia-nacional',
+        resumen:
+          'Jornada de memoria cívica y reconciliación democrática que recuerda los sucesos del 28 de febrero de 1947.',
+        contextoHistorico:
+          'El 28 de febrero de 1947 marcó un episodio decisivo en la historia contemporánea de la isla. Desde la transición democrática de los años noventa, el feriado honra a las víctimas y reafirma los derechos humanos, el diálogo y las libertades civiles.',
+        comoSeFesteja:
+          'Se realizan ceremonias conmemorativas en el Parque Memorial de la Paz 228 en Taipéi, toques de campana y actividades educativas sobre memoria histórica y convivencia democrática.',
+        saludoSugerido:
+          'En el Día Memorial de la Paz acompañamos el compromiso cívico de Taiwán con la memoria, el respeto y la convivencia democrática.'
+      }
+    ],
+    datoCurioso:
+      'Taiwán alberga más de 260 picos montañosos superiores a los 3.000 metros en una isla compacta y produce la mayor parte de los semiconductores más avanzados del planeta.'
+  },
+  {
     slug: 'tayikistan',
     nombre: 'Tayikistán',
     capital: 'Dusambé',

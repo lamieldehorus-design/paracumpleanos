@@ -616,6 +616,8 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         : 'Primer saludo de la mañana por WhatsApp o Instagram',
       consejo: esMotiv
         ? 'Elegí una sola idea accionable y leela antes de abrir notificaciones.'
+        : esDuelo
+        ? 'Abrí con el nombre de la persona o el vínculo real antes de copiar el mensaje.'
         : perfil === 'bilingue'
         ? 'Conservá la frase breve en inglés arriba y sumá el nombre abajo.'
         : `Abrí con el trato real que usás con ${dest} antes de pegar el texto.`

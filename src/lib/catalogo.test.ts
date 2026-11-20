@@ -21,7 +21,11 @@ import {
 import { GUIAS_EDITORIALES } from '../data/guias';
 import { ZODIACOS, MESES_CON_SIGNOS } from './horoscopo';
 import { PAISES_HITOS, HITOS_MUNDIALES, hitosPaisesPorDiaMes } from '../data/hitos-historicos';
-import { obtenerResumenFechaSinAnio, generarIndiceCalendarioAnualSinAnio } from './calendario';
+import {
+  obtenerResumenFechaSinAnio,
+  generarIndiceCalendarioAnualSinAnio,
+  generarPublicacionesPorMesCalendario
+} from './calendario';
 import {
   normalizarAniosAniversario,
   adaptarTextoAniosAniversario,
@@ -472,7 +476,7 @@ test('personalizador adapta saludos, cartas, bilingues, poemas y firma sin corta
   assert.equal(Object.keys(FORMATOS_TARJETA).length, 2);
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren las 18814 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
+test('generarUrlsSitio y generarSitemapXml cubren las 18815 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
@@ -480,8 +484,8 @@ test('generarUrlsSitio y generarSitemapXml cubren las 18814 URLs indexables sin 
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
   const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises);
 
-  assert.equal(urls.length, 18814, `Se esperaban 18814 URLs indexables, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 18814, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(urls.length, 18815, `Se esperaban 18815 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 18815, 'Las URLs del sitemap deben ser todas unicas');
   assert.ok(urls.every((url) => url.startsWith('https://paracumpleanos.com/')));
   assert.ok(urls.every((url) => !/[?#]/.test(url)));
   assert.ok(urls.includes('https://paracumpleanos.com/'));
@@ -491,6 +495,7 @@ test('generarUrlsSitio y generarSitemapXml cubren las 18814 URLs indexables sin 
   assert.ok(urls.includes('https://paracumpleanos.com/hitos-historicos/argentina/'));
   assert.ok(urls.includes('https://paracumpleanos.com/hitos-historicos/espana/'));
   assert.ok(urls.includes('https://paracumpleanos.com/hitos-historicos/japon/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/hitos-historicos/taiwan/'));
   assert.ok(urls.includes('https://paracumpleanos.com/condolencias/'));
   assert.ok(urls.includes('https://paracumpleanos.com/frases-tristes-para-recordar-momentos/'));
   assert.ok(urls.includes('https://paracumpleanos.com/mas-de-10-anos-de-novios/'));
@@ -535,13 +540,13 @@ test('generarUrlsSitio y generarSitemapXml cubren las 18814 URLs indexables sin 
   assert.ok(xmlSinLastmod.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xmlSinLastmod.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xmlSinLastmod.match(/<loc>/g) || [];
-  assert.equal(locs.length, 18814);
+  assert.equal(locs.length, 18815);
   assert.ok(!xmlSinLastmod.includes('<lastmod>'), 'Sin mapa lastmod no debe emitir etiquetas lastmod');
 
   const mapaLastmod = construirMapaLastmodSitemap(cat, GUIAS_EDITORIALES, slugsSignos, slugsPaises, '2026-11-20');
   const xmlConLastmod = generarSitemapXml(urls, mapaLastmod);
   const lastmods = xmlConLastmod.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || [];
-  assert.equal(lastmods.length, 18814, 'Cada una de las 18814 URLs debe recibir su lastmod real YYYY-MM-DD');
+  assert.equal(lastmods.length, 18815, 'Cada una de las 18815 URLs debe recibir su lastmod real YYYY-MM-DD');
   assert.ok(
     xmlConLastmod.includes('<loc>https://paracumpleanos.com/banderines-de-cumpleanos-para-imprimir/</loc><lastmod>2026-11-20</lastmod>'),
     'El sitemap debe reflejar el lastmod real de banderines'
@@ -549,7 +554,7 @@ test('generarUrlsSitio y generarSitemapXml cubren las 18814 URLs indexables sin 
   assert.throws(() => generarSitemapXml(['https://paracumpleanos.com/'], { 'https://paracumpleanos.com/': '2026-02-31' }));
 });
 
-test('Bing IndexNow cubre las 18814 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre las 18815 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -562,13 +567,13 @@ test('Bing IndexNow cubre las 18814 URLs en lotes validos de hasta 10000 y tiene
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
   const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises));
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 18814);
+  assert.equal(extraidas.length, 18815);
 
   const payloads = construirPayloadsIndexNow(extraidas);
   assert.equal(payloads.length, 2);
-  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 18814);
+  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 18815);
   assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
-  assert.equal(payloads[1].urlList.length, 8814);
+  assert.equal(payloads[1].urlList.length, 8815);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);
@@ -736,9 +741,10 @@ test('favicons completos presentes en public, copia sin titulo en componentes y 
   assert.ok(dudaMsg && dudaMsg.texto.split(/\s+/).length >= 90, 'El mensaje de dudas concretas debe tener desarrollo accionable amplio');
 });
 
-test('hitos historicos cubre los 195 paises soberanos y calendario sin anio integra hitos, fechas especiales, signo y motivacion', () => {
-  assert.equal(PAISES_HITOS.length, 195, `Se esperaban 195 paises, hay ${PAISES_HITOS.length}`);
-  assert.equal(new Set(PAISES_HITOS.map((p) => p.slug)).size, 195, 'Todos los slugs de paises deben ser unicos');
+test('hitos historicos cubre los 196 paises y calendario sin anio solo enlaza publicaciones reales sin inventar URLs', () => {
+  assert.equal(PAISES_HITOS.length, 196, `Se esperaban 196 paises, hay ${PAISES_HITOS.length}`);
+  assert.equal(new Set(PAISES_HITOS.map((p) => p.slug)).size, 196, 'Todos los slugs de paises deben ser unicos');
+  assert.ok(PAISES_HITOS.some((p) => p.slug === 'taiwan'), 'Debe incluir Taiwan entre los 196 paises');
   assert.ok(HITOS_MUNDIALES.length >= 14, `Se esperaban >= 14 hitos mundiales, hay ${HITOS_MUNDIALES.length}`);
 
   for (const p of PAISES_HITOS) {
@@ -752,26 +758,122 @@ test('hitos historicos cubre los 195 paises soberanos y calendario sin anio inte
 
   assert.ok(hitosPaisesPorDiaMes(7, 9).some((h) => h.pais.slug === 'argentina'));
   assert.ok(hitosPaisesPorDiaMes(9, 16).some((h) => h.pais.slug === 'mexico'));
+  assert.ok(hitosPaisesPorDiaMes(10, 10).some((h) => h.pais.slug === 'taiwan'));
   assert.ok(hitosPaisesPorDiaMes(10, 12).some((h) => h.pais.slug === 'espana'));
 
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
-  const motivs = cat.mensajesDe('motivaciones');
+  const urlsReales = new Set(
+    generarUrlsSitio(
+      cat,
+      GUIAS_EDITORIALES.map((g) => g.slug),
+      ZODIACOS.map((s) => s.slug),
+      PAISES_HITOS.map((p) => p.slug)
+    )
+  );
 
-  const resumenJul9 = obtenerResumenFechaSinAnio(7, 9, cat.hubsPorSlug, motivs);
+  // Dia con celebracion exacta (14 de febrero - San Valentin): incluye publicaciones reales
+  const resumenFeb14 = obtenerResumenFechaSinAnio(2, 14, cat.hubsPorSlug, cat.mensajesDe);
+  assert.ok(resumenFeb14.fechasEspecialesExactas.some((f) => f.slug === 'feliz-san-valentin'));
+  assert.ok(resumenFeb14.publicacionesExactas.length > 0, 'El 14 de febrero debe mostrar publicaciones reales de San Valentin');
+
+  // Dia sin celebracion puntual (14 de enero): no inventa publicaciones falsas
+  const resumenEne14 = obtenerResumenFechaSinAnio(1, 14, cat.hubsPorSlug, cat.mensajesDe);
+  assert.equal(resumenEne14.fechasEspecialesExactas.length, 0);
+  assert.equal(resumenEne14.publicacionesExactas.length, 0, 'Un dia sin efemeride puntual no debe inventar publicaciones');
+
+  const resumenJul9 = obtenerResumenFechaSinAnio(7, 9, cat.hubsPorSlug, cat.mensajesDe);
   assert.equal(resumenJul9.etiquetaSinAnio, '9 de julio');
   assert.ok(!/\b20\d{2}\b/.test(resumenJul9.etiquetaSinAnio), 'El calendario no debe mostrar anio');
   assert.ok(resumenJul9.hitosPaises.some((h) => h.pais.slug === 'argentina'));
   assert.equal(resumenJul9.signo?.slug, 'cancer');
   assert.equal(resumenJul9.hubMes?.slug, 'cumpleanos-en-julio');
-  assert.ok(resumenJul9.motivacionDelDia && resumenJul9.motivacionDelDia.texto.length > 20);
 
-  const resumenFeb29 = obtenerResumenFechaSinAnio(2, 29, cat.hubsPorSlug, motivs);
+  const resumenFeb29 = obtenerResumenFechaSinAnio(2, 29, cat.hubsPorSlug, cat.mensajesDe);
   assert.equal(resumenFeb29.etiquetaSinAnio, '29 de febrero');
   assert.equal(resumenFeb29.signo?.slug, 'piscis');
 
-  const indice = generarIndiceCalendarioAnualSinAnio(cat.hubsPorSlug, motivs);
+  const indice = generarIndiceCalendarioAnualSinAnio(cat.hubsPorSlug, cat.mensajesDe);
   assert.equal(Object.keys(indice).length, 366, 'El indice anual sin anio debe cubrir los 366 dias (incl. 29/2)');
+
+  // 100% de las URLs referenciadas en los 366 dias deben existir en el sitio real
+  for (const [clave, dia] of Object.entries(indice)) {
+    assert.ok(urlsReales.has(`https://paracumpleanos.com/${dia.hubMesSlug}/`), `Hub mes inexistente en ${clave}: ${dia.hubMesSlug}`);
+    assert.ok(urlsReales.has(`https://paracumpleanos.com/horoscopo/${dia.signoSlug}/`), `Signo inexistente en ${clave}: ${dia.signoSlug}`);
+    for (const h of dia.hitosPaises) {
+      assert.ok(urlsReales.has(`https://paracumpleanos.com/hitos-historicos/${h.paisSlug}/`), `Pais inexistente en ${clave}: ${h.paisSlug}`);
+    }
+    for (const f of [...dia.fechasEspecialesExactas, ...dia.fechasEspecialesDelMes]) {
+      assert.ok(urlsReales.has(`https://paracumpleanos.com/${f.slug}/`), `Fecha especial inexistente en ${clave}: ${f.slug}`);
+    }
+    for (const p of dia.publicacionesExactas) {
+      assert.ok(urlsReales.has(`https://paracumpleanos.com/${p.slug}/`), `Publicacion inexistente en ${clave}: ${p.slug}`);
+    }
+  }
+
+  const pubsMes = generarPublicacionesPorMesCalendario(cat.mensajesDe);
+  for (let m = 1; m <= 12; m++) {
+    assert.equal(pubsMes[m].length, 3, `El mes ${m} debe incluir 3 publicaciones reales`);
+    for (const p of pubsMes[m]) {
+      assert.ok(urlsReales.has(`https://paracumpleanos.com/${p.slug}/`), `Publicacion mensual inexistente en mes ${m}: ${p.slug}`);
+    }
+  }
+});
+
+test('calidad editorial SEO en Trabajo/Profesion (g08) y Condolencias/Recuerdos sin repeticiones ni errores de genero', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+
+  // 1. Condolencias y recuerdos sin muletillas repetitivas en titulos
+  const dueloSlugs = [
+    'condolencias',
+    'frases-tristes-para-recordar-momentos',
+    'frases-de-nostalgia-y-recuerdos',
+    'mensajes-cuando-extranas-a-alguien'
+  ];
+  for (const slug of dueloSlugs) {
+    const msgs = cat.mensajesDe(slug);
+    assert.equal(msgs.length, 40, `Esperados 40 mensajes en ${slug}`);
+    for (const m of msgs) {
+      assert.ok(!/cuando se extrañ/i.test(m.titulo), `Titulo repetitivo con "cuando se extraña" en ${slug}: ${m.titulo}`);
+      assert.ok(!/en momentos tristes$/i.test(m.titulo), `Sufijo mecanico en ${slug}: ${m.titulo}`);
+      assert.ok(!/entre nostalgias$/i.test(m.titulo), `Sufijo mecanico en ${slug}: ${m.titulo}`);
+    }
+  }
+
+  // 2. Trabajo, escuela y profesion sin errores de genero ni plantillas sin sentido
+  const profFem = [
+    'feliz-cumpleanos-para-doctora',
+    'feliz-cumpleanos-para-mi-jefa',
+    'feliz-cumpleanos-maestra',
+    'feliz-cumpleanos-para-una-profesora-muy-especial',
+    'feliz-cumpleanos-vecina'
+  ];
+  for (const slug of profFem) {
+    const msgs = cat.mensajesDe(slug);
+    assert.equal(msgs.length, 40);
+    for (const m of msgs) {
+      assert.ok(!/\b(saludarlo|lo rodean|rodeado de|compañero querido)\b/i.test(m.texto), `Concordancia masculina indebida en ${slug}: ${m.slug}`);
+      assert.ok(!/En este día especial quiero destacar especialmente/i.test(m.texto), `Plantilla repetitiva en ${slug}: ${m.slug}`);
+      assert.ok(!/Siempre encontrará en casa un lugar cálido para volver/i.test(m.titulo), `Titulo fuera de contexto en ${slug}: ${m.titulo}`);
+    }
+  }
+  const profMasc = [
+    'feliz-cumpleanos-doctor',
+    'feliz-cumpleanos-jefe',
+    'feliz-cumpleanos-profesor',
+    'feliz-cumpleanos-pastor-imagenes-y-palabras',
+    'feliz-cumpleanos-para-un-companero-de-trabajo',
+    'frases-de-feliz-cumpleanos-para-un-alumno'
+  ];
+  for (const slug of profMasc) {
+    const msgs = cat.mensajesDe(slug);
+    assert.equal(msgs.length, 40);
+    for (const m of msgs) {
+      assert.ok(!/En este día especial quiero destacar especialmente/i.test(m.texto), `Plantilla repetitiva en ${slug}: ${m.slug}`);
+      assert.ok(!/bajo cielo claro|en esta nueva etapa en esta nueva etapa/i.test(m.titulo), `Titulo artificial en ${slug}: ${m.titulo}`);
+    }
+  }
 });
 
 test('orden mas reciente primero, filtros universales en las 416 categorias, aniversario +10 anos personalizable y popularidad dinamica', () => {

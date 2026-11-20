@@ -168,20 +168,39 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
             </details>
           );
         })}
-        <details class="sidebar-grupo" open={grupoActual === 'hitos_calendario'}>
+        <details class="sidebar-grupo sidebar-grupo--hitos" open={grupoActual === 'hitos_calendario'}>
           <summary>
             <span>🌍 Hitos históricos y calendario</span>
-            <span class="sidebar-count">{PAISES_HITOS.length + 1}</span>
+            <span class="sidebar-count">{PAISES_HITOS.length}</span>
           </summary>
-          <ul>
-            <li><a href="/hitos-historicos/">Hitos históricos ({PAISES_HITOS.length} países)</a></li>
-            <li><a href="/calendario/">Calendario perpetuo (366 días)</a></li>
-            <li><a href="/hitos-historicos/argentina/">Argentina · 9 de julio</a></li>
-            <li><a href="/hitos-historicos/mexico/">México · 16 de septiembre</a></li>
-            <li><a href="/hitos-historicos/espana/">España · 12 de octubre</a></li>
-            <li><a href="/hitos-historicos/colombia/">Colombia · 20 de julio</a></li>
-            <li><a href="/hitos-historicos/chile/">Chile · 18 de septiembre</a></li>
+          <ul class="sidebar-hitos-accesos">
+            <li><a href="/hitos-historicos/" aria-current={slugActual === 'hitos-historicos' ? 'page' : undefined}>Atlas completo ({PAISES_HITOS.length} países)</a></li>
+            <li><a href="/calendario/" aria-current={slugActual === 'calendario' ? 'page' : undefined}>Calendario sin año (366 días)</a></li>
             <li><a href="/herramientas/#banderines-imprimir">Banderines A4 para imprimir</a></li>
+          </ul>
+          <div class="sidebar-paises-buscador">
+            <label class="sr-only" for="sidebar-filtro-paises">Buscar entre los {PAISES_HITOS.length} países</label>
+            <input
+              type="search"
+              id="sidebar-filtro-paises"
+              class="sidebar-paises-filtro"
+              placeholder={`Buscar entre ${PAISES_HITOS.length} países…`}
+              autocomplete="off"
+            />
+          </div>
+          <ul class="sidebar-paises-lista" id="sidebar-paises-lista" aria-label={`Los ${PAISES_HITOS.length} países del mundo`}>
+            {PAISES_HITOS.map(function (pais) {
+              return (
+                <li data-pais={pais.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}>
+                  <a
+                    href={'/hitos-historicos/' + pais.slug + '/'}
+                    aria-current={slugActual === 'hito:' + pais.slug ? 'page' : undefined}
+                  >
+                    {pais.bandera} {pais.nombre}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </details>
       </aside>
@@ -656,6 +675,24 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           }
         }
       } catch (_) {}
+      // Filtro rapido para los 196 paises en el menu lateral
+      var filtroPaises = document.getElementById('sidebar-filtro-paises');
+      var listaPaises = document.getElementById('sidebar-paises-lista');
+      if (filtroPaises && listaPaises) {
+        filtroPaises.addEventListener('input', function () {
+          var q = String(filtroPaises.value || '')
+            .trim()
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+          var items = listaPaises.children;
+          for (var i = 0; i < items.length; i++) {
+            var li = items[i];
+            var nombre = li.getAttribute('data-pais') || '';
+            li.hidden = q.length > 0 && nombre.indexOf(q) === -1;
+          }
+        });
+      }
     })();
   </script>
 </body>

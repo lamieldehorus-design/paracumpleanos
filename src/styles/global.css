@@ -168,6 +168,26 @@ img { max-width: 100%; }
 .sidebar li { margin: 5px 0; font-size: 0.88rem; }
 .sidebar a { text-decoration: none; color: var(--texto-suave); }
 .sidebar a:hover, .sidebar a[aria-current="page"] { color: var(--rosa-oscuro); font-weight: 700; text-decoration: underline; }
+.sidebar-hitos-accesos { max-height: none !important; overflow: visible !important; border-bottom: 1px dashed var(--borde-suave); padding-bottom: 8px !important; margin-bottom: 8px !important; }
+.sidebar-paises-buscador { padding: 2px 2px 6px; }
+.sidebar-paises-filtro {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 10px;
+  font-size: 0.84rem;
+  font-family: var(--fuente-cuerpo);
+  border: 1px solid var(--borde-suave);
+  border-radius: 6px;
+  background: var(--crema-claro, #faf7f2);
+  color: var(--texto);
+}
+.sidebar-paises-filtro:focus {
+  outline: 2px solid var(--rosa-oscuro);
+  outline-offset: 1px;
+  background: #fff;
+}
+.sidebar-paises-lista { max-height: 310px !important; overflow-y: auto; }
+.sidebar-paises-lista li[hidden] { display: none; }
 
 /* Tipografia y metadata limpia (cero capsulas pill) */
 .meta-linea-editorial, .card-meta, .guia-meta {

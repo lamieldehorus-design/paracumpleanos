@@ -3,11 +3,14 @@ import Base from '../../layouts/Base.astro';
 import { MESES_NOMBRES_HITOS, PAISES_HITOS } from '../../data/hitos-historicos.ts';
 import {
   DIAS_POR_MES_EVERGREEN,
-  generarIndiceCalendarioAnualSinAnio
+  generarIndiceCalendarioAnualSinAnio,
+  generarPublicacionesPorMesCalendario
 } from '../../lib/calendario.ts';
 import { SITIO, hubsPorSlug, mensajesDe } from '../../lib/contenido.ts';
 
-const indiceCalendario = generarIndiceCalendarioAnualSinAnio(hubsPorSlug, mensajesDe('motivaciones'));
+const totalPaises = PAISES_HITOS.length;
+const indiceCalendario = generarIndiceCalendarioAnualSinAnio(hubsPorSlug, mensajesDe);
+const publicacionesPorMes = generarPublicacionesPorMesCalendario(mensajesDe);
 
 const jsonLd = [
   {
@@ -18,7 +21,7 @@ const jsonLd = [
     operatingSystem: 'All',
     url: `${SITIO}/calendario/`,
     description:
-      'Elegí cualquier día y mes del calendario sin año para descubrir hitos históricos mundiales de 195 países, celebraciones especiales, cumpleaños del mes, signo zodiacal, motivación diaria y fecha de duelo.',
+      `Elegí cualquier día y mes del calendario sin año para descubrir hitos históricos mundiales de ${totalPaises} países, publicaciones reales de celebraciones exactas, cumpleaños del mes, signo zodiacal y fecha de duelo.`,
     inLanguage: 'es'
   },
   {
@@ -34,8 +37,10 @@ const jsonLd = [
 
 <Base
   titulo="Calendario de Fechas, Hitos Históricos y Cumpleaños (Sin Año)"
-  descripcion={`Elegí cualquier día y mes sin año y descubrí todo en nuestra web: hitos históricos de ${PAISES_HITOS.length} países, fechas especiales, cumpleaños, signo zodiacal, motivación y duelo.`}
+  descripcion={`Elegí cualquier día y mes sin año y descubrí todo lo que existe en nuestra web para esa fecha: hitos históricos de ${totalPaises} países, celebraciones exactas, cumpleaños del mes, signo zodiacal y duelo.`}
   jsonld={jsonLd}
+  grupoActual="hitos_calendario"
+  slugActual="calendario"
 >
   <nav class="migas" aria-label="Ruta de navegación">
     <a href="/">Inicio</a>
@@ -47,7 +52,7 @@ const jsonLd = [
     <p class="eyebrow">Calendario perpetuo · Día y mes (sin año)</p>
     <h1>Calendario de celebraciones, hitos históricos y fechas especiales</h1>
     <p class="lead">
-      Elegí cualquier mes y día (del 1 de enero al 31 de diciembre, sin indicar año) para ver reunido todo lo que corresponde a esa fecha en ParaCumpleanos: los hitos históricos mundiales que se festejan ese día en distintos países, fechas anuales del sitio, cumpleaños del mes, signo zodiacal, motivación diaria y acceso directo para recordar una fecha de duelo.
+      Elegí cualquier mes y día (del 1 de enero al 31 de diciembre, sin indicar año) para ver únicamente las publicaciones reales que corresponden a esa fecha en ParaCumpleanos: los hitos históricos mundiales de {totalPaises} países, celebraciones exactas del sitio con sus textos listos para abrir, cumpleaños del mes, signo zodiacal y acceso para recordar una fecha de duelo.
     </p>
   </header>
 
@@ -140,6 +145,8 @@ const jsonLd = [
     is:inline
     define:vars={{
       indiceCalendario,
+      publicacionesPorMes,
+      totalPaises,
       mesesNombres: MESES_NOMBRES_HITOS,
       diasPorMes: DIAS_POR_MES_EVERGREEN
     }}
@@ -330,14 +337,16 @@ const jsonLd = [
               '<h3>🌍 Hitos históricos mundiales del ' +
               escHtml(dato.etiqueta) +
               '</h3>' +
-              '<p class="cal-vacio">Ningún Estado soberano fija su día nacional exacto el ' +
+              '<p class="cal-vacio">No hay ningún país que fije su día nacional exacto el ' +
               escHtml(dato.etiqueta) +
-              '. Podés recorrer las fechas marcadas con punto rosa en este mes o explorar el <a href="/hitos-historicos/">atlas completo de 195 países</a>.</p>' +
+              '. Podés recorrer las fechas marcadas con punto rosa en este mes o explorar el <a href="/hitos-historicos/">atlas completo de ' +
+              totalPaises +
+              ' países</a>.</p>' +
               '</section>'
           );
         }
 
-        // 2. Fechas especiales exactas del sitio
+        // 2. Celebraciones y publicaciones exactas del sitio para esta fecha (nunca se inventan)
         if (dato.fechasEspecialesExactas.length > 0) {
           var cardsEsp = dato.fechasEspecialesExactas
             .map(function (f) {
@@ -347,29 +356,87 @@ const jsonLd = [
                 '/">' +
                 '<div class="cal-card__meta">' +
                 escHtml(f.emoji) +
-                ' Celebración en ParaCumpleanos</div>' +
+                ' Colección exacta de esta fecha</div>' +
                 '<h4>' +
                 escHtml(f.titulo) +
                 '</h4>' +
-                '<p>40 mensajes inéditos y tarjetas personalizadas listas para copiar o descargar.</p>' +
-                '<span class="cal-card__link">Abrir colección →</span>' +
+                '<p>Publicaciones originales y tarjetas listas para copiar, descargar o imprimir.</p>' +
+                '<span class="cal-card__link">Abrir colección completa →</span>' +
                 '</a>'
               );
             })
             .join('');
+
+          var cardsPubsExactas = (dato.publicacionesExactas || [])
+            .map(function (p) {
+              return (
+                '<a class="cal-card" href="/' +
+                escHtml(p.slug) +
+                '/">' +
+                '<div class="cal-card__meta">📝 ' +
+                escHtml(p.categoriaTitulo) +
+                '</div>' +
+                '<h4>' +
+                escHtml(p.titulo) +
+                '</h4>' +
+                '<p>' +
+                escHtml(p.extracto) +
+                '</p>' +
+                '<span class="cal-card__link">Abrir publicación →</span>' +
+                '</a>'
+              );
+            })
+            .join('');
+
           secciones.push(
             '<section class="cal-seccion">' +
-              '<h3>🎉 Celebraciones especiales del ' +
+              '<h3>🎉 Celebraciones y publicaciones del ' +
               escHtml(dato.etiqueta) +
               '</h3>' +
               '<div class="cal-cards">' +
               cardsEsp +
+              cardsPubsExactas +
               '</div>' +
+              '</section>'
+          );
+        } else {
+          secciones.push(
+            '<section class="cal-seccion">' +
+              '<h3>🎉 Celebraciones puntuales del ' +
+              escHtml(dato.etiqueta) +
+              '</h3>' +
+              '<p class="cal-vacio">No hay una fecha festiva puntual registrada en el archivo para el ' +
+              escHtml(dato.etiqueta) +
+              '. Abajo encontrás las publicaciones reales del mes de ' +
+              escHtml(mesesNombres[mesActual - 1]) +
+              ' y el signo del zodíaco correspondiente a este día.</p>' +
               '</section>'
           );
         }
 
-        // 3. Cumpleaños del mes + Signo zodiacal
+        // 3. Cumpleaños del mes + Signo zodiacal + Publicaciones reales del mes
+        var pubsMes = publicacionesPorMes[mesActual] || [];
+        var cardsPubsMes = pubsMes
+          .map(function (p) {
+            return (
+              '<a class="cal-card" href="/' +
+              escHtml(p.slug) +
+              '/">' +
+              '<div class="cal-card__meta">🎂 Publicación de ' +
+              escHtml(mesesNombres[mesActual - 1]) +
+              '</div>' +
+              '<h4>' +
+              escHtml(p.titulo) +
+              '</h4>' +
+              '<p>' +
+              escHtml(p.extracto) +
+              '</p>' +
+              '<span class="cal-card__link">Leer publicación →</span>' +
+              '</a>'
+            );
+          })
+          .join('');
+
         secciones.push(
           '<section class="cal-seccion">' +
             '<h3>🎂 Cumpleaños y horóscopo para el ' +
@@ -402,48 +469,28 @@ const jsonLd = [
             escHtml(dato.signoNombre) +
             ' →</span>' +
             '</a>' +
+            cardsPubsMes +
             '</div>' +
             '</section>'
         );
 
-        // 4. Motivación diaria + Fecha de duelo
-        var cardMotivacion = dato.motivacion
-          ? '<a class="cal-card" href="/posts/' +
-            escHtml(dato.motivacion.slug) +
-            '/">' +
-            '<div class="cal-card__meta">✨ Motivación para el ' +
-            escHtml(dato.etiqueta) +
-            '</div>' +
-            '<h4>' +
-            escHtml(dato.motivacion.titulo) +
-            '</h4>' +
-            '<p>' +
-            escHtml(dato.motivacion.extracto) +
-            '</p>' +
-            '<span class="cal-card__link">Leer reflexión completa →</span>' +
-            '</a>'
-          : '';
-
-        var cardDuelo =
-          '<a class="cal-card cal-card--duelo" href="/condolencias/?mes=' +
-          mesActual +
-          '&dia=' +
-          diaActual +
-          '#fecha-duelo">' +
-          '<div class="cal-card__meta">🕊️ Fecha de duelo y condolencias</div>' +
-          '<h4>Recordar a un ser querido el ' +
-          escHtml(dato.etiqueta) +
-          '</h4>' +
-          '<p>Accedé a 40 textos serenos de condolencias y configurá esta fecha de recuerdo sin año.</p>' +
-          '<span class="cal-card__link">Ir a Condolencias →</span>' +
-          '</a>';
-
+        // 4. Fecha de duelo y recuerdo respetuoso
         secciones.push(
           '<section class="cal-seccion">' +
-            '<h3>✨ Inspiración diaria y memoria respetuosa</h3>' +
-            '<div class="cal-cards cal-cards--dos">' +
-            cardMotivacion +
-            cardDuelo +
+            '<h3>🕊️ Memoria respetuosa y fecha de duelo</h3>' +
+            '<div class="cal-cards">' +
+            '<a class="cal-card cal-card--duelo" href="/condolencias/?mes=' +
+            mesActual +
+            '&dia=' +
+            diaActual +
+            '#fecha-duelo">' +
+            '<div class="cal-card__meta">🕊️ Fecha de duelo y condolencias</div>' +
+            '<h4>Recordar a un ser querido el ' +
+            escHtml(dato.etiqueta) +
+            '</h4>' +
+            '<p>Accedé a las 40 publicaciones de condolencias y configurá esta fecha de recuerdo sin año.</p>' +
+            '<span class="cal-card__link">Ir a Condolencias →</span>' +
+            '</a>' +
             '</div>' +
             '</section>'
         );
