@@ -394,12 +394,11 @@ const formatos = Object.values(FORMATOS_TARJETA);
       var contenedor = document.getElementById('mensaje-cuerpo');
       if (!contenedor) return;
       var origTexto = contenedor.getAttribute('data-orig-texto') || '';
-      var origTitulo = contenedor.getAttribute('data-orig-titulo') || '';
       var textoPers = personalizar(origTexto, nombre, firma, posdata);
 
       renderizarParrafosDom(contenedor, textoPers);
 
-      var completo = (origTitulo ? origTitulo + '. ' : '') + textoPers;
+      var completo = textoPers;
       var root = document.getElementById('mensaje-detalle-bloque');
       if (root) {
         var btnCop = root.querySelector('.btn-copiar');
@@ -421,11 +420,10 @@ const formatos = Object.values(FORMATOS_TARJETA);
     function renderizarTarjetasListado(nombre, firma, posdata) {
       var hayPers = Boolean(limpiarCampo(nombre, 40) || limpiarCampo(firma, 40) || limpiarCampo(posdata, 120));
       document.querySelectorAll('[data-card-personalizable]').forEach(function (card) {
-        var origTit = card.getAttribute('data-orig-titulo') || '';
         var origTxt = card.getAttribute('data-orig-texto') || '';
         var origRes = card.getAttribute('data-orig-resumen') || '';
         var persTxt = personalizar(origTxt, nombre, firma, posdata);
-        var completo = (origTit ? origTit + '. ' : '') + persTxt;
+        var completo = persTxt;
 
         var resEl = card.querySelector('.card-resumen');
         if (resEl) {

@@ -13,6 +13,7 @@ import {
   calcularEstadisticasCumpleanos,
   construirDedicatoriaGuiada
 } from '../../lib/horoscopo.ts';
+import { TEMAS_TARJETA } from '../../lib/personalizador.ts';
 
 const titulo = `Herramientas de cumpleaños: edad exacta, acróstico y agenda - ${MARCA}`;
 const descripcion =
@@ -28,6 +29,9 @@ const demoDedicatoria = construirDedicatoriaGuiada({
   detalle: 'esos mates de los domingos escuchando sin apuro',
   firma: 'Tu amiga Laura'
 });
+const parrafosDemoDedicatoria = demoDedicatoria.split('\n\n');
+const temasLista = Object.values(TEMAS_TARJETA);
+const temaArmDefault = temasLista[0];
 
 const faqs = [
   {
@@ -211,13 +215,13 @@ const signosCliente = ZODIACOS.map((s) => ({
     </div>
 
     <div class="acciones no-print">
-      <button id="herr-acro-copiar" type="button" class="btn btn-copiar" data-text={`Acróstico para SOFÍA\n\n${demoAcrosticoTexto}`}>
+      <button id="herr-acro-copiar" type="button" class="btn btn-copiar" data-text={demoAcrosticoTexto}>
         Copiar acróstico
       </button>
       <a
         id="herr-acro-wa"
         class="btn btn-wa"
-        href={'https://wa.me/?text=' + encodeURIComponent(`Acróstico para SOFÍA\n\n${demoAcrosticoTexto}`)}
+        href={'https://wa.me/?text=' + encodeURIComponent(demoAcrosticoTexto)}
         target="_blank"
         rel="noopener"
       >
@@ -286,10 +290,66 @@ const signosCliente = ZODIACOS.map((s) => ({
     </div>
 
     <div class="acciones no-print">
-      <button id="herr-arm-btn" type="button" class="btn btn-copiar">Armar dedicatoria</button>
+      <button id="herr-arm-btn" type="button" class="btn btn-copiar">Actualizar dedicatoria</button>
     </div>
 
-    <div id="herr-arm-salida" class="herr-dedicatoria-salida">{demoDedicatoria}</div>
+    <div class="herr-arm-estilo no-print">
+      <div class="herr-arm-paletas" role="group" aria-label="Color de postal del armador">
+        <span class="herr-arm-estilo-label">Paleta de postal:</span>
+        {temasLista.map((tema, idx) => (
+          <button
+            type="button"
+            class={'pers-tema-btn' + (idx === 0 ? ' activo' : '')}
+            data-arm-tema={tema.id}
+            data-inicio={tema.inicio}
+            data-medio={tema.medio}
+            data-fin={tema.fin}
+            data-borde={tema.borde}
+            data-acento={tema.acento}
+            aria-pressed={idx === 0 ? 'true' : 'false'}
+          >
+            <span class="pers-swatch" style={`background:${tema.fondoCss};border-color:${tema.borde}`}></span>
+            <span>{tema.nombre}</span>
+          </button>
+        ))}
+      </div>
+      <div class="herr-arm-formatos" role="group" aria-label="Formato de descarga PNG del armador">
+        <span class="herr-arm-estilo-label">Formato PNG:</span>
+        <button type="button" class="pers-chip-btn pers-chip-texto activo" data-arm-formato="cuadrada" aria-pressed="true">Cuadrada (1:1)</button>
+        <button type="button" class="pers-chip-btn pers-chip-texto" data-arm-formato="story" aria-pressed="false">Story IG (9:16)</button>
+      </div>
+    </div>
+
+    <div
+      id="herr-arm-visual"
+      class="tarjeta-visual"
+      role="img"
+      aria-label="Vista previa postal de dedicatoria personalizada"
+      data-formato="cuadrada"
+      data-fuente="editorial"
+      data-subtitulo="Para Sofía"
+      data-tema-inicio={temaArmDefault.inicio}
+      data-tema-medio={temaArmDefault.medio}
+      data-tema-fin={temaArmDefault.fin}
+      data-tema-borde={temaArmDefault.borde}
+      data-tema-acento={temaArmDefault.acento}
+    >
+      <div class="tarjeta-visual-emoji">💌</div>
+      <p class="tarjeta-visual-subtitulo" id="herr-arm-vis-sub">PARA SOFÍA</p>
+      <p class="tarjeta-visual-titulo" id="herr-arm-vis-titulo">Feliz cumpleaños, Sofía</p>
+      <div class="tarjeta-visual-extracto" id="herr-arm-vis-cuerpo">
+        {parrafosDemoDedicatoria.map((p) => (
+          <p>{p}</p>
+        ))}
+      </div>
+      <p class="tarjeta-visual-marca">paracumpleanos.com</p>
+    </div>
+
+    <div id="herr-arm-salida" class="herr-dedicatoria-salida no-print">
+      {parrafosDemoDedicatoria.map((p) => (
+        <p>{p}</p>
+      ))}
+    </div>
 
     <div class="acciones no-print">
       <button id="herr-arm-copiar" type="button" class="btn btn-copiar" data-text={demoDedicatoria}>
@@ -305,15 +365,29 @@ const signosCliente = ZODIACOS.map((s) => ({
         WhatsApp
       </a>
       <button
+        id="herr-arm-ig"
+        type="button"
+        class="btn btn-ig"
+        data-ig-title="Feliz cumpleaños, Sofía"
+        data-ig-body={demoDedicatoria}
+        data-ig-emoji="💌"
+        data-ig-text={demoDedicatoria}
+        data-ig-subtitulo="Para Sofía"
+      >
+        Instagram
+      </button>
+      <button
         id="herr-arm-dl"
         type="button"
         class="btn btn-descargar"
-        data-title="Dedicatoria personalizada"
+        data-title="Feliz cumpleaños, Sofía"
         data-body={demoDedicatoria}
         data-emoji="💌"
+        data-subtitulo="Para Sofía"
       >
-        Descargar PNG
+        Descargar postal PNG
       </button>
+      <button type="button" class="btn btn-imprimir">Imprimir postal</button>
     </div>
   </section>
 
@@ -322,10 +396,17 @@ const signosCliente = ZODIACOS.map((s) => ({
     <p class="herr-modulo-kicker">Utilidad 04 · Calendario local</p>
     <h2 id="tit-ag">Agenda privada de cumpleaños con recordatorios .ics</h2>
     <p class="herr-modulo-intro">
-      Anotá las fechas importantes de tu familia y amigos en este dispositivo. Calculamos cuántos días faltan, enlazamos su signo y mes correspondiente y podés bajar cada evento anual en archivo <code>.ics</code> para tu calendario.
+      Anotá las fechas importantes de tu familia y amigos en este dispositivo. Calculamos cuántos días faltan, enlazamos su signo y mes correspondiente, y podés bajar cada evento o toda tu agenda junta en formato universal <code>.ics</code>.
     </p>
 
-    <form id="herr-ag-form" class="herr-form-grid no-print">
+    <details class="ics-explicacion no-print" open>
+      <summary>¿Qué es un archivo <strong>.ics</strong> y para qué sirve en tus cumpleaños?</summary>
+      <p>
+        Un archivo <strong>.ics</strong> (estándar <em>iCalendar</em>) es un recordatorio universal que aceptan <strong>Google Calendar</strong>, <strong>Apple Calendario</strong> (iPhone/Mac) y <strong>Outlook</strong>. Al descargarlo y abrirlo una sola vez en tu celular o computadora, agenda el cumpleaños automáticamente con <strong>repetición todos los años</strong> y dos avisos (48 horas antes y a las 09:00 hs del día), funcionando incluso cuando cerrás este sitio. Si usás Google Calendar desde el navegador, también tenés botón directo sin descargar archivo.
+      </p>
+    </details>
+
+    <form id="herr-ag-form" class="herr-form-grid no-print" novalidate>
       <div class="herr-campo">
         <label for="herr-ag-nombre">Nombre de la persona</label>
         <input id="herr-ag-nombre" type="text" required maxlength="40" placeholder="Ej.: Mamá, Juan, Prima Carla" />
@@ -354,11 +435,17 @@ const signosCliente = ZODIACOS.map((s) => ({
       <div style="grid-column: 1 / -1;">
         <button id="herr-ag-btn" type="submit" class="btn btn-copiar">Guardar en mi agenda local</button>
       </div>
+      <p id="herr-ag-error" class="herr-ag-error" style="grid-column: 1 / -1;" hidden></p>
     </form>
+
+    <div id="herr-ag-barra" class="acciones no-print" hidden>
+      <button id="herr-ag-exportar-todo" type="button" class="btn btn-descargar">Exportar toda mi agenda (.ics)</button>
+      <button id="herr-ag-vaciar" type="button" class="pers-limpiar">Vaciar agenda</button>
+    </div>
 
     <ul id="herr-ag-lista" class="herr-agenda-lista" aria-live="polite"></ul>
     <p id="herr-ag-vacio" class="texto-ayuda">
-      Todavía no cargaste fechas en este navegador. Probá sumar tu primer cumpleaños arriba para descargar su alerta anual <code>.ics</code>.
+      Todavía no cargaste fechas en este navegador. Probá sumar tu primer cumpleaños arriba para agendarlo en Google Calendar o descargar su alerta anual <code>.ics</code>.
     </p>
   </section>
 
@@ -567,9 +654,9 @@ const signosCliente = ZODIACOS.map((s) => ({
         }
 
         var cuerpo = lineas.map(function (it) { return it.letra + ' — ' + it.verso; }).join('\n');
-        var completo = tituloCard + '\n\n' + cuerpo;
-        if (btnAcroCop) btnAcroCop.setAttribute('data-text', completo);
-        if (btnAcroWa) btnAcroWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(completo));
+        var cuerpoCopia = cuerpo;
+        if (btnAcroCop) btnAcroCop.setAttribute('data-text', cuerpoCopia);
+        if (btnAcroWa) btnAcroWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(cuerpoCopia));
         if (btnAcroDl) {
           btnAcroDl.setAttribute('data-title', tituloCard);
           btnAcroDl.setAttribute('data-body', cuerpo);
@@ -580,7 +667,7 @@ const signosCliente = ZODIACOS.map((s) => ({
       if (inpAcroNom) inpAcroNom.addEventListener('input', actualizarAcrostico);
       if (selAcroTono) selAcroTono.addEventListener('change', actualizarAcrostico);
 
-      // 3. ARMADOR EN 3 PASOS
+      // 3. ARMADOR EN 3 PASOS + POSTAL VISUAL EN VIVO
       var selVinculo = document.getElementById('herr-arm-vinculo');
       var selTono = document.getElementById('herr-arm-tono');
       var inpArmNom = document.getElementById('herr-arm-nombre');
@@ -588,9 +675,15 @@ const signosCliente = ZODIACOS.map((s) => ({
       var inpArmDet = document.getElementById('herr-arm-detalle');
       var btnArm = document.getElementById('herr-arm-btn');
       var outArm = document.getElementById('herr-arm-salida');
+      var visArm = document.getElementById('herr-arm-visual');
+      var visArmSub = document.getElementById('herr-arm-vis-sub');
+      var visArmTit = document.getElementById('herr-arm-vis-titulo');
+      var visArmCuerpo = document.getElementById('herr-arm-vis-cuerpo');
       var btnArmCop = document.getElementById('herr-arm-copiar');
       var btnArmWa = document.getElementById('herr-arm-wa');
+      var btnArmIg = document.getElementById('herr-arm-ig');
       var btnArmDl = document.getElementById('herr-arm-dl');
+      var formatoArm = 'cuadrada';
 
       var APERTURAS = {
         familia: {
@@ -626,6 +719,18 @@ const signosCliente = ZODIACOS.map((s) => ({
         fe: 'Que nunca falte abrigo espiritual ni alegría en tu hogar.'
       };
 
+      function renderParrafosEnContenedor(el, texto) {
+        if (!el) return;
+        el.innerHTML = '';
+        String(texto || '').split(/\n{2,}/).forEach(function (bloque) {
+          var limpio = bloque.trim();
+          if (!limpio) return;
+          var p = document.createElement('p');
+          p.textContent = limpio;
+          el.appendChild(p);
+        });
+      }
+
       function armarDedicatoria() {
         var v = (selVinculo && selVinculo.value) || 'amistad';
         var t = (selTono && selTono.value) || 'emotivo';
@@ -644,30 +749,97 @@ const signosCliente = ZODIACOS.map((s) => ({
         }
         var b3 = CIERRES[t] || CIERRES.emotivo;
         var texto = [b1, b2, b3].filter(Boolean).join('\n\n') + (fir ? '\n\n— ' + fir : '');
+        var tituloPostal = nom ? 'Feliz cumpleaños, ' + nom : 'Dedicatoria personalizada';
+        var subPostal = nom ? 'Para ' + nom : 'Postal personalizada';
 
-        if (outArm) outArm.textContent = texto;
+        renderParrafosEnContenedor(outArm, texto);
+        renderParrafosEnContenedor(visArmCuerpo, texto);
+        if (visArmTit) visArmTit.textContent = tituloPostal;
+        if (visArmSub) visArmSub.textContent = subPostal.toUpperCase();
+        if (visArm) {
+          visArm.setAttribute('data-subtitulo', subPostal);
+          visArm.setAttribute('data-formato', formatoArm);
+        }
+
         if (btnArmCop) btnArmCop.setAttribute('data-text', texto);
         if (btnArmWa) btnArmWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(texto));
+        if (btnArmIg) {
+          btnArmIg.setAttribute('data-ig-title', tituloPostal);
+          btnArmIg.setAttribute('data-ig-body', texto);
+          btnArmIg.setAttribute('data-ig-text', texto);
+          btnArmIg.setAttribute('data-ig-subtitulo', subPostal);
+          btnArmIg.setAttribute('data-formato', formatoArm);
+        }
         if (btnArmDl) {
-          btnArmDl.setAttribute('data-title', nom ? 'Para ' + nom : 'Dedicatoria personalizada');
+          btnArmDl.setAttribute('data-title', tituloPostal);
           btnArmDl.setAttribute('data-body', texto);
+          btnArmDl.setAttribute('data-subtitulo', subPostal);
+          btnArmDl.setAttribute('data-formato', formatoArm);
         }
       }
 
-      if (btnArm) btnArm.addEventListener('click', armarDedicatoria);
-      [selVinculo, selTono, inpArmNom, inpArmFir, inpArmDet].forEach(function (el) {
-        if (el) el.addEventListener('input', armarDedicatoria);
+      document.querySelectorAll('[data-arm-tema]').forEach(function (btnTema) {
+        btnTema.addEventListener('click', function () {
+          document.querySelectorAll('[data-arm-tema]').forEach(function (b) {
+            var act = b === btnTema;
+            b.classList.toggle('activo', act);
+            b.setAttribute('aria-pressed', act ? 'true' : 'false');
+          });
+          if (!visArm) return;
+          var ini = btnTema.getAttribute('data-inicio') || '#fdf2f8';
+          var med = btnTema.getAttribute('data-medio') || '#fff7ed';
+          var fin = btnTema.getAttribute('data-fin') || '#e0f2fe';
+          var bor = btnTema.getAttribute('data-borde') || '#e11d74';
+          var ace = btnTema.getAttribute('data-acento') || '#9f1239';
+          visArm.setAttribute('data-tema-inicio', ini);
+          visArm.setAttribute('data-tema-medio', med);
+          visArm.setAttribute('data-tema-fin', fin);
+          visArm.setAttribute('data-tema-borde', bor);
+          visArm.setAttribute('data-tema-acento', ace);
+          visArm.style.background = 'linear-gradient(135deg, ' + ini + ', ' + med + ' 55%, ' + fin + ')';
+          visArm.style.borderColor = bor;
+          if (visArmTit) visArmTit.style.color = ace;
+        });
       });
 
-      // 4. AGENDA PRIVADA DE CUMPLEANOS CON DESCARGA .ICS
+      document.querySelectorAll('[data-arm-formato]').forEach(function (btnFmt) {
+        btnFmt.addEventListener('click', function () {
+          formatoArm = btnFmt.getAttribute('data-arm-formato') || 'cuadrada';
+          document.querySelectorAll('[data-arm-formato]').forEach(function (b) {
+            var act = b === btnFmt;
+            b.classList.toggle('activo', act);
+            b.setAttribute('aria-pressed', act ? 'true' : 'false');
+          });
+          if (visArm) {
+            visArm.setAttribute('data-formato', formatoArm);
+            visArm.classList.toggle('formato-story', formatoArm === 'story');
+          }
+          armarDedicatoria();
+        });
+      });
+
+      if (btnArm) btnArm.addEventListener('click', armarDedicatoria);
+      [selVinculo, selTono, inpArmNom, inpArmFir, inpArmDet].forEach(function (el) {
+        if (!el) return;
+        el.addEventListener('input', armarDedicatoria);
+        el.addEventListener('change', armarDedicatoria);
+      });
+      armarDedicatoria();
+
+      // 4. AGENDA PRIVADA DE CUMPLEANOS CON DESCARGA .ICS + GOOGLE CALENDAR
       var STORAGE_AG = 'pc_agenda_cumples_v1';
       var formAg = document.getElementById('herr-ag-form');
       var ulAg = document.getElementById('herr-ag-lista');
       var vacioAg = document.getElementById('herr-ag-vacio');
+      var barraAg = document.getElementById('herr-ag-barra');
+      var errAg = document.getElementById('herr-ag-error');
+      var btnExpTodo = document.getElementById('herr-ag-exportar-todo');
+      var btnVaciarAg = document.getElementById('herr-ag-vaciar');
 
       function cargarAgenda() {
         try {
-          return JSON.parse(localStorage.getItem(STORAGE_AG) || '[]') || [];
+          var datos = JSON.parse(localStorage.getItem(STORAGE_AG) || '[]');
+          return Array.isArray(datos) ? datos : [];
         } catch (e) {
           return [];
         }
@@ -691,8 +863,19 @@ const signosCliente = ZODIACOS.map((s) => ({
         return Math.round((prox.getTime() - ref.getTime()) / 86400000);
       }
 
-      function generarContenidoIcs(item) {
+      function escaparIcsCli(texto) {
+        return String(texto || '')
+          .replace(/\\/g, '\\\\')
+          .replace(/\r?\n/g, '\\n')
+          .replace(/;/g, '\\;')
+          .replace(/,/g, '\\,');
+      }
+
+      function construirBloqueVeventCli(item, stamp) {
         var anio = new Date().getFullYear();
+        if (item.mes === 2 && item.dia === 29 && !esBisiesto(anio)) {
+          while (!esBisiesto(anio)) anio += 1;
+        }
         var mm = String(item.mes).padStart(2, '0');
         var dd = String(item.dia).padStart(2, '0');
         var dt = anio + mm + dd;
@@ -700,34 +883,93 @@ const signosCliente = ZODIACOS.map((s) => ({
         var mesObj = MESES[item.mes - 1] || MESES[0];
         var signo = resolverSigno(item.mes, item.dia);
         var rel = item.relacion ? ' (' + item.relacion + ')' : '';
-        var uid = 'cumple-' + item.nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + mm + dd + '@paracumpleanos.com';
-        var stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+        var uidBase = item.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'cumple';
+        var uid = 'cumple-' + uidBase + '-' + mm + dd + '@paracumpleanos.com';
         return [
-          'BEGIN:VCALENDAR',
-          'VERSION:2.0',
-          'PRODID:-//ParaCumpleanos//Agenda Cumpleanos//ES',
-          'CALSCALE:GREGORIAN',
           'BEGIN:VEVENT',
           'UID:' + uid,
           'DTSTAMP:' + stamp,
           'DTSTART;VALUE=DATE:' + dt,
           'DTEND;VALUE=DATE:' + dtEnd,
           'RRULE:FREQ=YEARLY',
-          'SUMMARY:Cumpleaños de ' + item.nombre + rel,
-          'DESCRIPTION:Recordatorio anual ParaCumpleanos.com (' + signo.nombre + '). Ideas en https://paracumpleanos.com/' + mesObj.slug + '/ y https://paracumpleanos.com/horoscopo/' + signo.slug + '/',
+          'SUMMARY:' + escaparIcsCli('Cumpleaños de ' + item.nombre + rel),
+          'DESCRIPTION:' + escaparIcsCli('Recordatorio anual ParaCumpleanos.com (' + signo.nombre + '). Ideas en https://paracumpleanos.com/' + mesObj.slug + '/ y https://paracumpleanos.com/horoscopo/' + signo.slug + '/'),
           'BEGIN:VALARM',
           'TRIGGER:-P2D',
           'ACTION:DISPLAY',
-          'DESCRIPTION:Faltan 2 días para el cumpleaños de ' + item.nombre,
+          'DESCRIPTION:' + escaparIcsCli('Faltan 2 días para el cumpleaños de ' + item.nombre),
           'END:VALARM',
           'BEGIN:VALARM',
-          'TRIGGER:PT9H',
+          'TRIGGER;RELATED=START:PT9H',
           'ACTION:DISPLAY',
-          'DESCRIPTION:Hoy cumple años ' + item.nombre,
+          'DESCRIPTION:' + escaparIcsCli('Hoy cumple años ' + item.nombre),
           'END:VALARM',
-          'END:VEVENT',
+          'END:VEVENT'
+        ].join('\r\n');
+      }
+
+      function generarContenidoIcs(item) {
+        var stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+        return [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//ParaCumpleanos//Agenda Cumpleanos//ES',
+          'CALSCALE:GREGORIAN',
+          construirBloqueVeventCli(item, stamp),
           'END:VCALENDAR'
         ].join('\r\n');
+      }
+
+      function generarIcsAgendaCompleta(lista) {
+        var stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+        var bloques = lista.map(function (item) {
+          return construirBloqueVeventCli(item, stamp);
+        });
+        return [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//ParaCumpleanos//Agenda Cumpleanos//ES',
+          'CALSCALE:GREGORIAN',
+          'X-WR-CALNAME:Agenda de Cumpleanos - ParaCumpleanos'
+        ].concat(bloques, ['END:VCALENDAR']).join('\r\n');
+      }
+
+      function urlGoogleCalendarCli(item) {
+        var anio = new Date().getFullYear();
+        if (item.mes === 2 && item.dia === 29 && !esBisiesto(anio)) {
+          while (!esBisiesto(anio)) anio += 1;
+        }
+        var mm = String(item.mes).padStart(2, '0');
+        var dd = String(item.dia).padStart(2, '0');
+        var dt = anio + mm + dd;
+        var dtEnd = new Date(Date.UTC(anio, item.mes - 1, item.dia + 1)).toISOString().slice(0, 10).replace(/-/g, '');
+        var mesObj = MESES[item.mes - 1] || MESES[0];
+        var signo = resolverSigno(item.mes, item.dia);
+        var rel = item.relacion ? ' (' + item.relacion + ')' : '';
+        var titulo = 'Cumpleaños de ' + item.nombre + rel;
+        var detalles = 'Recordatorio anual de ParaCumpleanos.com (' + signo.nombre + ' ' + signo.simbolo + '). Ideas listas en https://paracumpleanos.com/' + mesObj.slug + '/ y https://paracumpleanos.com/horoscopo/' + signo.slug + '/';
+        return (
+          'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+          '&text=' + encodeURIComponent(titulo) +
+          '&dates=' + dt + '/' + dtEnd +
+          '&recur=' + encodeURIComponent('RRULE:FREQ=YEARLY') +
+          '&details=' + encodeURIComponent(detalles)
+        );
+      }
+
+      function descargarArchivoIcs(contenido, nombreArchivo, avisoToast) {
+        var blob = new Blob([contenido], { type: 'text/calendar;charset=utf-8' });
+        var urlBlob = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = urlBlob;
+        a.download = nombreArchivo;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(urlBlob); }, 1000);
+        if (window.pcMostrarToast && avisoToast) {
+          window.pcMostrarToast(avisoToast);
+        }
       }
 
       function renderAgenda() {
@@ -738,6 +980,7 @@ const signosCliente = ZODIACOS.map((s) => ({
         });
         ulAg.innerHTML = '';
         if (vacioAg) vacioAg.hidden = lista.length > 0;
+        if (barraAg) barraAg.hidden = lista.length === 0;
 
         lista.forEach(function (item) {
           var mesObj = MESES[item.mes - 1] || MESES[0];
@@ -767,24 +1010,21 @@ const signosCliente = ZODIACOS.map((s) => ({
           var acc = document.createElement('div');
           acc.className = 'herr-agenda-acciones';
 
+          var btnGcal = document.createElement('a');
+          btnGcal.className = 'btn btn-wa btn-sm';
+          btnGcal.href = urlGoogleCalendarCli(item);
+          btnGcal.target = '_blank';
+          btnGcal.rel = 'noopener noreferrer';
+          btnGcal.textContent = 'Google Calendar +';
+
           var btnIcs = document.createElement('button');
           btnIcs.type = 'button';
           btnIcs.className = 'btn btn-descargar btn-sm';
           btnIcs.textContent = 'Descargar .ics';
           btnIcs.addEventListener('click', function () {
             var icsText = generarContenidoIcs(item);
-            var blob = new Blob([icsText], { type: 'text/calendar;charset=utf-8' });
-            var urlBlob = URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = urlBlob;
-            a.download = 'cumple-' + item.nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.ics';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(function () { URL.revokeObjectURL(urlBlob); }, 1000);
-            if (window.pcMostrarToast) {
-              window.pcMostrarToast('✓ Evento anual .ics descargado para tu calendario.');
-            }
+            var slugNombre = item.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'persona';
+            descargarArchivoIcs(icsText, 'cumple-' + slugNombre + '.ics', '✓ Archivo .ics descargado: abrilo para agendar el aviso anual.');
           });
 
           var btnDel = document.createElement('button');
@@ -797,6 +1037,7 @@ const signosCliente = ZODIACOS.map((s) => ({
             renderAgenda();
           });
 
+          acc.appendChild(btnGcal);
           acc.appendChild(btnIcs);
           acc.appendChild(btnDel);
 
@@ -806,14 +1047,57 @@ const signosCliente = ZODIACOS.map((s) => ({
         });
       }
 
+      if (btnExpTodo) {
+        btnExpTodo.addEventListener('click', function () {
+          var lista = cargarAgenda();
+          if (!lista.length) return;
+          descargarArchivoIcs(
+            generarIcsAgendaCompleta(lista),
+            'agenda-cumpleanos-paracumpleanos.ics',
+            '✓ Agenda completa (' + lista.length + ' fechas) descargada en un solo archivo .ics.'
+          );
+        });
+      }
+
+      if (btnVaciarAg) {
+        btnVaciarAg.addEventListener('click', function () {
+          guardarAgenda([]);
+          renderAgenda();
+          if (window.pcMostrarToast) {
+            window.pcMostrarToast('Agenda local vaciada.');
+          }
+        });
+      }
+
       if (formAg) {
         formAg.addEventListener('submit', function (ev) {
           ev.preventDefault();
-          var nom = String((document.getElementById('herr-ag-nombre') || {}).value || '').trim();
+          var nomEl = document.getElementById('herr-ag-nombre');
+          var nom = String((nomEl || {}).value || '').trim();
           var rel = String((document.getElementById('herr-ag-relacion') || {}).value || 'Familia');
           var mes = Number((document.getElementById('herr-ag-mes') || {}).value || '1');
           var dia = Number((document.getElementById('herr-ag-dia') || {}).value || '1');
-          if (!nom || dia < 1 || dia > 31 || mes < 1 || mes > 12) return;
+
+          if (!nom) {
+            if (errAg) {
+              errAg.textContent = 'Ingresá un nombre (ej.: Mamá o Primo Lucas) antes de guardar.';
+              errAg.hidden = false;
+            }
+            if (nomEl) nomEl.focus();
+            return;
+          }
+          if (!Number.isInteger(mes) || mes < 1 || mes > 12 || !Number.isInteger(dia) || dia < 1 || dia > 31) {
+            if (errAg) {
+              errAg.textContent = 'Revisá el día (1 a 31) y el mes seleccionados.';
+              errAg.hidden = false;
+            }
+            return;
+          }
+          if (errAg) {
+            errAg.hidden = true;
+            errAg.textContent = '';
+          }
+
           var maxDiaMes = diasEnMes(2024, mes);
           if (dia > maxDiaMes) dia = maxDiaMes;
 

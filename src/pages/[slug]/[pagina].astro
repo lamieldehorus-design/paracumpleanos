@@ -57,6 +57,13 @@ const jsonld = [migasLd([
   </div>
   <nav class="paginacion" aria-label="Paginación">
     {prev >= 1 ? <a href={urlPrev}>‹ Anterior</a> : null}
+    {Array.from({ length: total }, (_, i) => i + 1).map(function (p) {
+      if (p === pagina) {
+        return <span class="pag-actual" aria-current="page">{p}</span>;
+      }
+      const hrefP = p === 1 ? '/' + hub.slug + '/' : '/' + hub.slug + '/' + p + '/';
+      return <a class="pag-num" href={hrefP}>{p}</a>;
+    })}
     {next <= total ? <a href={'/' + hub.slug + '/' + next + '/'}>Siguiente ›</a> : null}
   </nav>
   {hub.seoTitulo && hub.seoTexto ? (

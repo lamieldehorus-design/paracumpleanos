@@ -1,7 +1,10 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { SITIO, MARCA, migasLd } from '../../lib/contenido.ts';
+import { SITIO, MARCA, migasLd, mensajesDe } from '../../lib/contenido.ts';
 import { ZODIACOS, MESES_CON_SIGNOS } from '../../lib/horoscopo.ts';
+
+const frasesPorSigno = ZODIACOS[0]?.frasesCumpleanos.length || 12;
+const frasesPorMes = mensajesDe(MESES_CON_SIGNOS[0].slug).length || 60;
 
 const titulo = `Horóscopo de cumpleaños: fechas, signos y meses - ${MARCA}`;
 const descripcion =
@@ -126,12 +129,12 @@ const signosBuscador = ZODIACOS.map((s) => ({
             <strong>Tono ideal:</strong> {s.tonoIdeal}. {s.comoSaludar}
           </p>
           <div class="horoscopo-enlaces-mes">
-            <span>Meses del signo:</span>
+            <span>{s.frasesCumpleanos.length} frases · Meses:</span>
             <a href={`/${s.mesesSlugs[0]}/`}>{s.mesesNombres[0]}</a>
             <span aria-hidden="true">·</span>
             <a href={`/${s.mesesSlugs[1]}/`}>{s.mesesNombres[1]}</a>
             <span aria-hidden="true">·</span>
-            <a href={`/horoscopo/${s.slug}/`}>Ver guía →</a>
+            <a href={`/horoscopo/${s.slug}/`}>Ver {s.frasesCumpleanos.length} frases →</a>
           </div>
         </article>
       ))}
@@ -173,7 +176,7 @@ const signosBuscador = ZODIACOS.map((s) => ({
   <section class="guia-categoria" aria-labelledby="hor-meses-tit">
     <h2 id="hor-meses-tit">Explorá las 12 colecciones de cumpleaños por mes del año</h2>
     <p>
-      Cada mes reúne 40 dedicatorias inéditas adaptadas a la estación y al clima de los dos signos que conviven en sus fechas:
+      Cada mes reúne {frasesPorMes} dedicatorias inéditas adaptadas a la estación y al clima de los dos signos que conviven en sus fechas (más {frasesPorSigno} dedicatorias específicas en cada ficha zodiacal):
     </p>
     <div class="chips">
       {MESES_CON_SIGNOS.map((m) => (

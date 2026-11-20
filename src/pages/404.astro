@@ -82,7 +82,7 @@ const totalHubs = hubs.length;
           var txt = document.getElementById('sugerencia-404-texto');
           var lnk = document.getElementById('sugerencia-404-link');
           if (box && txt && lnk) {
-            txt.textContent = mejor.emoji + ' ' + mejor.nombre + ' (40 mensajes listos para personalizar y copiar)';
+            txt.textContent = mejor.emoji + ' ' + mejor.nombre + ' (dedicatorias originales listas para personalizar y copiar)';
             lnk.setAttribute('href', '/' + mejor.slug + '/');
             box.hidden = false;
           }
@@ -111,7 +111,7 @@ const totalHubs = hubs.length;
             var li = document.createElement('li');
             var a = document.createElement('a');
             a.href = '/' + h.slug + '/';
-            a.innerHTML = '<span>' + h.emoji + ' ' + h.nombre + '</span><span class="portal-res-tipo">40 textos</span>';
+            a.innerHTML = '<span>' + h.emoji + ' ' + h.nombre + '</span><span class="portal-res-tipo">Colección</span>';
             li.appendChild(a);
             res.appendChild(li);
           });

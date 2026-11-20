@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Compartir from '../../components/Compartir.astro';
 import PersonalizadorTarjeta from '../../components/PersonalizadorTarjeta.astro';
-import { SITIO, MARCA, migasLd } from '../../lib/contenido.ts';
+import { SITIO, MARCA, migasLd, mensajesDe } from '../../lib/contenido.ts';
 import { ZODIACOS, MESES_CON_SIGNOS, type SignoZodiaco } from '../../lib/horoscopo.ts';
 
 export function getStaticPaths() {
@@ -17,22 +17,31 @@ interface Props {
 }
 
 const { signo } = Astro.props;
-const titulo = `Cumpleaños de ${signo.nombre} (${signo.rangoTexto}): frases y perfil - ${MARCA}`;
+const titulo = `Cumpleaños de ${signo.nombre} (${signo.rangoTexto}): ${signo.frasesCumpleanos.length} frases y meses - ${MARCA}`;
 const descripcion =
-  `Frases de cumpleaños para ${signo.nombre} (${signo.rangoTexto}), ideas de regalos según su elemento ${signo.elemento} y colecciones completas de ${signo.mesesNombres[0]} y ${signo.mesesNombres[1]}.`;
+  `${signo.frasesCumpleanos.length} frases de cumpleaños para ${signo.nombre} (${signo.rangoTexto}), ideas de regalos según su elemento ${signo.elemento} y colecciones completas de ${signo.mesesNombres[0]} y ${signo.mesesNombres[1]}.`;
 
 const mesesVinculados = signo.mesesSlugs.map((slugMes, idx) => {
   const mesInfo = MESES_CON_SIGNOS.find((m) => m.slug === slugMes);
   const subSigno = mesInfo?.signos.find((x) => x.slug === signo.slug);
+  const cantidadMes = mensajesDe(slugMes).length;
   return {
     slug: slugMes,
     nombre: signo.mesesNombres[idx],
     rangoEnMes: subSigno ? subSigno.rangoEnMes : signo.rangoTexto,
-    estacion: mesInfo ? mesInfo.estacionSurNorte : ''
+    estacion: mesInfo ? mesInfo.estacionSurNorte : '',
+    cantidadMes
   };
 });
 
 const otrosSignos = ZODIACOS.filter((z) => z.slug !== signo.slug);
+
+const etiquetasTono: Record<string, string> = {
+  emotivo: 'Emotivo y cercano',
+  breve: 'Breve para WhatsApp',
+  humor: 'Con humor sano',
+  fe: 'Con fe y gratitud'
+};
 
 const jsonld = [
   migasLd([
@@ -71,7 +80,7 @@ const jsonld = [
     <a href="/">Inicio</a> › <a href="/horoscopo/">Horóscopo</a> › <span>{signo.nombre}</span>
   </nav>
 
-  <h1>Cumpleaños de {signo.nombre} {signo.simbolo}: frases, regalos y meses</h1>
+  <h1>Cumpleaños de {signo.nombre} {signo.simbolo}: {signo.frasesCumpleanos.length} frases, regalos y meses</h1>
   <p class="meta-linea-editorial">
     <span>{signo.rangoTexto}</span>
     <span aria-hidden="true">·</span>
@@ -81,20 +90,20 @@ const jsonld = [
   </p>
 
   <p class="lead">
-    Si la persona homenajeada nació bajo <strong>{signo.nombre}</strong>, su cumpleaños cae entre el {signo.rangoTexto}. Acá tenés el tono exacto que más valora al leer una dedicatoria, ideas de regalos concretas y las colecciones completas de los meses vinculados.
+    Si la persona homenajeada nació bajo <strong>{signo.nombre}</strong>, su cumpleaños cae entre el {signo.rangoTexto}. Acá tenés {signo.frasesCumpleanos.length} dedicatorias por tono adaptadas a su personalidad, ideas de regalos concretas y las colecciones completas de los meses vinculados.
   </p>
 
   <!-- INTERLINK BIDIRECCIONAL DIRECTO CON CATEGORIAS POR MESES -->
   <aside class="enlace-horoscopo-mes" aria-labelledby="hor-meses-tit-signo">
     <h2 id="hor-meses-tit-signo">Meses vinculados a los cumpleaños de {signo.nombre}</h2>
     <p>
-      Según el día exacto de nacimiento, {signo.nombre} comparte calendario con dos colecciones mensuales de 40 textos inéditos cada una:
+      Según el día exacto de nacimiento, {signo.nombre} comparte calendario con dos colecciones mensuales ampliadas:
     </p>
     <div class="enlace-horoscopo-grid">
       {mesesVinculados.map((m) => (
         <a class="signo-mes-card" href={`/${m.slug}/`}>
           <span class="signo-mes-nombre">🎂 Cumpleaños en {m.nombre}</span>
-          <span class="signo-mes-rango">{signo.nombre}: {m.rangoEnMes} · 40 dedicatorias</span>
+          <span class="signo-mes-rango">{signo.nombre}: {m.rangoEnMes} · {m.cantidadMes} dedicatorias</span>
         </a>
       ))}
     </div>
@@ -138,22 +147,31 @@ const jsonld = [
   </div>
 
   <section aria-labelledby="hor-frases-tit">
-    <h2 id="hor-frases-tit">Dedicatorias exclusivas para celebrar a {signo.nombre}</h2>
-    <div class="grilla">
+    <h2 id="hor-frases-tit">{signo.frasesCumpleanos.length} dedicatorias exclusivas para celebrar a {signo.nombre}</h2>
+    <div class="filtros-tono" role="group" aria-label={`Filtrar dedicatorias de ${signo.nombre} por tono`}>
+      <button type="button" class="filtro-btn activo" data-hor-filtro="todos" aria-pressed="true">Todas ({signo.frasesCumpleanos.length})</button>
+      <button type="button" class="filtro-btn" data-hor-filtro="emotivo" aria-pressed="false">Emotivo</button>
+      <button type="button" class="filtro-btn" data-hor-filtro="breve" aria-pressed="false">Breve WhatsApp</button>
+      <button type="button" class="filtro-btn" data-hor-filtro="humor" aria-pressed="false">Humor sano</button>
+      <button type="button" class="filtro-btn" data-hor-filtro="fe" aria-pressed="false">Fe y gratitud</button>
+    </div>
+    <div class="grilla" id="hor-grilla-signo">
       {signo.frasesCumpleanos.map((f) => {
-        const completo = `${f.titulo}. ${f.texto}`;
+        const tono = f.tono || 'emotivo';
         return (
           <article
             class="card"
             data-card-personalizable="1"
+            data-hor-tono={tono}
             data-orig-titulo={f.titulo}
             data-orig-texto={f.texto}
             data-orig-resumen={f.texto}
           >
+            <p class="card-meta"><span>{etiquetasTono[tono] || 'Dedicatoria'}</span></p>
             <h3>{f.titulo}</h3>
             <p class="card-resumen">{f.texto}</p>
             <Compartir
-              texto={completo}
+              texto={f.texto}
               url={`${SITIO}/horoscopo/${signo.slug}/`}
               tituloCard={f.titulo}
               cuerpoCard={f.texto}
@@ -177,7 +195,7 @@ const jsonld = [
       ))}
     </ol>
     <p class="ver-tambien">
-      Seguí explorando mensajes según su fecha exacta en <a href={`/${mesesVinculados[0].slug}/`}>cumpleaños en {mesesVinculados[0].nombre} →</a> o <a href={`/${mesesVinculados[1].slug}/`}>cumpleaños en {mesesVinculados[1].nombre} →</a>
+      Seguí explorando mensajes según su fecha exacta en <a href={`/${mesesVinculados[0].slug}/`}>cumpleaños en {mesesVinculados[0].nombre} ({mesesVinculados[0].cantidadMes}) →</a> o <a href={`/${mesesVinculados[1].slug}/`}>cumpleaños en {mesesVinculados[1].nombre} ({mesesVinculados[1].cantidadMes}) →</a>
     </p>
   </section>
 
@@ -203,4 +221,25 @@ const jsonld = [
       ))}
     </div>
   </section>
+
+  <script is:inline>
+    (function () {
+      var btns = document.querySelectorAll('[data-hor-filtro]');
+      var grilla = document.getElementById('hor-grilla-signo');
+      if (!btns.length || !grilla) return;
+      btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var f = btn.getAttribute('data-hor-filtro') || 'todos';
+          btns.forEach(function (b) {
+            var act = b === btn;
+            b.classList.toggle('activo', act);
+            b.setAttribute('aria-pressed', act ? 'true' : 'false');
+          });
+          grilla.querySelectorAll('[data-hor-tono]').forEach(function (card) {
+            card.style.display = f === 'todos' || card.getAttribute('data-hor-tono') === f ? '' : 'none';
+          });
+        });
+      });
+    })();
+  </script>
 </Base>

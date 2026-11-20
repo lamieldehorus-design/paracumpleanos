@@ -8,6 +8,8 @@ import {
   generarAcrostico,
   construirDedicatoriaGuiada,
   construirIcsCumpleanos,
+  construirIcsAgendaCompleta,
+  construirUrlGoogleCalendar,
   signoPorSlug,
   mesInfoPorSlug
 } from './horoscopo';
@@ -18,7 +20,16 @@ test('todos los 12 signos y los 12 meses mantienen enlaces bidireccionales consi
 
   for (const signo of ZODIACOS) {
     assert.equal(signo.mesesSlugs.length, 2);
-    assert.equal(signo.frasesCumpleanos.length, 3);
+    assert.equal(signo.frasesCumpleanos.length, 12, `Signo ${signo.slug} debe tener 12 frases`);
+    assert.equal(
+      new Set(signo.frasesCumpleanos.map((f) => f.texto.trim())).size,
+      12,
+      `Signo ${signo.slug} tiene frases repetidas`
+    );
+    assert.ok(
+      signo.frasesCumpleanos.every((f) => ['emotivo', 'breve', 'humor', 'fe'].includes(String(f.tono))),
+      `Signo ${signo.slug} tiene tono invalido`
+    );
     assert.equal(signo.faqs.length, 3);
     assert.equal(signo.ideasRegalo.length, 3);
 
@@ -111,7 +122,7 @@ test('construirDedicatoriaGuiada y construirIcsCumpleanos producen salidas valid
   assert.ok(texto.includes('— Martín'));
 
   const ics = construirIcsCumpleanos({
-    nombre: 'Mamá',
+    nombre: 'Mamá, Lucía',
     mes: 5,
     dia: 25,
     relacion: 'mamá',
@@ -119,6 +130,42 @@ test('construirDedicatoriaGuiada y construirIcsCumpleanos producen salidas valid
   });
   assert.ok(ics.includes('RRULE:FREQ=YEARLY'));
   assert.ok(ics.includes('DTSTART;VALUE=DATE:20260525'));
+  assert.ok(ics.includes('DTEND;VALUE=DATE:20260526'));
+  assert.ok(ics.includes('TRIGGER;RELATED=START:PT9H'));
+  assert.ok(ics.includes('Cumpleaños de Mamá\\, Lucía'));
   assert.ok(ics.includes('https://paracumpleanos.com/cumpleanos-en-mayo/'));
   assert.ok(ics.includes('https://paracumpleanos.com/horoscopo/geminis/'));
+
+  // 29 de febrero en año no bisiesto (2026) ajusta a próximo año bisiesto (2028)
+  const icsBisiesto = construirIcsCumpleanos({
+    nombre: 'Juli',
+    mes: 2,
+    dia: 29,
+    anioBase: 2026
+  });
+  assert.ok(icsBisiesto.includes('DTSTART;VALUE=DATE:20280229'));
+
+  // Agenda completa multi-evento + validación vacía
+  assert.throws(() => construirIcsAgendaCompleta([]));
+  const icsCompleto = construirIcsAgendaCompleta(
+    [
+      { nombre: 'Mamá', mes: 5, dia: 25, relacion: 'mamá' },
+      { nombre: 'Papá', mes: 10, dia: 12, relacion: 'papá' }
+    ],
+    2026
+  );
+  assert.equal((icsCompleto.match(/BEGIN:VEVENT/g) || []).length, 2);
+  assert.equal((icsCompleto.match(/END:VEVENT/g) || []).length, 2);
+
+  // Enlace directo Google Calendar
+  const gcalUrl = construirUrlGoogleCalendar({
+    nombre: 'Sofía',
+    mes: 6,
+    dia: 5,
+    relacion: 'amiga',
+    anioBase: 2026
+  });
+  assert.ok(gcalUrl.startsWith('https://calendar.google.com/calendar/render?action=TEMPLATE'));
+  assert.ok(gcalUrl.includes('20260605%2F20260606') || gcalUrl.includes('dates=20260605/20260606'));
+  assert.ok(gcalUrl.includes('RRULE%3AFREQ%3DYEARLY'));
 });

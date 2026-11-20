@@ -36,6 +36,12 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <title>{titulo}</title>
   <meta name="description" content={descripcion} />
   <link rel="canonical" href={url} />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#9f1239" />
   {relPrev ? <link rel="prev" href={'https://paracumpleanos.com' + relPrev} /> : null}
   {relNext ? <link rel="next" href={'https://paracumpleanos.com' + relNext} /> : null}
   <link rel="alternate" type="application/rss+xml" title="ParaCumpleanos RSS" href="https://paracumpleanos.com/rss.xml" />
@@ -190,6 +196,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       <a href="/herramientas/">Herramientas</a>
       <a href="/horoscopo/">Horóscopo</a>
       <a href="/categorias/#meses">Meses</a>
+      <a href="/categorias/#fechas_especiales">Fechas especiales</a>
       <a href="/categorias/">Categorías</a>
       <a href="/motivaciones/">Motivaciones</a>
       <a href="/guias/">Guías</a>
@@ -254,7 +261,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         var textoCard = opts.body || '';
         var emojiCard = opts.emoji || '🎂';
         var subtitulo = opts.subtitulo || '';
-        var visualRef = document.querySelector('.tarjeta-visual');
+        var visualRef = opts.visualEl || document.querySelector('.tarjeta-visual');
         var fuente = opts.fuente || (visualRef && visualRef.getAttribute('data-fuente')) || 'editorial';
         var formato = opts.formato || (visualRef && visualRef.getAttribute('data-formato')) || 'cuadrada';
 
@@ -457,13 +464,15 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
         var dl = e.target.closest ? e.target.closest('.btn-descargar') : null;
         if (dl) {
+          var visualDl = (dl.closest && dl.closest('.herr-modulo') && dl.closest('.herr-modulo').querySelector('.tarjeta-visual')) || document.querySelector('.tarjeta-visual');
           var resDl = generarCanvasTarjeta({
             title: dl.getAttribute('data-title') || 'Feliz cumpleaños',
             body: dl.getAttribute('data-body') || '',
             emoji: dl.getAttribute('data-emoji') || '🎂',
             fuente: dl.getAttribute('data-fuente') || '',
             formato: dl.getAttribute('data-formato') || '',
-            subtitulo: dl.getAttribute('data-subtitulo') || ''
+            subtitulo: dl.getAttribute('data-subtitulo') || '',
+            visualEl: visualDl
           });
           if (!resDl) return;
           var a = document.createElement('a');
@@ -478,10 +487,11 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
         var ig = e.target.closest ? e.target.closest('.btn-ig') : null;
         if (ig) {
+          var visualIg = (ig.closest && ig.closest('.herr-modulo') && ig.closest('.herr-modulo').querySelector('.tarjeta-visual')) || document.querySelector('.tarjeta-visual');
           var igTitulo = ig.getAttribute('data-ig-title') || 'Feliz cumpleaños';
           var igCuerpo = ig.getAttribute('data-ig-body') || '';
           var igEmoji = ig.getAttribute('data-ig-emoji') || '🎂';
-          var igTexto = ig.getAttribute('data-ig-text') || (igTitulo + '. ' + igCuerpo);
+          var igTexto = ig.getAttribute('data-ig-text') || igCuerpo;
           var igUrl = ig.getAttribute('data-ig-url') || window.location.href;
           var caption = igTexto + '\n\nVía paracumpleanos.com';
 
@@ -491,7 +501,8 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
             emoji: igEmoji,
             fuente: ig.getAttribute('data-fuente') || '',
             formato: ig.getAttribute('data-formato') || '',
-            subtitulo: ig.getAttribute('data-subtitulo') || ''
+            subtitulo: ig.getAttribute('data-subtitulo') || '',
+            visualEl: visualIg
           });
 
           function fallbackDescargaIg() {
@@ -537,6 +548,19 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
         var imp = e.target.closest ? e.target.closest('.btn-imprimir') : null;
         if (imp) {
+          var mod = imp.closest ? imp.closest('.herr-modulo') : null;
+          document.querySelectorAll('.herr-modulo.pc-print-solo').forEach(function (el) {
+            el.classList.remove('pc-print-solo');
+          });
+          if (mod) {
+            document.body.classList.add('pc-print-con-solo');
+            mod.classList.add('pc-print-solo');
+            window.addEventListener('afterprint', function limpiarSoloPrint() {
+              document.body.classList.remove('pc-print-con-solo');
+              mod.classList.remove('pc-print-solo');
+              window.removeEventListener('afterprint', limpiarSoloPrint);
+            });
+          }
           if (typeof window.print === 'function') {
             window.print();
           }

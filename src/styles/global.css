@@ -1071,18 +1071,35 @@ img { max-width: 100%; }
 .contacto-resultado p { margin: 0 0 10px; }
 
 .migas { font-size: 0.88rem; margin-bottom: 14px; color: var(--texto-suave); }
-.paginacion { display: flex; gap: 12px; align-items: center; margin-top: 22px; flex-wrap: wrap; }
+.paginacion { display: flex; gap: 10px; align-items: center; margin-top: 22px; flex-wrap: wrap; }
 .paginacion a {
   background: #fff;
   border: 1px solid var(--borde);
   color: var(--rosa-oscuro);
   text-decoration: none;
-  padding: 10px 18px;
+  padding: 10px 16px;
   border-radius: 9px;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.paginacion a.pag-num {
+  padding: 10px 14px;
+  min-width: 44px;
+  text-align: center;
 }
 .paginacion a:hover { border-color: var(--rosa); background: var(--rosa-claro); }
-.paginacion span { color: var(--texto-suave); font-variant-numeric: tabular-nums; }
+.paginacion .pag-actual {
+  background: var(--rosa-oscuro);
+  border: 1px solid var(--rosa-oscuro);
+  color: #fff;
+  padding: 10px 14px;
+  min-width: 44px;
+  text-align: center;
+  border-radius: 9px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.paginacion span:not(.pag-actual) { color: var(--texto-suave); font-variant-numeric: tabular-nums; }
 
 .relacionadas ul { padding-left: 1.15em; }
 .relacionadas li { margin: 7px 0; }
@@ -1712,5 +1729,75 @@ input, textarea, select { font-size: 16px; }
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+  body.pc-print-con-solo .herr-modulo:not(.pc-print-solo) {
+    display: none !important;
+  }
+  body.pc-print-con-solo .herr-modulo-kicker,
+  body.pc-print-con-solo .herr-modulo > h2,
+  body.pc-print-con-solo .herr-modulo-intro {
+    display: none !important;
+  }
 }
+
+/* Extensiones UX: explicacion .ics, armador postal, motivaciones y errores inline */
+.ics-explicacion {
+  background: var(--papel);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 10px 0 16px;
+}
+.ics-explicacion summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--texto);
+}
+.ics-explicacion p {
+  margin: 8px 0 0;
+  font-size: 0.94rem;
+  color: var(--suave);
+  line-height: 1.55;
+}
+.herr-ag-error {
+  margin: 4px 0 0;
+  color: #b91c1c;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.herr-arm-estilo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 14px 0 6px;
+  padding: 12px 14px;
+  background: var(--papel);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+.herr-arm-paletas,
+.herr-arm-formatos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.herr-arm-estilo-label {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--suave);
+  margin-right: 4px;
+}
+.herr-dedicatoria-salida p {
+  margin: 0 0 10px;
+}
+.herr-dedicatoria-salida p:last-child {
+  margin-bottom: 0;
+}
+.motiv-nota-aclaracion {
+  margin: 10px 0 0;
+  font-size: 0.86rem;
+  color: var(--suave);
+  line-height: 1.5;
+}
+
 

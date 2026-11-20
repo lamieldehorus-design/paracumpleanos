@@ -16,7 +16,7 @@ export interface SignoZodiaco {
   estiloCelebracion: string;
   comoSaludar: string;
   ideasRegalo: [string, string, string];
-  frasesCumpleanos: { titulo: string; texto: string }[];
+  frasesCumpleanos: { titulo: string; texto: string; tono?: 'emotivo' | 'breve' | 'humor' | 'fe' }[];
   faqs: { pregunta: string; respuesta: string }[];
   compatibilidadBrindis: [string, string];
 }
@@ -112,16 +112,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Fuerza y rumbo nuevo para tu cumpleaños de Aries',
         texto: 'Admiro esa chispa tuya para encender proyectos cuando todos todavía lo están pensando. Que este año nuevo te traiga desafíos a tu medida, gente leal alrededor de la mesa y la energía intacta para disfrutar cada paso.'
       },
       {
+        tono: 'emotivo',
+        titulo: 'Coraje generoso que cuida siempre a los suyos',
+        texto: 'Detrás de tu ritmo rápido hay un corazón enorme que siempre pone el hombro primero cuando alguien cercano te necesita. ¡Feliz cumpleaños! Ojalá recibas hoy la misma lealtad que das todo el año.'
+      },
+      {
+        tono: 'emotivo',
+        titulo: 'Desafíos lindos y calma para celebrar hoy',
+        texto: 'Que este nuevo ciclo premie tu coraje de siempre con victorias claras, tardes de descanso merecido y motivos grandes para festejar con quienes elegís tener cerca.'
+      },
+      {
+        tono: 'breve',
         titulo: 'Brindis directo por tu impulso incansable',
         texto: 'No hace falta discurso largo para celebrar a alguien tan frontal y generoso como vos. ¡Muy feliz vuelta al sol! Ojalá sigas abriendo caminos nuevos sin perder nunca tu humor directo.'
       },
       {
-        titulo: 'Desafíos lindos y calma para celebrar hoy',
-        texto: 'Que este nuevo ciclo premie tu coraje de siempre con victorias claras, tardes de descanso merecido y motivos grandes para festejar con quienes elegís tener cerca.'
+        tono: 'breve',
+        titulo: '¡Feliz cumple! Que nada frene tus ganas',
+        texto: 'Sos motor de cada grupo y el primero en decir «vamos» cuando hace falta animarse. ¡Disfrutá tu día a lo grande, con buena comida y cero protocolos aburridos!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Energía limpia y metas nuevas para este año',
+        texto: 'Otro año más conquistando cimas sin esperar permiso de nadie. ¡Muy feliz cumpleaños, Aries! Brindemos fuerte por tus próximos planes.'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Hoy el único apuro es cortar la torta primero',
+        texto: 'Sabemos que ya estás planeando los próximos cinco proyectos mientras todos recién nos sentamos a comer. ¡Feliz cumple! Prometemos seguirte el ritmo… al menos hasta el segundo brindis.'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Paciencia en cuotas y asado sin espera',
+        texto: 'Como buen Aries, seguro ya abriste tus regalos antes de que terminen de cantar el feliz cumpleaños. ¡Que tengas un día tan rápido, intenso y divertido como tus audios!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Aries al mando del festejo sin freno',
+        texto: 'Este año pedimos paz mundial y alguien capaz de decirte «esperá cinco minutos» sin que salgas corriendo a resolverlo igual. ¡Feliz vuelta al sol, campeón/a!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Paz firme y dirección sabia para tu nuevo ciclo',
+        texto: 'Agradecemos a Dios por tu vida valiente y pedimos que guíe cada iniciativa tuya con discernimiento, salud firme y descanso verdadero en familia.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Bendición sobre tu casa y cada meta nueva',
+        texto: 'Que nunca te falte abrigo espiritual en los momentos exigentes ni motivos claros para dar gracias alrededor de la mesa cada semana.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Fortaleza serena para cuidar lo que más amás',
+        texto: 'Deseo de corazón que la fe acompañe tu impulso natural con sabiduría, acuerdos justos y una paz profunda que abrace a toda tu familia.'
       }
     ],
     faqs: [
@@ -164,16 +212,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Sobremesas largas y calma fiel para tu Tauro',
         texto: 'Qué suerte contar con alguien que sabe cuidar los vínculos con hechos y paciencia. Que tu nuevo año llegue lleno de buena mesa, hogar tranquilo, salud firme y abrazos sin reloj.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Gratitud honda por tu lealtad de siempre',
         texto: 'Sos de esas personas que dan paz apenas entran en la habitación. Feliz cumpleaños: hoy te toca sentarte tranquilo y dejarte agasajar como correspondía desde hace rato.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Disfrute verdadero en esta nueva vuelta al sol',
         texto: 'Deseo que los próximos meses te encuentren cosechando frutos de tu constancia, rodeado de aromas ricos, descanso real y afectos estables.'
+      },
+      {
+        tono: 'breve',
+        titulo: '¡Feliz cumple! Buena comida y cero apuros',
+        texto: 'Que hoy el reloj quede guardado en el cajón y no falte nada rico sobre la mesa. ¡Muy feliz cumpleaños, Tauro querido/a!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Brindis sereno por tu firmeza tan cálida',
+        texto: 'Gracias por estar siempre igual, sin vueltas ni poses. ¡Feliz cumpleaños y un año lleno de cosas simples y duraderas!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Merecés cada gusto lindo en tu día',
+        texto: 'Hoy está prohibido apurarte o pedirte favores: café tranquilo, plato favorito y siesta sagrada. ¡Muy feliz cumple!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Torta doble y derecho adquirido a la siesta',
+        texto: 'Conociéndote, el mejor regalo no es una sorpresa intensa sino un menú espectacular y cero dramas ajenos. ¡Feliz cumple, disfrutá sin compartir el último bocado!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Cero cambios de último minuto en tu festejo',
+        texto: 'Sabemos que cambiar el plan media hora antes te arruina la paz interior, así que hoy todo sale puntual, rico y cómodo como te gusta. ¡Feliz vuelta al sol!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Terquedad de la buena y helado artesanal',
+        texto: 'Que este año te encuentre tan firme en tus ideas como el día en que defendiste tu postre favorito contra toda la mesa. ¡Muy feliz cumpleaños!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Abundancia tranquila y paz sobre tu mesa',
+        texto: 'Damos gracias a Dios por tu corazón fiel que sostiene la casa con calma y trabajo honesto. Que Su bendición cuide cada fruto de tus manos.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Hogar cuidado y salud firme todo el año',
+        texto: 'Pedimos que nunca falten el pan compartido, el descanso reparador ni la serenidad de saberte acompañado en cada paso.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Raíces hondas de fe y gratitud cotidiana',
+        texto: 'Que este nuevo ciclo fortalezca tus lazos familiares y te regale muchísimas mañanas tranquilas llenas de gratitud.'
       }
     ],
     faqs: [
@@ -216,16 +312,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Ideas frescas y risas largas en tu Géminis',
         texto: 'Con vos nunca falta tema de conversación ni planes inesperados que salvan cualquier semana aburrida. ¡Muy feliz cumpleaños! Que nunca te falten preguntas lindas, viajes cortos y gente que siga tu ritmo.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Tu chispa despierta ilumina cada mesa',
         texto: 'Celebramos tu curiosidad, tu humor rápido y esa capacidad única de unir personas distintas en una misma risa. ¡Feliz nueva vuelta al sol llena de novedades buenas!'
       },
       {
+        tono: 'emotivo',
         titulo: 'Un año curioso y libre para disfrutar',
         texto: 'Que estos doce meses te regalen libros buenos, charlas hasta la madrugada, proyectos versátiles y tiempo para disfrutar cada ocurrencia.'
+      },
+      {
+        tono: 'breve',
+        titulo: '¡Feliz cumple al alma de las mejores charlas!',
+        texto: 'Que nunca se terminen tus historias buenas ni los planes improvisados que nos hacen reír fuerte. ¡Feliz cumpleaños, Géminis!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Dos o tres motivos diarios para sonreír',
+        texto: 'Para alguien con mil intereses lindos, un solo brindis queda corto. ¡Muy feliz cumpleaños y un año lleno de descubrimientos!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Mente viva, viaje corto y abrazo grande',
+        texto: '¡Feliz cumple! Que este ciclo traiga respuestas rápidas, amigos cerca y cero tardes aburridas.'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Felicidades a todas tus versiones en un solo día',
+        texto: 'Como sos capaz de arrancar tres charlas a la vez mientras contestás cinco chats, hoy festejamos por partida doble. ¡Muy feliz cumple, que nadie te pida resumir un audio!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Hoy vale cambiar de plan tres veces seguidas',
+        texto: 'Si a las tres de la tarde querés café y a las cinco decidís fiesta sorpresa, hoy se te perdona todo porque es tu día. ¡Feliz vuelta al sol, Géminis!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Treinta pestañas abiertas y mil anécdotas',
+        texto: 'Deseamos que este año logres cerrar al menos la mitad de los proyectos que empezás con entusiasmo cada martes. ¡Brindemos con ganas!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Claridad serena entre tantos caminos lindos',
+        texto: 'Pedimos a Dios que ilumine tu mente despierta para elegir siempre lo que suma paz, vínculos sinceros y propósito claro en tu hogar.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Palabras que consuelen y alegren cada mesa',
+        texto: 'Agradecemos ese don tuyo de escuchar y tender puentes con humor amable; que la gracia diaria cuide cada paso de tu nuevo año.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Paz interior y alegría compartida este ciclo',
+        texto: 'Que nunca falte luz espiritual para aquietar la cabeza cuando el ritmo apure, ni amigos leales para celebrar cada bendición.'
       }
     ],
     faqs: [
@@ -268,16 +412,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Refugio y ternura para tu cumpleaños de Cáncer',
         texto: 'Tenés el don raro de convertir cualquier lugar en hogar apenas ponés la pava y preguntás cómo estuvo el día. Que hoy todo ese cuidado vuelva multiplicado hacia vos en forma de abrazos largos.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Memoria viva del cariño que sembrás',
         texto: 'Para alguien que recuerda cada fecha importante de los demás, hoy nos toca agasajarte fuerte. ¡Feliz cumpleaños, lleno de familia, paz y anécdotas lindas!'
       },
       {
+        tono: 'emotivo',
         titulo: 'Abrazos tibios para esta nueva etapa',
         texto: 'Ojalá este nuevo año cuide tu corazón sensible con gente leal, noches serenas en casa y mucha alegría compartida.'
+      },
+      {
+        tono: 'breve',
+        titulo: '¡Feliz cumple! Gracias por cuidar tan bien',
+        texto: 'Hoy dejá la cocina en paz y recibí todo el cariño que repartís sin medida durante todo el año. ¡Te queremos muchísimo!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Mesa tibia y gente que te quiere de verdad',
+        texto: 'Que este cumpleaños te abrace suave desde temprano y deje recuerdos lindos para todo el año. ¡Muy feliz cumple, Cáncer!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Para quien convierte cada reunión en hogar',
+        texto: 'Brindo hoy por tu sensibilidad noble y por muchas sobremesas largas cerca de los tuyos. ¡Feliz vuelta al sol!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Prohibido emocionarse antes de cortar la torta',
+        texto: 'Ya sabemos que guardaste hasta los papelitos de los cumpleaños de hace cinco años; hoy tenés permiso de lagrimear solo un poquito mientras repetís postre. ¡Feliz cumple!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Hoy cuidamos nosotros al cuidador oficial',
+        texto: 'Por veinticuatro horas queda suspendido tu servicio de «¿llevaste abrigo?» y «¿avisame cuando llegues?». ¡Sentate y disfrutá tu fiesta!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Álbum nuevo listo para otra docena de fotos',
+        texto: 'Si alguien intenta hacer un cumpleaños sin fotos grupales, sabemos que vos intervenís con autoridad maternal. ¡Muy feliz cumpleaños!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Amparo tierno de Dios sobre toda tu familia',
+        texto: 'Damos gracias por tu corazón compasivo y pedimos que la paz divina resguarde tu casa, tus afectos queridos y tus noches de descanso.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Consuelo fiel y gozo compartido en el hogar',
+        texto: 'Que cada oración que elevás por los tuyos vuelva multiplicada en salud, serenidad y bendiciones visibles sobre tu vida.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Ternura bendecida para otro año en calma',
+        texto: 'Pedimos fuerza serena y alegría constante alrededor de tu mesa para seguir sembrando amor sincero donde estés.'
       }
     ],
     faqs: [
@@ -320,16 +512,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Brillo merecido para celebrar tu Leo',
         texto: 'Cuando llegás vos se nota enseguida: por tu risa franca, tu generosidad enorme y esa fuerza con la que defendés a los tuyos. ¡Feliz cumpleaños! Hoy el centro de la mesa es todo tuyo.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Un aplauso fuerte por tu corazón generoso',
         texto: 'Gracias por contagiar entusiasmo cuando el resto se achica y por celebrar siempre los triunfos ajenos como propios. Que tengas un año brillante y muy feliz.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Sol y alegrías grandes en tu nuevo ciclo',
         texto: 'Deseo que estos doce meses te devuelvan a lo grande tanta lealtad y calidez como repartís en cada encuentro.'
+      },
+      {
+        tono: 'breve',
+        titulo: '¡Feliz cumple! Hoy la fiesta lleva tu nombre',
+        texto: 'Brindamos alto por tu luz propia, tu nobleza y esa alegría que levanta cualquier tarde gris. ¡Disfrutá al máximo tu día, Leo!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Realeza cálida y abrazos sin medida hoy',
+        texto: 'Que nunca se apague tu entusiasmo ni falten aplausos sinceros para tus proyectos. ¡Muy feliz cumpleaños!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Generosidad gigante que merece todo lo bueno',
+        texto: '¡Feliz vuelta al sol! Que este nuevo año brille tanto como tu sonrisa en cada reunión.'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Alfombra roja y torta de tres pisos mínimo',
+        texto: 'Sabemos que un «fc» seco por chat es ofensa diplomática para un Leo. Así que acá tenés saludo largo, aplauso cerrado y permiso para subir diez stories seguidas. ¡Feliz cumple!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Hoy hasta el espejo te aplaude con ganas',
+        texto: 'Que este año encuentres siempre buena luz para las fotos y amigos dispuestos a escuchar tus mejores anécdotas otra vez. ¡Muy feliz cumple!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Protagonista oficial desde el desayuno hasta la cena',
+        texto: 'Hoy nadie te discute la música del auto ni el lugar de honor en la mesa. ¡Festejá a lo grande como manda tu signo!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Luz noble para servir y alegrar con humildad',
+        texto: 'Agradecemos a Dios por tu corazón valiente y generoso; que Su gracia guíe cada proyecto grande que emprendas con sabiduría y paz.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Bendiciones abundantes sobre tu camino',
+        texto: 'Pedimos salud firme, hogar protegido y sabiduría serena para que tu brillo natural siga abrigando a quienes te rodean.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Gozo genuino y gratitud en cada triunfo',
+        texto: 'Que el nuevo año te regale victorias limpias, descanso verdadero y la certeza de caminar siempre cuidado por Su mano.'
       }
     ],
     faqs: [
@@ -372,16 +612,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Cuidado discreto y lucidez en tu Virgo',
         texto: 'Pocos notan cuántos líos acomodás en silencio para que todo salga bien alrededor nuestro. Hoy celebramos tu claridad, tu mano generosa y tu humor fino. ¡Muy feliz cumpleaños!'
       },
       {
+        tono: 'emotivo',
         titulo: 'Hoy soltá la lista y dejate agasajar',
         texto: 'Te merecés un cumpleaños donde no tengas que organizar nada ni estar en todos los detalles. ¡Que disfrutes muchísimo tu día con calma y buena compañía!'
       },
       {
+        tono: 'emotivo',
         titulo: 'Orden sereno y proyectos lindos este año',
         texto: 'Ojalá esta nueva vuelta al sol te regale equilibrio, salud firme y satisfacciones reales en todo eso que cuidás con tanta dedicación.'
+      },
+      {
+        tono: 'breve',
+        titulo: '¡Feliz cumple! Gracias por resolver tanto',
+        texto: 'Un año más admirando tu criterio limpio y tu cariño hecho de pequeños hechos concretos. ¡Muy feliz cumpleaños, Virgo!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Hoy cero pendientes ni preocupaciones ajenas',
+        texto: '¡Feliz cumpleaños! Guardá las planillas, disfrutá de tu mesa favorita y dejá que hoy te cuiden a vos.'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Calma, salud y alegría bien merecida',
+        texto: 'Brindamos hoy por tu lucidez generosa y por doce meses livianos llenos de bienestar.'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Te regalamos un día entero sin errores ajenos',
+        texto: 'Prometemos no mover tus cosas de lugar ni escribir faltas de ortografía en la tarjeta de cumple (revisada tres veces). ¡Feliz vuelta al sol, Virgo!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Permitido celebrar aunque un plato esté torcido',
+        texto: 'Hoy está prohibido ordenar la cocina antes de que se vayan los invitados o corregir el horario del brindis. ¡A disfrutar sin perfeccionismo!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Alguien ya anotó en Excel cuántos velas van',
+        texto: 'Sabemos que ya sabés a qué hora llega cada uno y qué falta comprar; por hoy descansá que el festejo corre por nuestra cuenta. ¡Feliz cumple!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Paz para soltar cargas y descansar en calma',
+        texto: 'Pedimos a Dios que aliviane tus preocupaciones diarias, bendiga tu trabajo meticuloso y llene tu hogar de serenidad verdadera.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Sabiduría práctica y gozo en lo sencillo',
+        texto: 'Agradecemos tu servicio callado y fiel; que Su gracia te regale salud, equilibrio y alegría sin exigencias pesadas.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Manos guiadas y descanso reparador este año',
+        texto: 'Que el nuevo ciclo te acerque calma interior, buenas noticias en familia y la paz de saberte profundamente amado.'
       }
     ],
     faqs: [
@@ -424,16 +712,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Armonía y belleza cotidiana para tu Libra',
         texto: 'Tenés la virtud de buscar siempre lo justo y hacer más amable cada encuentro. ¡Feliz cumpleaños! Que este año te rodee de música buena, calma y gente que cuide tu paz.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Gracias por traer equilibrio a nuestras charlas',
         texto: 'Celebramos tu sonrisa diplomática, tu buen gusto y esa calidez con la que escuchás todas las campanas. ¡Brindemos por una vuelta al sol luminosa!'
       },
       {
+        tono: 'emotivo',
         titulo: 'Un ciclo liviano y rodeado de afectos lindos',
         texto: 'Que estos doce meses te regalen encuentros serenos, decisiones claras y muchísimos pequeños momentos hermosos.'
+      },
+      {
+        tono: 'breve',
+        titulo: '¡Feliz cumple! Elegancia y paz siempre cerca',
+        texto: 'Que nunca falten belleza cotidiana, lindas meriendas y gente sincera que valore tu trato amable. ¡Muy feliz cumpleaños, Libra!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Brindis suave por tu corazón justo y cálido',
+        texto: '¡Feliz vuelta al sol! Ojalá este año traiga equilibrio real, arte lindo y abrazos sin ruido.'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Hoy toda la balanza se inclina a tu favor',
+        texto: 'Por un año lleno de acuerdos serenos, buena música y alegrías compartidas. ¡Muy feliz cumpleaños!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Elegimos nosotros el gusto de torta para salvarte',
+        texto: 'Para que no pases cuarenta minutos dudando entre chocolate y frutilla, hoy traemos dos porciones distintas y listo. ¡Feliz cumpleaños, Libra!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Prohibido quedar bien con todo el mundo hoy',
+        texto: 'Por veinticuatro horas tenés licencia oficial para decir «no» con una sonrisa encantadora y quedarte descansando tranquilo. ¡A celebrar!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Tarjeta estética aprobada por el comité de diseño',
+        texto: 'Sabemos que mirás la fuente y los colores antes de leer el mensaje, así que cuidamos hasta el último borde. ¡Muy feliz cumple!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Paz verdadera que ordena decisiones y vínculos',
+        texto: 'Pedimos a Dios discernimiento tranquilo para tus elecciones y armonía duradera dentro de tu casa y tus afectos.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Bondad serena multiplicada en tu camino',
+        texto: 'Agradecemos tu vocación de paz y amabilidad; que la bendición diaria cuide tu descanso y tus proyectos.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Luz clara y amistad sincera todo el año',
+        texto: 'Que la gracia acompañe cada encuentro de tu nuevo año con justicia, gratitud y gozo compartido.'
       }
     ],
     faqs: [
@@ -476,16 +812,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Fuerza y lealtad verdadera en tu Escorpio',
         texto: 'Cuando vos querés a alguien, lo defendés a muerte y sin caretas. Hoy celebramos tu intensidad honesta y esa capacidad admirable de renacer más fuerte de cada etapa. ¡Feliz cumpleaños!'
       },
       {
+        tono: 'emotivo',
         titulo: 'Para quien nunca se queda en lo superficial',
         texto: 'Ojalá este nuevo año te encuentre rodeado únicamente de vínculos reales que estén a la altura de tu lealtad. ¡Feliz vuelta al sol, con paz y pasión intactas!'
       },
       {
+        tono: 'emotivo',
         titulo: 'Transformación y calma en tu nuevo ciclo',
         texto: 'Que estos meses traigan verdades lindas, descanso para la mente inquieta y alegrías profundas junto a tus elegidos.'
+      },
+      {
+        tono: 'breve',
+        titulo: '¡Feliz cumple! Lealtad intacta otro año más',
+        texto: 'Sin vueltas ni frases de relleno: qué enorme orgullo tenerte de nuestro lado siempre. ¡Muy feliz cumpleaños, Escorpio!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Brindis honesto por tu intuición tan cierta',
+        texto: 'Por otro año viviendo en serio, queriendo de verdad y cerrando etapas con frente alta. ¡Feliz cumpleaños!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Poca gente pero de la buena en tu mesa',
+        texto: 'Que hoy sobren charlas profundas, noche linda y abrazos que no tengan doble intención. ¡Feliz cumple!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Ya sabemos que adivinaste el regalo ayer',
+        texto: 'Es inútil hacerte fiesta sorpresa porque tu radar detecta hasta el susurro en otro grupo de chat. Igual finjamos asombro cuando llegues. ¡Feliz cumple!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Hoy suspendemos la mirada de rayos X por 24 horas',
+        texto: 'Prometemos portarnos bien para no activar tu memoria fotográfica de los últimos quince años. ¡Brindemos tranquilos y a reír fuerte!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Intensidad nivel: elegir el sabor de torta en serio',
+        texto: 'O nos quedamos hasta las cuatro charlando de la vida o no hay cumpleaños digno de vos. ¡Muy feliz vuelta al sol!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Renovación profunda y paz sobre tu espíritu',
+        texto: 'Damos gracias a Dios por tu fortaleza frente a las pruebas y pedimos serenidad firme para tu mente y todo tu hogar.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Protección fiel en cada cierre y nuevo comienzo',
+        texto: 'Que la luz divina transforme cualquier cansancio acumulado en propósito claro, salud y consuelo verdadero.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Verdad, perdón y gozo duradero en casa',
+        texto: 'Pedimos que el nuevo año te regale reposo profundo y vínculos sanos guardados bajo bendición.'
       }
     ],
     faqs: [
@@ -528,16 +912,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Horizontes amplios y alegría para tu Sagitario',
         texto: 'Donde haya risa fuerte, valijas listas o ganas de probar algo distinto, seguro estás vos. ¡Feliz cumpleaños! Que este año sume millas lindas, libertad y grandes anécdotas.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Gracias por tu optimismo que levanta semanas',
         texto: 'Celebramos tu espíritu libre, tu humor honesto y esa mirada amplia con la que siempre ves salida. ¡Muy feliz vuelta al sol llena de aventuras!'
       },
       {
+        tono: 'emotivo',
         titulo: 'Rutas nuevas y brindis largos este año',
         texto: 'Que los próximos doce meses te sorprendan con paisajes nuevos, proyectos que entusiasmen y amigos en cada esquina.'
+      },
+      {
+        tono: 'breve',
+        titulo: '¡Feliz cumple! Valija lista y buen viento',
+        texto: 'Por más kilómetros felices, tardes al sol y risas contagiosas de esas que curan todo. ¡Muy feliz cumpleaños, Sagitario!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Espíritu libre para disfrutar sin jaulas',
+        texto: '¡Feliz cumple! Que este año te lleve a lugares lindos junto a la mejor compañía posible.'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Brindis alto por tu entusiasmo inagotable',
+        texto: 'Gracias por contagiar esperanza incluso cuando el año aprieta. ¡Disfrutá fuerte tu cumpleaños!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Mandamos el saludo antes de que saques otro pasaje',
+        texto: 'Si esperamos una semana más para festejar, seguro ya estás en otra provincia buscando un café nuevo. ¡Feliz cumple, viajero/a incansable!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Sincericidio permitido solo por ser tu cumpleaños',
+        texto: 'Todos sabemos que decís exactamente lo que pensás antes de contar hasta tres… y por eso te queremos tanto. ¡Feliz vuelta al sol sin filtro!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Que no te mezclen el regalo con el arbolito',
+        texto: 'Prometemos papel de cumpleaños real y torta exclusiva sin olor a pan dulce, como corresponde a tu fecha. ¡A celebrar!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Pasos guardados en cada ruta de este año',
+        texto: 'Pedimos a Dios que cuide tus viajes, oriente tus proyectos con sabiduría y regale gratitud fresca en tu corazón cada mañana.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Esperanza viva y propósito firme en el camino',
+        texto: 'Agradecemos ese optimismo generoso que sembrás; que la gracia divina multiplique alegría y abrigo en tu familia.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Horizontes bendecidos con salud y buena compañía',
+        texto: 'Que este nuevo ciclo una aventura sana, fe cotidiana y puertas abiertas donde vayas.'
       }
     ],
     faqs: [
@@ -580,16 +1012,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Cimas alcanzadas y descanso para tu Capricornio',
         texto: 'Todo lo que hoy disfrutás te lo ganaste paso a paso y sin atajos. Hoy bajá el ritmo un rato y celebrá lo lejos que llegaste con tu gente. ¡Muy feliz cumpleaños!'
       },
       {
+        tono: 'emotivo',
         titulo: 'Admiración genuina por tu firmeza serena',
         texto: 'Detrás de esa calma tuya que resuelve tormentas hay un corazón enorme y leal. Que este nuevo año premie tu constancia con salud, disfrute y tiempo libre real.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Año firme para seguir construyendo con alegría',
         texto: 'Ojalá los próximos doce meses traigan metas cumplidas, humor tranquilo y muchas sobremesas sin mirar el reloj.'
+      },
+      {
+        tono: 'breve',
+        titulo: '¡Feliz cumple! Hoy descansás vos y brindamos todos',
+        texto: 'Gracias por ser sostén confiable siempre. ¡Que disfrutes tu día propio lejos de responsabilidades!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Constancia noble que hoy merece aplauso largo',
+        texto: '¡Muy feliz cumpleaños, Capricornio! Que este año devuelva multiplicado todo tu esfuerzo silencioso.'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Tu cumpleaños tiene fecha y brillo propio',
+        texto: 'Nada de confundirlo con las fiestas de diciembre ni enero: hoy celebramos exclusivamente tu vida. ¡Feliz cumple!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Apagá el mail laboral al menos durante la torta',
+        texto: 'Sabemos que sos capaz de estar contestando mensajes de trabajo mientras te cantan el feliz cumpleaños. ¡Hoy descanso obligatorio por decreto familiar!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'A vos te regalamos un año con diez horas extra de sueño',
+        texto: 'Y humor seco de altísima calidad para seguir observando el caos ajeno desde la calma. ¡Muy feliz vuelta al sol!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Ya calculaste la amortización de los próximos doce meses',
+        texto: 'Pero hoy la única cuenta que vale es cuántas porciones de torta te servís sin culpa. ¡A brindar tranquilo!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Sabiduría fiel y reposo en el corazón',
+        texto: 'Agradecemos a Dios por tu responsabilidad honesta y pedimos que alivie tus cargas diarias con salud firme y alegría serena en casa.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Frutos bendecidos de tu paciencia cotidiana',
+        texto: 'Que Su cuidado acompañe cada proyecto serio que emprendás y multiplique momentos de paz junto a quienes amás.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Firmeza cuidada por promesas de bien y salud',
+        texto: 'Pedimos un año ordenado en calma, gratitud viva y bendiciones estables para toda tu familia.'
       }
     ],
     faqs: [
@@ -632,16 +1112,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Originalidad libre para tu cumpleaños de Acuario',
         texto: 'Con vos el mundo siempre tiene una vuelta distinta y mucho más interesante. ¡Feliz cumpleaños! Seguí animándote a pensar afuera de la caja rodeado de amigos que celebren tu autenticidad.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Tu amistad sin etiquetas es un regalo enorme',
         texto: 'Gracias por escuchar sin juzgar y por traer siempre aire fresco a nuestras charlas. ¡Muy feliz vuelta al sol llena de proyectos originales!'
       },
       {
+        tono: 'emotivo',
         titulo: 'Libertad creativa en este nuevo año',
         texto: 'Que estos doce meses te regalen inventos propios, viajes imprevistos y la alegría de seguir siendo fiel a tu estilo único.'
+      },
+      {
+        tono: 'breve',
+        titulo: '¡Feliz cumple al pensador libre del grupo!',
+        texto: 'Que nunca falten ideas locas que terminen saliendo genial ni amigos leales para celebrarlas. ¡Muy feliz cumpleaños, Acuario!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Aire fresco y cero rutinas grises hoy',
+        texto: '¡Feliz vuelta al sol! Ojalá este año supere tus planes más originales con alegría tranquila.'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Autenticidad intacta para otro ciclo brillante',
+        texto: 'Gracias por ser siempre vos sin pedir permiso a las modas. ¡Disfrutá un cumpleaños increíble!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Te escribimos algo distinto para no aburrirte',
+        texto: 'Si llegábamos con la frase copiada del diccionario común nos mirabas con cara de «¿en serio?». ¡Feliz cumple al más excéntrico y querido del chat!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Hoy prometemos escuchar tus teorías hasta el postre',
+        texto: 'Arrancá tranquilo con el dato raro de la semana o tu próximo proyecto revolucionario mientras repartimos la torta. ¡Feliz cumple!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Viviendo mentalmente en el año 2035 pero brindando hoy',
+        texto: 'Baja un ratito de tu nave espacial que acá abajo te queremos dar un abrazo enorme de carne y hueso. ¡Muy feliz vuelta al sol!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Propósito claro y amistades nobles en el camino',
+        texto: 'Damos gracias a Dios por tu mente inquieta y compasiva; que ilumine tus ideas para sembrar bien y paz donde vayas.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Libertad interior cuidada con sabiduría',
+        texto: 'Pedimos salud, armonía familiar y discernimiento tranquilo para cada proyecto distinto que encares este año.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Gratitud sincera por tu corazón solidario',
+        texto: 'Que la bendición diaria te acerque gente noble y alegrías reales para compartir sin prisas.'
       }
     ],
     faqs: [
@@ -684,16 +1212,64 @@ export const ZODIACOS: SignoZodiaco[] = [
     ],
     frasesCumpleanos: [
       {
+        tono: 'emotivo',
         titulo: 'Sensibilidad luminosa para tu cumpleaños de Piscis',
         texto: 'Sentís el mundo con una profundidad hermosa y siempre tenés una palabra compasiva a mano. ¡Feliz cumpleaños! Que hoy la vida te abrace suave y cuide todos tus sueños.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Arte, música y paz para tu corazón noble',
         texto: 'Gracias por enseñarnos a mirar con empatía lo que otros pasan de largo. Que esta nueva vuelta al sol esté llena de inspiración, abrazos sinceros y calma bonita.'
       },
       {
+        tono: 'emotivo',
         titulo: 'Un ciclo poético y sereno junto a los tuyos',
         texto: 'Ojalá cada mes nuevo te acerque exactamente aquello que anhelás en silencio, con salud y compañía verdadera.'
+      },
+      {
+        tono: 'breve',
+        titulo: '¡Feliz cumple! Tu ternura hace mejor este mundo',
+        texto: 'Que hoy recibas tanto cuidado y dulzura como regalás sin darte cuenta. ¡Muy feliz cumpleaños, Piscis!'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Calma, música linda y abrazos largos hoy',
+        texto: '¡Feliz vuelta al sol! Que nada apague tu sensibilidad hermosa ni tus sueños más queridos.'
+      },
+      {
+        tono: 'breve',
+        titulo: 'Para el alma más noble y creativa de la mesa',
+        texto: 'Brindamos hoy por tu empatía real y por doce meses suaves llenos de inspiración.'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Hoy tenés permiso de soñar despierto todo el día',
+        texto: 'Si te preguntan dónde tenés la cabeza hoy, respondé orgulloso que es tu cumpleaños y estás en modo creativo total. ¡Feliz cumple, Piscis!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Prometemos avisar dos veces antes de cantar el cumple',
+        texto: 'Para que no te agarre distraído pensando en una canción y se te escape la vela. ¡A festejar con alegría y cero dramas!'
+      },
+      {
+        tono: 'humor',
+        titulo: 'Tu intuición ya sabía quién te iba a mandar este saludo',
+        texto: 'Y también presiente dónde escondimos el mejor pedazo de torta para vos. ¡Muy feliz cumpleaños!'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Consuelo suave y esperanza viva en tu hogar',
+        texto: 'Agradecemos a Dios por tu corazón compasivo y pedimos que proteja tu sensibilidad con paz profunda y alegría constante.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Promesas de paz sobre cada sueño nuevo',
+        texto: 'Que la mano divina guíe tu creatividad, cuide tu descanso y te rodee siempre de afectos sinceros.'
+      },
+      {
+        tono: 'fe',
+        titulo: 'Gracia diaria y serenidad en cada paso',
+        texto: 'Pedimos salud firme y gozo cotidiano para que sigas siendo refugio amable para tu familia y amigos.'
       }
     ],
     faqs: [
@@ -1181,13 +1757,26 @@ export function construirDedicatoriaGuiada(params: {
   return salida;
 }
 
-export function construirIcsCumpleanos(params: {
+function escaparIcs(texto: string): string {
+  return String(texto || '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\r?\n/g, '\\n')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,');
+}
+
+function esAnioBisiesto(anio: number): boolean {
+  return anio % 4 === 0 && (anio % 100 !== 0 || anio % 400 === 0);
+}
+
+export interface EventoAgendaIcs {
   nombre: string;
   mes: number;
   dia: number;
   relacion?: string;
-  anioBase?: number;
-}): string {
+}
+
+function construirBloqueVeventIcs(params: EventoAgendaIcs & { anioBase?: number; stamp: string }): string {
   const nombre = String(params.nombre || '').trim();
   if (!nombre) throw new Error('Ingresá un nombre para generar el recordatorio.');
   if (!Number.isInteger(params.mes) || params.mes < 1 || params.mes > 12) {
@@ -1196,8 +1785,16 @@ export function construirIcsCumpleanos(params: {
   if (!Number.isInteger(params.dia) || params.dia < 1 || params.dia > 31) {
     throw new Error('Día inválido para recordatorio.');
   }
+  const diasMax = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][params.mes - 1];
+  if (params.dia > diasMax) {
+    throw new Error('Día inválido para el mes seleccionado.');
+  }
 
-  const anio = params.anioBase || new Date().getFullYear();
+  let anio = params.anioBase || new Date().getFullYear();
+  if (params.mes === 2 && params.dia === 29 && !esAnioBisiesto(anio)) {
+    while (!esAnioBisiesto(anio)) anio += 1;
+  }
+
   const mm = String(params.mes).padStart(2, '0');
   const dd = String(params.dia).padStart(2, '0');
   const dt = `${anio}${mm}${dd}`;
@@ -1206,19 +1803,17 @@ export function construirIcsCumpleanos(params: {
   const mesSlug = MESES_CON_SIGNOS[params.mes - 1].slug;
   const signo = resolverSignoPorDiaMes(params.mes, params.dia);
   const relTxt = params.relacion ? ` (${params.relacion})` : '';
-  const summary = `Cumpleaños de ${nombre}${relTxt}`;
-  const desc = `Recordatorio anual de ParaCumpleanos.com (${signo.nombre} ${signo.simbolo}). Ideas listas en https://paracumpleanos.com/${mesSlug}/ y https://paracumpleanos.com/horoscopo/${signo.slug}/`;
-  const uid = `cumple-${nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${mm}${dd}@paracumpleanos.com`;
-  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const summary = escaparIcs(`Cumpleaños de ${nombre}${relTxt}`);
+  const desc = escaparIcs(
+    `Recordatorio anual de ParaCumpleanos.com (${signo.nombre} ${signo.simbolo}). Ideas listas en https://paracumpleanos.com/${mesSlug}/ y https://paracumpleanos.com/horoscopo/${signo.slug}/`
+  );
+  const uidBase = nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'cumple';
+  const uid = `cumple-${uidBase}-${mm}${dd}@paracumpleanos.com`;
 
   return [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//ParaCumpleanos//Agenda Cumpleanos//ES',
-    'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
     `UID:${uid}`,
-    `DTSTAMP:${stamp}`,
+    `DTSTAMP:${params.stamp}`,
     `DTSTART;VALUE=DATE:${dt}`,
     `DTEND;VALUE=DATE:${dtEnd}`,
     'RRULE:FREQ=YEARLY',
@@ -1227,14 +1822,67 @@ export function construirIcsCumpleanos(params: {
     'BEGIN:VALARM',
     'TRIGGER:-P2D',
     'ACTION:DISPLAY',
-    `DESCRIPTION:Faltan 2 días para el cumpleaños de ${nombre}`,
+    `DESCRIPTION:${escaparIcs(`Faltan 2 días para el cumpleaños de ${nombre}`)}`,
     'END:VALARM',
     'BEGIN:VALARM',
-    'TRIGGER:PT9H',
+    'TRIGGER;RELATED=START:PT9H',
     'ACTION:DISPLAY',
-    `DESCRIPTION:Hoy cumple años ${nombre}`,
+    `DESCRIPTION:${escaparIcs(`Hoy cumple años ${nombre}`)}`,
     'END:VALARM',
-    'END:VEVENT',
+    'END:VEVENT'
+  ].join('\r\n');
+}
+
+export function construirIcsCumpleanos(params: EventoAgendaIcs & { anioBase?: number }): string {
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//ParaCumpleanos//Agenda Cumpleanos//ES',
+    'CALSCALE:GREGORIAN',
+    construirBloqueVeventIcs({ ...params, stamp }),
     'END:VCALENDAR'
   ].join('\r\n');
 }
+
+export function construirIcsAgendaCompleta(items: EventoAgendaIcs[], anioBase?: number): string {
+  if (!Array.isArray(items) || !items.length) {
+    throw new Error('Guardá al menos un cumpleaños en tu agenda para exportar el archivo completo.');
+  }
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const eventos = items.map((item) => construirBloqueVeventIcs({ ...item, anioBase, stamp }));
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//ParaCumpleanos//Agenda Cumpleanos//ES',
+    'CALSCALE:GREGORIAN',
+    'X-WR-CALNAME:Agenda de Cumpleanos - ParaCumpleanos',
+    ...eventos,
+    'END:VCALENDAR'
+  ].join('\r\n');
+}
+
+export function construirUrlGoogleCalendar(params: EventoAgendaIcs & { anioBase?: number }): string {
+  let anio = params.anioBase || new Date().getFullYear();
+  if (params.mes === 2 && params.dia === 29 && !esAnioBisiesto(anio)) {
+    while (!esAnioBisiesto(anio)) anio += 1;
+  }
+  const mm = String(params.mes).padStart(2, '0');
+  const dd = String(params.dia).padStart(2, '0');
+  const dt = `${anio}${mm}${dd}`;
+  const dtEndDate = new Date(Date.UTC(anio, params.mes - 1, params.dia + 1));
+  const dtEnd = dtEndDate.toISOString().slice(0, 10).replace(/-/g, '');
+  const mesSlug = MESES_CON_SIGNOS[params.mes - 1].slug;
+  const signo = resolverSignoPorDiaMes(params.mes, params.dia);
+  const relTxt = params.relacion ? ` (${params.relacion})` : '';
+  const titulo = `Cumpleaños de ${params.nombre}${relTxt}`;
+  const detalles = `Recordatorio anual de ParaCumpleanos.com (${signo.nombre} ${signo.simbolo}). Ideas listas en https://paracumpleanos.com/${mesSlug}/ y https://paracumpleanos.com/horoscopo/${signo.slug}/`;
+  return (
+    'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+    '&text=' + encodeURIComponent(titulo) +
+    '&dates=' + dt + '/' + dtEnd +
+    '&recur=' + encodeURIComponent('RRULE:FREQ=YEARLY') +
+    '&details=' + encodeURIComponent(detalles)
+  );
+}
+

@@ -183,7 +183,12 @@ export function detectarPerfilEditorial(hub?: any, msg?: any): PerfilEditorial {
   if (grupo === 'meses' || /^cumpleanos-en-/.test(slug)) return 'meses';
   if (/jubilacion/.test(slug)) return 'jubilacion';
   if (/nacimiento|cumplemes/.test(slug)) return 'nacimiento';
-  if (/^feliz-dia-|^feliz-navidad|^feliz-ano-nuevo/.test(slug)) return 'fecha_especial';
+  if (
+    grupo === 'fechas_especiales' ||
+    /^feliz-dia-|^feliz-navidad|^feliz-ano-nuevo|^feliz-nochebuena|^feliz-san-valentin|^feliz-halloween|^feliz-primavera|^felices-pascuas/.test(slug)
+  ) {
+    return 'fecha_especial';
+  }
   if (REGEX_DUELO.test(slug)) return 'duelo';
   if (/meses-de-novios/.test(slug)) return 'aniv_meses';
   if (REGEX_ANIV.test(slug)) return 'aniv_anos';
@@ -332,7 +337,12 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'que-regalar-a-papa-que-dice-que-no-quiere-nada-ideas-con-dedicatoria';
   } else if (/30-anos-para-mi|bodas-de-plata/.test(slug)) {
     target = 'frasco-de-los-30-motivos-como-armarlo-paso-a-paso-con-frases';
-  } else if (/feliz-dia-|jubilacion|cumplemes|nacimiento/.test(slug)) {
+  } else if (
+    hub && (
+      hub.grupo === 'fechas_especiales' ||
+      /feliz-dia-|jubilacion|cumplemes|nacimiento|navidad|nochebuena|ano-nuevo|san-valentin|pascuas|halloween|primavera/.test(slug)
+    )
+  ) {
     target = 'regalos-economicos-con-valor-emocional-y-tarjeta-personalizada';
   } else if (REGEX_DUELO.test(slug)) {
     target = 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido';
@@ -1158,14 +1168,14 @@ export function guiaAdaptacionMensaje(m: any, hub: any): GuiaAdaptacionMensaje {
   const bancoPorPerfil: Record<PerfilEditorial, VarianteEjemplo[]> = {
     motivaciones: [
       {
-        generico: 'Creé en vos mismo y nunca te rindas porque los sueños se cumplen.',
-        concreto: 'Hoy no hace falta resolver toda la semana: elegí una sola tarea importante, cerrá distracciones veinticinco minutos y celebrá haber dado ese paso.',
-        posdata: 'Posdata sugerida: «Leelo de vuelta al cerrar la tarde y anotá una cosa concreta que sí salió hoy.»'
+        generico: 'Creé en vos mismo y nunca te rindas porque todo va a salir bien.',
+        concreto: 'Tomá un papel ahora: escribí la traba más grande de tu día en una oración y definí la tarea de 15 minutos con la que la empezás antes de cenar.',
+        posdata: 'Práctica sugerida: «Anotá el primer micro-paso en tu agenda, cerrá notificaciones 25 minutos y al terminar tachalo con tranquilidad.»'
       },
       {
         generico: 'Hoy es un gran día para empezar con toda la actitud positiva del mundo.',
-        concreto: 'Descansar a tiempo también es avanzar con inteligencia; protegé tu energía cuidando las pausas y enfocando tu atención en lo que sí depende de vos.',
-        posdata: 'Posdata sugerida: «Descargala en Story 1080×1920 con fondo Oliva Cálida y guardala en tu pantalla.»'
+        concreto: 'Cuidar tus bloques de atención también es avanzar: elegí una prioridad real para la mañana, protegé una pausa corta y soltá lo secundario por hoy.',
+        posdata: 'Práctica sugerida: «Guardala como Story 1080×1920 o enviala por WhatsApp a ese amigo que hoy necesita un empujón realista.»'
       }
     ],
     meses: [

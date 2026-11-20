@@ -6,14 +6,14 @@ const jsonld = [migasLd([
   { name: 'Categorías', url: SITIO + '/categorias/' }
 ])];
 ---
-<Base titulo={`${hubs.length} Categorías de felicitaciones - ParaCumpleanos`} descripcion={`Todas las ${hubs.length} categorías y ${todosMensajes.length.toLocaleString('es-AR')} textos originales: mamá, amiga, cartas, edades, motivaciones, cristianos y más.`} jsonld={jsonld}>
+<Base titulo={`${hubs.length} Categorías de felicitaciones - ParaCumpleanos`} descripcion={`Todas las ${hubs.length} categorías y ${todosMensajes.length.toLocaleString('es-AR')} textos originales: mamá, fechas especiales, meses, horóscopo, cartas y más.`} jsonld={jsonld}>
   <nav class="migas" aria-label="Migas de pan">
     <a href="/">Inicio</a> › <span>Categorías</span>
   </nav>
   <h1>Todas las categorías ({hubs.length})</h1>
   <p class="lead">Explorá las <strong>{hubs.length} categorías</strong> y sus <strong>{todosMensajes.length.toLocaleString('es-AR')} felicitaciones originales</strong> listas para copiar y enviar por WhatsApp.</p>
   <label for="filtro-cats" style="display:block;font-weight:600;margin-top:12px;">Buscar categoría o destinatario:</label>
-  <input id="filtro-cats" class="buscador-cats" type="search" placeholder="Ej.: mamá, 15 años, carta, amigo lejos, cristianos…" autocomplete="off" />
+  <input id="filtro-cats" class="buscador-cats" type="search" placeholder="Ej.: mamá, navidad, san valentín, pascuas, 15 años, carta…" autocomplete="off" />
   <div class="chips">
     {GRUPOS.map(function (g) {
       const lista = hubsPorGrupo.get(g.id) || [];

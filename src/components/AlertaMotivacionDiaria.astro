@@ -41,7 +41,7 @@ const inicial = listaFrases[0] || {
             type="button"
             class="btn btn-copiar btn-sm"
             id="motiv-btn-copiar"
-            data-text={`${inicial.titulo}. ${inicial.texto}`}
+            data-text={inicial.texto}
           >
             Copiar frase
           </button>
@@ -52,7 +52,7 @@ const inicial = listaFrases[0] || {
             data-ig-title={inicial.titulo}
             data-ig-body={inicial.texto}
             data-ig-emoji="✨"
-            data-ig-text={`${inicial.titulo}. ${inicial.texto}`}
+            data-ig-text={inicial.texto}
             data-ig-url={`${SITIO}/${inicial.slug}/`}
           >
             Instagram
@@ -63,25 +63,15 @@ const inicial = listaFrases[0] || {
     </div>
 
     <div class="motiv-suscripcion-col">
-      <h3>Recibí tu alerta motivacional cada mañana</h3>
+      <h3>Activá tu recordatorio motivacional cada mañana</h3>
       <p class="motiv-sub">
-        Dejá tu email para guardar tu recordatorio diario gratuito, activar alertas del navegador al visitarnos o sumar un aviso recurrente en tu calendario.
+        La frase del portal cambia sola todos los días. Como este sitio es 100% estático (sin servidor de correos), <strong>no enviamos emails automáticos</strong>: la alarma real se configura en 1 clic en tu calendario (.ics) o en tu navegador al visitarnos.
       </p>
 
       <form class="motiv-form" id="motiv-form" novalidate>
         <div class="motiv-form-fila">
-          <div class="motiv-campo">
-            <label for="motiv-email">Tu correo electrónico</label>
-            <input
-              id="motiv-email"
-              type="email"
-              required
-              placeholder="tuemail@ejemplo.com"
-              autocomplete="email"
-            />
-          </div>
           <div class="motiv-campo motiv-campo-hora">
-            <label for="motiv-hora">Horario</label>
+            <label for="motiv-hora">Horario preferido de alarma</label>
             <select id="motiv-hora">
               <option value="07:30">07:30 hs</option>
               <option value="08:30" selected>08:30 hs</option>
@@ -89,20 +79,34 @@ const inicial = listaFrases[0] || {
               <option value="19:00">19:00 hs</option>
             </select>
           </div>
+          <div class="motiv-campo">
+            <label for="motiv-nota">Intención o recordatorio personal (opcional)</label>
+            <input
+              id="motiv-nota"
+              type="text"
+              maxlength="80"
+              placeholder="Ej.: Arrancar el día con foco y calma"
+              autocomplete="off"
+            />
+          </div>
         </div>
 
         <label class="motiv-check-push">
           <input type="checkbox" id="motiv-check-push" checked />
-          <span>Activar también notificación visual diaria en este navegador</span>
+          <span>Mostrar aviso visual en este navegador cuando abras el sitio cada día</span>
         </label>
 
         <div class="motiv-botones">
-          <button type="submit" class="btn btn-copiar" id="motiv-submit">Activar aviso diario</button>
-          <button type="button" class="btn btn-descargar" id="motiv-ics" hidden>Agregar a Calendario (.ics)</button>
-          <button type="button" class="pers-limpiar" id="motiv-probar" hidden>Probar alerta hoy</button>
-          <button type="button" class="pers-limpiar" id="motiv-pausar" hidden>Pausar</button>
+          <button type="button" class="btn btn-copiar" id="motiv-ics">Descargar alarma diaria (.ics)</button>
+          <button type="submit" class="btn btn-descargar" id="motiv-submit">Guardar aviso en navegador</button>
+          <button type="button" class="pers-limpiar" id="motiv-probar">Probar alerta hoy</button>
+          <button type="button" class="pers-limpiar" id="motiv-pausar" hidden>Desactivar</button>
         </div>
       </form>
+
+      <p class="motiv-nota-aclaracion">
+        ¿Qué hace el archivo <strong>.ics</strong>? Lo abrís una sola vez en Google Calendar, Apple o Outlook y agenda un aviso diario recurrente sin pedir contraseñas ni depender de emails.
+      </p>
 
       <div class="motiv-estado" id="motiv-estado" role="status" aria-live="polite"></div>
     </div>
@@ -138,17 +142,17 @@ const inicial = listaFrases[0] || {
       elTit.setAttribute('href', '/' + fraseHoy.slug + '/');
     }
     if (elCue) elCue.textContent = fraseHoy.texto;
-    if (btnCop) btnCop.setAttribute('data-text', fraseHoy.titulo + '. ' + fraseHoy.texto);
+    if (btnCop) btnCop.setAttribute('data-text', fraseHoy.texto);
     if (btnIg) {
       btnIg.setAttribute('data-ig-title', fraseHoy.titulo);
       btnIg.setAttribute('data-ig-body', fraseHoy.texto);
-      btnIg.setAttribute('data-ig-text', fraseHoy.titulo + '. ' + fraseHoy.texto);
+      btnIg.setAttribute('data-ig-text', fraseHoy.texto);
       btnIg.setAttribute('data-ig-url', 'https://paracumpleanos.com/' + fraseHoy.slug + '/');
     }
 
     var STORAGE_KEY = 'pc_motivacion_diaria';
     var form = document.getElementById('motiv-form');
-    var inputEmail = document.getElementById('motiv-email');
+    var inputNota = document.getElementById('motiv-nota');
     var selectHora = document.getElementById('motiv-hora');
     var checkPush = document.getElementById('motiv-check-push');
     var btnSubmit = document.getElementById('motiv-submit');
@@ -156,7 +160,7 @@ const inicial = listaFrases[0] || {
     var btnProbar = document.getElementById('motiv-probar');
     var btnPausar = document.getElementById('motiv-pausar');
     var estado = document.getElementById('motiv-estado');
-    if (!form || !inputEmail || !selectHora) return;
+    if (!form || !selectHora) return;
 
     function leerEstado() {
       try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (_) { return null; }
@@ -171,7 +175,7 @@ const inicial = listaFrases[0] || {
       estado.textContent = msg;
     }
 
-    function descargarIcs(horaStr) {
+    function descargarIcs(horaStr, notaPersonal) {
       var parts = String(horaStr || '08:30').split(':');
       var hh = String(parts[0] || '08').padStart(2, '0');
       var mm = String(parts[1] || '30').padStart(2, '0');
@@ -180,19 +184,26 @@ const inicial = listaFrases[0] || {
         d.getFullYear().toString() +
         String(d.getMonth() + 1).padStart(2, '0') +
         String(d.getDate()).padStart(2, '0');
+      var notaExtra = notaPersonal ? (' — ' + notaPersonal) : '';
       var ics = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
         'PRODID:-//ParaCumpleanos//MotivacionDiaria//ES',
+        'CALSCALE:GREGORIAN',
         'BEGIN:VEVENT',
         'UID:motivacion-diaria-' + stamp + '@paracumpleanos.com',
         'DTSTAMP:' + stamp + 'T' + hh + mm + '00Z',
         'DTSTART:' + stamp + 'T' + hh + mm + '00',
         'DURATION:PT5M',
         'RRULE:FREQ=DAILY',
-        'SUMMARY:✨ Tu frase motivacional diaria — ParaCumpleanos',
-        'DESCRIPTION:Leé tu motivación del día: ' + fraseHoy.titulo + ' en https://paracumpleanos.com/motivaciones/',
+        'SUMMARY:✨ Motivación diaria ParaCumpleanos' + notaExtra,
+        'DESCRIPTION:Abrí tu frase motivacional nueva de hoy en https://paracumpleanos.com/motivaciones/',
         'URL:https://paracumpleanos.com/motivaciones/',
+        'BEGIN:VALARM',
+        'TRIGGER:PT0M',
+        'ACTION:DISPLAY',
+        'DESCRIPTION:Leé tu motivación diaria en paracumpleanos.com',
+        'END:VALARM',
         'END:VEVENT',
         'END:VCALENDAR'
       ].join('\r\n');
@@ -219,25 +230,23 @@ const inicial = listaFrases[0] || {
         } catch (_) {}
       }
       if (window.pcMostrarToast) {
-        window.pcMostrarToast((subtitulo || 'Motivación del día') + ': "' + fraseHoy.titulo + '"');
+        window.pcMostrarToast((subtitulo || 'Motivación del día') + ': ' + fraseHoy.texto.slice(0, 95) + '…');
       }
       return false;
     }
 
     function pintarUI(conf) {
-      var activa = Boolean(conf && conf.activo && conf.email);
-      if (conf && conf.email) inputEmail.value = conf.email;
+      var activa = Boolean(conf && conf.activo);
+      if (conf && conf.nota && inputNota) inputNota.value = conf.nota;
       if (conf && conf.hora) selectHora.value = conf.hora;
       if (checkPush && conf && typeof conf.push === 'boolean') checkPush.checked = conf.push;
 
-      if (btnSubmit) btnSubmit.textContent = activa ? 'Actualizar preferencia' : 'Activar aviso diario';
-      if (btnIcs) btnIcs.hidden = !activa;
-      if (btnProbar) btnProbar.hidden = !activa;
+      if (btnSubmit) btnSubmit.textContent = activa ? 'Actualizar en navegador' : 'Guardar aviso en navegador';
       if (btnPausar) btnPausar.hidden = !activa;
 
       if (activa) {
         mostrarMensajeEstado(
-          '✓ Aviso diario activo para ' + conf.email + ' a las ' + conf.hora + ' hs. Podés sumar el evento recurrente (.ics) a tu calendario o probar tu alerta ahora.',
+          '✓ Aviso local guardado en este navegador (' + conf.hora + ' hs). Para alarma puntual en el celular aunque cierres la pestaña, usá "Descargar alarma diaria (.ics)".',
           'ok'
         );
       }
@@ -248,28 +257,21 @@ const inicial = listaFrases[0] || {
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var email = String(inputEmail.value || '').trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-        mostrarMensajeEstado('Ingresá un correo electrónico válido para guardar tu recordatorio diario.', 'error');
-        inputEmail.focus();
-        return;
-      }
-
+      var nota = String(inputNota ? inputNota.value : '').trim();
       var hora = selectHora.value || '08:30';
       var quierePush = Boolean(checkPush && checkPush.checked);
 
       function finalizar(perm) {
         var nuevo = {
-          email: email,
+          nota: nota,
           hora: hora,
           push: quierePush && perm === 'granted',
           activo: true,
-          actualizado: new Date().toISOString().slice(0, 10),
-          ultimaFechaNotif: new Date().toISOString().slice(0, 10)
+          actualizado: new Date().toISOString().slice(0, 10)
         };
         guardarEstado(nuevo);
         pintarUI(nuevo);
-        dispararNotificacion('Suscripción activa');
+        dispararNotificacion('Recordatorio activado');
       }
 
       if (quierePush && typeof Notification !== 'undefined' && Notification.permission === 'default') {
@@ -281,8 +283,9 @@ const inicial = listaFrases[0] || {
 
     if (btnIcs) {
       btnIcs.addEventListener('click', function () {
-        descargarIcs(selectHora.value || '08:30');
-        mostrarMensajeEstado('✓ Descargamos tu recordatorio diario (.ics) para Google Calendar, Apple o Outlook.', 'ok');
+        var nota = String(inputNota ? inputNota.value : '').trim();
+        descargarIcs(selectHora.value || '08:30', nota);
+        mostrarMensajeEstado('✓ Archivo motivacion-diaria-paracumpleanos.ics descargado. Abrilo para agendar el aviso diario en Google Calendar, Apple o Outlook.', 'ok');
       });
     }
 
@@ -301,9 +304,9 @@ const inicial = listaFrases[0] || {
     if (btnPausar) {
       btnPausar.addEventListener('click', function () {
         try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
-        inputEmail.value = '';
+        if (inputNota) inputNota.value = '';
         pintarUI(null);
-        mostrarMensajeEstado('Aviso diario pausado y eliminado de este navegador.', '');
+        mostrarMensajeEstado('Aviso local desactivado en este navegador.', '');
       });
     }
   })();

@@ -22,7 +22,8 @@ export const GRUPOS: GrupoInfo[] = [
   { id: 'profesionales', nombre: 'Trabajo, escuela y profesión', emoji: '💼' },
   { id: 'aniversarios', nombre: 'Aniversarios y meses de novios', emoji: '💑' },
   { id: 'meses', nombre: 'Cumpleaños por mes y signo', emoji: '🗓️' },
-  { id: 'fechas_hitos', nombre: 'Fechas especiales e hitos de vida', emoji: '💐' },
+  { id: 'fechas_especiales', nombre: 'Fechas especiales del año', emoji: '🎉' },
+  { id: 'fechas_hitos', nombre: 'Hitos y momentos de vida', emoji: '💐' },
   { id: 'especiales', nombre: 'Ocasiones especiales', emoji: '✨' }
 ];
 
@@ -207,16 +208,19 @@ export function generarUrlsSitio(
 
   for (const h of catalogo.hubs) {
     urls.push(`${SITIO}/${h.slug}/`);
-    const total = Math.ceil(catalogo.mensajesDe(h.slug).length / POR_PAGINA);
-    for (let p = 2; p <= total; p++) {
-      urls.push(`${SITIO}/${h.slug}/${p}/`);
-    }
   }
 
   const indexables = construirSetIndexables(catalogo.todosMensajes);
   for (const m of catalogo.todosMensajes) {
     if (indexables.has(m.slug)) {
       urls.push(`${SITIO}/${m.slug}/`);
+    }
+  }
+
+  for (const h of catalogo.hubs) {
+    const total = Math.ceil(catalogo.mensajesDe(h.slug).length / POR_PAGINA);
+    for (let p = 2; p <= total; p++) {
+      urls.push(`${SITIO}/${h.slug}/${p}/`);
     }
   }
 

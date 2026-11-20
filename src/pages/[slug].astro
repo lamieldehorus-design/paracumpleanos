@@ -170,6 +170,280 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
       { href: '/feliz-cumpleanos-hija/', label: 'Feliz cumpleaños hija (todas las edades)' },
       { href: '/carta-para-mi-hija/', label: 'Cartas largas para mi hija' }
     ]
+  },
+  // Meses del año vinculados con fechas especiales del calendario
+  'cumpleanos-en-enero': {
+    texto: 'Fechas especiales y arranques de Enero:',
+    enlaces: [
+      { href: '/feliz-ano-nuevo-familia/', label: 'Feliz Año Nuevo en familia' },
+      { href: '/feliz-dia-de-reyes/', label: 'Feliz Día de Reyes' }
+    ]
+  },
+  'cumpleanos-en-febrero': {
+    texto: 'Fechas especiales de Febrero:',
+    enlaces: [
+      { href: '/feliz-san-valentin/', label: 'Feliz San Valentín (14 de febrero)' },
+      { href: '/feliz-cumpleanos-mi-amor/', label: 'Cumpleaños para mi amor' }
+    ]
+  },
+  'cumpleanos-en-marzo': {
+    texto: 'Fechas especiales de Marzo:',
+    enlaces: [
+      { href: '/feliz-dia-de-la-mujer/', label: 'Día de la Mujer (8 de marzo)' },
+      { href: '/felices-pascuas/', label: 'Felices Pascuas' }
+    ]
+  },
+  'cumpleanos-en-abril': {
+    texto: 'Celebraciones de Abril:',
+    enlaces: [
+      { href: '/felices-pascuas/', label: 'Felices Pascuas en familia' },
+      { href: '/feliz-dia-de-la-familia/', label: 'Día de la Familia' }
+    ]
+  },
+  'cumpleanos-en-mayo': {
+    texto: 'Fechas destacadas de Mayo:',
+    enlaces: [
+      { href: '/feliz-dia-del-trabajador/', label: 'Día del Trabajador (1.° de mayo)' },
+      { href: '/feliz-dia-de-la-madre/', label: 'Feliz Día de la Madre' }
+    ]
+  },
+  'cumpleanos-en-junio': {
+    texto: 'Celebraciones especiales de Junio:',
+    enlaces: [
+      { href: '/feliz-dia-del-padre/', label: 'Feliz Día del Padre' },
+      { href: '/feliz-dia-de-la-familia/', label: 'Día de la Familia' }
+    ]
+  },
+  'cumpleanos-en-julio': {
+    texto: 'Fechas especiales de Julio:',
+    enlaces: [
+      { href: '/feliz-dia-del-amigo/', label: 'Feliz Día del Amigo (20 de julio)' },
+      { href: '/feliz-dia-de-los-abuelos/', label: 'Día de los Abuelos (26 de julio)' }
+    ]
+  },
+  'cumpleanos-en-agosto': {
+    texto: 'Celebraciones de Agosto:',
+    enlaces: [
+      { href: '/feliz-dia-del-nino/', label: 'Feliz Día del Niño / de las Infancias' },
+      { href: '/feliz-dia-de-los-abuelos/', label: 'Día de los Abuelos' }
+    ]
+  },
+  'cumpleanos-en-septiembre': {
+    texto: 'Fechas especiales de Septiembre:',
+    enlaces: [
+      { href: '/feliz-primavera-mensajes/', label: 'Feliz Primavera (21 de septiembre)' },
+      { href: '/feliz-dia-del-maestro/', label: 'Feliz Día del Maestro (11 de septiembre)' }
+    ]
+  },
+  'cumpleanos-en-octubre': {
+    texto: 'Celebraciones de Octubre:',
+    enlaces: [
+      { href: '/feliz-dia-de-la-madre/', label: 'Feliz Día de la Madre' },
+      { href: '/feliz-halloween-mensajes/', label: 'Mensajes de Halloween' }
+    ]
+  },
+  'cumpleanos-en-noviembre': {
+    texto: 'Fechas especiales de Noviembre y fin de año:',
+    enlaces: [
+      { href: '/feliz-dia-de-la-familia/', label: 'Día de la Familia' },
+      { href: '/feliz-nochebuena/', label: 'Preparar saludos de Nochebuena' }
+    ]
+  },
+  'cumpleanos-en-diciembre': {
+    texto: 'Celebraciones de Diciembre y cierre de año:',
+    enlaces: [
+      { href: '/feliz-nochebuena/', label: 'Feliz Nochebuena (24 de dic.)' },
+      { href: '/feliz-navidad-en-familia/', label: 'Feliz Navidad en familia' },
+      { href: '/feliz-ano-nuevo-familia/', label: 'Feliz Año Nuevo en familia' }
+    ]
+  },
+  // Fechas especiales del año conectadas con meses y destinatarios
+  'feliz-dia-de-reyes': {
+    texto: 'Relacionado con Enero e infancias:',
+    enlaces: [
+      { href: '/cumpleanos-en-enero/', label: 'Cumpleaños en Enero' },
+      { href: '/feliz-dia-del-nino/', label: 'Día del Niño' },
+      { href: '/feliz-cumpleanos-nino/', label: 'Cumpleaños de niño' }
+    ]
+  },
+  'feliz-san-valentin': {
+    texto: 'Más dedicatorias de amor y pareja en Febrero:',
+    enlaces: [
+      { href: '/cumpleanos-en-febrero/', label: 'Cumpleaños en Febrero' },
+      { href: '/feliz-cumpleanos-mi-amor/', label: 'Para mi amor' },
+      { href: '/feliz-aniversario-mi-amor/', label: 'Aniversario de pareja' }
+    ]
+  },
+  'feliz-dia-de-la-mujer': {
+    texto: 'Más dedicatorias para mujeres especiales:',
+    enlaces: [
+      { href: '/cumpleanos-en-marzo/', label: 'Cumpleaños en Marzo' },
+      { href: '/feliz-cumpleanos-mujer/', label: 'Cumpleaños para mujer' },
+      { href: '/feliz-cumpleanos-mama/', label: 'Saludos para mamá' }
+    ]
+  },
+  'felices-pascuas': {
+    texto: 'Meses y fechas familiares cercanas:',
+    enlaces: [
+      { href: '/cumpleanos-en-marzo/', label: 'Cumpleaños en Marzo' },
+      { href: '/cumpleanos-en-abril/', label: 'Cumpleaños en Abril' },
+      { href: '/feliz-dia-de-la-familia/', label: 'Día de la Familia' }
+    ]
+  },
+  'feliz-dia-del-trabajador': {
+    texto: 'Saludos laborales y mes de Mayo:',
+    enlaces: [
+      { href: '/cumpleanos-en-mayo/', label: 'Cumpleaños en Mayo' },
+      { href: '/feliz-cumpleanos-para-un-companero-de-trabajo/', label: 'Compañero de trabajo' },
+      { href: '/feliz-cumpleanos-jefe/', label: 'Saludos formales para jefe' }
+    ]
+  },
+  'feliz-dia-de-la-madre': {
+    texto: 'Más colecciones y cartas para mamá:',
+    enlaces: [
+      { href: '/cumpleanos-en-mayo/', label: 'Cumpleaños en Mayo' },
+      { href: '/cumpleanos-en-octubre/', label: 'Cumpleaños en Octubre' },
+      { href: '/feliz-cumpleanos-mama/', label: 'Cumpleaños de mamá' }
+    ]
+  },
+  'feliz-dia-del-padre': {
+    texto: 'Más mensajes para papá y mes de Junio:',
+    enlaces: [
+      { href: '/cumpleanos-en-junio/', label: 'Cumpleaños en Junio' },
+      { href: '/feliz-cumpleanos-papa/', label: 'Cumpleaños de papá' },
+      { href: '/cartas-para-mi-papa-que-lo-haga-llorar/', label: 'Cartas emotivas para papá' }
+    ]
+  },
+  'feliz-dia-del-amigo': {
+    texto: 'Más dedicatorias de amistad y Julio:',
+    enlaces: [
+      { href: '/cumpleanos-en-julio/', label: 'Cumpleaños en Julio' },
+      { href: '/feliz-cumpleanos-amiga/', label: 'Cumpleaños de amiga' },
+      { href: '/feliz-cumpleanos-amigo/', label: 'Cumpleaños de amigo' }
+    ]
+  },
+  'feliz-dia-de-los-abuelos': {
+    texto: 'Más saludos para abuelos y Julio/Agosto:',
+    enlaces: [
+      { href: '/cumpleanos-en-julio/', label: 'Cumpleaños en Julio' },
+      { href: '/feliz-cumpleanos-abuela/', label: 'Para mi abuela' },
+      { href: '/feliz-cumpleanos-abuelo/', label: 'Para mi abuelo' }
+    ]
+  },
+  'feliz-dia-del-nino': {
+    texto: 'Más dedicatorias infantiles y mes de Agosto:',
+    enlaces: [
+      { href: '/cumpleanos-en-agosto/', label: 'Cumpleaños en Agosto' },
+      { href: '/feliz-cumpleanos-nino/', label: 'Cumpleaños de niño' },
+      { href: '/feliz-cumpleanos-para-una-nina/', label: 'Cumpleaños de niña' },
+      { href: '/feliz-cumpleanos-para-un-sobrino/', label: 'Para un sobrino' }
+    ]
+  },
+  'feliz-dia-del-maestro': {
+    texto: 'Más dedicatorias educativas y Septiembre:',
+    enlaces: [
+      { href: '/cumpleanos-en-septiembre/', label: 'Cumpleaños en Septiembre' },
+      { href: '/feliz-cumpleanos-maestra/', label: 'Cumpleaños de maestra' },
+      { href: '/feliz-primavera-mensajes/', label: 'Feliz Primavera' }
+    ]
+  },
+  'feliz-primavera-mensajes': {
+    texto: 'Septiembre, juventud y energía positiva:',
+    enlaces: [
+      { href: '/cumpleanos-en-septiembre/', label: 'Cumpleaños en Septiembre' },
+      { href: '/feliz-cumpleanos-amiga/', label: 'Frases para amiga' },
+      { href: '/motivaciones/', label: 'Motivaciones diarias ✨' }
+    ]
+  },
+  'feliz-halloween-mensajes': {
+    texto: 'Octubre, amigos y saludos con humor:',
+    enlaces: [
+      { href: '/cumpleanos-en-octubre/', label: 'Cumpleaños en Octubre' },
+      { href: '/feliz-cumpleanos-gracioso/', label: 'Cumpleaños gracioso' },
+      { href: '/feliz-cumpleanos-amigo/', label: 'Saludos para amigos' }
+    ]
+  },
+  'feliz-nochebuena': {
+    texto: 'Completá tus saludos de Diciembre y fiestas:',
+    enlaces: [
+      { href: '/cumpleanos-en-diciembre/', label: 'Cumpleaños en Diciembre' },
+      { href: '/feliz-navidad-en-familia/', label: 'Feliz Navidad en familia' },
+      { href: '/feliz-ano-nuevo-familia/', label: 'Feliz Año Nuevo' }
+    ]
+  },
+  'feliz-navidad-en-familia': {
+    texto: 'Toda la ruta de fiestas en Diciembre:',
+    enlaces: [
+      { href: '/cumpleanos-en-diciembre/', label: 'Cumpleaños en Diciembre' },
+      { href: '/feliz-nochebuena/', label: 'Feliz Nochebuena' },
+      { href: '/feliz-ano-nuevo-familia/', label: 'Feliz Año Nuevo en familia' }
+    ]
+  },
+  'feliz-ano-nuevo-familia': {
+    texto: 'Cierre de Diciembre y comienzo de Enero:',
+    enlaces: [
+      { href: '/cumpleanos-en-enero/', label: 'Cumpleaños en Enero' },
+      { href: '/feliz-navidad-en-familia/', label: 'Feliz Navidad en familia' },
+      { href: '/feliz-dia-de-reyes/', label: 'Feliz Día de Reyes' }
+    ]
+  },
+  'feliz-dia-de-la-familia': {
+    texto: 'Más fechas familiares y distancia:',
+    enlaces: [
+      { href: '/feliz-dia-de-la-madre/', label: 'Día de la Madre' },
+      { href: '/feliz-dia-del-padre/', label: 'Día del Padre' },
+      { href: '/feliz-cumpleanos-a-distancia/', label: 'Abrazos a distancia' }
+    ]
+  },
+  // Destinatarios con cruce natural hacia fechas anuales
+  'feliz-cumpleanos-novia': {
+    texto: '¿Buscás también saludos románticos del año?',
+    enlaces: [
+      { href: '/feliz-san-valentin/', label: 'Feliz San Valentín' },
+      { href: '/feliz-aniversario-mi-amor/', label: 'Feliz aniversario mi amor' }
+    ]
+  },
+  'feliz-cumpleanos-novio': {
+    texto: '¿Buscás también saludos románticos del año?',
+    enlaces: [
+      { href: '/feliz-san-valentin/', label: 'Feliz San Valentín' },
+      { href: '/feliz-aniversario-mi-amor/', label: 'Feliz aniversario mi amor' }
+    ]
+  },
+  'feliz-cumpleanos-amiga': {
+    texto: 'Celebrá la amistad todo el año:',
+    enlaces: [
+      { href: '/feliz-dia-del-amigo/', label: 'Feliz Día del Amigo' },
+      { href: '/feliz-cumpleanos-a-distancia/', label: 'Amiga a la distancia' }
+    ]
+  },
+  'feliz-cumpleanos-amigo': {
+    texto: 'Celebrá la amistad todo el año:',
+    enlaces: [
+      { href: '/feliz-dia-del-amigo/', label: 'Feliz Día del Amigo' },
+      { href: '/feliz-cumpleanos-gracioso/', label: 'Saludos graciosos' }
+    ]
+  },
+  'feliz-cumpleanos-nino': {
+    texto: 'Otras fechas mágicas para chicos:',
+    enlaces: [
+      { href: '/feliz-dia-del-nino/', label: 'Feliz Día del Niño' },
+      { href: '/feliz-dia-de-reyes/', label: 'Feliz Día de Reyes' }
+    ]
+  },
+  'feliz-cumpleanos-para-una-nina': {
+    texto: 'Otras fechas mágicas para chicas:',
+    enlaces: [
+      { href: '/feliz-dia-del-nino/', label: 'Feliz Día del Niño' },
+      { href: '/feliz-dia-de-reyes/', label: 'Feliz Día de Reyes' }
+    ]
+  },
+  'feliz-cumpleanos-maestra': {
+    texto: 'Más saludos escolares del calendario:',
+    enlaces: [
+      { href: '/feliz-dia-del-maestro/', label: 'Feliz Día del Maestro' },
+      { href: '/cumpleanos-en-septiembre/', label: 'Cumpleaños en Septiembre' }
+    ]
   }
 };
 const parContextual = esHub ? PARES_CONTEXTUALES[registro.slug] : undefined;
@@ -188,7 +462,7 @@ if (esHub) {
     publisher: { '@type': 'Organization', name: MARCA, url: SITIO + '/' }
   });
 }
-const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
+const textoEnviar = esHub ? '' : registro.texto;
 ---
 <Base
   titulo={titulo}
@@ -289,7 +563,10 @@ const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
 
       {totalPaginas > 1 ? (
         <nav class="paginacion" aria-label="Paginación">
-          <span>Página 1 de {totalPaginas}</span>
+          <span class="pag-actual" aria-current="page">1</span>
+          {Array.from({ length: totalPaginas - 1 }, (_, i) => i + 2).map(function (p) {
+            return <a class="pag-num" href={'/' + registro.slug + '/' + p + '/'}>{p}</a>;
+          })}
           <a href={'/' + registro.slug + '/2/'}>Siguiente ›</a>
         </nav>
       ) : null}
@@ -422,14 +699,22 @@ const textoEnviar = esHub ? '' : registro.titulo + '. ' + registro.texto;
       <blockquote class="cita-editorial">{guiaMsg.citaDestacada}</blockquote>
 
       <section class="consejo-mensaje" aria-labelledby="consejo-adaptar-titulo">
-        <h2 id="consejo-adaptar-titulo">Cómo adaptar este texto en 30 segundos para que suene tuyo</h2>
+        <h2 id="consejo-adaptar-titulo">
+          {guiaMsg.perfil === 'motivaciones'
+            ? 'Cómo aplicar esta motivación en acciones concretas hoy'
+            : 'Cómo adaptar este texto en 30 segundos para que suene tuyo'}
+        </h2>
         <div class="comparacion-concreta">
           <div class="comp-item comp-evitar">
-            <span class="comp-etiqueta">Evitá enviar genérico</span>
+            <span class="comp-etiqueta">
+              {guiaMsg.perfil === 'motivaciones' ? 'Frase vacía de internet' : 'Evitá enviar genérico'}
+            </span>
             <p>«{guiaMsg.ejemploGenerico}»</p>
           </div>
           <div class="comp-item comp-mejor">
-            <span class="comp-etiqueta">Sumá un detalle real</span>
+            <span class="comp-etiqueta">
+              {guiaMsg.perfil === 'motivaciones' ? 'Paso práctico para destrabar tu día' : 'Sumá un detalle real'}
+            </span>
             <p>«{guiaMsg.ejemploConcreto}»</p>
           </div>
         </div>

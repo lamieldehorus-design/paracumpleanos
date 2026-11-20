@@ -68,23 +68,25 @@ function cargarDatosCompletos() {
   return all;
 }
 
-test('catalogo contiene exactamente 380 categorias y 40 mensajes por categoria (15200 todos unicos)', () => {
+test('catalogo contiene 390 categorias (60 mensajes por mes, 40 en el resto) y 15840 mensajes todos unicos', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
-  assert.equal(cat.hubs.length, 380, `Se esperaban 380 hubs, hay ${cat.hubs.length}`);
+  assert.equal(cat.hubs.length, 390, `Se esperaban 390 hubs, hay ${cat.hubs.length}`);
   assert.ok(cat.hubsPorSlug.has('motivaciones'), 'Debe existir el hub /motivaciones/');
   assert.ok(cat.hubsPorSlug.has('cumpleanos-en-junio'), 'Debe existir el hub /cumpleanos-en-junio/');
-  assert.equal(cat.todosMensajes.length, 380 * 40, `Se esperaban ${380 * 40} mensajes, hay ${cat.todosMensajes.length}`);
+  assert.ok(cat.hubsPorSlug.has('feliz-san-valentin'), 'Debe existir el hub /feliz-san-valentin/');
+  assert.equal(cat.todosMensajes.length, 15840, `Se esperaban 15840 mensajes, hay ${cat.todosMensajes.length}`);
   assert.equal(
     new Set(cat.todosMensajes.map((m) => String(m.texto || '').trim())).size,
-    15200,
-    'Todos los 15200 mensajes deben tener cuerpo unico sin duplicados'
+    15840,
+    'Todos los 15840 mensajes deben tener cuerpo unico sin duplicados'
   );
 
   for (const hub of cat.hubs) {
     const msgs = cat.mensajesDe(hub.slug);
-    assert.ok(msgs.length >= 40, `Hub ${hub.slug} tiene solo ${msgs.length} mensajes`);
+    const esperado = hub.grupo === 'meses' ? 60 : 40;
+    assert.equal(msgs.length, esperado, `Hub ${hub.slug} debe tener ${esperado} mensajes, tiene ${msgs.length}`);
     assert.ok(hub.titulo.length <= 60, `Hub ${hub.slug} excede 60 chars en titulo: ${hub.titulo.length}`);
     assert.ok(hub.meta.length >= 120 && hub.meta.length <= 165, `Hub ${hub.slug} meta fuera de rango: ${hub.meta.length}`);
   }
@@ -126,10 +128,10 @@ test('descripciones lead, seoTitulo y seoTexto son unicos y ningun titulo queda 
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
-  assert.equal(new Set(cat.hubs.map((h) => h.lead)).size, 380, 'Cada categoria debe tener una descripcion lead unica');
-  assert.equal(new Set(cat.hubs.map((h) => h.seoTitulo)).size, 380, 'Cada categoria debe tener un seoTitulo unico');
-  assert.equal(new Set(cat.hubs.map((h) => h.seoTexto)).size, 380, 'Cada categoria debe tener un seoTexto unico');
-  assert.equal(new Set(cat.hubs.map((h) => h.titulo)).size, 380, 'Cada categoria debe tener un titulo unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.lead)).size, 390, 'Cada categoria debe tener una descripcion lead unica');
+  assert.equal(new Set(cat.hubs.map((h) => h.seoTitulo)).size, 390, 'Cada categoria debe tener un seoTitulo unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.seoTexto)).size, 390, 'Cada categoria debe tener un seoTexto unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.titulo)).size, 390, 'Cada categoria debe tener un titulo unico');
 
   const cortePrep = /(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(de|del|en|con|a|al|para|por|sin|y|el|la|los|las|un|una|tu|su)$/i;
   for (const h of cat.hubs) {
@@ -271,7 +273,7 @@ test('construirSetIndexables prioriza contenido real y unicidad sin minimo artif
   const cat = crearCatalogo(datos);
   const indexables = construirSetIndexables(cat.todosMensajes);
 
-  assert.equal(indexables.size, 15200, `Se esperaban 15200 mensajes con contenido y slug unicos, hay ${indexables.size}`);
+  assert.equal(indexables.size, 15840, `Se esperaban 15840 mensajes con contenido y slug unicos, hay ${indexables.size}`);
   const cuerpos = new Set<string>();
   for (const m of cat.todosMensajes) {
     assert.ok(indexables.has(m.slug), `Mensaje con contenido valido excluido: ${m.slug}`);
@@ -425,15 +427,15 @@ test('personalizador adapta saludos, cartas, bilingues, poemas y firma sin corta
   assert.equal(Object.keys(FORMATOS_TARJETA).length, 2);
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren las 16777 URLs indexables sin duplicados incluyendo herramientas, horoscopo y meses', () => {
+test('generarUrlsSitio y generarSitemapXml cubren las 17469 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
   const slugsSignos = ZODIACOS.map((s) => s.slug);
   const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos);
 
-  assert.equal(urls.length, 16777, `Se esperaban 16777 URLs indexables, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 16777, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(urls.length, 17469, `Se esperaban 17469 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 17469, 'Las URLs del sitemap deben ser todas unicas');
   assert.ok(urls.every((url) => url.startsWith('https://paracumpleanos.com/')));
   assert.ok(urls.every((url) => !/[?#]/.test(url)));
   assert.ok(urls.includes('https://paracumpleanos.com/'));
@@ -442,6 +444,9 @@ test('generarUrlsSitio y generarSitemapXml cubren las 16777 URLs indexables sin 
   assert.ok(urls.includes('https://paracumpleanos.com/horoscopo/'));
   assert.ok(urls.includes('https://paracumpleanos.com/horoscopo/geminis/'));
   assert.ok(urls.includes('https://paracumpleanos.com/cumpleanos-en-junio/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/cumpleanos-en-junio/5/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/feliz-san-valentin/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/felices-pascuas/'));
   assert.ok(urls.includes('https://paracumpleanos.com/motivaciones/'));
   assert.ok(urls.includes('https://paracumpleanos.com/guias/'));
   assert.ok(urls.includes('https://paracumpleanos.com/sobre-nosotros/'));
@@ -454,6 +459,10 @@ test('generarUrlsSitio y generarSitemapXml cubren las 16777 URLs indexables sin 
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/4/'));
   assert.ok(urls.includes('https://paracumpleanos.com/hoy-celebramos-tu-autenticidad-tu-fuerza-tranquila-y-tu-enorme-corazon/'));
 
+  const firstPagIdx = urls.findIndex((u) => /\/\d+\/$/.test(u));
+  const lastMsgIdx = urls.indexOf(`https://paracumpleanos.com/${cat.todosMensajes[cat.todosMensajes.length - 1].slug}/`);
+  assert.ok(firstPagIdx > lastMsgIdx, 'Hubs y mensajes deben ubicarse antes de las URLs paginadas en sitemap.xml');
+
   for (const s of ZODIACOS) {
     for (const mSlug of s.mesesSlugs) {
       assert.ok(cat.hubsPorSlug.has(mSlug), `Signo ${s.slug} enlaza a mes inexistente: ${mSlug}`);
@@ -464,17 +473,17 @@ test('generarUrlsSitio y generarSitemapXml cubren las 16777 URLs indexables sin 
   }
 
   const indexables = construirSetIndexables(cat.todosMensajes);
-  assert.equal(indexables.size, 15200);
+  assert.equal(indexables.size, 15840);
 
   const xml = generarSitemapXml(urls);
   assert.ok(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xml.match(/<loc>/g) || [];
-  assert.equal(locs.length, 16777);
+  assert.equal(locs.length, 17469);
   assert.ok(!xml.includes('<lastmod>'), 'No agregar lastmod sin fechas reales por URL');
 });
 
-test('Bing IndexNow cubre las 16777 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre las 17469 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -486,13 +495,13 @@ test('Bing IndexNow cubre las 16777 URLs en lotes validos de hasta 10000 y tiene
   const slugsSignos = ZODIACOS.map((s) => s.slug);
   const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias, slugsSignos));
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 16777);
+  assert.equal(extraidas.length, 17469);
 
   const payloads = construirPayloadsIndexNow(extraidas);
   assert.equal(payloads.length, 2);
-  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 16777);
+  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 17469);
   assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
-  assert.equal(payloads[1].urlList.length, 6777);
+  assert.equal(payloads[1].urlList.length, 7469);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);
@@ -626,6 +635,38 @@ test('Statcounter 13334162 cubre todas las paginas Astro con respaldo anti-rebot
       contenidoArchivo.includes('components/PuenteRedireccion.astro');
     assert.ok(usaLayoutConStatcounter, `Pagina sin Statcounter (no importa Base ni PuenteRedireccion): ${archivo}`);
   }
+});
+
+test('favicons completos presentes en public, copia sin titulo en componentes y grupo fechas_especiales conectado', () => {
+  for (const asset of [
+    'favicon.ico',
+    'favicon-16x16.png',
+    'favicon-32x32.png',
+    'apple-touch-icon.png',
+    'android-chrome-192x192.png',
+    'android-chrome-512x512.png',
+    'site.webmanifest'
+  ]) {
+    assert.ok(fs.existsSync(path.resolve('public', asset)), `Falta activo public/${asset}`);
+  }
+
+  const baseSrc = fs.readFileSync(path.resolve('src/layouts/Base.astro'), 'utf8');
+  assert.ok(baseSrc.includes('/favicon.ico'));
+  assert.ok(baseSrc.includes('/favicon-32x32.png'));
+  assert.ok(baseSrc.includes('/site.webmanifest'));
+
+  const cardSrc = fs.readFileSync(path.resolve('src/components/TarjetaMensaje.astro'), 'utf8');
+  assert.ok(cardSrc.includes('texto={m.texto}'), 'TarjetaMensaje debe enviar solo el cuerpo del mensaje sin titulo');
+
+  const slugSrc = fs.readFileSync(path.resolve('src/pages/[slug].astro'), 'utf8');
+  assert.ok(slugSrc.includes('const textoEnviar = esHub ? \'\' : registro.texto;'), '[slug].astro debe enviar solo registro.texto sin titulo');
+
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+  const fechasEsp = cat.hubsPorGrupo.get('fechas_especiales') || [];
+  assert.equal(fechasEsp.length, 17, `Se esperaban 17 hubs en fechas_especiales, hay ${fechasEsp.length}`);
+  const dudaMsg = cat.todosMensajes.find((m) => m.slug === 'converti-las-dudas-en-preguntas-concretas-hoy');
+  assert.ok(dudaMsg && dudaMsg.texto.split(/\s+/).length >= 90, 'El mensaje de dudas concretas debe tener desarrollo accionable amplio');
 });
 
 
