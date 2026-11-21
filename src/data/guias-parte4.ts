@@ -102,6 +102,7 @@ export const GUIAS_PARTE_4: GuiaEditorial[] = [
       }
     ],
     categoriasRelacionadas: [
+      { slug: 'banderines-de-cumpleanos-para-imprimir', nombre: 'Herramienta y 40 guías de banderines A4' },
       { slug: 'feliz-cumpleanos-general', nombre: 'Frases de feliz cumpleaños' },
       { slug: 'tarjetas-bonitas-para-felicitar-en-un-cumpleanos', nombre: 'Postales y tarjetas para imprimir' },
       { slug: 'frases-para-invitacion-de-cumpleanos', nombre: 'Invitaciones de cumpleaños' },

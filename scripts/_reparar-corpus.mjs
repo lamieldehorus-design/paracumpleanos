@@ -70,8 +70,14 @@ for (const ds of datasets) {
 // =========================================================================
 // PASO 1: ELIMINAR 100% DE SUFIJOS BASURA ENTRE PARENTESIS EN TODO EL SITIO
 // =========================================================================
-const PAREN_TAG_RE = /\s*\([^()]+,\s*[^()]+\d+\)\.?\s*/g;
-const PAREN_EDICION_RE = /\s*\(edición\s+\d+\)\.?\s*/gi;
+const PAREN_TAG_TEST_RE = /\([^()]+,\s*[^()]+\d+\)/;
+const PAREN_TAG_REPLACE_RE = /\s*\([^()]+,\s*[^()]+\d+\)\.?\s*/g;
+const PAREN_EDICION_TEST_RE = /\(edici[oó]n\s+\d+\)/i;
+const PAREN_EDICION_REPLACE_RE = /\s*\(edici[oó]n\s+\d+\)\.?\s*/gi;
+
+function claveIndexable(texto) {
+  return String(texto || '').normalize('NFC').replace(/\s+/g, ' ').trim().toLocaleLowerCase('es');
+}
 
 function detectarTipoCategoria(hub) {
   const s = (hub?.slug || '').toLowerCase();
@@ -233,15 +239,25 @@ const COMPLEMENTOS_UNICOS = [
   'Te deseamos sobremesas cálidas y amistades sinceras.',
   'Hoy sobran razones limpias para celebrar tu historia.',
   'Que cada mes traiga aprendizajes gratos y bienestar.',
-  'Guardamos con orgullo cada momento vivido a tu lado.'
+  'Guardamos con orgullo cada momento vivido a tu lado.',
+  'Que el entusiasmo y la serenidad caminen siempre a tu lado.',
+  'Valoramos profundamente tu palabra franca y tu constancia.',
+  'Deseamos un año sereno, fructífero y lleno de afecto.',
+  'Qué lindo poder compartir esta fecha con vos un año más.'
+];
+
+const COMPLEMENTOS_TEXTO_DUELO = [
+  'Guardamos con gratitud cada enseñanza que nos dejaste.',
+  'Tu memoria serena acompaña siempre a nuestra familia.',
+  'Recordamos tu voz amable y tu ejemplo de vida en calma.',
+  'El cariño verdadero permanece intacto a través de los años.',
+  'Honramos tu historia con respeto profundo y paz en casa.',
+  'Tus gestos nobles siguen vivos en quienes te conocieron.'
 ];
 
 let strippedParens = 0;
 let fixedNonBdayClosing = 0;
-const seenBody = new Set();
 
-// First pass: strip parenthetical tags and fix mismatched birthday closings
-const modifiedBodies = [];
 for (let i = 0; i < todosMensajes.length; i++) {
   const m = todosMensajes[i];
   const hub = hubsBySlug.get(m.categoria);
@@ -250,12 +266,12 @@ for (let i = 0; i < todosMensajes.length; i++) {
 
   let txt = m.texto;
   let hadTag = false;
-  if (PAREN_TAG_RE.test(txt) || PAREN_EDICION_RE.test(txt)) {
+  if (PAREN_TAG_TEST_RE.test(txt) || PAREN_EDICION_TEST_RE.test(txt)) {
     hadTag = true;
     strippedParens++;
     txt = txt
-      .replace(PAREN_TAG_RE, ' ')
-      .replace(PAREN_EDICION_RE, ' ')
+      .replace(PAREN_TAG_REPLACE_RE, ' ')
+      .replace(PAREN_EDICION_REPLACE_RE, ' ')
       .replace(/\s+\./g, '.')
       .replace(/\.\s*\./g, '.')
       .replace(/[ \t]{2,}/g, ' ')
@@ -263,7 +279,6 @@ for (let i = 0; i < todosMensajes.length; i++) {
       .trim();
   }
 
-  // Fix mismatched "Feliz cumpleaños, disfrutá muchísimo tu jornada" on non-birthday categories
   if (
     /Feliz cumpleaños, disfrutá muchísimo tu jornada\.?/i.test(txt) &&
     (tipo === 'aniversario' || tipo === 'duelo' || tipo === 'fecha_especial' || tipo === 'hito_vida' || tipo === 'motivacion' || tipo === 'invitacion' || tipo === 'gracias')
@@ -274,7 +289,6 @@ for (let i = 0; i < todosMensajes.length; i++) {
     txt = txt.replace(/Feliz cumpleaños, disfrutá muchísimo tu jornada\.?/i, rep);
   }
 
-  // Also replace generic "Feliz cumpleaños, disfrutá muchísimo tu jornada." on tagged birthday items with varied natural closings
   if (hadTag && /Feliz cumpleaños, disfrutá muchísimo tu jornada\.?$/i.test(txt)) {
     const pool = CIERRES_POR_TIPO[tipo] || CIERRES_POR_TIPO.cumple;
     let rep = pool[(i + (hub?.slug?.length || 0)) % pool.length];
@@ -282,7 +296,6 @@ for (let i = 0; i < todosMensajes.length; i++) {
     txt = txt.replace(/Feliz cumpleaños, disfrutá muchísimo tu jornada\.?$/i, rep);
   }
 
-  // Ensure punctuation cleanliness
   txt = txt
     .replace(/\.\s*\./g, '.')
     .replace(/,\s*\./g, '.')
@@ -290,47 +303,59 @@ for (let i = 0; i < todosMensajes.length; i++) {
     .trim();
   if (!/[.!?…»"]$/.test(txt)) txt += '.';
 
-  // Ensure feminine concordance if we inserted "rodeado"
   if (fem) {
     txt = txt.replace(/\brodeado de\b/g, 'rodeada de');
   }
 
   m.texto = txt;
-  if (hadTag) modifiedBodies.push(m);
 }
 
-// Deduplicate any body collisions cleanly (especially among the 1,360 stripped items)
+// Strict body deduplication using BOTH exact construirSetIndexables key AND normalizar()
+const seenBodyExact = new Set();
+const seenBodyNorm = new Set();
 let dedupedBodies = 0;
+
 for (let i = 0; i < todosMensajes.length; i++) {
   const m = todosMensajes[i];
-  const key = normalizar(m.texto);
-  if (!seenBody.has(key)) {
-    seenBody.add(key);
+  const kExact = claveIndexable(m.texto);
+  const kNorm = normalizar(m.texto);
+  if (!seenBodyExact.has(kExact) && !seenBodyNorm.has(kNorm)) {
+    seenBodyExact.add(kExact);
+    seenBodyNorm.add(kNorm);
     continue;
   }
+
   const hub = hubsBySlug.get(m.categoria);
   const tipo = detectarTipoCategoria(hub);
   const dest = extraerEtiquetaDestinatario(hub);
   const fem = esFemenino(hub);
   const poolCierre = CIERRES_POR_TIPO[tipo] || CIERRES_POR_TIPO.cumple;
+  const poolComp = tipo === 'duelo' ? COMPLEMENTOS_TEXTO_DUELO : COMPLEMENTOS_UNICOS;
 
   let candidato = m.texto;
-  for (let intento = 0; intento < 60; intento++) {
+  for (let intento = 0; intento < 120; intento++) {
     const c1 = poolCierre[(i + intento) % poolCierre.length];
-    const c2 = COMPLEMENTOS_UNICOS[(i * 7 + intento * 3) % COMPLEMENTOS_UNICOS.length];
+    const c2 = poolComp[(i * 7 + intento * 3) % poolComp.length];
     const sufDest = dest && tipo !== 'duelo' && tipo !== 'poema'
-      ? (intento % 2 === 0 ? ` Gracias por todo, ${dest}.` : ` Un abrazo grande, ${dest}.`)
+      ? (intento % 3 === 0 ? ` Gracias por todo, ${dest}.` : intento % 3 === 1 ? ` Un abrazo grande, ${dest}.` : ` Te quiero muchísimo, ${dest}.`)
       : '';
-    let extra = tipo === 'poema' ? `\n\n${c1}` : ` ${intento < 8 ? c1 : c2}${sufDest}`;
+    let extra = tipo === 'poema'
+      ? `\n\n${c1}`
+      : intento < 10
+        ? ` ${c1}${sufDest}`
+        : intento < 40
+          ? ` ${c2}${sufDest}`
+          : ` ${c1} ${c2}`;
     if (fem) extra = extra.replace(/\brodeado\b/g, 'rodeada').replace(/\bacompañado\b/g, 'acompañada');
-    // For duelo, make sure zero festive words enter
     if (tipo === 'duelo' && /(torta|pastel|soplá|velas|fiesta|festej|brindis|regalos)/i.test(extra)) continue;
     if (tipo === 'aniversario' && /cumpleaños/i.test(extra)) continue;
     const prueba = (m.texto + extra).replace(/\.\s*\./g, '.').replace(/[ \t]{2,}/g, ' ').trim();
-    const kPrueba = normalizar(prueba);
-    if (!seenBody.has(kPrueba)) {
+    const kpExact = claveIndexable(prueba);
+    const kpNorm = normalizar(prueba);
+    if (!seenBodyExact.has(kpExact) && !seenBodyNorm.has(kpNorm)) {
       candidato = prueba;
-      seenBody.add(kPrueba);
+      seenBodyExact.add(kpExact);
+      seenBodyNorm.add(kpNorm);
       dedupedBodies++;
       break;
     }
@@ -339,31 +364,32 @@ for (let i = 0; i < todosMensajes.length; i++) {
 }
 
 // =========================================================================
-// PASO 2: REPARAR TITULOS INCOHERENTES, SUFIJOS MECANICOS Y GRAMATICA
+// PASO 2: REPARAR 100% DE TITULOS INCOHERENTES, SUFIJOS MECANICOS Y GRAMATICA
 // =========================================================================
 
-// Detect broken titles across the entire 16,880 corpus
-const BROKEN_START_RE = /^(Verte|Alentá|Encendé|Confirmá|Sellá|Protegé|Mantené|Confiá|Honrá|Multiplicá|Recibí|Recordá|Brindá|Celebrá|Acompañá|Escribí|Abrazá|Elegí|Guía|Cuidá|Sostené|Sumá|Regalá|Construí|Descubrí|Inspirá|Valorá|Sembrá|Iluminá|Guardá|Agradecé|Defendé|Avanzá|Reconocé|Proyectá|Ofrecé|Envolvé|Seguí|Compartí)\s+(con alegría|cada instante con|hoy|nuevas metas|sueños propios|pasos firmes|serena alegría|salud serena|tiempo compartido|abrazos cercanos|mesas alegres|huellas nobles|proyectos lindos|fuerza tranquila|paz verdadera|charlas largas|senderos claros|buenos hábitos|gratitud genuina)/i;
-
-const VERTE_NOUN_RE = /^Verte\s+(?!crecer|sonreír|reír|brillar|cumplir|feliz|bien|llegar|avanzar|disfrutar|florecer|triunfar|celebrar|soñar)/i;
-
-const PARA_DEST_NO_ART_RE = /\bpara\s+(amiga|amigo|hija|hijo|hermana|hermano|prima|primo|sobrina|sobrino|tía|tío|abuela|abuelo|esposa|esposo|novia|novio|suegra|suegro|cuñada|cuñado|nuera|yerno|ahijada|ahijado|madrina|padrino|compadre|comadre|nieta|nieto|mujer|hombre|bebé|niño|niña|jefa|jefe|doctora|doctor|maestra|profesor|profesora)\b/i;
-
-const AWKWARD_SUFFIX_RE = /\s+(bajo cielo claro|bajo cielo sereno|con gratitud viva|con impulso genuino|con calma y verdad|con mirada serena|desde lo cotidiano|en cada nueva mañana|en esta nueva vuelta|para lo que empieza|con afecto cercano|con corazón sincero)(\s+siempre)?$/i;
-
-const VOCAB_COMMA_SUFFIX_RE = /,\s+([a-záéíóúüñ]+)\s+(bajo cielo claro|bajo cielo sereno|con enorme cariño|con sonrisa sincera|con afecto verdadero|con inmensa gratitud|en familia hoy|de todo corazón|con gratitud viva|en esta nueva etapa|con sincero entusiasmo|en calma y salud|con paz y esperanza|desde lo más hondo|hoy mismo)$/i;
-
+const VERB_CON_ALEGRIA_SOUP_RE = /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+\s+(con alegría|cada instante con)\s+(huellas|sueños|senderos|charlas|fuerza|salud|paz|abrazos|mesas|gratitud|pasos|proyectos|serena|tiempo|buenos|nuevas|calma|alegría)/i;
+const CADA_INSTANTE_CON_RE = /\bcada instante con\b/i;
+const IMP_VERB_SOUP_RE = /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+\s+(hoy\s+)?(nuevas metas|sueños propios|pasos firmes|serena alegría|salud serena|tiempo compartido|abrazos cercanos|mesas alegres|huellas nobles|proyectos lindos|fuerza tranquila|paz verdadera|charlas largas|senderos claros|buenos hábitos|gratitud genuina|calma diaria)\b/i;
+const VERTE_NOUN_RE = /^Verte\s+(?!crecer|sonreír|reír|brillar|cumplir|feliz|bien|llegar|avanzar|disfrutar|florecer|triunfar|celebrar|soñar|tan|así|rodeada|rodeado)/i;
+const PARA_DEST_NO_ART_RE = /\bpara\s+(mejor amigo|mejor amiga|amiga|amigo|hija|hijo|hermana|hermano|prima|primo|sobrina|sobrino|tía|tío|abuela|abuelo|esposa|esposo|novia|novio|suegra|suegro|cuñada|cuñado|nuera|yerno|ahijada|ahijado|madrina|padrino|compadre|comadre|nieta|nieto|mujer|hombre|bebé|niño|niña|jefa|jefe|doctora|doctor|maestra|profesor|profesora)\b/i;
+const AWKWARD_SUFFIX_RE = /\s+(bajo cielo claro|bajo cielo sereno|bajo cielo limpio|bajo cielo abierto|con gratitud viva|con impulso genuino|con calma y verdad|con mirada serena|desde lo cotidiano|en cada nueva mañana|en esta nueva vuelta|para lo que empieza|con afecto cercano|con corazón sincero)(\s+siempre)?$/i;
+const CONTAGIOSA_SUFFIX_RE = /contagiosa\s+(con enorme cariño|con paz y esperanza|en calma y salud|de todo corazón)$/i;
+const VOCAB_COMMA_SUFFIX_RE = /,\s+([a-záéíóúüñ]+)\s+(bajo cielo claro|bajo cielo sereno|bajo cielo limpio|con enorme cariño|con sonrisa sincera|con afecto verdadero|con inmensa gratitud|en familia hoy|de todo corazón|con gratitud viva|en esta nueva etapa|con sincero entusiasmo|en calma y salud|con paz y esperanza|desde lo más hondo|hoy mismo)$/i;
 const EN_FAMILIA_NONFAM_RE = /\s+en familia hoy$/i;
-const SIEMPRE_END_RE = /\s+(en cada nueva mañana|con calma y verdad|para todo el año|en esta nueva vuelta|para lo que empieza|junto a los tuyos|con afecto cercano|con impulso genuino)\s+siempre$/i;
-const DOUBLE_CON_RE = /\bcon\s+[a-záéíóúüñ]+\s+[a-záéíóúüñ]+\s+con\s+[a-záéíóúüñ]+/i;
+const SIEMPRE_END_RE = /\s+(en cada nueva mañana|con calma y verdad|para todo el año|en esta nueva vuelta|para lo que empieza|junto a los tuyos|con afecto cercano|con impulso genuino|con calma|con alegría|con gratitud|en paz|en tu día|este año)\s+siempre$/i;
+const DOUBLE_CON_RE = /\bcon\s+[a-záéíóúüñ]+(?:\s+[a-záéíóúüñ]+)?\s+con\s+[a-záéíóúüñ]+/i;
 
 function esTituloRoto(m, hub) {
   const t = m.titulo;
-  if (BROKEN_START_RE.test(t)) return 'broken_expansion';
+  if (VERB_CON_ALEGRIA_SOUP_RE.test(t)) return 'broken_expansion';
+  if (CADA_INSTANTE_CON_RE.test(t)) return 'broken_expansion';
+  if (IMP_VERB_SOUP_RE.test(t)) return 'broken_expansion';
   if (VERTE_NOUN_RE.test(t)) return 'broken_expansion';
   if (SIEMPRE_END_RE.test(t)) return 'broken_expansion';
-  if (PARA_DEST_NO_ART_RE.test(t) && !/cumpleaños para|carta para|frases para|mensajes para|tarjetas para|palabras para|poemas para|deseos para|saludos para|dedicatoria para|felicitaciones para|regalo para/i.test(t)) return 'broken_expansion';
+  if (/de corazón con corazón/i.test(t)) return 'broken_expansion';
+  if (PARA_DEST_NO_ART_RE.test(t) && !/cumpleaños para|carta para|frases para|mensajes para|tarjetas para|palabras para|poemas para|deseos para|saludos para|dedicatoria para|felicitaciones para|regalo para|oración para|bendición para|versos para|brindis para|nota para|texto para|recuerdo para|abrazo para|homenaje para|despedida para|invitación para|ideas para|consejos para|guía para|banderines para/i.test(t)) return 'broken_expansion';
   if (VOCAB_COMMA_SUFFIX_RE.test(t)) return 'vocab_comma_suffix';
+  if (CONTAGIOSA_SUFFIX_RE.test(t)) return 'contagiosa_suffix';
   if (AWKWARD_SUFFIX_RE.test(t)) return 'awkward_suffix';
   if (EN_FAMILIA_NONFAM_RE.test(t) && /(amigo|amiga|novio|novia|exnov|companer|jefe|jefa|profesor|maestra|doctor|pastor|vecin|alumno|amor)/i.test(m.categoria)) return 'en_familia_nonfam';
   if (DOUBLE_CON_RE.test(t)) return 'double_con';
@@ -373,7 +399,6 @@ function esTituloRoto(m, hub) {
   return null;
 }
 
-// Build global trackers EXCLUDING titles we are about to fix so replacements never collide
 const porReparar = [];
 const usadosTitulos = new Set();
 const usadosPorDest = new Map();
@@ -397,8 +422,7 @@ for (const m of todosMensajes) {
 
 console.log('Total titulos a reparar:', porReparar.length);
 
-// Rich, 100% natural, varied Spanish title building blocks (Subject/Opening + Natural Core + Optional Context)
-// Every single combination produces idiomatic, grammatical Spanish!
+// 100+ completely distinct first words, 100% idiomatic natural Spanish templates!
 const PLANTILLAS_NATURALES = {
   cumple: [
     'Deseo que este año nuevo te regale calma y salud',
@@ -431,8 +455,6 @@ const PLANTILLAS_NATURALES = {
     'Guardo el mejor recuerdo de nuestras charlas y risas',
     'Un brindis honesto por tus logros y sueños nuevos',
     'Esta fecha invita a agradecer todo lo compartido hasta acá',
-    'Ojalá la vida te devuelva multiplicado tu cariño diario',
-    'Que tu casa reciba siempre visitas queridas y armonía',
     'Felicidades por sumar historias valiosas año tras año',
     'Renovamos hoy el orgullo enorme que sentimos por vos',
     'Disfrutá tu jornada con calma, risas y buena música',
@@ -445,13 +467,11 @@ const PLANTILLAS_NATURALES = {
     'Hacés que lo cotidiano se vuelva recuerdo entrañable',
     'Levanto mi copa deseándote prosperidad, calma y amor',
     'Encontrá hoy pausa, mimos y abrazos de quienes amás',
-    'Tu ejemplo silencioso inspira respeto en toda tu gente',
     'Arrancá esta vuelta al sol con fuerzas renovadas',
     'Nada alegra tanto como verte crecer y disfrutar en paz',
     'Días luminosos, proyectos claros y gente noble te esperan',
     'Juntos celebramos el regalo enorme de tenerte cerca',
     'Tanta entrega diaria merece hoy un festejo inolvidable',
-    'Ojalá cada mes nuevo acerque oportunidades hermosas',
     'Basta recordar tus gestos nobles para sonreír con ganas',
     'Rodeate hoy de voces queridas, música suave y alegría',
     'Dejamos atrás las prisas para saludarte como corresponde',
@@ -460,7 +480,41 @@ const PLANTILLAS_NATURALES = {
     'Pensamos en vos deseándote bienestar y tranquilidad',
     'Lograste tanto con paciencia que hoy toca celebrar fuerte',
     'Nadie merece más un año sereno, próspero y feliz',
-    'Palabras breves y honestas para acompañar tu día especial'
+    'Palabras breves y honestas para acompañar tu día especial',
+    'Ahora empieza un tramo hermoso lleno de aprendizajes buenos',
+    'Aquí tenés nuestro aplauso sincero por tu gran recorrido',
+    'Desde temprano pensamos en desearte una jornada luminosa',
+    'Entre risas y buenas charlas celebramos un año más',
+    'Mientras soplás las velas pedimos salud para tu casa',
+    'Cuando celebrás tu fecha toda la mesa se ilumina',
+    'Sobre todo deseamos tranquilidad, afecto y planes lindos',
+    'Todo lo bueno que diste vuelve multiplicado este año',
+    'Tantos recuerdos lindos merecen otro festejo memorable',
+    'Muchas razones honestas para agradecer tu compañía fiel',
+    'Buen comienzo de ciclo con salud firme y paz',
+    'Gran motivo de alegría celebrar tu presencia hoy',
+    'Nuevo capítulo abierto para disfrutar sin apuros ni cargas',
+    'Lindo momento para frenar y celebrar quién sos hoy',
+    'Fuerte abrazo a distancia o de cerca en tu día',
+    'Cálido saludo cargado de estima, humor y gratitud',
+    'Sincero deseo de bienestar para cada semana que viene',
+    'Honesto reconocimiento a tu paciencia y calidez diaria',
+    'Especial saludo para alguien que siempre suma claridad',
+    'Seguro este año traerá noticias que te hagan sonreír',
+    'Alegre jornada llena de afecto y sobremesa larga',
+    'Grato motivo para reunirnos y celebrar tu historia',
+    'Sereno comienzo de una nueva etapa muy merecida',
+    'Firme deseo de salud, descanso y metas cumplidas',
+    'Claro ejemplo de generosidad en cada gesto cotidiano',
+    'Dulce recuerdo el de celebrar otro año juntos',
+    'Bello pretexto esta fecha para decir cuánto te queremos',
+    'Oportuno instante para agradecer todo lo vivido juntos',
+    'Pura gratitud por compartir caminos, risas y confianza',
+    'Plena alegría al verte iniciar otra vuelta al sol',
+    'Sobra cariño en esta casa para celebrar tu cumpleaños',
+    'Vale la pena brindar por tu constancia y sonrisa',
+    'Queda mucho por vivir, viajar y festejar de acá en adelante',
+    'Llega tu fecha y nos encuentra agradecidos por tenerte'
   ],
   cristiano: [
     'Que la bendición de Dios abrace tu nuevo año',
@@ -469,11 +523,9 @@ const PLANTILLAS_NATURALES = {
     'Dios ilumine tus decisiones en cada jornada nueva',
     'Pedimos gracia, sabiduría y calma para tu hogar hoy',
     'El Señor renueve tus fuerzas al iniciar este ciclo',
-    'Que Su fidelidad sostenga tus pasos todo el año',
     'Celebramos tu vida dando gracias por tu fe firme',
     'Bendiciones abundantes sobre tu familia en esta fecha',
     'Confiamos en que Dios guarda grandes alegrías para vos',
-    'Que nunca falte luz divina ni paz en tu mesa',
     'Elevamos una oración agradecida por otro año tuyo',
     'Su amor sereno te guíe en cada nuevo comienzo',
     'Recibí hoy un abrazo cálido lleno de fe viva',
@@ -518,7 +570,7 @@ const PLANTILLAS_NATURALES = {
     'Crecer a tu lado sigue siendo mi mejor aventura',
     'Cuidar nuestro vínculo cada día vale muchísimo la pena',
     'Festejamos otra vuelta compartida con el corazón tranquilo',
-    'Llevamos años y meses aprendiendo a querernos mejor'
+    'Llevamos tiempo valioso aprendiendo a querernos mejor'
   ],
   duelo: [
     'Guardamos tu recuerdo sereno con respeto y gratitud',
@@ -599,7 +651,6 @@ function validarCandidatoTitulo(cand, hub, catSlug, dest) {
   const p0 = words[0];
   if (!inicioPorCat.has(catSlug)) inicioPorCat.set(catSlug, new Set());
   if (inicioPorCat.get(catSlug).has(p0)) return null;
-  // Check Dice/Jaccard against same destinatario
   const listaDest = usadosPorDest.get(dest) || [];
   const big = bigramas(nt);
   const ws = new Set(words);
@@ -628,7 +679,6 @@ for (let idx = 0; idx < porReparar.length; idx++) {
 
   const candidatos = [];
 
-  // 1. Direct surgical fixes first for grammatical or glued-suffix titles!
   if (motivo === 'brindamos_por') {
     const fixed = m.titulo.replace(/^Brindamos\s+/i, 'Brindamos por ');
     candidatos.push(fixed);
@@ -636,10 +686,11 @@ for (let idx = 0; idx < porReparar.length; idx++) {
       m.texto = fixed + '.' + m.texto.slice(m.titulo.length + 1);
     }
   } else if (motivo === 'agradecemos_manana') {
-    const fixed1 = m.titulo.replace(/^Agradecemos\s+un\s+mañana/i, 'Soñamos un mañana');
-    const fixed2 = m.titulo.replace(/^Agradecemos\s+un\s+mañana/i, 'Deseamos un mañana');
-    const fixed3 = m.titulo.replace(/^Agradecemos\s+un\s+mañana/i, 'Esperamos un mañana');
-    candidatos.push(fixed1, fixed2, fixed3);
+    candidatos.push(
+      m.titulo.replace(/^Agradecemos\s+un\s+mañana/i, 'Soñamos un mañana'),
+      m.titulo.replace(/^Agradecemos\s+un\s+mañana/i, 'Deseamos un mañana'),
+      m.titulo.replace(/^Agradecemos\s+un\s+mañana/i, 'Esperamos un mañana')
+    );
   } else if (motivo === 'cierre_sereno') {
     const fixed1 = m.titulo.replace(/cierre sereno/i, 'encuentro sereno');
     const fixed2 = m.titulo.replace(/cierre sereno/i, 'momento sereno');
@@ -647,13 +698,17 @@ for (let idx = 0; idx < porReparar.length; idx++) {
     if (m.texto.startsWith(m.titulo + '.')) {
       m.texto = fixed1 + '.' + m.texto.slice(m.titulo.length + 1);
     }
+  } else if (motivo === 'contagiosa_suffix') {
+    const base = m.titulo.replace(CONTAGIOSA_SUFFIX_RE, 'contagiosa').trim();
+    candidatos.push(base, `${base} hoy`, `${base} este año`);
+    if (destLabel) candidatos.push(`${base}, ${destLabel}`);
   } else if (motivo === 'vocab_comma_suffix') {
     const base = m.titulo.replace(VOCAB_COMMA_SUFFIX_RE, ', $1').trim();
     candidatos.push(base);
     if (destLabel) candidatos.push(base.replace(/,\s+[a-záéíóúüñ]+$/i, '') + ` para vos, ${destLabel}`);
   } else if (motivo === 'awkward_suffix') {
     const base = m.titulo.replace(AWKWARD_SUFFIX_RE, '').trim();
-    if (!BROKEN_START_RE.test(base) && !VERTE_NOUN_RE.test(base)) {
+    if (!VERB_CON_ALEGRIA_SOUP_RE.test(base) && !IMP_VERB_SOUP_RE.test(base) && !CADA_INSTANTE_CON_RE.test(base) && !VERTE_NOUN_RE.test(base)) {
       candidatos.push(base);
       const mods = tipo === 'duelo' ? COMPLEMENTOS_DUELO : COMPLEMENTOS_TITULO;
       for (const mod of mods) {
@@ -662,27 +717,19 @@ for (let idx = 0; idx < porReparar.length; idx++) {
     }
   } else if (motivo === 'en_familia_nonfam') {
     const base = m.titulo.replace(EN_FAMILIA_NONFAM_RE, '').trim();
-    candidatos.push(base);
-    candidatos.push(base + ' hoy');
-    candidatos.push(base + ' en tu día');
-    candidatos.push(base + ' junto a quienes querés');
-    candidatos.push(base + ' con alegría');
+    candidatos.push(base, base + ' hoy', base + ' en tu día', base + ' junto a quienes querés', base + ' con alegría');
   } else if (motivo === 'double_con') {
-    const base = m.titulo.replace(/\s+con\s+[a-záéíóúüñ]+\s+[a-záéíóúüñ]+$/i, '').trim();
-    if (!BROKEN_START_RE.test(base)) {
-      candidatos.push(base);
-      candidatos.push(base + ' hoy');
-      candidatos.push(base + ' este año');
+    const base = m.titulo.replace(/\s+con\s+[a-záéíóúüñ]+(?:\s+[a-záéíóúüñ]+)?$/i, '').trim();
+    if (!VERB_CON_ALEGRIA_SOUP_RE.test(base) && !IMP_VERB_SOUP_RE.test(base) && !CADA_INSTANTE_CON_RE.test(base)) {
+      candidatos.push(base, base + ' hoy', base + ' este año');
     }
   }
 
-  // 2. Rich natural Spanish pool (for broken_expansion or if surgical fix collided)
   const poolBase = [
     ...(PLANTILLAS_NATURALES[tipo] || []),
     ...(tipo === 'duelo' ? [] : PLANTILLAS_NATURALES.cumple)
   ];
 
-  // Rotate starting offset by idx to diversify openings across hubs
   const start = (idx * 7) % poolBase.length;
   for (let k = 0; k < poolBase.length; k++) {
     let base = poolBase[(start + k) % poolBase.length];
@@ -698,13 +745,14 @@ for (let idx = 0; idx < porReparar.length; idx++) {
     }
   }
 
-  // Extra diverse natural variants with varied first words + recipient/context
   const APERTURAS_EXTRA = tipo === 'duelo'
     ? [
         'Mantenemos viva', 'Atesoramos', 'Evocamos', 'Acompañamos', 'Recordamos',
         'Sostenemos', 'Honramos', 'Guardamos', 'Cuidamos', 'Agradecemos',
         'Llevamos', 'Sentimos', 'Valoramos', 'Respetamos', 'Conservamos',
-        'Nombramos', 'Extrañamos', 'Pensamos en', 'Abrazamos', 'Refugiamos'
+        'Nombramos', 'Extrañamos', 'Pensamos en', 'Abrazamos', 'Refugiamos',
+        'Preservamos', 'Reconocemos', 'Sostendremos', 'Cuidaremos', 'Recordaremos',
+        'Evocaremos', 'Honraremos', 'Guardaremos', 'Llevaremos', 'Acompañaremos'
       ]
     : [
         'Festejamos', 'Celebramos', 'Aplaudimos', 'Valoramos', 'Agradecemos',
@@ -715,7 +763,16 @@ for (let idx = 0; idx < porReparar.length; idx++) {
         'Inauguramos', 'Comenzamos', 'Arrancamos', 'Estrenamos', 'Abrimos',
         'Sumamos', 'Multiplicamos', 'Guardamos', 'Atesoramos', 'Cuidamos',
         'Protegemos', 'Alentamos', 'Acompañamos', 'Inspiramos', 'Miramos',
-        'Brindamos por', 'Sonreímos por', 'Cantamos por', 'Pensamos en', 'Creemos en'
+        'Brindamos por', 'Sonreímos por', 'Cantamos por', 'Pensamos en', 'Creemos en',
+        'Confiamos en', 'Apostamos por', 'Dedicamos', 'Ofrecemos', 'Preparamos',
+        'Reunimos', 'Trazamos', 'Construimos', 'Sembramos', 'Cultivamos',
+        'Recibimos', 'Apreciamos', 'Admiramos', 'Sentimos', 'Vivimos',
+        'Marcamos', 'Subrayamos', 'Sostengo', 'Valoro', 'Agradezco',
+        'Celebro', 'Festejo', 'Deseo', 'Envío', 'Comparto',
+        'Mando', 'Acerco', 'Regalo', 'Brindo por', 'Aplaudo',
+        'Recuerdo', 'Guardo', 'Honro', 'Saludo', 'Abrazo',
+        'Ojalá recibas', 'Siempre valoramos', 'Hoy destacamos', 'Juntos festejamos', 'Ahora celebramos',
+        'Aquí dejamos', 'Desde hoy celebramos', 'Pronto brindaremos por', 'También agradecemos', 'Tanto valoramos'
       ];
 
   const NUCLEOS_EXTRA = tipo === 'duelo'
@@ -762,7 +819,6 @@ for (let idx = 0; idx < porReparar.length; idx++) {
   }
 
   if (!elegido) {
-    // Try opening + core + optional recipient/context
     outer:
     for (let a = 0; a < APERTURAS_EXTRA.length; a++) {
       const ap = APERTURAS_EXTRA[(idx + a) % APERTURAS_EXTRA.length];
@@ -782,7 +838,6 @@ for (let idx = 0; idx < porReparar.length; idx++) {
   }
 
   if (elegido) {
-    // Keep original opening sentence of texto synchronized if texto literally repeated old titulo
     if (m.texto.startsWith(m.titulo + '.')) {
       m.texto = elegido.limpio + '.' + m.texto.slice(m.titulo.length + 1);
     }
@@ -790,7 +845,6 @@ for (let idx = 0; idx < porReparar.length; idx++) {
     registrarTitulo(elegido, m.categoria, m.destinatario);
     fixedTitles++;
   } else {
-    // Re-register original if impossible (should never happen)
     const nt = normalizar(m.titulo);
     const words = nt.split(' ').filter(Boolean);
     registrarTitulo({ limpio: m.titulo, nt, words, big: bigramas(nt), ws: new Set(words) }, m.categoria, m.destinatario);

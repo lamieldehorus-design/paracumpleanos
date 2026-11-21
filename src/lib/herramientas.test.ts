@@ -246,20 +246,20 @@ test('modulo banderines calcula piezas, hojas A4, formas SVG y las 40 publicacio
   const cfgFallback = resolverConfigBanderin({ texto: 'Probá armar la frase "FELIZ 30 AÑOS" en tu pared.' });
   assert.equal(cfgFallback.frase, 'FELIZ 30 AÑOS');
 
-  // Verificar las 40 publicaciones reales en data/categorias/g16-banderines.json
+  // Verificar las 40 guias practicas independientes en data/categorias/g16-banderines.json
   const datosBanderines = JSON.parse(fs.readFileSync(path.resolve('data/categorias/g16-banderines.json'), 'utf8'));
   const msgs = datosBanderines.filter((r: any) => r.tipo === 'mensaje');
-  assert.equal(msgs.length, 40, 'La categoria banderines debe tener exactamente 40 publicaciones');
+  assert.equal(msgs.length, 40, 'La categoria banderines debe tener exactamente 40 guias practicas');
 
-  const idsPlantillas = new Set(PLANTILLAS_BANDERINES.map((p) => p.id));
-  const frasesVistas = new Set<string>();
+  const titulosVistos = new Set<string>();
   for (const m of msgs) {
-    assert.ok(m.banderinConfig, `Falta banderinConfig en ${m.slug}`);
-    assert.ok(idsPlantillas.has(m.banderinConfig.plantillaId), `Plantilla invalida en ${m.slug}: ${m.banderinConfig.plantillaId}`);
-    const cfg = resolverConfigBanderin(m);
-    assert.ok(cfg.frase.length >= 4, `Frase banderin muy corta en ${m.slug}`);
-    assert.ok(!frasesVistas.has(cfg.frase), `Frase de banderin duplicada en ${m.slug}: ${cfg.frase}`);
-    frasesVistas.add(cfg.frase);
-    assert.ok(plantillaBanderinPorId(cfg.plantillaId).id === cfg.plantillaId);
+    assert.equal(m.banderinConfig, undefined, `La guia ${m.slug} debe estar separada de la herramienta (sin banderinConfig)`);
+    const palabras = String(m.texto || '').trim().split(/\s+/).filter(Boolean).length;
+    assert.ok(palabras >= 180, `La guia de banderines ${m.slug} debe superar 180 palabras de valor practico (tiene ${palabras})`);
+    const parrafos = String(m.texto || '').trim().split(/\n\n+/).filter(Boolean).length;
+    assert.ok(parrafos >= 4, `La guia de banderines ${m.slug} debe estar estructurada en al menos 4 parrafos claros (tiene ${parrafos})`);
+    assert.ok(!titulosVistos.has(m.titulo), `Titulo duplicado en banderines: ${m.titulo}`);
+    titulosVistos.add(m.titulo);
   }
+  assert.ok(plantillaBanderinPorId(cfgFallback.plantillaId).id === cfgFallback.plantillaId);
 });
