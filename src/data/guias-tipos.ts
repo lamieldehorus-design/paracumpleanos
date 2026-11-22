@@ -74,4 +74,4 @@ export interface GuiaEditorial {
 
 export const AUTOR_ROL_DEFAULT = 'Redacción y revisión lingüística en español · ParaCumpleanos';
 export const AUTOR_BIO_DEFAULT =
-  'Equipo especializado en dedicatorias y textos afectivos en español rioplatense y neutro. Editamos y auditamos a diario 416 categorías y 16.880 textos inéditos verificando tono, concordancia gramatical y adecuación emocional para cada vínculo.';
+  'Equipo especializado en dedicatorias y textos afectivos en español rioplatense y neutro. Editamos y auditamos a diario 441 categorías y 22.280 textos inéditos verificando tono, concordancia gramatical y adecuación emocional para cada vínculo.';

@@ -23,7 +23,12 @@ export const BASE_POPULARIDAD_GUIAS: Record<string, number> = {
   'como-felicitar-en-el-trabajo-jefe-companeros-clientes': 102,
   'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido': 98,
   'mensajes-de-cumpleanos-en-ingles-y-espanol-bilingues': 95,
-  'como-escribir-frases-motivacionales-diarias-que-inspiren': 92
+  'feliz-cumpleanos-en-otros-idiomas-ingles-italiano-frances-y-portugues': 94,
+  'como-agradecer-los-mensajes-de-cumpleanos-por-whatsapp-y-redes': 93,
+  'como-escribir-frases-motivacionales-diarias-que-inspiren': 92,
+  'que-regalar-y-como-decorar-un-cumpleanos-con-presupuesto-inteligente': 91,
+  'canciones-de-cumpleanos-las-mananitas-feliz-cumpleanos-y-tradiciones': 90,
+  'cumpleanos-solo-o-en-momentos-dificiles-ideas-para-pasar-el-dia-con-calma': 89
 };
 
 export const BASE_POPULARIDAD_CATEGORIAS: Record<string, number> = {
@@ -45,10 +50,12 @@ export const BASE_POPULARIDAD_CATEGORIAS: Record<string, number> = {
   'feliz-cumpleanos-cristiano': 146,
   'cartas-para-mi-madre': 144,
   'feliz-cumpleanos-a-distancia': 142,
+  'invitaciones-de-cumpleanos-para-editar-e-imprimir': 140,
   'feliz-cumpleanos-jefe': 138,
   'motivaciones': 136,
   'feliz-1-ano-de-novios': 134,
   'felices-6-meses-de-novios': 132,
+  'condolencias-por-fallecimiento-de-madre': 131,
   'frases-de-nostalgia-y-recuerdos': 130,
   'feliz-cumpleanos-15-anos': 128,
   'feliz-cumpleanos-50-anos': 126,
@@ -59,10 +66,17 @@ export const BASE_POPULARIDAD_CATEGORIAS: Record<string, number> = {
   'feliz-dia-del-amigo': 116,
   'feliz-san-valentin': 114,
   'mensajes-cuando-extranas-a-alguien': 112,
+  'decoracion-y-regalos-de-cumpleanos': 111,
   'carta-para-mi-hija': 110,
+  'canciones-y-mananitas-de-cumpleanos': 109,
   'frases-para-invitacion-de-cumpleanos': 108,
+  'oracion-de-cumpleanos-cristiana': 107,
   'poemas-para-mi-mama': 106,
-  'feliz-cumpleanos-atrasado': 104
+  'feliz-cumpleanos-en-italiano': 105,
+  'feliz-cumpleanos-atrasado': 104,
+  'agradecimiento-por-saludos-cumpleanos': 103,
+  'cumpleanos-en-la-oficina-y-equipo': 102,
+  'aniversario-luctuoso-recuerdos-serenos': 101
 };
 
 export interface GuiaRankeada extends GuiaEditorial {

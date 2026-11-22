@@ -133,8 +133,8 @@ export interface GuiaAdaptacionMensaje {
   guia: GuiaEditorial;
 }
 
-const REGEX_DUELO = /fallecid|hasta-el-cielo|condolencias|pesame|duelo|tristes|nostalgia|extranas/;
-const REGEX_ANIV = /(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/;
+const REGEX_DUELO = /fallecid|hasta-el-cielo|condolencias|pesame|consuelo|luctuoso|duelo|tristes|nostalgia|extranas/;
+const REGEX_ANIV = /^(?!.*luctuoso).*(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/;
 const REGEX_POEMA = /^poema|poesia|-poema/;
 
 function contarPalabras(texto: string): number {
@@ -243,26 +243,27 @@ export function detectarPerfilEditorial(hub?: any, msg?: any): PerfilEditorial {
   ) {
     return 'fecha_especial';
   }
-  if (REGEX_DUELO.test(slug)) return 'duelo';
+  if (REGEX_DUELO.test(slug) || grupo === 'duelo_recuerdos') return 'duelo';
   if (/meses-de-novios/.test(slug)) return 'aniv_meses';
   if (REGEX_ANIV.test(slug)) return 'aniv_anos';
-  if (/ingles|english|biling/.test(slug)) return 'bilingue';
+  if (/ingles|english|biling|italiano|portugues|frances/.test(slug)) return 'bilingue';
   if (/invitacion/.test(slug)) return 'invitacion';
   if (/atrasad|tarde/.test(slug)) return 'atrasado';
   if (/gracioso|divertido|chist|humor|risa/.test(slug)) return 'humor';
-  if (grupo === 'cristiano' || /cristian|dios-te-bendiga/.test(slug)) return 'fe';
+  if (grupo === 'cristiano' || /cristian|dios-te-bendiga|oracion/.test(slug)) return 'fe';
   if (
     grupo === 'profesionales' ||
+    /oficina-y-equipo/.test(slug) ||
     ['formal', 'doctor', 'doctora', 'jefe', 'jefa', 'profesor', 'profesora', 'maestra', 'pastor', 'sacerdote', 'ex-suegra'].includes(dest)
   ) {
     return 'profesionales';
   }
   if (grupo === 'distancia' || /lejos|distancia/.test(slug)) return 'distancia';
   if (/embaraz/.test(slug)) return 'embarazo';
-  if (/(bebe|primer-anito|(?:^|-)[1-9]-anos?\b|(?:^|-)10-anos?\b|-nino\b|-nina\b)/.test(slug)) return 'infantil';
+  if (/(bebe|primer-anito|superheroes|princesas|(?:^|-)[1-9]-anos?\b|(?:^|-)10-anos?\b|-nino\b|-nina\b)/.test(slug)) return 'infantil';
   if (/(?:^|-)(12|13|14|15|16|17|18|19|20|21)-anos?\b|quince/.test(slug)) return 'jovenes';
   if (/(?:^|-)(25|30|35|40|45)-anos?\b/.test(slug)) return 'adultos';
-  if (/(?:^|-)(50|60|70|80|90)-anos?\b|abuel/.test(slug)) return 'mayores';
+  if (/(?:^|-)(50|60|65|70|80|90)-anos?\b|abuel/.test(slug)) return 'mayores';
   if (REGEX_POEMA.test(slug)) return 'poema';
   if (grupo === 'cartas') return 'carta';
   if (/(novio|novia|espos|mi-amor|pareja|crush)/.test(slug)) return 'pareja';
@@ -443,7 +444,7 @@ export function extraerCitaDestacada(m: any): string {
     .filter((b) => !(b.length < 55 && /[:,]$/.test(b)))
     .map((b) =>
       b
-        .replace(/^(Mensaje en inglés|Traducción al español):\s*/i, '')
+        .replace(/^(Mensaje en (inglés|italiano|portugués|francés)|Traducción al español):\s*/i, '')
         .replace(/\s*\n+\s*/g, ' ')
         .replace(/\s+/g, ' ')
         .trim()
@@ -491,8 +492,18 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'como-escribir-frases-motivacionales-diarias-que-inspiren';
   } else if (grupo === 'meses' || /^cumpleanos-en-/.test(slug)) {
     target = 'cumpleanos-segun-tu-signo-del-zodiaco-como-felicitar';
-  } else if (slug === 'brindis-de-cumpleanos') {
+  } else if (slug === 'brindis-de-cumpleanos' || slug === 'discursos-cortos-de-cumpleanos-para-leer') {
     target = 'como-dar-un-brindis-de-cumpleanos-inolvidable-en-60-segundos';
+  } else if (slug === 'canciones-y-mananitas-de-cumpleanos') {
+    target = 'canciones-de-cumpleanos-las-mananitas-feliz-cumpleanos-y-tradiciones';
+  } else if (slug === 'decoracion-y-regalos-de-cumpleanos') {
+    target = 'que-regalar-y-como-decorar-un-cumpleanos-con-presupuesto-inteligente';
+  } else if (/superheroes|princesas|futbol|retro-vintage/.test(slug)) {
+    target = 'tematicas-de-cumpleanos-ideas-originales-para-fiestas';
+  } else if (slug === 'agradecimiento-por-saludos-cumpleanos') {
+    target = 'como-agradecer-los-mensajes-de-cumpleanos-por-whatsapp-y-redes';
+  } else if (slug === 'feliz-cumpleanos-para-mi-si-estoy-lejos-o-solo') {
+    target = 'cumpleanos-solo-o-en-momentos-dificiles-ideas-para-pasar-el-dia-con-calma';
   } else if (slug === 'feliz-dia-del-padre') {
     target = 'que-regalar-a-papa-que-dice-que-no-quiere-nada-ideas-con-dedicatoria';
   } else if (/30-anos-para-mi|bodas-de-plata/.test(slug)) {
@@ -507,7 +518,8 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
   } else if (slug === 'banderines-de-cumpleanos-para-imprimir') {
     target = 'banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas';
   } else if (
-    slug === 'condolencias' ||
+    slug.startsWith('condolencias') ||
+    /pesame|consuelo|luctuoso|duelo-recuerdos|acompanar-a-una-familia-en-duelo/.test(slug) ||
     slug === 'frases-tristes-para-recordar-momentos' ||
     slug === 'frases-de-nostalgia-y-recuerdos' ||
     slug === 'mensajes-cuando-extranas-a-alguien'
@@ -515,10 +527,16 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'como-escribir-condolencias-y-palabras-de-pesame-respetuosas';
   } else if (REGEX_DUELO.test(slug)) {
     target = 'que-decir-en-un-cumpleanos-cuando-falta-un-ser-querido';
-  } else if (slug === 'frases-para-invitacion-de-cumpleanos' || slug === 'tarjetas-bonitas-para-felicitar-en-un-cumpleanos') {
+  } else if (
+    slug === 'frases-para-invitacion-de-cumpleanos' ||
+    slug === 'tarjetas-bonitas-para-felicitar-en-un-cumpleanos' ||
+    slug === 'invitaciones-de-cumpleanos-para-editar-e-imprimir'
+  ) {
     target = 'invitaciones-y-postales-de-cumpleanos-para-imprimir-y-editar';
   } else if (REGEX_ANIV.test(slug)) {
     target = 'como-celebrar-meses-de-novios-y-aniversarios-sin-caer-en-cliches';
+  } else if (/italiano|portugues|frances/.test(slug)) {
+    target = 'feliz-cumpleanos-en-otros-idiomas-ingles-italiano-frances-y-portugues';
   } else if (/ingles|english|biling/.test(slug)) {
     target = 'mensajes-de-cumpleanos-en-ingles-y-espanol-bilingues';
   } else if (REGEX_POEMA.test(slug)) {
@@ -527,9 +545,9 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'cumpleanos-de-15-anos-dedicatorias-y-reglas-del-festejo';
   } else if (/18-anos/.test(slug)) {
     target = 'ideas-para-cumpleanos-de-18-anos-regalos-y-dedicatorias';
-  } else if (/50-anos/.test(slug)) {
+  } else if (/50-anos|65-anos/.test(slug)) {
     target = 'como-celebrar-cumpleanos-de-50-anos-homenajes-y-palabras';
-  } else if (/abuel/.test(slug)) {
+  } else if (/90-anos|abuel/.test(slug)) {
     target = 'que-escribir-en-cumpleanos-de-abuelos-con-ternura';
   } else if (/embaraz/.test(slug)) {
     target = 'como-felicitar-a-una-embarazada-en-su-cumpleanos';
@@ -545,11 +563,11 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'como-escribir-una-carta-de-cumpleanos-a-tu-pareja';
   } else if (grupo === 'cartas') {
     target = 'como-escribir-una-carta-de-cumpleanos-que-emocione';
-  } else if (grupo === 'profesionales') {
+  } else if (grupo === 'profesionales' || /oficina-y-equipo/.test(slug)) {
     target = 'como-felicitar-en-el-trabajo-jefe-companeros-clientes';
   } else if (grupo === 'distancia') {
     target = 'como-celebrar-un-cumpleanos-a-la-distancia';
-  } else if (grupo === 'cristiano') {
+  } else if (grupo === 'cristiano' || /oracion/.test(slug)) {
     target = 'frases-de-fe-y-agradecimiento-para-cumpleanos-cristianos';
   } else if (/(bebe|primer-anito|nino|nina)/.test(slug)) {
     target = 'cumpleanos-infantiles-entre-amigos-y-companeros-de-colegio';
@@ -646,7 +664,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         : perfil === 'mayores'
         ? 'Dedicatoria impresa con letra clara para atesorar en familia'
         : 'Carta escrita a mano o lectura tranquila al final del día',
-      consejo: 'Personalizá encabezado, posdata y estilo arriba antes de bajar tu tarjeta PNG.'
+      consejo: 'Abrí la dedicatoria elegida para personalizar encabezado, posdata y estilo antes de bajar tu tarjeta PNG.'
     }
   ];
 
@@ -681,7 +699,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Puedo agregar el nombre antes de copiar o guardar la tarjeta?',
           respuesta:
-            'Sí. Usá el personalizador superior con el nombre y tu firma para actualizar al instante el texto, el botón de WhatsApp y la tarjeta descargable PNG en tonos sobrios.'
+            'Sí. Al abrir cualquier dedicatoria accedés al personalizador de esa tarjeta para sumar el nombre y tu firma, actualizar los botones de envío y descargar tu PNG en tonos sobrios.'
         }
       ];
       break;
@@ -708,7 +726,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Puedo descargar una tarjeta imagen con estos textos?',
           respuesta:
-            'Sí, en cada una de las 40 dedicatorias podés elegir el tema visual y descargar tu tarjeta PNG cuadrada 1080×1080 o vertical Story 1080×1920 lista para compartir.'
+            `Sí, al abrir cualquiera de las ${mensajes.length} dedicatorias podés personalizar la tarjeta, elegir el tema visual y descargar el PNG cuadrado 1080×1080 o vertical Story 1080×1920.`
         }
       ];
       break;
@@ -725,7 +743,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: `¿Cómo personalizo un mensaje de "${nombre}" sin que parezca copiado?`,
           respuesta:
-            'Escribí el apodo de tu pareja y tu firma en el personalizador de arriba y sumá una referencia concreta de un momento vivido este último período.'
+            'Abrí el texto que más te identifique, escribí el apodo de tu pareja y tu firma en el personalizador de la publicación y sumá una referencia concreta de un momento vivido este último período.'
         },
         {
           pregunta: '¿Estas dedicatorias cuidan el vocabulario propio del aniversario?',
@@ -735,37 +753,45 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Cómo convierto cualquiera de estos textos en tarjeta imagen?',
           respuesta:
-            'Al abrir cualquiera de las 40 dedicatorias o usar el personalizador vas a encontrar 6 estilos visuales, tipografías, posdata y descarga PNG cuadrada o Story.'
+            `Al abrir cualquiera de las ${mensajes.length} dedicatorias encontrás el estudio de tarjeta con 6 estilos visuales, tipografías, posdata y descarga PNG cuadrada o Story.`
         }
       ];
       break;
 
-    case 'bilingue':
-      subtituloClaves = 'Cómo combinar inglés y español con naturalidad';
+    case 'bilingue': {
+      const idiomaLabel = slug.includes('italiano')
+        ? 'italiano'
+        : slug.includes('portugues')
+        ? 'portugués'
+        : slug.includes('frances')
+        ? 'francés'
+        : 'inglés';
+      subtituloClaves = `Cómo combinar ${idiomaLabel} y español con naturalidad`;
       claves = [
-        'Dejá la línea en inglés limpia y fiel cuando sea la cita central, y usá la traducción al español para sumar calidez personal.',
-        'Evitá mezclar frases sueltas sin sentido: elegí textos cortos si van en un estado o historia y bilingües completos para tarjetas.',
-        'Agregá primero el nombre de la persona en el personalizador para que el saludo arranque cercano en cualquiera de los dos idiomas.'
+        `Dejá la línea en ${idiomaLabel} limpia y fiel cuando sea la cita central, y usá la traducción al español para sumar calidez personal.`,
+        'Evitá mezclar palabras sueltas sin sentido: elegí textos cortos si van en un estado o historia y bilingües completos para tarjetas.',
+        'Abrí el mensaje que prefieras para agregar el nombre en el personalizador de la tarjeta y mantener un saludo cercano en ambos idiomas.'
       ];
-      citaClave = 'Una frase en inglés suena auténtica cuando conserva el ritmo breve del idioma original y suma una posdata cercana en español.';
+      citaClave = `Una frase en ${idiomaLabel} suena auténtica cuando conserva el ritmo breve del idioma original y suma una posdata cercana en español.`;
       faqs = [
         {
           pregunta: '¿Todas las frases incluyen su traducción clara al español?',
           respuesta:
-            'Sí. Cada una de las 40 opciones presenta primero el texto en inglés y debajo su traducción natural al español.'
+            `Sí. Cada una de las ${mensajes.length} opciones presenta primero el texto en ${idiomaLabel} y debajo su traducción natural al español.`
         },
         {
-          pregunta: '¿Conviene copiar solo la parte en inglés o el mensaje bilingüe?',
+          pregunta: `¿Conviene copiar solo la parte en ${idiomaLabel} o el mensaje bilingüe?`,
           respuesta:
-            'Para historias de Instagram o estados breves suele lucir mejor solo la línea en inglés; para tarjetas o WhatsApp familiar suma muchísimo incluir ambas partes.'
+            `Para historias de Instagram o estados breves suele lucir mejor solo la línea en ${idiomaLabel}; para tarjetas o WhatsApp familiar suma muchísimo incluir ambas partes.`
         },
         {
-          pregunta: '¿Se actualiza la tarjeta descargable al poner un nombre arriba?',
+          pregunta: '¿Se actualiza la tarjeta descargable al poner un nombre?',
           respuesta:
-            'Sí, tanto el botón de Copiar como WhatsApp, Instagram y la tarjeta PNG cuadrada o Story incorporan automáticamente el nombre y la firma que indiques.'
+            'Sí. Al entrar a cada publicación, el botón de Copiar, WhatsApp, Instagram y la tarjeta PNG cuadrada o Story incorporan automáticamente el nombre y la firma que indiques.'
         }
       ];
       break;
+    }
 
     case 'invitacion':
       subtituloClaves = 'Qué no puede faltar en una invitación clara y cálida';
@@ -860,7 +886,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: `¿Cómo hago que un mensaje de "${nombre}" no suene a cadena repetida?`,
           respuesta:
-            'Poné el nombre arriba en el personalizador y sumá en una línea algo concreto que agradecés de su ejemplo durante este último año.'
+            'Abrí el mensaje que más te guste, poné el nombre en el personalizador de la tarjeta y sumá en una línea algo concreto que agradecés de su ejemplo durante este último año.'
         },
         {
           pregunta: '¿Sirven estas dedicatorias para tarjetas impresas o iglesia?',
@@ -887,7 +913,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: `¿Trato de vos o de usted al saludar a ${dest}?`,
           respuesta:
-            'Seguí siempre el trato que usan a diario en la oficina, escuela o consulta. En esta sección incluimos opciones formales y cordiales adaptables arriba.'
+            'Seguí siempre el trato que usan a diario en la oficina, escuela o consulta. En esta sección incluimos opciones formales y cordiales adaptables dentro de cada publicación.'
         },
         {
           pregunta: '¿Cuál es el mejor canal y horario en el ámbito laboral?',
@@ -897,7 +923,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Se pueden adaptar para firmar en nombre de todo un equipo?',
           respuesta:
-            'Sí. Escribí por ejemplo "Todo el equipo" o "Tus alumnos" en el campo Tu firma arriba para que cada tarjeta salga lista para copiar.'
+            'Sí. Al entrar a la dedicatoria elegida, escribí por ejemplo "Todo el equipo" o "Tus alumnos" en el campo Tu firma para que la tarjeta salga lista para copiar.'
         }
       ];
       break;
@@ -951,7 +977,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Puedo personalizar la tarjeta con su apodo antes de compartir?',
           respuesta:
-            'Sí, completá su nombre y tu firma en el personalizador superior para copiar o descargar la tarjeta PNG lista.'
+            'Sí, abrí cualquier dedicatoria para completar su nombre y tu firma en el personalizador de la tarjeta antes de copiar o bajar el PNG.'
         }
       ];
       break;
@@ -1032,7 +1058,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Cómo agrego una dedicatoria personalizada para todo un grupo?',
           respuesta:
-            'Completá el nombre del cumpleañero y poné "Tus amigos del club" o el nombre de la familia en el campo Tu firma arriba.'
+            'Abrí el texto elegido, completá el nombre del cumpleañero y poné "Tus amigos del club" o el nombre de la familia en el campo Tu firma de la tarjeta.'
         }
       ];
       break;
@@ -1086,7 +1112,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Puedo agregar dedicatoria arriba y mi firma abajo en el verso?',
           respuesta:
-            'Sí, usá el personalizador superior y se agregan automáticamente sin romper la estructura de las estrofas.'
+            'Sí, al abrir el poema elegido encontrás el personalizador para sumar nombre y firma sin romper la estructura de las estrofas.'
         }
       ];
       break;
@@ -1108,7 +1134,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Puedo editar el saludo inicial y la firma antes de copiar?',
           respuesta:
-            'Sí. Ingresá el nombre o apodo y cómo firmás vos en el personalizador superior para actualizar todas las cartas de una vez.'
+            'Sí. Al entrar a la carta que elijas podés ingresar el nombre o apodo y cómo firmás vos para adaptar tanto el texto como la tarjeta descargable.'
         },
         {
           pregunta: '¿Conviene mandarla por WhatsApp o pasarla a papel?',
@@ -1162,7 +1188,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Cómo adapto estas frases al apodo con que nos llamamos?',
           respuesta:
-            'Escribí su apodo real en "Nombre o apodo" arriba y se inserta limpio al comienzo de todas las tarjetas.'
+            'Abrí el mensaje elegido y escribí su apodo real en "Nombre o apodo" para que se inserte limpio al comienzo del texto y de la tarjeta.'
         },
         {
           pregunta: '¿Puedo bajar la tarjeta como imagen para subir a estados?',
@@ -1243,12 +1269,12 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Cómo adapto estas frases si quien cumple vive en otro hemisferio?',
           respuesta:
-            'Cuidamos redacciones que funcionan bien tanto en el sur como en el norte, y arriba podés sumar su nombre, posdata y firma en un segundo.'
+            'Cuidamos redacciones que funcionan bien tanto en el sur como en el norte, y dentro de cada texto podés sumar su nombre, posdata y firma en un segundo.'
         },
         {
           pregunta: '¿Puedo agregar una fotografía propia a la tarjeta antes de descargarla?',
           respuesta:
-            'Sí. En el personalizador superior cargás una foto desde tu dispositivo sin subirla a ningún servidor para bajar tu tarjeta PNG o imprimir la postal.'
+            'Sí. Al abrir cualquier dedicatoria podés cargar una foto desde tu dispositivo sin subirla a ningún servidor para bajar tu tarjeta PNG o imprimir la postal.'
         }
       ];
       break;
@@ -1270,12 +1296,12 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Sirven para imprimir y entregar junto a un presente o flores?',
           respuesta:
-            'Sí. Podés adaptar nombre y firma arriba y tocar Imprimir postal o descargar el PNG cuadrado listo para compartir.'
+            'Sí. Abrí la dedicatoria elegida, adaptá nombre y firma, y tocá Imprimir postal o descargá el PNG cuadrado listo para compartir.'
         },
         {
           pregunta: '¿Puedo firmar en nombre de toda la familia o del curso?',
           respuesta:
-            'Claro: escribí por ejemplo "Tus hijos y nietos" o "Las familias del grupo" en el campo Tu firma arriba.'
+            'Claro: dentro de cada tarjeta escribí por ejemplo "Tus hijos y nietos" o "Las familias del grupo" en el campo Tu firma.'
         }
       ];
       break;
@@ -1292,12 +1318,12 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Conviene trato de vos o de usted al saludar por jubilación?',
           respuesta:
-            'Respetá exactamente el trato que usaron todos estos años en el trabajo. Arriba podés sumar nombre, posdata y firma del equipo completo.'
+            'Respetá exactamente el trato que usaron todos estos años en el trabajo. Al abrir cualquier publicación podés sumar nombre, posdata y firma del equipo completo.'
         },
         {
           pregunta: '¿Cómo hago para que la tarjeta represente a varios compañeros?',
           respuesta:
-            'Ingresá en "Tu firma" algo como "Todo el equipo de Administración" y usá el botón Imprimir postal para entregarla firmada en papel.'
+            'Entrá en la dedicatoria elegida, ingresá en "Tu firma" algo como "Todo el equipo de Administración" y usá el botón Imprimir postal para entregarla firmada en papel.'
         },
         {
           pregunta: '¿Puedo bajarla como imagen para mandar al grupo de WhatsApp?',
@@ -1312,7 +1338,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
       claves = [
         'Abrazá tanto al bebé como a mamá y papá, evitando consejos médicos no pedidos u opiniones sobre descanso.',
         'Anotá un detalle concreto de este momento o de su primer año para que la tarjeta sirva como recuerdo familiar.',
-        'Podés cargar una foto local en el personalizador superior para armar una postal tierna en formato Story o impresa.'
+        'Al abrir cualquier publicación podés cargar una foto local para armar una postal tierna en formato Story o impresa.'
       ];
       citaClave = 'Las mejores palabras para recibir a un bebé cuidan el descanso de la casa y celebran con suavidad cada primer descubrimiento.';
       faqs = [
@@ -1324,7 +1350,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Cómo adapto la tarjeta de cumplemes para subir a Instagram Stories?',
           respuesta:
-            'Elegí formato Story IG 9:16 arriba, cargá si querés una foto del bebé desde tu teléfono y tocá Instagram para descargarla limpia.'
+            'Abrí el mensaje, elegí formato Story IG 9:16, cargá si querés una foto del bebé desde tu teléfono y tocá Instagram para descargarla limpia.'
         },
         {
           pregunta: '¿Se pueden imprimir estas dedicatorias para guardar en el álbum?',
@@ -1350,7 +1376,7 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
         {
           pregunta: '¿Cómo adapto estas felicitaciones para que suenen escritas por mí?',
           respuesta:
-            'Completá "Nombre o apodo", "Posdata" y "Tu firma" en el personalizador superior: todos los botones de Copiar, WhatsApp, Instagram y la tarjeta PNG se actualizan automáticamente.'
+            'Abrí el texto que más te guste y completá "Nombre o apodo", "Posdata" y "Tu firma" en su personalizador de tarjeta: todos los botones de Copiar, WhatsApp, Instagram y PNG se actualizan automáticamente.'
         },
         {
           pregunta: '¿Es mejor mandar texto por WhatsApp o descargar la tarjeta imagen?',
@@ -1496,18 +1522,57 @@ export function guiaAdaptacionMensaje(m: any, hub: any): GuiaAdaptacionMensaje {
         posdata: 'Posdata sugerida: «Anotá el viernes libre: tengo ganas de repetir aquel lugar donde fuimos al comienzo.»'
       }
     ],
-    bilingue: [
-      {
-        generico: 'Happy birthday to you, many blessings in your day.',
-        concreto: 'Me encanta esta frase en inglés porque resume justo cómo iluminás el año; acá seguimos guardando las risas de siempre.',
-        posdata: 'Posdata sugerida: «Elegí este mensaje bilingüe porque combina perfecto con tu estilo; ¡pronto brindamos!»'
-      },
-      {
-        generico: 'Wishing you the best birthday ever, enjoy a lot.',
-        concreto: 'Ojalá este nuevo año venga lleno de buenos viajes y música; cuando te vea en persona hacemos el brindis completo en español.',
-        posdata: 'Posdata sugerida: «P.D.: guardate el sábado libre que nos debemos la charla larga de cierre de año.»'
-      }
-    ],
+    bilingue: String((hub && hub.slug) || '').includes('italiano')
+      ? [
+          {
+            generico: 'Buon compleanno a te, tante benedizioni oggi.',
+            concreto: 'Elegí esta fórmula en italiano porque conserva la calidez cotidiana; al sumar el nombre de la persona y tu firma suena escrita especialmente para ella.',
+            posdata: 'Posdata sugerida: «Tanti auguri di cuore! Prometto di festeggiare insieme prestissimo.»'
+          },
+          {
+            generico: 'Auguri per il tuo giorno, felicità sempre.',
+            concreto: 'Podés dejar el saludo en italiano arriba en la tarjeta y cerrar abajo con un deseo breve en español sobre un recuerdo compartido.',
+            posdata: 'Posdata sugerida: «P.D.: guardate el fin de semana para nuestro brindis en familia.»'
+          }
+        ]
+      : String((hub && hub.slug) || '').includes('portugues')
+      ? [
+          {
+            generico: 'Parabéns pra você, muitas bênçãos no seu dia.',
+            concreto: 'Usá esta expresión natural en portugués y sumá en tu posdata una escena real compartida para evitar que parezca una frase copiada.',
+            posdata: 'Posdata sugerida: «Parabéns! O próximo café ou brinde já está marcado por minha conta.»'
+          },
+          {
+            generico: 'Feliz aniversário, tudo de bom sempre.',
+            concreto: 'Combiná el saludo cálido en portugués con tu firma habitual arriba para enviar por WhatsApp o bajar la tarjeta limpia en PNG.',
+            posdata: 'Posdata sugerida: «P.D.: te mando un abrazo gigante desde acá hasta nuestro próximo encuentro.»'
+          }
+        ]
+      : String((hub && hub.slug) || '').includes('frances')
+      ? [
+          {
+            generico: 'Joyeux anniversaire à toi, plein de bonheur.',
+            concreto: 'Mantené intacta la cadencia elegante del francés y sumá arriba el nombre de quien cumple para que la dedicatoria respire cercanía.',
+            posdata: 'Posdata sugerida: «Joyeux anniversaire ! A muy pronto para brindar como corresponde.»'
+          },
+          {
+            generico: 'Bon anniversaire, passe une bonne journée.',
+            concreto: 'Podés usar solo la frase en francés para Story IG o conservar el bloque bilingüe completo si la persona disfruta ambos idiomas.',
+            posdata: 'Posdata sugerida: «P.D.: ojalá este nuevo año venga cargado de viajes y mesas lindas.»'
+          }
+        ]
+      : [
+          {
+            generico: 'Happy birthday to you, many blessings in your day.',
+            concreto: 'Me encanta esta frase en inglés porque resume justo cómo iluminás el año; acá seguimos guardando las risas de siempre.',
+            posdata: 'Posdata sugerida: «Elegí este mensaje bilingüe porque combina perfecto con tu estilo; ¡pronto brindamos!»'
+          },
+          {
+            generico: 'Wishing you the best birthday ever, enjoy a lot.',
+            concreto: 'Ojalá este nuevo año venga lleno de buenos viajes y música; cuando te vea en persona hacemos el brindis completo en español.',
+            posdata: 'Posdata sugerida: «P.D.: guardate el sábado libre que nos debemos la charla larga de cierre de año.»'
+          }
+        ],
     invitacion: [
       {
         generico: 'Te invito a mi fiesta este fin de semana, confirmame si venís.',

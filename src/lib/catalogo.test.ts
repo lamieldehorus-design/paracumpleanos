@@ -87,12 +87,12 @@ function cargarDatosCompletos() {
   return all;
 }
 
-test('catalogo contiene 416 categorias en 14 grupos (60 por mes, 40 en el resto) y 16880 mensajes todos unicos', () => {
+test('catalogo contiene 441 categorias en 14 grupos (70 por mes, 40 en banderines, 50 en el resto) y 22280 mensajes todos unicos', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
   assert.equal(GRUPOS.length, 14, `Se esperaban 14 grupos tematicos, hay ${GRUPOS.length}`);
-  assert.equal(cat.hubs.length, 416, `Se esperaban 416 hubs, hay ${cat.hubs.length}`);
+  assert.equal(cat.hubs.length, 441, `Se esperaban 441 hubs, hay ${cat.hubs.length}`);
   assert.ok(cat.hubsPorSlug.has('motivaciones'), 'Debe existir el hub /motivaciones/');
   assert.ok(cat.hubsPorSlug.has('condolencias'), 'Debe existir el hub /condolencias/');
   assert.ok(cat.hubsPorSlug.has('frases-tristes-para-recordar-momentos'), 'Debe existir hub recuerdos tristes');
@@ -102,18 +102,25 @@ test('catalogo contiene 416 categorias en 14 grupos (60 por mes, 40 en el resto)
   assert.ok(cat.hubsPorSlug.has('mas-de-10-anos-de-novios'), 'Debe existir hub personalizable +10 anos de novios');
   assert.ok(cat.hubsPorSlug.has('cumpleanos-en-junio'), 'Debe existir el hub /cumpleanos-en-junio/');
   assert.ok(cat.hubsPorSlug.has('feliz-san-valentin'), 'Debe existir el hub /feliz-san-valentin/');
-  assert.equal((cat.hubsPorGrupo.get('duelo_recuerdos') || []).length, 9, 'duelo_recuerdos debe tener 9 categorias');
+  assert.ok(cat.hubsPorSlug.has('feliz-cumpleanos-en-italiano'), 'Debe existir el hub /feliz-cumpleanos-en-italiano/');
+  assert.ok(cat.hubsPorSlug.has('aniversario-luctuoso-recuerdos-serenos'), 'Debe existir el hub /aniversario-luctuoso-recuerdos-serenos/');
+  assert.equal((cat.hubsPorGrupo.get('duelo_recuerdos') || []).length, 17, 'duelo_recuerdos debe tener 17 categorias');
   assert.equal((cat.hubsPorGrupo.get('aniversarios') || []).length, 27, 'aniversarios debe tener 27 categorias');
-  assert.equal(cat.todosMensajes.length, 16880, `Se esperaban 16880 mensajes, hay ${cat.todosMensajes.length}`);
+  assert.equal(cat.todosMensajes.length, 22280, `Se esperaban 22280 mensajes, hay ${cat.todosMensajes.length}`);
   assert.equal(
     new Set(cat.todosMensajes.map((m) => String(m.texto || '').trim())).size,
-    16880,
-    'Todos los 16880 mensajes deben tener cuerpo unico sin duplicados'
+    22280,
+    'Todos los 22280 mensajes deben tener cuerpo unico sin duplicados'
   );
 
   for (const hub of cat.hubs) {
     const msgs = cat.mensajesDe(hub.slug);
-    const esperado = hub.grupo === 'meses' ? 60 : 40;
+    const esperado =
+      hub.slug === 'banderines-de-cumpleanos-para-imprimir'
+        ? 40
+        : hub.grupo === 'meses'
+        ? 70
+        : 50;
     assert.equal(msgs.length, esperado, `Hub ${hub.slug} debe tener ${esperado} mensajes, tiene ${msgs.length}`);
     assert.ok(hub.titulo.length <= 60, `Hub ${hub.slug} excede 60 chars en titulo: ${hub.titulo.length}`);
     assert.ok(hub.meta.length >= 120 && hub.meta.length <= 165, `Hub ${hub.slug} meta fuera de rango: ${hub.meta.length}`);
@@ -137,7 +144,7 @@ test('interlinks garantizan 8 relacionadas y 6 hermanas por pagina', () => {
   const chips = cat.hubsPrincipales.slice(0, 25).map((h) => h.destinatario);
   assert.equal(new Set(chips).size, 25, 'hubsPrincipales debe tener 25 destinatarios unicos');
 
-  assert.equal(Math.ceil(cat.mensajesDe(hub.slug).length / POR_PAGINA), 4);
+  assert.equal(Math.ceil(cat.mensajesDe(hub.slug).length / POR_PAGINA), 5);
 });
 
 test('helpers SEO metaDe, nombreHub y migasLd formatean correctamente', () => {
@@ -156,10 +163,10 @@ test('descripciones lead, seoTitulo y seoTexto son unicos y ningun titulo queda 
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
-  assert.equal(new Set(cat.hubs.map((h) => h.lead)).size, 416, 'Cada categoria debe tener una descripcion lead unica');
-  assert.equal(new Set(cat.hubs.map((h) => h.seoTitulo)).size, 416, 'Cada categoria debe tener un seoTitulo unico');
-  assert.equal(new Set(cat.hubs.map((h) => h.seoTexto)).size, 416, 'Cada categoria debe tener un seoTexto unico');
-  assert.equal(new Set(cat.hubs.map((h) => h.titulo)).size, 416, 'Cada categoria debe tener un titulo unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.lead)).size, 441, 'Cada categoria debe tener una descripcion lead unica');
+  assert.equal(new Set(cat.hubs.map((h) => h.seoTitulo)).size, 441, 'Cada categoria debe tener un seoTitulo unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.seoTexto)).size, 441, 'Cada categoria debe tener un seoTexto unico');
+  assert.equal(new Set(cat.hubs.map((h) => h.titulo)).size, 441, 'Cada categoria debe tener un titulo unico');
 
   const cortePrep = /(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(de|del|en|con|a|al|para|por|sin|y|el|la|los|las|un|una|tu|su)$/i;
   for (const h of cat.hubs) {
@@ -168,11 +175,11 @@ test('descripciones lead, seoTitulo y seoTexto son unicos y ningun titulo queda 
     assert.ok((h.lead || '').split('\n\n').length >= 2, `Hub ${h.slug} lead debe tener al menos 2 parrafos`);
     assert.ok((h.seoTexto || '').length >= 400, `Hub ${h.slug} seoTexto demasiado corto: ${(h.seoTexto || '').length}`);
     assert.ok((h.seoTexto || '').split('\n\n').length >= 3, `Hub ${h.slug} seoTexto debe tener 3 parrafos`);
-    if (/fallecid|hasta-el-cielo|condolencias|tristes|nostalgia|extranas/.test(h.slug) || h.grupo === 'duelo_recuerdos') {
+    if (/fallecid|hasta-el-cielo|condolencias|pesame|consuelo|luctuoso|tristes|nostalgia|extranas/.test(h.slug) || h.grupo === 'duelo_recuerdos') {
       const seoBlob = `${h.lead} ${h.seoTitulo} ${h.seoTexto}`;
       assert.ok(!/(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(torta|pastel|soplá|velas|fiesta|festej\w*|brindis|regalos)(?![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])/i.test(seoBlob), `Hub de duelo/recuerdos ${h.slug} contiene palabra festiva en lead/seo`);
     }
-    if (/(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(h.slug)) {
+    if (/^(?!.*luctuoso).*(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(h.slug)) {
       const seoBlob = `${h.lead} ${h.seoTitulo} ${h.seoTexto}`;
       assert.ok(!/cumpleaños/i.test(seoBlob), `Hub de aniversario ${h.slug} menciona cumpleaños en lead/seo`);
     }
@@ -200,10 +207,10 @@ test('cartas largas, poemas en estrofas, duelo respetuoso y aniversarios coheren
     cat.hubs.filter((h) => /^poema|poesia/.test(h.slug) || /-poema/.test(h.slug)).map((h) => h.slug)
   );
   const dueloHubs = new Set(
-    cat.hubs.filter((h) => /fallecid|hasta-el-cielo|condolencias|tristes|nostalgia|extranas/.test(h.slug) || h.grupo === 'duelo_recuerdos').map((h) => h.slug)
+    cat.hubs.filter((h) => /fallecid|hasta-el-cielo|condolencias|pesame|consuelo|luctuoso|tristes|nostalgia|extranas/.test(h.slug) || h.grupo === 'duelo_recuerdos').map((h) => h.slug)
   );
   const anivHubs = new Set(
-    cat.hubs.filter((h) => /(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(h.slug)).map((h) => h.slug)
+    cat.hubs.filter((h) => /^(?!.*luctuoso).*(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(h.slug)).map((h) => h.slug)
   );
 
   for (const m of cat.todosMensajes) {
@@ -247,8 +254,8 @@ test('modulo editorial genera 20 perfiles distintos, citas, FAQs y posdatas cohe
     assert.equal(ed.faqs.length, 3);
     assert.ok(ed.claves.length >= 3);
 
-    const isDuelo = /fallecid|hasta-el-cielo|condolencias|tristes|nostalgia|extranas/.test(hub.slug) || hub.grupo === 'duelo_recuerdos';
-    const isAniv = /(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(hub.slug);
+    const isDuelo = /fallecid|hasta-el-cielo|condolencias|pesame|consuelo|luctuoso|tristes|nostalgia|extranas/.test(hub.slug) || hub.grupo === 'duelo_recuerdos';
+    const isAniv = /^(?!.*luctuoso).*(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(hub.slug);
 
     if (isDuelo) {
       assert.equal(ed.perfil, 'duelo', `Hub duelo mal clasificado: ${hub.slug}`);
@@ -293,10 +300,16 @@ test('modulo editorial genera 20 perfiles distintos, citas, FAQs y posdatas cohe
   assert.equal(clasificarMensaje(msgMama, cat.hubDe(msgMama)).palabras > 30, true);
   assert.ok(extraerCitaDestacada(msgMama).length > 15);
 
+  const hubLuctuoso = cat.hubsPorSlug.get('aniversario-luctuoso-recuerdos-serenos');
+  assert.equal(editorialHubCompleto(hubLuctuoso, cat.mensajesDe(hubLuctuoso.slug)).perfil, 'duelo', 'aniversario-luctuoso debe clasificarse como duelo');
+
+  const edSrc = fs.readFileSync(path.resolve('src/lib/editorial.ts'), 'utf8');
+  assert.ok(!/personalizador superior|personalizador de arriba/i.test(edSrc), 'editorial.ts no debe referenciar personalizador superior en paginas hub');
+
   for (const m of cat.todosMensajes) {
     const cita = extraerCitaDestacada(m);
     assert.ok(cita.length >= 15, `Cita muy corta en ${m.slug}: ${cita}`);
-    assert.ok(!/^(Mensaje en inglés|Traducción al español):/i.test(cita), `Cita expone etiqueta bilingue en ${m.slug}: ${cita}`);
+    assert.ok(!/^(Mensaje en (inglés|italiano|portugués|francés)|Traducción al español):/i.test(cita), `Cita expone etiqueta bilingue en ${m.slug}: ${cita}`);
     assert.ok(!/^(Hoy en tu cumpleaños|Querid[ao]\s+[^,]+|Mi amor|Amor mío|Con todo cariño|Para vos[^,]*),\s+[A-ZÁÉÍÓÚÜÑ]/u.test(cita), `Cita pega saludo con mayuscula en ${m.slug}: ${cita}`);
     const comillas = (cita.match(/"/g) || []).length;
     assert.equal(comillas % 2, 0, `Cita con comillas desparejas en ${m.slug}: ${cita}`);
@@ -308,7 +321,7 @@ test('construirSetIndexables prioriza contenido real y unicidad sin minimo artif
   const cat = crearCatalogo(datos);
   const indexables = construirSetIndexables(cat.todosMensajes);
 
-  assert.equal(indexables.size, 16880, `Se esperaban 16880 mensajes con contenido y slug unicos, hay ${indexables.size}`);
+  assert.equal(indexables.size, 22280, `Se esperaban 22280 mensajes con contenido y slug unicos, hay ${indexables.size}`);
   const cuerpos = new Set<string>();
   for (const m of cat.todosMensajes) {
     assert.ok(indexables.has(m.slug), `Mensaje con contenido valido excluido: ${m.slug}`);
@@ -331,7 +344,7 @@ test('guias editoriales cumplen checklist completo SEO y GEO 2026 para guias act
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
 
-  assert.equal(GUIAS_EDITORIALES.length, 40, `Se esperaban 40 guias editoriales, hay ${GUIAS_EDITORIALES.length}`);
+  assert.equal(GUIAS_EDITORIALES.length, 45, `Se esperaban 45 guias editoriales, hay ${GUIAS_EDITORIALES.length}`);
   const slugsGuias = new Set<string>();
   for (const g of GUIAS_EDITORIALES) {
     assert.ok(!slugsGuias.has(g.slug), `Slug de guia duplicado: ${g.slug}`);
@@ -476,7 +489,7 @@ test('personalizador adapta saludos, cartas, bilingues, poemas y firma sin corta
   assert.equal(Object.keys(FORMATOS_TARJETA).length, 2);
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren las 18815 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
+test('generarUrlsSitio y generarSitemapXml cubren las 24696 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
@@ -484,8 +497,8 @@ test('generarUrlsSitio y generarSitemapXml cubren las 18815 URLs indexables sin 
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
   const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises);
 
-  assert.equal(urls.length, 18815, `Se esperaban 18815 URLs indexables, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 18815, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(urls.length, 24696, `Se esperaban 24696 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 24696, 'Las URLs del sitemap deben ser todas unicas');
   assert.ok(urls.every((url) => url.startsWith('https://paracumpleanos.com/')));
   assert.ok(urls.every((url) => !/[?#]/.test(url)));
   assert.ok(urls.includes('https://paracumpleanos.com/'));
@@ -534,19 +547,19 @@ test('generarUrlsSitio y generarSitemapXml cubren las 18815 URLs indexables sin 
   }
 
   const indexables = construirSetIndexables(cat.todosMensajes);
-  assert.equal(indexables.size, 16880);
+  assert.equal(indexables.size, 22280);
 
   const xmlSinLastmod = generarSitemapXml(urls);
   assert.ok(xmlSinLastmod.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xmlSinLastmod.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xmlSinLastmod.match(/<loc>/g) || [];
-  assert.equal(locs.length, 18815);
+  assert.equal(locs.length, 24696);
   assert.ok(!xmlSinLastmod.includes('<lastmod>'), 'Sin mapa lastmod no debe emitir etiquetas lastmod');
 
-  const mapaLastmod = construirMapaLastmodSitemap(cat, GUIAS_EDITORIALES, slugsSignos, slugsPaises, '2026-11-20');
+  const mapaLastmod = construirMapaLastmodSitemap(cat, GUIAS_EDITORIALES, slugsSignos, slugsPaises, '2026-11-22');
   const xmlConLastmod = generarSitemapXml(urls, mapaLastmod);
   const lastmods = xmlConLastmod.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || [];
-  assert.equal(lastmods.length, 18815, 'Cada una de las 18815 URLs debe recibir su lastmod real YYYY-MM-DD');
+  assert.equal(lastmods.length, 24696, 'Cada una de las 24696 URLs debe recibir su lastmod real YYYY-MM-DD');
   assert.ok(
     xmlConLastmod.includes('<loc>https://paracumpleanos.com/banderines-de-cumpleanos-para-imprimir/</loc><lastmod>2026-11-20</lastmod>'),
     'El sitemap debe reflejar el lastmod real de banderines'
@@ -554,7 +567,7 @@ test('generarUrlsSitio y generarSitemapXml cubren las 18815 URLs indexables sin 
   assert.throws(() => generarSitemapXml(['https://paracumpleanos.com/'], { 'https://paracumpleanos.com/': '2026-02-31' }));
 });
 
-test('Bing IndexNow cubre las 18815 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre las 24696 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -567,13 +580,14 @@ test('Bing IndexNow cubre las 18815 URLs en lotes validos de hasta 10000 y tiene
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
   const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises));
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 18815);
+  assert.equal(extraidas.length, 24696);
 
   const payloads = construirPayloadsIndexNow(extraidas);
-  assert.equal(payloads.length, 2);
-  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 18815);
+  assert.equal(payloads.length, 3);
+  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 24696);
   assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
-  assert.equal(payloads[1].urlList.length, 8815);
+  assert.equal(payloads[1].urlList.length, INDEXNOW_MAX_BATCH);
+  assert.equal(payloads[2].urlList.length, 4696);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);
@@ -833,7 +847,7 @@ test('calidad editorial SEO en Trabajo/Profesion (g08) y Condolencias/Recuerdos 
   ];
   for (const slug of dueloSlugs) {
     const msgs = cat.mensajesDe(slug);
-    assert.equal(msgs.length, 40, `Esperados 40 mensajes en ${slug}`);
+    assert.equal(msgs.length, 50, `Esperados 50 mensajes en ${slug}`);
     for (const m of msgs) {
       assert.ok(!/cuando se extrañ/i.test(m.titulo), `Titulo repetitivo con "cuando se extraña" en ${slug}: ${m.titulo}`);
       assert.ok(!/en momentos tristes$/i.test(m.titulo), `Sufijo mecanico en ${slug}: ${m.titulo}`);
@@ -851,7 +865,7 @@ test('calidad editorial SEO en Trabajo/Profesion (g08) y Condolencias/Recuerdos 
   ];
   for (const slug of profFem) {
     const msgs = cat.mensajesDe(slug);
-    assert.equal(msgs.length, 40);
+    assert.equal(msgs.length, 50);
     for (const m of msgs) {
       assert.ok(!/\b(saludarlo|lo rodean|rodeado de|compañero querido)\b/i.test(m.texto), `Concordancia masculina indebida en ${slug}: ${m.slug}`);
       assert.ok(!/En este día especial quiero destacar especialmente/i.test(m.texto), `Plantilla repetitiva en ${slug}: ${m.slug}`);
@@ -868,7 +882,7 @@ test('calidad editorial SEO en Trabajo/Profesion (g08) y Condolencias/Recuerdos 
   ];
   for (const slug of profMasc) {
     const msgs = cat.mensajesDe(slug);
-    assert.equal(msgs.length, 40);
+    assert.equal(msgs.length, 50);
     for (const m of msgs) {
       assert.ok(!/En este día especial quiero destacar especialmente/i.test(m.texto), `Plantilla repetitiva en ${slug}: ${m.slug}`);
       assert.ok(!/bajo cielo claro|en esta nueva etapa en esta nueva etapa/i.test(m.titulo), `Titulo artificial en ${slug}: ${m.titulo}`);
@@ -876,7 +890,7 @@ test('calidad editorial SEO en Trabajo/Profesion (g08) y Condolencias/Recuerdos 
   }
 });
 
-test('orden mas reciente primero, filtros universales en las 416 categorias, aniversario +10 anos personalizable y popularidad dinamica', () => {
+test('orden mas reciente primero, filtros universales en las 441 categorias, aniversario +10 anos personalizable y popularidad dinamica', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
 
@@ -892,9 +906,9 @@ test('orden mas reciente primero, filtros universales en las 416 categorias, ani
     ['nuevo2', 'nuevo1', 'medio', 'viejo'],
     'Las publicaciones mas recientes deben aparecer primero de arriba hacia abajo'
   );
-  assert.equal(cat.hubs[0].actualizado, '2026-11-20', 'El primer hub del catalogo debe ser de la fecha mas reciente');
+  assert.equal(cat.hubs[0].actualizado, '2026-11-22', 'El primer hub del catalogo debe ser de la fecha mas reciente');
 
-  // 2. Filtros de segmentacion en TODAS las 416 categorias (incluyendo cartas, cristiano, profesionales y duelo_recuerdos)
+  // 2. Filtros de segmentacion en TODAS las 441 categorias (incluyendo cartas, cristiano, profesionales y duelo_recuerdos)
   for (const hub of cat.hubs) {
     const msgs = cat.mensajesDe(hub.slug);
     const filtros = calcularFiltrosHub(msgs, hub, Math.min(12, msgs.length));
@@ -912,7 +926,7 @@ test('orden mas reciente primero, filtros universales en las 416 categorias, ani
     assert.ok(cat.hubsPorSlug.has(`felices-${a}-anos-de-novios`), `Falta hub felices-${a}-anos-de-novios`);
   }
   const msgsMas10 = cat.mensajesDe('mas-de-10-anos-de-novios');
-  assert.equal(msgsMas10.length, 40);
+  assert.equal(msgsMas10.length, 50);
   for (const m of msgsMas10) {
     assert.ok(m.titulo.includes('12 años') && m.texto.includes('12 años'), `Mensaje ${m.slug} debe contener "12 años" para adaptarse en vivo`);
     const adaptado = adaptarTextoAniosAniversario(m.texto, 25);
@@ -961,11 +975,18 @@ test('impresion aisla solo la postal o banderines, descargas omiten titulo SEO y
     'La postal de detalle no debe mostrar el titulo SEO dentro de .tarjeta-visual'
   );
 
-  // 3. EstudioBanderines solo en la categoria banderines; PersonalizadorTarjeta intacto en las demas
+  // 3. EstudioBanderines solo en la categoria banderines; PersonalizadorTarjeta SOLO dentro de publicaciones (!esHub), nunca en hubs ni paginacion
+  const pagSrc = fs.readFileSync(path.resolve('src/pages/[slug]/[pagina].astro'), 'utf8');
   assert.ok(slugSrc.includes("const esBanderines = hub.slug === 'banderines-de-cumpleanos-para-imprimir';"));
   assert.ok(slugSrc.includes('<EstudioBanderines'));
   assert.ok(slugSrc.includes('<PersonalizadorTarjeta'));
-  assert.ok(persSrc.includes('class="personalizador"'), 'PersonalizadorTarjeta debe seguir intacto para el resto de categorias');
+  const idxRamaHub = slugSrc.indexOf('{esHub && editorialHub ?');
+  const idxRamaMsg = slugSrc.indexOf(') : guiaMsg ?');
+  const idxPers = slugSrc.indexOf('<PersonalizadorTarjeta');
+  assert.ok(idxRamaHub !== -1 && idxRamaMsg > idxRamaHub && idxPers > idxRamaMsg, 'PersonalizadorTarjeta debe vivir unicamente dentro de la rama de publicacion individual (!esHub)');
+  assert.equal((slugSrc.match(/<PersonalizadorTarjeta/g) || []).length, 1, 'Solo debe existir un PersonalizadorTarjeta en [slug].astro');
+  assert.ok(!pagSrc.includes('PersonalizadorTarjeta'), 'Las paginas de paginacion de categorias no deben incluir PersonalizadorTarjeta');
+  assert.ok(persSrc.includes('class="personalizador"'), 'PersonalizadorTarjeta debe seguir intacto para las publicaciones individuales');
 
   // 4. @media print oculta h1, meta, selectores y formularios dejando solo postal o hojas A4 de banderines
   assert.ok(cssSrc.includes('@media print'), 'Debe existir bloque @media print');

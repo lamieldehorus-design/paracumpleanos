@@ -8,47 +8,53 @@ import {
 
 interface Props {
   modo?: 'hub' | 'mensaje';
+  esDuelo?: boolean;
 }
-const { modo = 'hub' } = Astro.props;
+const { modo = 'mensaje', esDuelo = false } = Astro.props;
 const temas = Object.values(TEMAS_TARJETA);
 const tipografias = Object.values(TIPOGRAFIAS_TARJETA);
 const formatos = Object.values(FORMATOS_TARJETA);
+const iconosDisponibles = esDuelo ? ['🕊️', '🤍', '🌿', '🕯️', '🙏', '⭐'] : ICONOS_TARJETA;
+const temaDefaultId = esDuelo ? 'elegante' : 'rosa';
 ---
-<section class="personalizador" aria-label="Personalizar felicitación en vivo" data-modo={modo}>
+<section class="personalizador" aria-label="Personalizar felicitación en vivo" data-modo={modo} data-duelo={esDuelo ? '1' : '0'} data-tema-default={temaDefaultId}>
   <div class="personalizador-cabecera">
-    <h2 class="personalizador-titulo">✨ Personalizá tu tarjeta y dedicatoria al instante</h2>
+    <h2 class="personalizador-titulo">
+      {esDuelo ? '🕊️ Personalizá esta dedicatoria y tarjeta serena al instante' : '✨ Personalizá tu tarjeta y dedicatoria al instante'}
+    </h2>
     <p class="personalizador-desc">
-      {modo === 'mensaje'
-        ? 'Ajustá nombre, firma, posdata, ícono, tipografía y formato (cuadrada o Story Instagram): el texto, WhatsApp, Instagram, la copia y el PNG se actualizan en vivo.'
-        : 'Escribí nombre, firma y posdata, elegí paleta, ícono y formato visual para adaptar todas las tarjetas de esta página antes de copiar o compartir.'}
+      {esDuelo
+        ? 'Ajustá nombre, firma, posdata, ícono sereno y formato: el texto, WhatsApp, Instagram, la copia y la tarjeta PNG sobria se actualizan en vivo.'
+        : 'Ajustá nombre, firma, posdata, ícono, tipografía y formato (cuadrada o Story Instagram): el texto, WhatsApp, Instagram, la copia y el PNG se actualizan en vivo.'}
     </p>
   </div>
   <div class="personalizador-controles">
     <div class="pers-campo">
       <label for="pers-nombre">Nombre o apodo</label>
-      <input id="pers-nombre" type="text" maxlength="40" placeholder="Ej.: Laura, Mamá, Juampi" autocomplete="off" />
+      <input id="pers-nombre" type="text" maxlength="40" placeholder={esDuelo ? 'Ej.: Mamá, Abuelo José, Laura' : 'Ej.: Laura, Mamá, Juampi'} autocomplete="off" />
     </div>
     <div class="pers-campo">
       <label for="pers-firma">Tu firma</label>
-      <input id="pers-firma" type="text" maxlength="40" placeholder="Ej.: Tu hija Sofi, Los chicos" autocomplete="off" />
+      <input id="pers-firma" type="text" maxlength="40" placeholder={esDuelo ? 'Ej.: Tu familia, Tu amiga Sofi' : 'Ej.: Tu hija Sofi, Los chicos'} autocomplete="off" />
     </div>
     <div class="pers-campo">
       <label for="pers-subtitulo">Encabezado o motivo (opcional)</label>
-      <input id="pers-subtitulo" type="text" maxlength="45" placeholder="Ej.: Felices 30, Con todo cariño" autocomplete="off" />
+      <input id="pers-subtitulo" type="text" maxlength="45" placeholder={esDuelo ? 'Ej.: En tu memoria, Con todo respeto' : 'Ej.: Felices 30, Con todo cariño'} autocomplete="off" />
     </div>
     <div class="pers-campo">
       <label for="pers-posdata">Posdata breve P.D. (opcional)</label>
-      <input id="pers-posdata" type="text" maxlength="120" placeholder="Ej.: Nos vemos el sábado para brindar" autocomplete="off" />
+      <input id="pers-posdata" type="text" maxlength="120" placeholder={esDuelo ? 'Ej.: Los acompañamos hoy con todo cariño' : 'Ej.: Nos vemos el sábado para brindar'} autocomplete="off" />
     </div>
 
     <div class="pers-campo pers-campo-temas">
       <span class="pers-etiqueta">Estilo visual de tarjeta ({temas.length} paletas)</span>
       <div class="pers-temas" role="radiogroup" aria-label="Color de la tarjeta visual">
-        {temas.map(function (t, idx) {
+        {temas.map(function (t) {
+          const activoInit = t.id === temaDefaultId;
           return (
             <button
               type="button"
-              class={'pers-tema-btn' + (idx === 0 ? ' activo' : '')}
+              class={'pers-tema-btn' + (activoInit ? ' activo' : '')}
               data-tema={t.id}
               data-fondo={t.fondoCss}
               data-inicio={t.gradInicio}
@@ -56,7 +62,7 @@ const formatos = Object.values(FORMATOS_TARJETA);
               data-fin={t.gradFin}
               data-borde={t.borde}
               data-acento={t.acento}
-              aria-pressed={idx === 0 ? 'true' : 'false'}
+              aria-pressed={activoInit ? 'true' : 'false'}
             >
               <span class="pers-swatch" style={`background:${t.fondoCss};border-color:${t.borde}`}></span>
               <span>{t.nombre}</span>
@@ -69,7 +75,7 @@ const formatos = Object.values(FORMATOS_TARJETA);
     <div class="pers-campo">
       <span class="pers-etiqueta">Ícono de la tarjeta</span>
       <div class="pers-opciones-inline" role="radiogroup" aria-label="Ícono decorativo de la tarjeta">
-        {ICONOS_TARJETA.map(function (ic, idx) {
+        {iconosDisponibles.map(function (ic, idx) {
           return (
             <button
               type="button"
@@ -256,7 +262,10 @@ const formatos = Object.values(FORMATOS_TARJETA);
       });
     }
 
-    var temaActual = temaBtns.length ? temaBtns[0].getAttribute('data-tema') || 'rosa' : 'rosa';
+    var secPers = document.querySelector('.personalizador');
+    var temaDefault = (secPers && secPers.getAttribute('data-tema-default')) || 'rosa';
+    var esDuelo = (secPers && secPers.getAttribute('data-duelo')) === '1';
+    var temaActual = temaDefault;
     var iconoActual = '';
     var fuenteActual = 'editorial';
     var formatoActual = 'cuadrada';
@@ -569,9 +578,13 @@ const formatos = Object.values(FORMATOS_TARJETA);
         iconoActual = '';
         fuenteActual = 'editorial';
         formatoActual = 'cuadrada';
-        aplicarTema('rosa');
+        aplicarTema(temaDefault);
         aplicarTodo(true);
       });
+    }
+
+    if (esDuelo) {
+      aplicarTema(temaDefault);
     }
 
     try {
@@ -579,7 +592,7 @@ const formatos = Object.values(FORMATOS_TARJETA);
       var sFir = sessionStorage.getItem('pc_pers_firma') || '';
       var sSub = sessionStorage.getItem('pc_pers_subtitulo') || '';
       var sPos = sessionStorage.getItem('pc_pers_posdata') || '';
-      var sTem = sessionStorage.getItem('pc_pers_tema') || 'rosa';
+      var sTem = sessionStorage.getItem('pc_pers_tema') || temaDefault;
       var sIco = sessionStorage.getItem('pc_pers_icono') || '';
       var sFue = sessionStorage.getItem('pc_pers_fuente') || 'editorial';
       var sFmt = sessionStorage.getItem('pc_pers_formato') || 'cuadrada';
@@ -587,11 +600,13 @@ const formatos = Object.values(FORMATOS_TARJETA);
       if (sFir) inputFirma.value = sFir;
       if (sSub && inputSub) inputSub.value = sSub;
       if (sPos && inputPosdata) inputPosdata.value = sPos;
-      if (sIco) iconoActual = sIco;
+      if (sIco && (!esDuelo || ['🕊️', '🤍', '🌿', '🕯️', '🙏', '⭐'].indexOf(sIco) !== -1)) {
+        iconoActual = sIco;
+      }
       if (sFue) fuenteActual = sFue;
       if (sFmt) formatoActual = sFmt;
-      if (sTem && sTem !== 'rosa') aplicarTema(sTem);
-      if (sNom || sFir || sSub || sPos || sIco || sFue !== 'editorial' || sFmt !== 'cuadrada') {
+      if (sTem && !esDuelo && sTem !== temaDefault) aplicarTema(sTem);
+      if (sNom || sFir || sSub || sPos || iconoActual || sFue !== 'editorial' || sFmt !== 'cuadrada') {
         aplicarTodo(false);
       }
     } catch (err) {}

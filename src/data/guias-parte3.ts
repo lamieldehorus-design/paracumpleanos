@@ -26,7 +26,7 @@ export const GUIAS_PARTE_3: GuiaEditorial[] = [
     citaDestacada: 'Mirar el signo y el mes de nacimiento no reemplaza conocer a la persona, pero te da una brújula rápida para elegir el tono exacto sin fallar.',
     datosPropios: {
       titulo: 'Mapa cruzado de 12 signos y 12 meses de nacimiento en nuestro portal',
-      dato: 'Conectamos las 12 fichas completas de horóscopo con nuestras 12 colecciones mensuales (480 dedicatorias específicas por mes del año) para que encuentres frase, fecha exacta y regalo en un solo recorrido.',
+      dato: 'Conectamos las 12 fichas completas de horóscopo con nuestras 12 colecciones mensuales (840 dedicatorias específicas por mes del año) para que encuentres frase, fecha exacta y regalo en un solo recorrido.',
       fuente: 'Base editorial y calendario zodiacal de ParaCumpleanos (2026).'
     },
     comparacionPractica: {

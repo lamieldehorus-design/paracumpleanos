@@ -123,7 +123,7 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
   'frases-para-un-primo': {
     texto: 'Explorá más mensajes para un primo:',
     enlaces: [
-      { href: '/feliz-cumpleanos-primo/', label: 'Feliz cumpleaños primo (40 mensajes)' },
+      { href: '/feliz-cumpleanos-primo/', label: 'Feliz cumpleaños primo (50 mensajes)' },
       { href: '/frases-para-un-primo-que-esta-lejos/', label: 'Para un primo lejos' }
     ]
   },
@@ -423,14 +423,80 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
     ]
   },
   'condolencias': {
-    texto: 'Otras colecciones serenas de recuerdo, nostalgia y acompañamiento:',
+    texto: 'Otras colecciones serenas de recuerdo, pésame y acompañamiento:',
     enlaces: [
+      { href: '/condolencias-por-fallecimiento-de-madre/', label: 'Condolencias por fallecimiento de madre' },
+      { href: '/condolencias-por-fallecimiento-de-padre/', label: 'Condolencias por fallecimiento de padre' },
+      { href: '/mensajes-de-pesame-cortos-para-whatsapp/', label: 'Pésame corto para WhatsApp' },
+      { href: '/aniversario-luctuoso-recuerdos-serenos/', label: 'Aniversario luctuoso sereno' },
       { href: '/frases-tristes-para-recordar-momentos/', label: 'Frases tristes para recordar momentos' },
-      { href: '/frases-de-nostalgia-y-recuerdos/', label: 'Frases de nostalgia y recuerdos' },
-      { href: '/mensajes-cuando-extranas-a-alguien/', label: 'Mensajes cuando extrañas a alguien' },
-      { href: '/frases-para-una-persona-fallecida/', label: 'Frases para una persona fallecida' },
-      { href: '/feliz-cumpleanos-hasta-el-cielo/', label: 'Mensajes hasta el cielo' },
       { href: '/calendario/', label: 'Ver calendario de fechas' }
+    ]
+  },
+  'condolencias-por-fallecimiento-de-madre': {
+    texto: 'Más acompañamiento y recuerdo en el duelo:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias generales (50 textos)' },
+      { href: '/condolencias-por-fallecimiento-de-padre/', label: 'Condolencias por padre' },
+      { href: '/felicitaciones-a-madre-fallecida/', label: 'Recuerdo para madre fallecida' },
+      { href: '/aniversario-luctuoso-recuerdos-serenos/', label: 'Aniversario luctuoso' }
+    ]
+  },
+  'condolencias-por-fallecimiento-de-padre': {
+    texto: 'Más acompañamiento y recuerdo en el duelo:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias generales (50 textos)' },
+      { href: '/condolencias-por-fallecimiento-de-madre/', label: 'Condolencias por madre' },
+      { href: '/frases-lindas-para-mi-padre-fallecido-que-esta-en-el-cielo/', label: 'Recuerdo para padre fallecido' },
+      { href: '/aniversario-luctuoso-recuerdos-serenos/', label: 'Aniversario luctuoso' }
+    ]
+  },
+  'condolencias-para-un-amigo-en-duelo': {
+    texto: 'Más textos sobrios para acompañar en el duelo:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias generales' },
+      { href: '/mensajes-de-pesame-cortos-para-whatsapp/', label: 'Pésame corto por WhatsApp' },
+      { href: '/frases-para-acompanar-a-una-familia-en-duelo/', label: 'Acompañar a una familia en duelo' }
+    ]
+  },
+  'condolencias-para-companero-de-trabajo': {
+    texto: 'Más condolencias sobrias y laborales:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias generales' },
+      { href: '/mensajes-de-pesame-cortos-para-whatsapp/', label: 'Pésame corto por WhatsApp' },
+      { href: '/frases-para-acompanar-a-una-familia-en-duelo/', label: 'Acompañar a una familia' }
+    ]
+  },
+  'mensajes-de-pesame-cortos-para-whatsapp': {
+    texto: 'Más opciones respetuosas de pésame y consuelo:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias completas' },
+      { href: '/condolencias-para-un-amigo-en-duelo/', label: 'Para un amigo en duelo' },
+      { href: '/palabras-de-consuelo-cristianas-para-duelo/', label: 'Consuelo cristiano para duelo' }
+    ]
+  },
+  'palabras-de-consuelo-cristianas-para-duelo': {
+    texto: 'Más acompañamiento sereno y palabras de fe:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias y pésame' },
+      { href: '/feliz-cumpleanos-hasta-el-cielo/', label: 'Mensajes hasta el cielo' },
+      { href: '/aniversario-luctuoso-recuerdos-serenos/', label: 'Aniversario luctuoso' }
+    ]
+  },
+  'aniversario-luctuoso-recuerdos-serenos': {
+    texto: 'Más palabras serenas para honrar una fecha de duelo:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias y selector de fecha de duelo' },
+      { href: '/frases-para-una-persona-fallecida/', label: 'Para una persona fallecida' },
+      { href: '/calendario/', label: 'Calendario anual de fechas' }
+    ]
+  },
+  'frases-para-acompanar-a-una-familia-en-duelo': {
+    texto: 'Más textos sobrios para enviar a familiares:',
+    enlaces: [
+      { href: '/condolencias/', label: 'Condolencias generales' },
+      { href: '/condolencias-por-fallecimiento-de-madre/', label: 'Condolencias por madre' },
+      { href: '/condolencias-por-fallecimiento-de-padre/', label: 'Condolencias por padre' }
     ]
   },
   'frases-tristes-para-recordar-momentos': {
@@ -479,14 +545,16 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
     texto: 'Armá e imprimí tus banderines ahora mismo:',
     enlaces: [
       { href: '/herramientas/#banderines-imprimir', label: 'Abrir generador interactivo de banderines A4' },
-      { href: '/guias/banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas/', label: 'Guía de medidas y papeles' },
-      { href: '/frases-para-invitacion-de-cumpleanos/', label: 'Invitaciones de cumpleaños' }
+      { href: '/decoracion-y-regalos-de-cumpleanos/', label: 'Ideas de decoración y regalos' },
+      { href: '/invitaciones-de-cumpleanos-para-editar-e-imprimir/', label: 'Invitaciones para editar e imprimir' },
+      { href: '/guias/banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas/', label: 'Guía de medidas y papeles' }
     ]
   },
   'frases-para-una-persona-fallecida': {
     texto: 'Acompañamiento en fechas de duelo y pésame:',
     enlaces: [
-      { href: '/condolencias/', label: 'Condolencias y mensajes de pésame (40 textos)' },
+      { href: '/condolencias/', label: 'Condolencias y mensajes de pésame (50 textos)' },
+      { href: '/aniversario-luctuoso-recuerdos-serenos/', label: 'Aniversario luctuoso sereno' },
       { href: '/feliz-cumpleanos-hasta-el-cielo/', label: 'Mensajes hasta el cielo' },
       { href: '/calendario/', label: 'Calendario de fechas sin año' }
     ]
@@ -541,8 +609,166 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
     texto: 'Recursos populares para tu festejo:',
     enlaces: [
       { href: '/banderines-de-cumpleanos-para-imprimir/', label: 'Banderines para imprimir (40 ideas)' },
+      { href: '/decoracion-y-regalos-de-cumpleanos/', label: 'Decoración y regalos' },
+      { href: '/canciones-y-mananitas-de-cumpleanos/', label: 'Canciones y mañanitas' },
       { href: '/calendario/', label: 'Calendario de fechas e hitos' },
       { href: '/guias/tematicas-de-cumpleanos-ideas-originales-para-fiestas/', label: 'Ideas de temáticas de cumpleaños' }
+    ]
+  },
+  // Nuevas colecciones multilingües y temáticas (g14 / g17)
+  'feliz-cumpleanos-en-italiano': {
+    texto: 'Explorá saludos en otros idiomas con traducción:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-en-portugues/', label: 'Feliz cumpleaños en portugués' },
+      { href: '/feliz-cumpleanos-en-frances/', label: 'Feliz cumpleaños en francés' },
+      { href: '/las-38-mejores-frases-en-ingles-traducidas/', label: 'Cumpleaños en inglés traducido' },
+      { href: '/guias/feliz-cumpleanos-en-otros-idiomas-ingles-italiano-frances-y-portugues/', label: 'Guía de idiomas sin errores' }
+    ]
+  },
+  'feliz-cumpleanos-en-portugues': {
+    texto: 'Explorá saludos en otros idiomas con traducción:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-en-italiano/', label: 'Feliz cumpleaños en italiano' },
+      { href: '/feliz-cumpleanos-en-frances/', label: 'Feliz cumpleaños en francés' },
+      { href: '/las-38-mejores-frases-en-ingles-traducidas/', label: 'Cumpleaños en inglés traducido' },
+      { href: '/guias/feliz-cumpleanos-en-otros-idiomas-ingles-italiano-frances-y-portugues/', label: 'Guía de idiomas sin errores' }
+    ]
+  },
+  'feliz-cumpleanos-en-frances': {
+    texto: 'Explorá saludos en otros idiomas con traducción:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-en-italiano/', label: 'Feliz cumpleaños en italiano' },
+      { href: '/feliz-cumpleanos-en-portugues/', label: 'Feliz cumpleaños en portugués' },
+      { href: '/las-38-mejores-frases-en-ingles-traducidas/', label: 'Cumpleaños en inglés traducido' },
+      { href: '/guias/feliz-cumpleanos-en-otros-idiomas-ingles-italiano-frances-y-portugues/', label: 'Guía de idiomas sin errores' }
+    ]
+  },
+  'las-38-mejores-frases-en-ingles-traducidas': {
+    texto: 'Más colecciones multilingües con traducción al español:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-en-italiano/', label: 'Feliz cumpleaños en italiano' },
+      { href: '/feliz-cumpleanos-en-portugues/', label: 'Feliz cumpleaños en portugués' },
+      { href: '/feliz-cumpleanos-en-frances/', label: 'Feliz cumpleaños en francés' }
+    ]
+  },
+  'invitaciones-de-cumpleanos-para-editar-e-imprimir': {
+    texto: 'Todo para armar tu fiesta e invitaciones:',
+    enlaces: [
+      { href: '/frases-para-invitacion-de-cumpleanos/', label: 'Textos para invitaciones' },
+      { href: '/banderines-de-cumpleanos-para-imprimir/', label: 'Banderines para imprimir (40 ideas)' },
+      { href: '/decoracion-y-regalos-de-cumpleanos/', label: 'Decoración y regalos económicos' }
+    ]
+  },
+  'decoracion-y-regalos-de-cumpleanos': {
+    texto: 'Completá tu celebración casera sin gastar de más:',
+    enlaces: [
+      { href: '/banderines-de-cumpleanos-para-imprimir/', label: 'Banderines para imprimir A4' },
+      { href: '/invitaciones-de-cumpleanos-para-editar-e-imprimir/', label: 'Invitaciones para imprimir' },
+      { href: '/feliz-cumpleanos-retro-vintage-elegante/', label: 'Temática retro vintage' }
+    ]
+  },
+  'feliz-cumpleanos-superheroes-ninos': {
+    texto: 'Más temáticas de cumpleaños e imprimibles:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-princesas-y-hadas/', label: 'Princesas y hadas' },
+      { href: '/feliz-cumpleanos-futbol-y-deportes/', label: 'Fútbol y deportes' },
+      { href: '/banderines-de-cumpleanos-para-imprimir/', label: 'Banderines A4 temáticos' }
+    ]
+  },
+  'feliz-cumpleanos-princesas-y-hadas': {
+    texto: 'Más temáticas infantiles e invitaciones:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-superheroes-ninos/', label: 'Superhéroes para niños' },
+      { href: '/feliz-cumpleanos-para-una-nina/', label: 'Cumpleaños de niña' },
+      { href: '/invitaciones-de-cumpleanos-para-editar-e-imprimir/', label: 'Invitaciones para imprimir' }
+    ]
+  },
+  'feliz-cumpleanos-futbol-y-deportes': {
+    texto: 'Más temáticas y dedicatorias para amigos:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-superheroes-ninos/', label: 'Temática superhéroes' },
+      { href: '/feliz-cumpleanos-amigo/', label: 'Cumpleaños para un amigo' },
+      { href: '/decoracion-y-regalos-de-cumpleanos/', label: 'Decoración y regalos' }
+    ]
+  },
+  'feliz-cumpleanos-retro-vintage-elegante': {
+    texto: 'Otras colecciones elegantes y para adultos:',
+    enlaces: [
+      { href: '/decoracion-y-regalos-de-cumpleanos/', label: 'Decoración y regalos' },
+      { href: '/cumpleanos-65-anos/', label: 'Cumpleaños de 65 años' },
+      { href: '/discursos-cortos-de-cumpleanos-para-leer/', label: 'Discursos cortos para leer' }
+    ]
+  },
+  'canciones-y-mananitas-de-cumpleanos': {
+    texto: 'Completá el momento de la torta y el brindis:',
+    enlaces: [
+      { href: '/brindis-de-cumpleanos/', label: 'Brindis de cumpleaños' },
+      { href: '/discursos-cortos-de-cumpleanos-para-leer/', label: 'Discursos cortos para leer' },
+      { href: '/decoracion-y-regalos-de-cumpleanos/', label: 'Decoración y regalos' }
+    ]
+  },
+  'discursos-cortos-de-cumpleanos-para-leer': {
+    texto: 'Más palabras en voz alta para celebrar:',
+    enlaces: [
+      { href: '/brindis-de-cumpleanos/', label: 'Brindis de cumpleaños' },
+      { href: '/canciones-y-mananitas-de-cumpleanos/', label: 'Canciones y mañanitas' },
+      { href: '/cumpleanos-65-anos/', label: 'Homenajes de 65 años' }
+    ]
+  },
+  'tarjetas-de-cumpleanos-para-whatsapp-estados': {
+    texto: 'Más recursos para WhatsApp y redes:',
+    enlaces: [
+      { href: '/agradecimiento-por-saludos-cumpleanos/', label: 'Agradecimiento por saludos' },
+      { href: '/invitaciones-de-cumpleanos-para-editar-e-imprimir/', label: 'Invitaciones digitales e impresas' },
+      { href: '/feliz-cumpleanos-corto/', label: 'Frases cortas de cumpleaños' }
+    ]
+  },
+  'agradecimiento-por-saludos-cumpleanos': {
+    texto: 'Más formas de agradecer después del festejo:',
+    enlaces: [
+      { href: '/frases-de-agradecimiento/', label: 'Frases de agradecimiento' },
+      { href: '/palabras-de-agradecimiento/', label: 'Palabras de agradecimiento' },
+      { href: '/tarjetas-de-cumpleanos-para-whatsapp-estados/', label: 'Tarjetas para estados WhatsApp' }
+    ]
+  },
+  'oracion-de-cumpleanos-cristiana': {
+    texto: 'Más mensajes de fe y bendiciones:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-cristiano/', label: 'Feliz cumpleaños cristiano' },
+      { href: '/palabras-de-agradecimiento-a-dios-por-mi-cumpleanos/', label: 'Agradecimiento a Dios' },
+      { href: '/palabras-de-consuelo-cristianas-para-duelo/', label: 'Consuelo cristiano para duelo' }
+    ]
+  },
+  'cumpleanos-en-la-oficina-y-equipo': {
+    texto: 'Más saludos cordiales para el trabajo:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-para-un-companero-de-trabajo/', label: 'Para compañero de trabajo' },
+      { href: '/feliz-cumpleanos-jefe/', label: 'Feliz cumpleaños jefe' },
+      { href: '/feliz-jubilacion-y-retiro/', label: 'Feliz jubilación y retiro' }
+    ]
+  },
+  'cumpleanos-65-anos': {
+    texto: 'Celebraciones de madurez, retiro y familia:',
+    enlaces: [
+      { href: '/feliz-jubilacion-y-retiro/', label: 'Feliz jubilación y retiro' },
+      { href: '/cumpleanos-90-anos/', label: 'Cumpleaños 90 años' },
+      { href: '/discursos-cortos-de-cumpleanos-para-leer/', label: 'Discursos para homenajes' }
+    ]
+  },
+  'cumpleanos-90-anos': {
+    texto: 'Más dedicatorias llenas de respeto para mayores:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-abuelo/', label: 'Para mi abuelo' },
+      { href: '/feliz-cumpleanos-abuela/', label: 'Para mi abuela' },
+      { href: '/cumpleanos-65-anos/', label: 'Cumpleaños 65 años' }
+    ]
+  },
+  'feliz-cumpleanos-para-mi-si-estoy-lejos-o-solo': {
+    texto: 'Más palabras serenas para vos y para la distancia:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-para-mi/', label: 'Feliz cumpleaños para mí' },
+      { href: '/feliz-cumpleanos-a-distancia/', label: 'Cumpleaños a la distancia' },
+      { href: '/motivaciones/', label: 'Motivaciones diarias ✨' }
     ]
   }
 };
@@ -583,7 +809,7 @@ const textoEnviar = esHub ? '' : registro.texto;
       <p class="meta-linea-editorial">
         <span>{esBanderines ? `${mensajesCat.length} guías prácticas e ideas` : `${mensajesCat.length} dedicatorias inéditas`}</span>
         <span aria-hidden="true">·</span>
-        <span>{esBanderines ? 'Herramienta online A4 independiente' : 'Personalización en vivo'}</span>
+        <span>{esBanderines ? 'Herramienta online A4 independiente' : 'Abrí cada texto para personalizar su tarjeta'}</span>
         <span aria-hidden="true">·</span>
         <span>Actualizado el <time datetime={actualizado}>{actualizado}</time></span>
       </p>
@@ -642,22 +868,7 @@ const textoEnviar = esHub ? '' : registro.texto;
             </p>
           </div>
         </>
-      ) : (
-        <>
-          <PersonalizadorTarjeta modo="hub" />
-
-          <div class="tarjeta-visual" role="img" aria-label={'Tarjeta destacada de ' + (registro.keyword || registro.h1)}>
-            <div class="tarjeta-visual-emoji">{registro.emoji}</div>
-            <p class="tarjeta-visual-subtitulo" hidden></p>
-            <div class="tarjeta-visual-foto-wrap" hidden>
-              <img class="tarjeta-visual-foto" alt="Foto personalizada para la tarjeta" />
-            </div>
-            <p class="tarjeta-visual-titulo">{nombreHub(registro)}</p>
-            <p class="tarjeta-visual-extracto">{mensajesCat.length} textos originales listos para personalizar, copiar o descargar en PNG</p>
-            <p class="tarjeta-visual-marca">paracumpleanos.com</p>
-          </div>
-        </>
-      )}
+      ) : null}
 
       <FiltrosSegmentacion
         mensajesTodos={mensajesCat}
@@ -789,7 +1000,7 @@ const textoEnviar = esHub ? '' : registro.texto;
       ) : (
         <>
           {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="mensaje" /> : null}
-          <PersonalizadorTarjeta modo="mensaje" />
+          <PersonalizadorTarjeta modo="mensaje" esDuelo={guiaMsg.perfil === 'duelo'} />
 
           <div id="mensaje-detalle-bloque">
             <div id="mensaje-cuerpo" class="mensaje" data-slug={registro.slug} data-orig-texto={registro.texto} data-orig-titulo={registro.titulo}>

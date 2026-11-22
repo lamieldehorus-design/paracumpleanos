@@ -240,6 +240,8 @@ const signosCliente = ZODIACOS.map((s) => ({
         id="herr-acro-dl"
         type="button"
         class="btn btn-descargar"
+        data-title="Acróstico para SOFÍA"
+        data-mostrar-titulo="1"
         data-body={demoAcrosticoTexto}
         data-emoji="✍️"
       >
@@ -698,6 +700,8 @@ const signosCliente = ZODIACOS.map((s) => ({
         if (btnAcroCop) btnAcroCop.setAttribute('data-text', cuerpoCopia);
         if (btnAcroWa) btnAcroWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(cuerpoCopia));
         if (btnAcroDl) {
+          btnAcroDl.setAttribute('data-title', tituloCard);
+          btnAcroDl.setAttribute('data-mostrar-titulo', '1');
           btnAcroDl.setAttribute('data-body', cuerpo);
         }
       }

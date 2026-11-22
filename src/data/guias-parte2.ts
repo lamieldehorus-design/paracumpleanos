@@ -544,7 +544,7 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
     citaDestacada: 'El humor que funciona en un cumpleaños es el que arranca una carcajada en la primera línea y termina en abrazo honesto en la última.',
     datosPropios: {
       titulo: 'Calibración de humor en nuestras colecciones divertidas',
-      dato: 'Nuestras colecciones con humor (más de 240 mensajes graciosos entre amigos, hermanos, hombres, mujeres y atrasados) combinan remate breve en la apertura con cierre afectuoso en el segundo párrafo.',
+      dato: 'Nuestras colecciones con humor (más de 300 mensajes graciosos entre amigos, hermanos, hombres, mujeres y atrasados) combinan remate breve en la apertura con cierre afectuoso en el segundo párrafo.',
       fuente: 'Guía de estilo del equipo de redacción de ParaCumpleanos (2026).'
     },
     comparacionPractica: {
@@ -1159,7 +1159,7 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
       {
         subtitulo: '¿Cómo ayudan nuestras categorías para quinceañeras, padres y amigas?',
         parrafos: [
-          'Podés consultar las 40 opciones en nuestras colecciones específicas de 15 años, personalizar apodo, firma y posdata arriba y elegir tarjetas en Lavanda Serena, Dorado Festivo o Rosa Clásica listas para WhatsApp, Instagram Stories o papel impreso.',
+          'Podés consultar las 50 opciones en nuestras colecciones específicas de 15 años, abrir cualquier dedicatoria para personalizar apodo, firma y posdata y elegir tarjetas en Lavanda Serena, Dorado Festivo o Rosa Clásica listas para WhatsApp, Instagram Stories o papel impreso.',
           'Si entregás un regalo compartido entre varias amigas o compañeros del club, sumen una posdata breve al pie con todos los nombres y guarden una copia digital para que la quinceañera pueda volver a leerla tranquila después del festejo.',
           'Cuidar el equilibrio entre alegría genuina, respeto por su personalidad y recuerdos verdaderos asegura que las palabras elegidas sigan emocionando incluso muchos años después.'
         ]

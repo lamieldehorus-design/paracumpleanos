@@ -160,9 +160,9 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
     respuestaDirecta: 'Para acertar con qué regalar según la edad sin gastar de más, adaptá el obsequio a la etapa vital: libros ilustrados y juegos familiares entre 1 y 10 años; hobbies, entradas o gift cards entre los 13 y 21; experiencias y descanso a los 30 y 40; y recuerdos colectivos o encuentros compartidos desde los 50 en adelante.',
     citaDestacada: 'Un buen regalo nunca se mide por cuánto costó, sino por cuánto demuestra que prestaste atención a lo que esa persona disfruta hoy.',
     datosPropios: {
-      titulo: 'Observación de nuestras 51 categorías por edades e hitos',
-      dato: 'El bloque de edades e hitos abarca 2.040 dedicatorias diferenciadas desde el primer añito hasta los 90 años. Las búsquedas más consultadas corresponden a edades redondas (15, 18, 30, 40 y 50 años), donde la tarjeta escrita cobra más peso que el objeto material.',
-      fuente: 'Análisis de estructura temática de ParaCumpleanos (51 categorías de edades, 2026).'
+      titulo: 'Observación de nuestras 53 categorías por edades e hitos',
+      dato: 'El bloque de edades e hitos abarca 2.650 dedicatorias diferenciadas desde el primer añito hasta los 90 años. Las búsquedas más consultadas corresponden a edades redondas (15, 18, 30, 40 y 50 años), donde la tarjeta escrita cobra más peso que el objeto material.',
+      fuente: 'Análisis de estructura temática de ParaCumpleanos (53 categorías de edades, 2026).'
     },
     comparacionPractica: {
       titulo: '¿Cuál es la diferencia entre un regalo de apuro y uno pensado para la etapa?',
@@ -293,8 +293,8 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
     respuestaDirecta: 'La regla esencial para saber cómo felicitar en el trabajo es respetar exactamente el mismo trato diario (vos o usted), enviar un texto breve en horario laboral por el canal habitual (mail, Slack, Teams o tarjeta del equipo) y agradecer una cualidad concreta de su trato profesional sin incluir bromas personales ni ventas.',
     citaDestacada: 'En el ámbito laboral, la cordialidad breve y respetuosa deja mucho mejor recuerdo que cualquier exageración forzada.',
     datosPropios: {
-      titulo: 'Criterio en nuestras 11 categorías laborales y académicas',
-      dato: 'Nuestras 11 secciones profesionales (440 mensajes para jefes, docentes, médicos, colegas y clientes) separan estrictamente el trato de usted de los saludos cercanos entre compañeros para evitar saltos bruscos de registro.',
+      titulo: 'Criterio en nuestras 12 categorías laborales y académicas',
+      dato: 'Nuestras 12 secciones profesionales (600 mensajes para jefes, docentes, médicos, colegas y clientes) separan estrictamente el trato de usted de los saludos cercanos entre compañeros para evitar saltos bruscos de registro.',
       fuente: 'Revisión de registro y trato en la sección Trabajo y Profesión de ParaCumpleanos (2026).'
     },
     comparacionPractica: {
@@ -553,8 +553,8 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
     respuestaDirecta: 'La forma más efectiva de resolver cómo celebrar un cumpleaños a distancia es respetar el huso horario local para saludar en su desayuno, combinar una carta o tarjeta personalizada con una foto vieja compartida y pactar una videollamada tranquila o encargar algo rico en un comercio de su misma ciudad.',
     citaDestacada: 'Cuando hay kilómetros en el medio, acordarse del huso horario correcto y proponer cuándo se van a abrazar de nuevo achica cualquier mapa.',
     datosPropios: {
-      titulo: 'Colección dedicada en nuestras 16 categorías a la distancia',
-      dato: 'Contamos con 16 colecciones específicas y 640 mensajes pensados para hermanos, parejas, madres y amigos en otras ciudades o países, priorizando el valor del huso horario y la promesa del reencuentro.',
+      titulo: 'Colección dedicada en nuestras 17 categorías a la distancia',
+      dato: 'Contamos con 17 colecciones específicas y 850 mensajes pensados para hermanos, parejas, madres y amigos en otras ciudades o países, priorizando el valor del huso horario y la promesa del reencuentro.',
       fuente: 'Catálogo de la sección A distancia / lejos de ParaCumpleanos (2026).'
     },
     comparacionPractica: {
@@ -1240,8 +1240,8 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
     respuestaDirecta: 'Para enviar un feliz cumpleaños atrasado y quedar bien igual, asumí el despiste en media línea con sinceridad o humor liviano, evitá excusas largas poco creíbles y cerrá proponiendo un gesto concreto —un café, llamado o brindis esta semana— para compensar con calidez real.',
     citaDestacada: 'Cuando ya pasaron las cien notificaciones del mismo día, tu mensaje atrasado pero sincero es el que realmente se lee despacio y abre charla.',
     datosPropios: {
-      titulo: '40 opciones dedicadas en nuestra sección de cumpleaños atrasado',
-      dato: 'Dentro del catálogo de tonos y formatos reunimos 40 mensajes específicos para saludos tardíos, calibrados en versiones breves con humor para amigos y fórmulas respetuosas para familiares o contactos laborales.',
+      titulo: '50 opciones dedicadas en nuestra sección de cumpleaños atrasado',
+      dato: 'Dentro del catálogo de tonos y formatos reunimos 50 mensajes específicos para saludos tardíos, calibrados en versiones breves con humor para amigos y fórmulas respetuosas para familiares o contactos laborales.',
       fuente: 'Catálogo editorial de la categoría Feliz cumpleaños atrasado de ParaCumpleanos (2026).'
     },
     comparacionPractica: {
