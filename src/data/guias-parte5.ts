@@ -168,7 +168,7 @@ export const GUIAS_PARTE_5: GuiaEditorial[] = [
     seoTitle: 'Cómo agradecer los mensajes de cumpleaños por WhatsApp hoy',
     titulo: 'Cómo agradecer los mensajes de cumpleaños por WhatsApp, estados e Instagram sin sonar robótico',
     h1: 'Cómo agradecer los mensajes de cumpleaños por WhatsApp y redes con calidez real',
-    descripcion: 'Aprendé cómo agradecer los mensajes de cumpleaños por WhatsApp, grupos familiares e Instagram Stories con respuestas breves, cercanas y listas para personalizar.',
+    descripcion: 'Aprendé cómo agradecer los mensajes de cumpleaños por WhatsApp, grupos familiares e Instagram Stories con respuestas breves, cercanas y listas para editar hoy.',
     keywordPrincipal: 'cómo agradecer los mensajes de cumpleaños',
     keywordsSecundarias: [
       'agradecimiento por saludos de cumpleaños',
@@ -492,7 +492,7 @@ export const GUIAS_PARTE_5: GuiaEditorial[] = [
     seoTitle: 'Cumpleaños solo o lejos: cómo pasar el día con calma hoy',
     titulo: 'Cumpleaños solo, lejos o en momentos difíciles: ideas reales para atravesar el día con serenidad',
     h1: 'Pasar un cumpleaños solo o lejos de casa: cómo cuidarte y encontrar calma en tu fecha',
-    descripcion: 'Ideas concretas para un cumpleaños solo, lejos de tu ciudad o tras un año difícil: rituales simples sin presión festiva y palabras honestas para vos o quien querés.',
+    descripcion: 'Ideas concretas para un cumpleaños solo, lejos de casa o tras un año difícil: rituales simples sin presión festiva y palabras honestas para vos o quien querés.',
     keywordPrincipal: 'cumpleaños solo',
     keywordsSecundarias: [
       'pasar mi cumpleaños lejos de casa',
@@ -653,7 +653,7 @@ export const GUIAS_PARTE_5: GuiaEditorial[] = [
     seoTitle: 'Canciones de cumpleaños y Las Mañanitas: letras y uso hoy',
     titulo: 'Canciones de cumpleaños, Las Mañanitas y brindis: tradiciones, letras y cómo presentar la torta',
     h1: 'Canciones de cumpleaños: Las Mañanitas, Feliz Cumpleaños y tradiciones para celebrar juntos',
-    descripcion: 'Todo sobre las canciones de cumpleaños en español: origen de Las Mañanitas y Que los cumpla feliz, cómo introducir el canto con humor o emoción y frases previas.',
+    descripcion: 'Todo sobre las canciones de cumpleaños en español: origen de Las Mañanitas y Que los cumpla feliz, cómo abrir el canto con humor o emoción y frases previas.',
     keywordPrincipal: 'canciones de cumpleaños',
     keywordsSecundarias: [
       'las mañanitas cumpleaños origen y letra',

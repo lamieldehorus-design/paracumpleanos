@@ -489,7 +489,7 @@ test('personalizador adapta saludos, cartas, bilingues, poemas y firma sin corta
   assert.equal(Object.keys(FORMATOS_TARJETA).length, 2);
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren las 24696 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
+test('generarUrlsSitio y generarSitemapXml cubren las 24760 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
@@ -497,8 +497,8 @@ test('generarUrlsSitio y generarSitemapXml cubren las 24696 URLs indexables sin 
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
   const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises);
 
-  assert.equal(urls.length, 24696, `Se esperaban 24696 URLs indexables, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 24696, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(urls.length, 24760, `Se esperaban 24760 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 24760, 'Las URLs del sitemap deben ser todas unicas');
   assert.ok(urls.every((url) => url.startsWith('https://paracumpleanos.com/')));
   assert.ok(urls.every((url) => !/[?#]/.test(url)));
   assert.ok(urls.includes('https://paracumpleanos.com/'));
@@ -553,21 +553,21 @@ test('generarUrlsSitio y generarSitemapXml cubren las 24696 URLs indexables sin 
   assert.ok(xmlSinLastmod.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xmlSinLastmod.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xmlSinLastmod.match(/<loc>/g) || [];
-  assert.equal(locs.length, 24696);
+  assert.equal(locs.length, 24760);
   assert.ok(!xmlSinLastmod.includes('<lastmod>'), 'Sin mapa lastmod no debe emitir etiquetas lastmod');
 
   const mapaLastmod = construirMapaLastmodSitemap(cat, GUIAS_EDITORIALES, slugsSignos, slugsPaises, '2026-11-22');
   const xmlConLastmod = generarSitemapXml(urls, mapaLastmod);
   const lastmods = xmlConLastmod.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || [];
-  assert.equal(lastmods.length, 24696, 'Cada una de las 24696 URLs debe recibir su lastmod real YYYY-MM-DD');
+  assert.equal(lastmods.length, 24760, 'Cada una de las 24760 URLs debe recibir su lastmod real YYYY-MM-DD');
   assert.ok(
-    xmlConLastmod.includes('<loc>https://paracumpleanos.com/banderines-de-cumpleanos-para-imprimir/</loc><lastmod>2026-11-20</lastmod>'),
+    xmlConLastmod.includes('<loc>https://paracumpleanos.com/banderines-de-cumpleanos-para-imprimir/</loc><lastmod>2026-11-22</lastmod>'),
     'El sitemap debe reflejar el lastmod real de banderines'
   );
   assert.throws(() => generarSitemapXml(['https://paracumpleanos.com/'], { 'https://paracumpleanos.com/': '2026-02-31' }));
 });
 
-test('Bing IndexNow cubre las 24696 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre las 24760 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -580,14 +580,14 @@ test('Bing IndexNow cubre las 24696 URLs en lotes validos de hasta 10000 y tiene
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
   const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises));
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 24696);
+  assert.equal(extraidas.length, 24760);
 
   const payloads = construirPayloadsIndexNow(extraidas);
   assert.equal(payloads.length, 3);
-  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 24696);
+  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 24760);
   assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
   assert.equal(payloads[1].urlList.length, INDEXNOW_MAX_BATCH);
-  assert.equal(payloads[2].urlList.length, 4696);
+  assert.equal(payloads[2].urlList.length, 4760);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);
