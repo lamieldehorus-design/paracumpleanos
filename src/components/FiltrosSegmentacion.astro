@@ -114,6 +114,39 @@ const emojiHub = hub?.emoji || '🎂';
         pRes.textContent = item.resumen;
         art.appendChild(pRes);
 
+        var divFull = document.createElement('div');
+        divFull.className = 'card-texto-completo';
+        divFull.hidden = true;
+        String(item.texto || '').split(/\n{2,}/).forEach(function (par) {
+          var limpio = par.trim();
+          if (!limpio) return;
+          var np = document.createElement('p');
+          limpio.split('\n').forEach(function (lin, idx) {
+            if (idx > 0) np.appendChild(document.createElement('br'));
+            np.appendChild(document.createTextNode(lin));
+          });
+          divFull.appendChild(np);
+        });
+        art.appendChild(divFull);
+
+        var rowExp = document.createElement('div');
+        rowExp.className = 'card-expand-row';
+        if (String(item.texto || '').replace(/\s+/g, ' ').trim().length > String(item.resumen || '').length + 10) {
+          var btnExp = document.createElement('button');
+          btnExp.type = 'button';
+          btnExp.className = 'btn-leer-mas';
+          btnExp.setAttribute('aria-expanded', 'false');
+          btnExp.setAttribute('aria-label', 'Leer completo: ' + item.titulo);
+          btnExp.textContent = 'Leer completo ▾';
+          rowExp.appendChild(btnExp);
+        }
+        var aCard = document.createElement('a');
+        aCard.className = 'card-cta-tarjeta';
+        aCard.href = '/' + item.slug + '/';
+        aCard.textContent = 'Tarjeta PNG / Story →';
+        rowExp.appendChild(aCard);
+        art.appendChild(rowExp);
+
         var acc = document.createElement('div');
         acc.className = 'acciones';
 

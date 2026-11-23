@@ -37,9 +37,15 @@ export function generarRssXml(
   guias: any[] = []
 ): string {
   const pubDate = fechaBuild.toUTCString();
-  const destacados = hubs.slice(0, 60);
+  const destacados = [...hubs]
+    .sort((a, b) => String(b.actualizado || '').localeCompare(String(a.actualizado || '')))
+    .slice(0, 60);
 
-  const itemsGuias = guias.slice(0, 10).map((g) => {
+  const guiasRecientes = [...guias]
+    .sort((a, b) => String(b.fechaPublicacion || '').localeCompare(String(a.fechaPublicacion || '')))
+    .slice(0, 10);
+
+  const itemsGuias = guiasRecientes.map((g) => {
     const enlace = `${SITIO}/guias/${g.slug}/`;
     const fechaItem = g.fechaPublicacion ? new Date(`${g.fechaPublicacion}T12:00:00Z`) : fechaBuild;
     const pubItem = Number.isNaN(fechaItem.getTime()) ? pubDate : fechaItem.toUTCString();

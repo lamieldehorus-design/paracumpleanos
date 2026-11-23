@@ -513,6 +513,25 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       }
 
       document.addEventListener('click', function (e) {
+        var leerMas = e.target.closest ? e.target.closest('.btn-leer-mas') : null;
+        if (leerMas) {
+          var cardExp = leerMas.closest ? leerMas.closest('.card') : null;
+          if (cardExp) {
+            var resEl = cardExp.querySelector('.card-resumen');
+            var compEl = cardExp.querySelector('.card-texto-completo');
+            var abierto = leerMas.getAttribute('aria-expanded') === 'true';
+            if (compEl) compEl.hidden = abierto;
+            if (resEl) resEl.hidden = !abierto;
+            leerMas.setAttribute('aria-expanded', abierto ? 'false' : 'true');
+            leerMas.textContent = abierto ? 'Leer completo ▾' : 'Ver resumen ▴';
+            var slugExp = detectarSlugDesdeNodo(leerMas);
+            if (!abierto && slugExp && window.pcRegistrarPopularidadPub) {
+              window.pcRegistrarPopularidadPub(slugExp, 1);
+            }
+          }
+          return;
+        }
+
         var wa = e.target.closest ? e.target.closest('.btn-wa') : null;
         if (wa) {
           var slugWa = detectarSlugDesdeNodo(wa);
@@ -525,10 +544,14 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           if (slugCop && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugCop, 3);
           var texto = btn.getAttribute('data-text') || '';
           var original = btn.textContent;
+          var enTarjetaGrilla = Boolean(btn.closest && btn.closest('article.card'));
           copiarAlPortapapeles(texto).then(function (ok) {
             if (!ok) return;
             btn.textContent = '¡Copiado! ✓';
             setTimeout(function () { btn.textContent = original; }, 2000);
+            if (enTarjetaGrilla && slugCop && window.pcMostrarToast) {
+              window.pcMostrarToast('✓ Texto copiado. ¿Querés bajarlo en tarjeta PNG o Story?', '/' + slugCop + '/', 'Abrir tarjeta →');
+            }
           });
           return;
         }

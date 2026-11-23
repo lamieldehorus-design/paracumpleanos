@@ -179,10 +179,10 @@ export const REDIRECCIONES_RAIZ_LEGADAS: RedireccionLegada[] = [
   },
   {
     slugOrigen: 'felices-20-anos-para-mi',
-    destinoSlug: 'feliz-cumpleanos-20-anos',
+    destinoSlug: 'feliz-cumpleanos-20-anos-para-mi',
     titulo: 'Felices 20 años para mí y mensajes de 20 años',
-    alternativoSlug: 'feliz-cumpleanos-para-mi',
-    alternativoTexto: 'Ver mensajes de auto-felicitación para mí'
+    alternativoSlug: 'feliz-cumpleanos-20-anos',
+    alternativoTexto: 'Ver mensajes de 20 años para dedicar a otra persona'
   },
   {
     slugOrigen: 'dedicatoria-para-mi-hija-de-5-anos',

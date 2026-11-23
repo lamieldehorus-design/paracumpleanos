@@ -923,7 +923,7 @@ test('orden mas reciente primero, filtros universales en las 441 categorias, ani
     ['nuevo2', 'nuevo1', 'medio', 'viejo'],
     'Las publicaciones mas recientes deben aparecer primero de arriba hacia abajo'
   );
-  assert.equal(cat.hubs[0].actualizado, '2026-11-22', 'El primer hub del catalogo debe ser de la fecha mas reciente');
+  assert.equal(cat.hubs[0].actualizado, '2026-11-23', 'El primer hub del catalogo debe ser de la fecha mas reciente');
 
   // 2. Filtros de segmentacion en TODAS las 441 categorias (incluyendo cartas, cristiano, profesionales y duelo_recuerdos)
   for (const hub of cat.hubs) {
@@ -1077,3 +1077,82 @@ test('estandar Ultra Guia Cosmica v3.0: cero contaminacion tematica, cero mezcla
     assert.equal(guiaRelacionadaParaHub(h).slug, guiaEsperada, `Hub ${hubSlug} mapeo a guia incorrecta`);
   }
 });
+
+test('Anti-canibalizacion GSC, sitemap/RSS actualizados, noindex en /posts y controles anti-rebote activos', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+
+  // 1. Ningun titulo abrupto terminado en "- 50", ningun meta truncado o robotico y ningun lead "40 opciones" en hubs de 50
+  const titulosUnicos = new Set<string>();
+  for (const h of cat.hubs) {
+    const tNorm = h.titulo.toLowerCase().trim();
+    assert.ok(!titulosUnicos.has(tNorm), `Titulo de hub duplicado: ${h.slug} -> ${h.titulo}`);
+    titulosUnicos.add(tNorm);
+    assert.ok(!/-\s*50$/.test(h.titulo), `Titulo abrupto terminado en "- 50": ${h.slug} -> ${h.titulo}`);
+    assert.ok(
+      !/\b(este|esta|estos|estas|para|de|con|por|en|el|la|los|las|un|una|y|o)\.$/i.test(h.meta.trim()),
+      `Meta truncado en ${h.slug}: ${h.meta}`
+    );
+    assert.ok(
+      !/(?:para\s+(?:frases|mensajes|cartas|palabras|dedicatorias)|de\s+(?:frases|mensajes|cartas|palabras|dedicatorias)\s+para)/i.test(h.meta),
+      `Meta robotico en ${h.slug}: ${h.meta}`
+    );
+    const cant = cat.mensajesDe(h.slug).length;
+    const slugNums = h.slug.match(/\d+/g) || [];
+    if (cant === 50 && !slugNums.includes('40')) {
+      assert.ok(
+        !/\b40\s+(opciones|mensajes|textos|dedicatorias|frases|cartas)\b/i.test(h.lead || ''),
+        `Lead desactualizado con "40" en hub de 50: ${h.slug}`
+      );
+    }
+  }
+
+  // 2. Pares hermanos clave diferenciados sin canibalizacion + top consultas GSC optimizadas
+  const paresDiferenciados: [string, string][] = [
+    ['feliz-cumpleanos-papa', 'cumpleanos-para-un-papa'],
+    ['feliz-cumpleanos-para-mi-esposo', 'frases-para-mi-esposo'],
+    ['feliz-cumpleanos-para-mi-esposa', 'frases-para-mi-esposa'],
+    ['feliz-cumpleanos-hijo', 'frases-para-un-hijo'],
+    ['feliz-cumpleanos-hija', 'frases-para-una-hija'],
+    ['feliz-cumpleanos-20-anos', 'feliz-cumpleanos-20-anos-para-mi'],
+    ['feliz-cumpleanos-cortos-y-bonitos', 'mensajes-cortos-de-cumpleanos'],
+    ['feliz-cumpleanos-primo', 'frases-para-un-primo']
+  ];
+  for (const [a, b] of paresDiferenciados) {
+    const ha = cat.hubsPorSlug.get(a);
+    const hb = cat.hubsPorSlug.get(b);
+    assert.ok(ha && hb, `Par faltante: ${a} / ${b}`);
+    assert.notEqual(ha.titulo, hb.titulo);
+    assert.ok(ha.titulo.length <= 60, `Titulo > 60 en ${a}: ${ha.titulo}`);
+    assert.ok(hb.titulo.length <= 60, `Titulo > 60 en ${b}: ${hb.titulo}`);
+  }
+
+  assert.ok(cat.hubsPorSlug.get('feliz-cumpleanos-prima-dios-te-bendiga')?.titulo.includes('frases'));
+  assert.ok(cat.hubsPorSlug.get('frases-para-un-hijo-que-esta-lejos')?.titulo.startsWith('Mensajes para un hijo que está lejos'));
+  assert.ok(cat.hubsPorSlug.get('frases-para-un-primo-que-esta-lejos')?.titulo.includes('distancia'));
+  assert.ok(!cat.hubsPorSlug.get('feliz-cumpleanos-20-anos')?.titulo.includes('para mí'));
+
+  // 3. Sitemap, RSS, robots.txt y PuenteRedireccion (noindex + canonical)
+  const sitemapSrc = fs.readFileSync(path.resolve('src/pages/sitemap.xml.ts'), 'utf8');
+  assert.ok(sitemapSrc.includes("'2026-11-23'"), 'sitemap.xml.ts debe usar fecha base actualizada 2026-11-23');
+  const robotsSrc = fs.readFileSync(path.resolve('public/robots.txt'), 'utf8');
+  assert.ok(robotsSrc.includes('Sitemap: https://paracumpleanos.com/rss.xml'), 'robots.txt debe declarar rss.xml');
+  const puenteSrc = fs.readFileSync(path.resolve('src/components/PuenteRedireccion.astro'), 'utf8');
+  assert.ok(puenteSrc.includes('content="noindex, follow"'), 'PuenteRedireccion debe emitir noindex, follow para evitar canibalizacion de /posts/');
+  assert.ok(!fs.existsSync(path.resolve('src/pages/guias/%5Bslug%5D.astro')), 'No debe existir archivo duplicado %5Bslug%5D.astro');
+
+  const rss = generarRssXml(cat.hubs, cat.mensajesDe, new Date('2026-11-23T12:00:00Z'), GUIAS_EDITORIALES);
+  assert.ok(
+    rss.includes('como-escribir-mensajes-de-nostalgia-y-cuando-extranas-a-alguien'),
+    'rss.xml debe priorizar las nuevas guias publicadas en 2026-11-23'
+  );
+
+  // 4. Componentes anti-rebote presentes en [slug].astro y TarjetaMensaje.astro
+  const slugSrc = fs.readFileSync(path.resolve('src/pages/[slug].astro'), 'utf8');
+  assert.ok(slugSrc.includes('<PersonalizadorRapidoHub'), '[slug].astro debe montar PersonalizadorRapidoHub');
+  assert.ok(slugSrc.includes('class="nav-dedicatorias"'), '[slug].astro debe incluir navegacion anterior/siguiente en paginas de mensaje');
+  const cardSrc = fs.readFileSync(path.resolve('src/components/TarjetaMensaje.astro'), 'utf8');
+  assert.ok(cardSrc.includes('btn-leer-mas'), 'TarjetaMensaje debe incluir boton inline Leer completo');
+  assert.ok(cardSrc.includes('card-cta-tarjeta'), 'TarjetaMensaje debe incluir enlace directo a Tarjeta PNG / Story');
+});
+

@@ -1,0 +1,231 @@
+---
+interface Props {
+  totalMensajes: number;
+  esDuelo?: boolean;
+}
+const { totalMensajes, esDuelo = false } = Astro.props;
+---
+<section
+  class="personalizador-rapido-hub"
+  aria-label="Personalizar las dedicatorias de esta categoría en vivo"
+  data-total={String(totalMensajes)}
+>
+  <div class="prh-cabecera">
+    <span class="prh-badge">{esDuelo ? '🕊️ Adaptación en vivo' : '✨ Personalizá en 1 paso'}</span>
+    <p class="prh-hint">
+      Escribí el nombre y las <strong>{totalMensajes} opciones</strong> se actualizan al instante para copiar o mandar por WhatsApp.
+    </p>
+  </div>
+  <div class="prh-campos">
+    <div class="prh-campo">
+      <label for="prh-nombre">Nombre o apodo</label>
+      <input
+        id="prh-nombre"
+        type="text"
+        maxlength="40"
+        placeholder={esDuelo ? 'Ej.: Abuelo José, Laura' : 'Ej.: Sofi, Papá, Juampi'}
+        autocomplete="off"
+      />
+    </div>
+    <div class="prh-campo">
+      <label for="prh-firma">Tu firma (opcional)</label>
+      <input
+        id="prh-firma"
+        type="text"
+        maxlength="40"
+        placeholder={esDuelo ? 'Ej.: Tu familia' : 'Ej.: Tu prima Mili'}
+        autocomplete="off"
+      />
+    </div>
+    <div class="prh-acciones">
+      <button type="button" id="prh-limpiar" class="prh-limpiar" hidden>Limpiar</button>
+    </div>
+  </div>
+  <p class="prh-estado" id="prh-estado" aria-live="polite" hidden></p>
+</section>
+
+<script is:inline>
+  (function () {
+    var inputNombre = document.getElementById('prh-nombre');
+    var inputFirma = document.getElementById('prh-firma');
+    var btnLimpiar = document.getElementById('prh-limpiar');
+    var estadoEl = document.getElementById('prh-estado');
+    var secEl = document.querySelector('.personalizador-rapido-hub');
+    if (!inputNombre || !inputFirma || !secEl) return;
+
+    function limpiarCampo(val, maxLen) {
+      return String(val || '')
+        .replace(/[\r\n\t]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, maxLen || 40);
+    }
+
+    function minusculaInicial(texto) {
+      if (!texto) return '';
+      if (texto.charAt(0) === '¡' || texto.charAt(0) === '¿') {
+        return texto.length > 1
+          ? texto.charAt(0) + texto.charAt(1).toLowerCase() + texto.slice(2)
+          : texto;
+      }
+      return texto.charAt(0).toLowerCase() + texto.slice(1);
+    }
+
+    function personalizarTextoHub(baseTexto, nombre, firma) {
+      var base = String(baseTexto || '').trim();
+      if (!base) return '';
+      var n = limpiarCampo(nombre, 40);
+      var f = limpiarCampo(firma, 40).replace(/^[—–-]\s*/, '').trim();
+
+      var parrafos = base.split(/\n{2,}/).map(function (p) { return p.trim(); }).filter(Boolean);
+      if (n && parrafos.length) {
+        var esc = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        var reg = new RegExp('(^|\\s|[¡¿])' + esc + '([,:!.]|\\s|$)', 'i');
+        if (!reg.test(parrafos[0])) {
+          var p0 = parrafos[0];
+          if (p0.length < 55 && /:$/.test(p0)) {
+            if (!reg.test(base)) {
+              parrafos.unshift('Para ' + n + ':');
+            }
+          } else if (p0.length < 55 && /,$/.test(p0)) {
+            if (/^(Mi\s+amor|Amor\s+m[ií]o|Para\s+vos,\s*mi\s+amor),$/i.test(p0)) {
+              parrafos[0] = n + ', mi amor,';
+            } else {
+              parrafos[0] = n + ',';
+            }
+          } else if (p0.indexOf('\n') !== -1) {
+            parrafos.unshift('Para ' + n + ':');
+          } else {
+            parrafos[0] = n + ', ' + minusculaInicial(p0);
+          }
+        }
+      }
+
+      var res = parrafos.join('\n\n');
+      if (f) res = res + '\n\n— ' + f;
+      return res;
+    }
+
+    function resumirTextoHub(texto) {
+      var bloques = String(texto || '').split(/\n{2,}/).map(function (b) { return b.trim(); }).filter(Boolean);
+      if (!bloques.length) return '';
+      var cuerpoIdx = -1;
+      for (var i = 0; i < bloques.length; i++) {
+        if (!(bloques[i].length < 55 && /[:,]$/.test(bloques[i]))) {
+          cuerpoIdx = i;
+          break;
+        }
+      }
+      var combinado = '';
+      if (cuerpoIdx > 0) {
+        var saludo = bloques[0];
+        var cuerpo = bloques[cuerpoIdx];
+        combinado = saludo.slice(-1) === ','
+          ? saludo + ' ' + minusculaInicial(cuerpo)
+          : saludo + ' ' + cuerpo;
+      } else {
+        combinado = bloques[0];
+      }
+      var plano = combinado.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
+      if (plano.length <= 135) return plano;
+      return plano.slice(0, 135).replace(/\s+\S*$/, '') + '…';
+    }
+
+    function renderizarParrafos(el, texto) {
+      if (!el) return;
+      el.innerHTML = '';
+      var parrafos = String(texto || '').split(/\n{2,}/).map(function (p) { return p.trim(); }).filter(Boolean);
+      parrafos.forEach(function (p) {
+        var nodoP = document.createElement('p');
+        var lineas = p.split('\n');
+        lineas.forEach(function (linea, idx) {
+          if (idx > 0) nodoP.appendChild(document.createElement('br'));
+          nodoP.appendChild(document.createTextNode(linea));
+        });
+        el.appendChild(nodoP);
+      });
+    }
+
+    function aplicarRapido(guardar) {
+      var nombre = limpiarCampo(inputNombre.value, 40);
+      var firma = limpiarCampo(inputFirma.value, 40);
+      var hayPers = Boolean(nombre || firma);
+
+      document.querySelectorAll('[data-card-personalizable]').forEach(function (card) {
+        var origTxt = card.getAttribute('data-orig-texto') || '';
+        var origRes = card.getAttribute('data-orig-resumen') || '';
+        var persTxt = hayPers ? personalizarTextoHub(origTxt, nombre, firma) : origTxt;
+
+        var resEl = card.querySelector('.card-resumen');
+        if (resEl) {
+          resEl.textContent = hayPers ? resumirTextoHub(persTxt) : origRes;
+        }
+        var compEl = card.querySelector('.card-texto-completo');
+        if (compEl) {
+          renderizarParrafos(compEl, persTxt);
+        }
+        var btnCop = card.querySelector('.btn-copiar');
+        if (btnCop) btnCop.setAttribute('data-text', persTxt);
+        var btnWa = card.querySelector('.btn-wa');
+        if (btnWa) btnWa.setAttribute('href', 'https://wa.me/?text=' + encodeURIComponent(persTxt));
+        var btnIg = card.querySelector('.btn-ig');
+        if (btnIg) {
+          btnIg.setAttribute('data-ig-body', persTxt);
+          btnIg.setAttribute('data-ig-text', persTxt);
+        }
+      });
+
+      if (btnLimpiar) btnLimpiar.hidden = !hayPers;
+      if (estadoEl) {
+        if (hayPers) {
+          var partes = [];
+          if (nombre) partes.push('para ' + nombre);
+          if (firma) partes.push('firmado por ' + firma);
+          estadoEl.textContent = '✓ Personalización activa (' + partes.join(' · ') + '). También queda guardada al abrir la tarjeta PNG.';
+          estadoEl.hidden = false;
+        } else {
+          estadoEl.textContent = '';
+          estadoEl.hidden = true;
+        }
+      }
+
+      if (guardar) {
+        try {
+          sessionStorage.setItem('pc_pers_nombre', nombre);
+          sessionStorage.setItem('pc_pers_firma', firma);
+        } catch (_) {}
+      }
+    }
+
+    window.__pcReaplicarPersonalizador = function () {
+      aplicarRapido(false);
+    };
+
+    inputNombre.addEventListener('input', function () { aplicarRapido(true); });
+    inputFirma.addEventListener('input', function () { aplicarRapido(true); });
+
+    if (btnLimpiar) {
+      btnLimpiar.addEventListener('click', function () {
+        inputNombre.value = '';
+        inputFirma.value = '';
+        aplicarRapido(true);
+      });
+    }
+
+    function restaurarSesion() {
+      try {
+        var sNom = sessionStorage.getItem('pc_pers_nombre') || '';
+        var sFir = sessionStorage.getItem('pc_pers_firma') || '';
+        if (sNom) inputNombre.value = sNom;
+        if (sFir) inputFirma.value = sFir;
+        if (sNom || sFir) aplicarRapido(false);
+      } catch (_) {}
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', restaurarSesion);
+    } else {
+      restaurarSesion();
+    }
+  })();
+</script>

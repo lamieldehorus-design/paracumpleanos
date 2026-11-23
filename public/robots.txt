@@ -19,3 +19,4 @@ User-agent: Google-Extended
 Allow: /
 
 Sitemap: https://paracumpleanos.com/sitemap.xml
+Sitemap: https://paracumpleanos.com/rss.xml
