@@ -11,6 +11,7 @@ import FiltrosSegmentacion from '../components/FiltrosSegmentacion.astro';
 import PersonalizadorAniosAniversario from '../components/PersonalizadorAniosAniversario.astro';
 import EstudioBanderines from '../components/EstudioBanderines.astro';
 import {
+  catalogo,
   contenido,
   POR_PAGINA,
   SITIO,
@@ -28,6 +29,7 @@ import {
   guiaAdaptacionMensaje
 } from '../lib/editorial.ts';
 import { mesInfoPorSlug } from '../lib/horoscopo.ts';
+import { clusterGscDe } from '../lib/gsc-estrategia.ts';
 
 export function getStaticPaths() {
   return contenido.map(function (r) {
@@ -724,7 +726,7 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
     enlaces: [
       { href: '/agradecimiento-por-saludos-cumpleanos/', label: 'Agradecimiento por saludos' },
       { href: '/invitaciones-de-cumpleanos-para-editar-e-imprimir/', label: 'Invitaciones digitales e impresas' },
-      { href: '/feliz-cumpleanos-corto/', label: 'Frases cortas de cumpleaños' }
+      { href: '/mensajes-cortos-de-cumpleanos/', label: 'Frases cortas de cumpleaños' }
     ]
   },
   'agradecimiento-por-saludos-cumpleanos': {
@@ -952,10 +954,10 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
       { href: '/feliz-cumpleanos-hijo/', label: 'Feliz cumpleaños hijo' }
     ]
   },
-  'carta-para-mi-hermana-que-la-haga-llorar': {
+  'carta-para-mi-hermana-mayor': {
     texto: 'Más dedicatorias para tu hermana:',
     enlaces: [
-      { href: '/carta-para-mi-hermana-menor-que-la-haga-llorar/', label: 'Para mi hermana menor' },
+      { href: '/carta-para-mi-hermana-menor-que-la-haga-llorar/', label: 'Para mi hermana menor (llorar)' },
       { href: '/feliz-cumpleanos-hermana/', label: 'Mensajes para hermana' },
       { href: '/frases-para-una-hermana/', label: 'Frases cortas para hermana' }
     ]
@@ -963,9 +965,17 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
   'carta-para-mi-hermana-menor-que-la-haga-llorar': {
     texto: 'Más dedicatorias para tu hermana:',
     enlaces: [
-      { href: '/carta-para-mi-hermana-que-la-haga-llorar/', label: 'Cartas para mi hermana' },
+      { href: '/carta-para-mi-hermana-mayor/', label: 'Cartas para mi hermana mayor' },
       { href: '/feliz-cumpleanos-hermana/', label: 'Mensajes para hermana' },
       { href: '/frases-para-una-hermana/', label: 'Frases cortas para hermana' }
+    ]
+  },
+  'carta-para-mi-prima-en-su-cumpleanos-que-la-haga-llorar': {
+    texto: 'Más mensajes y bendiciones para tu prima:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-prima-dios-te-bendiga/', label: 'Prima, Dios te bendiga' },
+      { href: '/feliz-cumpleanos-prima/', label: 'Feliz cumpleaños prima (50 frases)' },
+      { href: '/carta-para-mi-hermana-menor-que-la-haga-llorar/', label: 'Cartas para hermana menor' }
     ]
   },
   'feliz-cumpleanos-abuelito': {
@@ -1016,7 +1026,7 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
       { href: '/feliz-cumpleanos-para-mi-esposo/', label: 'Para mi esposo' }
     ]
   },
-  'mensajes-largos-para-mama': {
+  'feliz-cumpleanos-mama-texto-largo': {
     texto: 'Más saludos y cartas para mamá:',
     enlaces: [
       { href: '/feliz-cumpleanos-mama/', label: 'Frases cortas para mamá' },
@@ -1033,7 +1043,9 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
     ]
   }
 };
-const parContextual = esHub ? PARES_CONTEXTUALES[registro.slug] : undefined;
+const parContextual = esHub
+  ? PARES_CONTEXTUALES[registro.slug] || clusterGscDe(registro.slug, catalogo.hubsPorSlug, 3)
+  : undefined;
 
 if (esHub) {
   jsonld.push({
@@ -1070,7 +1082,7 @@ const textoEnviar = esHub ? '' : registro.texto;
       <p class="meta-linea-editorial">
         <span>{esBanderines ? `${mensajesCat.length} guías prácticas e ideas` : `${mensajesCat.length} dedicatorias inéditas`}</span>
         <span aria-hidden="true">·</span>
-        <span>{esBanderines ? 'Herramienta online A4 independiente' : 'Abrí cada texto para personalizar su tarjeta'}</span>
+        <span>{esBanderines ? 'Herramienta online A4 independiente' : 'Personalizables en vivo · Copiar / WhatsApp / PNG gratis'}</span>
         <span aria-hidden="true">·</span>
         <span>Actualizado el <time datetime={actualizado}>{actualizado}</time></span>
       </p>

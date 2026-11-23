@@ -62,14 +62,27 @@ const parrafosCompletos = String(m.texto || '').split(/\n{2,}/).map((p: string) 
         })}
       </div>
       <div class="card-expand-row">
-        <button
-          type="button"
-          class="btn-leer-mas"
-          aria-expanded="false"
-          aria-label={`Leer completo: ${m.titulo}`}
-        >
-          Leer completo ▾
-        </button>
+        <div class="card-expand-izq">
+          <button
+            type="button"
+            class="btn-leer-mas"
+            aria-expanded="false"
+            aria-label={`Leer completo: ${m.titulo}`}
+          >
+            Leer completo ▾
+          </button>
+          <button
+            type="button"
+            class="btn-favorita"
+            aria-pressed="false"
+            data-fav-slug={m.slug}
+            data-fav-titulo={m.titulo}
+            data-fav-emoji={hubRef.emoji || '🎂'}
+            aria-label={`Guardar en favoritas: ${m.titulo}`}
+          >
+            ♡ Guardar
+          </button>
+        </div>
         <a class="card-cta-tarjeta" href={'/' + m.slug + '/'}>
           Tarjeta PNG / Story →
         </a>
@@ -77,6 +90,19 @@ const parrafosCompletos = String(m.texto || '').split(/\n{2,}/).map((p: string) 
     </>
   ) : !esBanderinGuia ? (
     <div class="card-expand-row">
+      <div class="card-expand-izq">
+        <button
+          type="button"
+          class="btn-favorita"
+          aria-pressed="false"
+          data-fav-slug={m.slug}
+          data-fav-titulo={m.titulo}
+          data-fav-emoji={hubRef.emoji || '🎂'}
+          aria-label={`Guardar en favoritas: ${m.titulo}`}
+        >
+          ♡ Guardar
+        </button>
+      </div>
       <a class="card-cta-tarjeta" href={'/' + m.slug + '/'}>
         Personalizar tarjeta PNG →
       </a>

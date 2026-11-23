@@ -131,6 +131,8 @@ const emojiHub = hub?.emoji || '🎂';
 
         var rowExp = document.createElement('div');
         rowExp.className = 'card-expand-row';
+        var izqExp = document.createElement('div');
+        izqExp.className = 'card-expand-izq';
         if (String(item.texto || '').replace(/\s+/g, ' ').trim().length > String(item.resumen || '').length + 10) {
           var btnExp = document.createElement('button');
           btnExp.type = 'button';
@@ -138,8 +140,20 @@ const emojiHub = hub?.emoji || '🎂';
           btnExp.setAttribute('aria-expanded', 'false');
           btnExp.setAttribute('aria-label', 'Leer completo: ' + item.titulo);
           btnExp.textContent = 'Leer completo ▾';
-          rowExp.appendChild(btnExp);
+          izqExp.appendChild(btnExp);
         }
+        var btnFav = document.createElement('button');
+        btnFav.type = 'button';
+        btnFav.className = 'btn-favorita';
+        btnFav.setAttribute('aria-pressed', 'false');
+        btnFav.setAttribute('data-fav-slug', item.slug);
+        btnFav.setAttribute('data-fav-titulo', item.titulo);
+        btnFav.setAttribute('data-fav-emoji', payload.emoji || '🎂');
+        btnFav.setAttribute('aria-label', 'Guardar en favoritas: ' + item.titulo);
+        btnFav.textContent = '♡ Guardar';
+        izqExp.appendChild(btnFav);
+        rowExp.appendChild(izqExp);
+
         var aCard = document.createElement('a');
         aCard.className = 'card-cta-tarjeta';
         aCard.href = '/' + item.slug + '/';
@@ -220,6 +234,9 @@ const emojiHub = hub?.emoji || '🎂';
         }
         if (typeof window.__pcReaplicarPersonalizador === 'function') {
           window.__pcReaplicarPersonalizador();
+        }
+        if (typeof window.__pcSincronizarFavoritas === 'function') {
+          window.__pcSincronizarFavoritas();
         }
       }
 

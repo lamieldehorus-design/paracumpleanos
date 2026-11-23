@@ -36,6 +36,16 @@ import {
   seleccionarPoolPopularMixto
 } from './popularidad';
 import {
+  HUBS_PRIORITARIOS_GSC,
+  BLOQUES_PORTADA_GSC,
+  TOP_FOOTER_GSC,
+  ACCESOS_RAPIDOS_PORTADA,
+  ordenarHubsPorDemandaGsc,
+  clusterGscDe,
+  enlacesHermanasInteligentes,
+  faqsGscParaHub
+} from './gsc-estrategia';
+import {
   TEMAS_TARJETA,
   ICONOS_TARJETA,
   TIPOGRAFIAS_TARJETA,
@@ -1155,4 +1165,111 @@ test('Anti-canibalizacion GSC, sitemap/RSS actualizados, noindex en /posts y con
   assert.ok(cardSrc.includes('btn-leer-mas'), 'TarjetaMensaje debe incluir boton inline Leer completo');
   assert.ok(cardSrc.includes('card-cta-tarjeta'), 'TarjetaMensaje debe incluir enlace directo a Tarjeta PNG / Story');
 });
+
+test('Estrategia Superman+Batman GSC: 120 hubs prioritarios, enlazado interno sin rotos, CTR titulos/FAQs y retencion', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+
+  const slugsPrioritarios = Object.keys(HUBS_PRIORITARIOS_GSC);
+  assert.ok(slugsPrioritarios.length >= 110, `Se esperaban >= 110 hubs prioritarios GSC, hay ${slugsPrioritarios.length}`);
+
+  // 1. Todos los hubs prioritarios GSC existen en catalogo, sin titulos genericos "- 50 Mensajes/Cartas/Poemas"
+  for (const slug of slugsPrioritarios) {
+    const h = cat.hubsPorSlug.get(slug);
+    assert.ok(h, `Hub prioritario GSC inexistente en catalogo: ${slug}`);
+    assert.ok(
+      !/-\s*50\s+(Mensajes|Cartas|Poemas|Frases)$/i.test(h.titulo.trim()),
+      `Hub prioritario GSC aun tiene titulo generico: ${slug} -> ${h.titulo}`
+    );
+    assert.ok(h.titulo.length <= 65, `Titulo demasiado largo en hub GSC ${slug}: ${h.titulo}`);
+
+    // clusterGscDe debe cubrir al 100% los hubs GSC con enlaces validos y sin auto-enlace
+    const cl = clusterGscDe(slug, cat.hubsPorSlug, 3);
+    assert.ok(cl && cl.enlaces.length >= 2, `clusterGscDe vacio para ${slug}`);
+    for (const en of cl.enlaces) {
+      const targetSlug = en.href.replace(/^\/|\/$/g, '');
+      assert.notEqual(targetSlug, slug, `Auto-enlace en clusterGscDe para ${slug}`);
+      assert.ok(cat.hubsPorSlug.has(targetSlug), `Enlace roto en clusterGscDe: ${targetSlug}`);
+    }
+  }
+
+  // 2. Bloques de portada, footer global y accesos rapidos resuelven a URLs reales
+  const slugsPortada = BLOQUES_PORTADA_GSC.flatMap((b) => b.slugs);
+  assert.equal(BLOQUES_PORTADA_GSC.length, 4);
+  assert.equal(slugsPortada.length, 24);
+  assert.equal(new Set(slugsPortada).size, 24, 'Los 24 hubs destacados en portada deben ser unicos');
+  for (const sl of slugsPortada) {
+    assert.ok(cat.hubsPorSlug.has(sl), `Hub inexistente en BLOQUES_PORTADA_GSC: ${sl}`);
+  }
+  assert.equal(TOP_FOOTER_GSC.length, 12);
+  for (const item of TOP_FOOTER_GSC) {
+    assert.ok(cat.hubsPorSlug.has(item.slug), `Hub inexistente en TOP_FOOTER_GSC: ${item.slug}`);
+  }
+  for (const acc of ACCESOS_RAPIDOS_PORTADA) {
+    const sl = acc.href.replace(/^\/|\/$/g, '');
+    assert.ok(cat.hubsPorSlug.has(sl), `Enlace inexistente en ACCESOS_RAPIDOS_PORTADA: ${acc.href}`);
+  }
+
+  // 3. Cero slugs rotos en PARES_CONTEXTUALES de [slug].astro
+  const slugAstroSrc = fs.readFileSync(path.resolve('src/pages/[slug].astro'), 'utf8');
+  const bloquePares = slugAstroSrc.match(/const PARES_CONTEXTUALES[\s\S]*?\n\};/);
+  assert.ok(bloquePares, 'No se encontro PARES_CONTEXTUALES en [slug].astro');
+  const keysPares = [...bloquePares[0].matchAll(/^\s*'([a-z0-9-]+)':\s*\{/gm)].map((m) => m[1]);
+  assert.ok(keysPares.length >= 40);
+  for (const k of keysPares) {
+    assert.ok(cat.hubsPorSlug.has(k), `Clave rota en PARES_CONTEXTUALES: ${k}`);
+  }
+  const hrefsPares = [...bloquePares[0].matchAll(/href:\s*'([^']+)'/g)].map((m) => m[1]);
+  for (const href of hrefsPares) {
+    if (href.startsWith('/categorias/') || href.startsWith('/herramientas/') || href.startsWith('/calendario/') || href.startsWith('/guias/')) {
+      continue;
+    }
+    const sl = href.replace(/^\/|\/$/g, '');
+    assert.ok(cat.hubsPorSlug.has(sl), `Enlace roto en PARES_CONTEXTUALES: ${href}`);
+  }
+
+  // 4. enlacesHermanasInteligentes devuelve 8 hubs unicos sin auto-enlace y prioriza clúster GSC
+  const primaHub = cat.hubsPorSlug.get('feliz-cumpleanos-prima-dios-te-bendiga');
+  assert.ok(primaHub);
+  const hermanasPrima = enlacesHermanasInteligentes(primaHub, cat, 8);
+  assert.equal(hermanasPrima.length, 8);
+  assert.equal(new Set(hermanasPrima.map((h) => h.slug)).size, 8);
+  assert.ok(!hermanasPrima.some((h) => h.slug === primaHub.slug));
+  assert.ok(
+    hermanasPrima.slice(0, 4).some((h) => h.slug === 'feliz-cumpleanos-sobrina-dios-te-bendiga'),
+    'Hermanas inteligentes de prima debe priorizar sobrina-dios-te-bendiga'
+  );
+
+  // 5. ordenarHubsPorDemandaGsc prioriza los de mayor peso GSC
+  const ordenados = ordenarHubsPorDemandaGsc(cat.hubs);
+  assert.equal(ordenados[0].slug, 'feliz-cumpleanos-prima-dios-te-bendiga');
+
+  // 6. faqsGscParaHub genera 3 FAQs especificas en hubs objetivo y respeta exclusiones de duelo/aniversario
+  for (const sl of [
+    'feliz-cumpleanos-prima-dios-te-bendiga',
+    'cartas-para-mi-papa-que-lo-haga-llorar',
+    'feliz-cumpleanos-para-mi-esposa',
+    'frases-para-un-hijo-que-esta-lejos',
+    'frases-para-un-hijo-de-2-anos',
+    'feliz-cumpleanos-abuelo',
+    'feliz-cumpleanos-para-doctora'
+  ]) {
+    const h = cat.hubsPorSlug.get(sl);
+    const faqs = faqsGscParaHub(h, 50);
+    assert.ok(faqs && faqs.length === 3, `faqsGscParaHub debe devolver 3 FAQs para ${sl}`);
+  }
+  assert.equal(faqsGscParaHub(cat.hubsPorSlug.get('condolencias'), 50), null);
+  assert.equal(faqsGscParaHub(cat.hubsPorSlug.get('mas-de-10-anos-de-novios'), 50), null);
+  assert.equal(faqsGscParaHub(cat.hubsPorSlug.get('banderines-de-cumpleanos-para-imprimir'), 40), null);
+
+  // 7. Controles de retencion presentes en componentes y layout
+  const prhSrc = fs.readFileSync(path.resolve('src/components/PersonalizadorRapidoHub.astro'), 'utf8');
+  assert.ok(prhSrc.includes('id="prh-azar"'), 'PersonalizadorRapidoHub debe incluir boton Sorprendeme');
+  const baseSrc = fs.readFileSync(path.resolve('src/layouts/Base.astro'), 'utf8');
+  assert.ok(baseSrc.includes('id="pc-favoritas-dialog"'), 'Base.astro debe incluir modal de favoritas guardadas');
+  assert.ok(baseSrc.includes('class="pie-gsc-strip"'), 'Base.astro debe incluir franja de colecciones mas buscadas en footer');
+  const guiaSlugSrc = fs.readFileSync(path.resolve('src/pages/guias/[slug].astro'), 'utf8');
+  assert.ok(guiaSlugSrc.includes('class="guia-cta-rapida"'), 'guias/[slug].astro debe incluir CTA temprano al hub');
+});
+
 

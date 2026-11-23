@@ -19,6 +19,12 @@ import { ZODIACOS } from '../lib/horoscopo.ts';
 import { PAISES_HITOS, HITOS_MUNDIALES } from '../data/hitos-historicos.ts';
 import { rankearGuiasPorPopularidad, seleccionarPoolPopularMixto } from '../lib/popularidad.ts';
 import { ETIQUETAS_SEGMENTOS, type SegmentoTono } from '../lib/editorial.ts';
+import {
+  ACCESOS_RAPIDOS_PORTADA,
+  BLOQUES_PORTADA_GSC,
+  ordenarHubsPorDemandaGsc,
+  etiquetaCortaGsc
+} from '../lib/gsc-estrategia.ts';
 
 // Pool mixto de las publicaciones mas populares de TODAS las categorias del sitio
 const poolPopular = seleccionarPoolPopularMixto(catalogo, 32);
@@ -182,27 +188,28 @@ const jsonld = [
 
       <div class="portal-accesos-rapidos" aria-label="Accesos directos frecuentes">
         <span class="accesos-titulo">Más buscados hoy:</span>
-        <a href="/feliz-cumpleanos-amiga/">Amiga</a>
-        <span aria-hidden="true">·</span>
-        <a href="/feliz-cumpleanos-mama/">Mamá</a>
-        <span aria-hidden="true">·</span>
-        <a href="/mas-de-10-anos-de-novios/">+10 años novios 💞</a>
-        <span aria-hidden="true">·</span>
-        <a href="/banderines-de-cumpleanos-para-imprimir/">Banderines A4 🎏</a>
-        <span aria-hidden="true">·</span>
-        <a href="/frases-tristes-para-recordar-momentos/">Recuerdos y nostalgia 🌧️</a>
-        <span aria-hidden="true">·</span>
-        <a href="/condolencias/">Condolencias 🕊️</a>
-        <span aria-hidden="true">·</span>
-        <a href="/calendario/">Calendario 📅</a>
-        <span aria-hidden="true">·</span>
-        <a href="/hitos-historicos/">Hitos históricos 🌍</a>
+        {ACCESOS_RAPIDOS_PORTADA.map(function (acc, idx) {
+          return (
+            <>
+              {idx > 0 ? <span aria-hidden="true">·</span> : null}
+              <a href={acc.href}>{acc.label}</a>
+            </>
+          );
+        })}
       </div>
     </div>
 
     <div class="portal-hero-studio" aria-label="Vista previa del personalizador de tarjetas">
       <p class="studio-etiqueta">Estudio rápido · Probá personalizar acá mismo</p>
-      <div class="tarjeta-visual studio-card" id="portal-preview-card">
+      <div
+        class="tarjeta-visual studio-card"
+        id="portal-preview-card"
+        data-tema-inicio={temas[0].gradInicio}
+        data-tema-medio={temas[0].gradMedio}
+        data-tema-fin={temas[0].gradFin}
+        data-tema-borde={temas[0].borde}
+        data-tema-acento={temas[0].acento}
+      >
         <div class="tarjeta-visual-emoji" aria-hidden="true">🎂</div>
         <p class="tarjeta-visual-titulo" id="studio-titulo">Para alguien que hace la diferencia</p>
         <p class="tarjeta-visual-extracto" id="studio-cuerpo">
@@ -223,6 +230,9 @@ const jsonld = [
                 class={'pers-tema-btn' + (i === 0 ? ' activo' : '')}
                 data-studio-tema={t.id}
                 data-fondo={t.fondoCss}
+                data-inicio={t.gradInicio}
+                data-medio={t.gradMedio}
+                data-fin={t.gradFin}
                 data-borde={t.borde}
                 data-acento={t.acento}
               >
@@ -231,6 +241,27 @@ const jsonld = [
               </button>
             );
           })}
+        </div>
+        <div class="studio-acciones">
+          <button
+            type="button"
+            id="studio-btn-copiar"
+            class="btn btn-copiar btn-sm"
+            data-text="Que este nuevo año te traiga sobremesas tranquilas, salud firme y motivos reales para festejar cerca de los tuyos."
+          >
+            Copiar texto
+          </button>
+          <button
+            type="button"
+            id="studio-btn-png"
+            class="btn btn-descargar btn-sm"
+            data-title="Para alguien que hace la diferencia"
+            data-mostrar-titulo="1"
+            data-body="Que este nuevo año te traiga sobremesas tranquilas, salud firme y motivos reales para festejar cerca de los tuyos."
+            data-emoji="🎂"
+          >
+            Descargar PNG
+          </button>
         </div>
       </div>
     </div>
@@ -269,6 +300,41 @@ const jsonld = [
     </a>
   </section>
 
+  <section class="portal-banda portal-top-gsc" aria-labelledby="titulo-top-gsc">
+    <div class="banda-cabecera">
+      <div>
+        <p class="banda-kicker">Selección directa según lo que más buscan los lectores</p>
+        <h2 id="titulo-top-gsc">Lo más buscado ahora en cumpleaños</h2>
+      </div>
+      <a class="enlace-directorio" href="/categorias/">Ver todas las {hubs.length} colecciones →</a>
+    </div>
+    <div class="portal-top-gsc-grid">
+      {BLOQUES_PORTADA_GSC.map(function (bloque) {
+        return (
+          <article class="portal-gsc-col">
+            <h3><span aria-hidden="true">{bloque.emoji}</span> {bloque.titulo}</h3>
+            <p class="portal-gsc-sub">{bloque.subtitulo}</p>
+            <ul class="portal-gsc-links">
+              {bloque.slugs.map(function (sl) {
+                const h = catalogo.hubsPorSlug.get(sl);
+                if (!h) return null;
+                const cant = mensajesDe(sl).length;
+                return (
+                  <li>
+                    <a href={'/' + sl + '/'}>
+                      <span>{etiquetaCortaGsc(sl, h)}</span>
+                      <span class="portal-gsc-count">{cant}</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+
   <AlertaMotivacionDiaria />
 
   <section id="secciones-portal" class="portal-banda" aria-labelledby="titulo-secciones-portal">
@@ -284,7 +350,7 @@ const jsonld = [
       {GRUPOS.map(function (g) {
         const lista = hubsPorGrupo.get(g.id) || [];
         if (!lista.length) return null;
-        const destacadas = lista.slice(0, 6);
+        const destacadas = ordenarHubsPorDemandaGsc(lista).slice(0, 6);
         const totalMsgsGrupo = lista.reduce((acc, h) => acc + mensajesDe(h.slug).length, 0);
         return (
           <article class="portal-seccion-card">
@@ -506,14 +572,24 @@ const jsonld = [
       var studioCue = document.getElementById('studio-cuerpo');
       var studioMar = document.getElementById('studio-firma');
       var previewCard = document.getElementById('portal-preview-card');
+      var studioBtnCopiar = document.getElementById('studio-btn-copiar');
+      var studioBtnPng = document.getElementById('studio-btn-png');
       var baseCuerpo = 'Que este nuevo año te traiga sobremesas tranquilas, salud firme y motivos reales para festejar cerca de los tuyos.';
 
       function actualizarStudio() {
         var nom = (studioNom && studioNom.value || '').trim();
         var fir = (studioFir && studioFir.value || '').trim();
-        if (studioTit) studioTit.textContent = nom ? '¡Feliz cumpleaños, ' + nom + '!' : 'Para alguien que hace la diferencia';
-        if (studioCue) studioCue.textContent = nom ? nom + ', ' + baseCuerpo.charAt(0).toLowerCase() + baseCuerpo.slice(1) : baseCuerpo;
+        var titTxt = nom ? '¡Feliz cumpleaños, ' + nom + '!' : 'Para alguien que hace la diferencia';
+        var cueTxt = nom ? nom + ', ' + baseCuerpo.charAt(0).toLowerCase() + baseCuerpo.slice(1) : baseCuerpo;
+        var cuerpoCompleto = fir ? cueTxt + '\n\n— ' + fir : cueTxt;
+        if (studioTit) studioTit.textContent = titTxt;
+        if (studioCue) studioCue.textContent = cueTxt;
         if (studioMar) studioMar.textContent = fir ? '— ' + fir + ' · paracumpleanos.com' : 'paracumpleanos.com';
+        if (studioBtnCopiar) studioBtnCopiar.setAttribute('data-text', cuerpoCompleto);
+        if (studioBtnPng) {
+          studioBtnPng.setAttribute('data-title', titTxt);
+          studioBtnPng.setAttribute('data-body', cuerpoCompleto);
+        }
       }
       if (studioNom) studioNom.addEventListener('input', actualizarStudio);
       if (studioFir) studioFir.addEventListener('input', actualizarStudio);
@@ -525,6 +601,11 @@ const jsonld = [
           if (previewCard) {
             previewCard.style.background = btn.getAttribute('data-fondo');
             previewCard.style.borderColor = btn.getAttribute('data-borde');
+            previewCard.setAttribute('data-tema-inicio', btn.getAttribute('data-inicio') || '#fdf2f8');
+            previewCard.setAttribute('data-tema-medio', btn.getAttribute('data-medio') || '#fff7ed');
+            previewCard.setAttribute('data-tema-fin', btn.getAttribute('data-fin') || '#e0f2fe');
+            previewCard.setAttribute('data-tema-borde', btn.getAttribute('data-borde') || '#e91e8c');
+            previewCard.setAttribute('data-tema-acento', btn.getAttribute('data-acento') || '#be185d');
           }
           if (studioTit) studioTit.style.color = btn.getAttribute('data-acento');
         });

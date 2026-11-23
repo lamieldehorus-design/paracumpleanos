@@ -152,9 +152,21 @@ const OVERRIDES = {
     titulo: 'Dedicatorias para mamá en su cumpleaños: 50 textos',
     meta: '50 dedicatorias cálidas para mamá en tarjetas, flores o regalos de cumpleaños. Personalizá con su nombre y tu firma en vivo y compartí sin registrarte.'
   },
-  'mensajes-largos-para-mama': {
+  'feliz-cumpleanos-mama-texto-largo': {
     titulo: 'Feliz cumpleaños mamá texto largo: 50 cartas bellas',
     meta: 'Feliz cumpleaños mamá texto largo: 50 mensajes extensos y cartas llenas de agradecimiento para emocionarla en su día. Editá con su nombre y firma gratis.'
+  },
+  'cartas-para-mi-madre': {
+    titulo: 'Cartas de cumpleaños para mi madre: 50 dedicatorias',
+    meta: '50 cartas emotivas de cumpleaños para mi madre: textos profundos y sinceros para honrar su cuidado y amor. Personalizá con su nombre y descargá PNG.'
+  },
+  'poemas-para-mi-mama': {
+    titulo: 'Poemas de cumpleaños para mi mamá: 50 versos bellos',
+    meta: '50 poemas de cumpleaños para mi mamá escritos con ternura y ritmo real para tarjetas, flores o WhatsApp. Editá con su nombre y bajá postal PNG gratis.'
+  },
+  'felicitaciones-a-madre-fallecida': {
+    titulo: 'Mensajes de cumpleaños para mamá fallecida (50)',
+    meta: '50 mensajes serenos y respetuosos para recordar a una madre fallecida en su cumpleaños: palabras hasta el cielo con amor y gratitud para honrar su memoria.'
   },
   'feliz-cumpleanos-hermana': {
     titulo: 'Feliz cumpleaños hermana: 50 mensajes originales',
@@ -164,13 +176,17 @@ const OVERRIDES = {
     titulo: 'Frases cortas para una hermana en su cumpleaños',
     meta: '50 frases cortas y bonitas para felicitar a una hermana en su cumpleaños por WhatsApp, Instagram o tarjeta breve. Personalizá con su apodo al instante.'
   },
-  'carta-para-mi-hermana-que-la-haga-llorar': {
-    titulo: 'Carta para mi hermana que la haga llorar: 50 textos',
-    meta: '50 cartas para mi hermana en su cumpleaños que la hagan llorar de emoción: recuerdos compartidos y gratitud sincera listos para personalizar con su nombre.'
+  'carta-para-mi-hermana-mayor': {
+    titulo: 'Carta para mi hermana mayor en su cumpleaños (50)',
+    meta: '50 cartas largas y emotivas para mi hermana mayor en su cumpleaños: gratitud, admiración y recuerdos de infancia listos para editar con su nombre gratis.'
   },
   'carta-para-mi-hermana-menor-que-la-haga-llorar': {
     titulo: 'Carta para mi hermana menor que la haga llorar (50)',
     meta: '50 cartas para mi hermana menor en su cumpleaños que la hagan llorar de alegría: textos llenos de orgullo y complicidad para personalizar y enviar hoy.'
+  },
+  'feliz-cumpleanos-hermana-dios-te-bendiga': {
+    titulo: 'Feliz cumpleaños hermana, Dios te bendiga: 50 frases',
+    meta: 'Feliz cumpleaños hermana, Dios te bendiga: 50 frases cristianas llenas de fe, cariño y protección para dedicarle en su día por WhatsApp o tarjeta PNG.'
   },
   'frases-para-una-hermana-fallecida-en-su-cumpleanos': {
     titulo: 'Frases para una hermana fallecida en su cumpleaños',
@@ -459,6 +475,100 @@ const OVERRIDES = {
   'feliz-cumpleanos-retro-vintage-elegante': {
     titulo: 'Feliz cumpleaños retro vintage elegante: 50 ideas',
     meta: '50 dedicatorias de cumpleaños con estilo retro vintage y elegante: textos atemporales, sobrios y cálidos para tarjetas impresas, brindis o WhatsApp.'
+  },
+
+  // === PULIDO CTR FINAL PARA LOS 22 HUBS PRIORITARIOS GSC RESTANTES ===
+  'feliz-cumpleanos-cristiano': {
+    titulo: 'Feliz cumpleaños cristiano: 50 frases y bendiciones',
+    meta: 'Feliz cumpleaños cristiano: 50 frases, textos bíblicos y bendiciones de fe listos para copiar, personalizar con nombre y compartir por WhatsApp o tarjeta.'
+  },
+  'frases-para-esposo-que-esta-lejos': {
+    titulo: 'Frases para mi esposo que está lejos: 50 mensajes',
+    meta: '50 frases y mensajes de cumpleaños para mi esposo que está lejos: amor a la distancia, abrazos sinceros y palabras listas para personalizar con su nombre.'
+  },
+  'feliz-cumpleanos-para-un-hijo-de-1-ano': {
+    titulo: 'Feliz 1 año hijo: 50 frases y dedicatorias tiernas',
+    meta: 'Feliz 1 año hijo: 50 frases y palabras llenas de amor por su primer añito de vida, ideales para álbum de fotos, Instagram o WhatsApp. Editá con su nombre.'
+  },
+  'frases-para-un-hijo-de-5-anos': {
+    titulo: 'Frases para mi hijo de 5 años en su cumpleaños (50)',
+    meta: '50 frases y dedicatorias alegres para mi hijo de 5 años en su cumpleaños: textos tiernos para fotos, tarjetas o WhatsApp. Personalizá con su nombre gratis.'
+  },
+  'feliz-cumpleanos-para-hijo-de-12-anos': {
+    titulo: 'Feliz cumpleaños hijo de 12 años: 50 mensajes',
+    meta: '50 mensajes y dedicatorias para mi hijo de 12 años en su cumpleaños: orgullo, cariño y buenos deseos para su nueva etapa listos para personalizar y copiar.'
+  },
+  'carta-para-mi-hija': {
+    titulo: 'Carta de cumpleaños para mi hija: 50 textos emotivos',
+    meta: '50 cartas emotivas de cumpleaños para mi hija escritas desde el corazón: gratitud, orgullo y recuerdos para atesorar. Editá con su nombre y bajá PNG.'
+  },
+  'feliz-cumpleanos-de-mama-a-hijo': {
+    titulo: 'Feliz cumpleaños de mamá a hijo: 50 dedicatorias',
+    meta: '50 dedicatorias de cumpleaños de mamá a hijo llenas de orgullo, ternura y bendiciones maternas. Personalizá con su nombre en vivo y compartí por WhatsApp.'
+  },
+  'feliz-cumpleanos-abuelita-cartas-hermosas': {
+    titulo: 'Cartas hermosas de cumpleaños para mi abuelita (50)',
+    meta: '50 cartas hermosas de cumpleaños para mi abuelita llenas de ternura, recuerdos y gratitud de nietos. Editá con su nombre y descargá tarjeta PNG para imprimir.'
+  },
+  'feliz-cumpleanos-primo-hermano': {
+    titulo: 'Feliz cumpleaños primo hermano: 50 frases cómplices',
+    meta: '50 frases y mensajes de cumpleaños para un primo hermano que es casi un hermano de vida: risas, lealtad y cariño listos para editar con su nombre gratis.'
+  },
+  'feliz-cumpleanos-prima': {
+    titulo: 'Feliz cumpleaños prima: 50 mensajes y frases lindas',
+    meta: 'Feliz cumpleaños prima: 50 mensajes lindos, cómplices y cariñosos para WhatsApp, Instagram o tarjeta. Personalizá con su nombre y descargá postal PNG.'
+  },
+  'carta-para-mi-prima-en-su-cumpleanos-que-la-haga-llorar': {
+    titulo: 'Carta para mi prima que la haga llorar: 50 textos',
+    meta: '50 cartas para mi prima en su cumpleaños que la hagan llorar de alegría: recuerdos de infancia y cariño verdadero listos para editar con su nombre gratis.'
+  },
+  'feliz-cumpleanos-para-una-sobrina': {
+    titulo: 'Feliz cumpleaños sobrina: 50 frases llenas de amor',
+    meta: 'Feliz cumpleaños sobrina: 50 frases tiernas, alegres y llenas de orgullo de tíos para dedicarle en su día. Personalizá con su nombre y bajá tarjeta PNG.'
+  },
+  'feliz-cumpleanos-para-un-sobrino': {
+    titulo: 'Feliz cumpleaños sobrino: 50 mensajes originales',
+    meta: 'Feliz cumpleaños sobrino: 50 mensajes originales, divertidos y cariñosos de tíos para WhatsApp o tarjeta de regalo. Editá con su nombre en un clic gratis.'
+  },
+  'feliz-cumpleanos-para-un-cunado': {
+    titulo: 'Feliz cumpleaños cuñado: 50 saludos cordiales',
+    meta: 'Feliz cumpleaños cuñado: 50 saludos cercanos, respetuosos y con buena onda para compartir en familia o por WhatsApp. Sumá su nombre y copiá al instante.'
+  },
+  'carta-para-una-amiga-que-la-haga-llorar': {
+    titulo: 'Carta para una amiga que la haga llorar: 50 textos',
+    meta: '50 cartas largas de cumpleaños para una amiga que la hagan llorar de emoción: gratitud, risas y amistad real listas para personalizar con su apodo gratis.'
+  },
+  'feliz-cumpleanos-doctor': {
+    titulo: 'Feliz cumpleaños doctor: 50 saludos de gratitud',
+    meta: 'Feliz cumpleaños doctor: 50 mensajes respetuosos y cálidos para felicitar a un médico colega, amigo o familiar por su vocación y su nuevo año de vida.'
+  },
+  'feliz-cumpleanos-jefe': {
+    titulo: 'Feliz cumpleaños jefe: 50 saludos profesionales',
+    meta: 'Feliz cumpleaños jefe: 50 saludos cordiales, elegantes y profesionales para correo, Slack o tarjeta de equipo. Personalizá con su nombre y firma en vivo.'
+  },
+  'feliz-cumpleanos-maestra': {
+    titulo: 'Feliz cumpleaños maestra: 50 frases de gratitud',
+    meta: 'Feliz cumpleaños maestra: 50 frases cálidas y agradecidas de alumnos o familias para celebrar su vocación docente. Editá con su nombre y bajá tarjeta PNG.'
+  },
+  'feliz-cumpleanos-nino': {
+    titulo: 'Feliz cumpleaños niño: 50 saludos alegres y tiernos',
+    meta: 'Feliz cumpleaños niño: 50 saludos llenos de alegría, aventuras y cariño para tarjetas de regalo, fiestas o WhatsApp familiar. Editá con su nombre gratis.'
+  },
+  'feliz-cumpleanos-50-anos': {
+    titulo: 'Feliz cumpleaños 50 años: 50 mensajes memorables',
+    meta: 'Feliz cumpleaños 50 años: 50 mensajes memorables, emotivos y con humor elegante para celebrar medio siglo de vida. Personalizá con su nombre y bajá PNG.'
+  },
+  'feliz-cumpleanos-a-distancia': {
+    titulo: 'Feliz cumpleaños a la distancia: 50 abrazos lejos',
+    meta: 'Feliz cumpleaños a la distancia: 50 mensajes cálidos para acortar kilómetros y hacer sentir cerca tu abrazo por WhatsApp o tarjeta PNG personalizada.'
+  },
+  'feliz-cumpleanos-gracioso': {
+    titulo: 'Feliz cumpleaños gracioso: 50 frases para reír',
+    meta: 'Feliz cumpleaños gracioso: 50 frases ocurrentes y chistosas sin ofender, ideales para amigos, hermanos o grupos de WhatsApp. Editá con su nombre y copiá.'
+  },
+  'feliz-aniversario-mi-amor': {
+    titulo: 'Feliz aniversario mi amor: 50 frases románticas',
+    meta: 'Feliz aniversario mi amor: 50 frases románticas y cartas sinceras para celebrar su historia juntos en WhatsApp o tarjeta PNG descargable con sus nombres.'
   }
 };
 

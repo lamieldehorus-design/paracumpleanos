@@ -1,5 +1,6 @@
 import { GUIAS_EDITORIALES, guiaPorSlug, type GuiaEditorial } from '../data/guias.ts';
 import { nombreHub } from './catalogo.ts';
+import { faqsGscParaHub } from './gsc-estrategia.ts';
 
 export type ClaseTono =
   | 'corto'
@@ -1410,13 +1411,15 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
       break;
   }
 
+  const faqsFinales = faqsGscParaHub(hub, mensajes.length) || faqs;
+
   return {
     perfil,
     tabla,
     subtituloClaves,
     claves,
     citaClave,
-    faqs,
+    faqs: faqsFinales,
     guia: guiaRelacionadaParaHub(hub)
   };
 }

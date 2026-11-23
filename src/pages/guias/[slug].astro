@@ -157,6 +157,25 @@ const indiceItems = [
       <p>{guia.respuestaDirecta}</p>
     </section>
 
+    {guia.categoriasRelacionadas && guia.categoriasRelacionadas.length ? (
+      <aside class="guia-cta-rapida" aria-label="Acceso directo a dedicatorias listas">
+        <div class="guia-cta-rapida-texto">
+          <p class="guia-cta-eyebrow">¿Necesitás el texto listo ahora mismo?</p>
+          <p class="guia-cta-desc">Pasá directo a las colecciones con 50 dedicatorias personalizables para copiar o bajar en tarjeta PNG:</p>
+        </div>
+        <div class="guia-cta-rapida-acciones">
+          <a class="btn btn-copiar" href={`/${guia.categoriasRelacionadas[0].slug}/`}>
+            {guia.categoriasRelacionadas[0].nombre} →
+          </a>
+          {guia.categoriasRelacionadas[1] ? (
+            <a class="btn-leer-mas" href={`/${guia.categoriasRelacionadas[1].slug}/`}>
+              {guia.categoriasRelacionadas[1].nombre} →
+            </a>
+          ) : null}
+        </div>
+      </aside>
+    ) : null}
+
     <nav class="indice-guia" aria-label="Índice de la guía">
       <p class="indice-titulo">Índice de contenidos</p>
       <ol class="indice-lista">

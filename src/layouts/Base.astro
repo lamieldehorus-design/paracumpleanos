@@ -3,6 +3,7 @@ import '../styles/global.css';
 import { GRUPOS, hubs, hubsPorGrupo, nombreHub, todosMensajes } from '../lib/contenido.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { PAISES_HITOS } from '../data/hitos-historicos.ts';
+import { TOP_FOOTER_GSC } from '../lib/gsc-estrategia.ts';
 interface Props {
   titulo: string;
   descripcion: string;
@@ -227,6 +228,14 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       </a>
     </div>
     <p>ParaCumpleanos — {hubs.length} colecciones, {PAISES_HITOS.length} hitos históricos mundiales, {GUIAS_EDITORIALES.length} guías prácticas y {todosMensajes.length.toLocaleString('es-AR')} textos originales en español.</p>
+    <div class="pie-gsc-strip" aria-label="Colecciones más buscadas">
+      <p class="pie-gsc-titulo">Colecciones más buscadas:</p>
+      <div class="pie-gsc-links">
+        {TOP_FOOTER_GSC.map(function (item) {
+          return <a href={'/' + item.slug + '/'}>{item.label}</a>;
+        })}
+      </div>
+    </div>
     <nav aria-label="Páginas institucionales">
       <a href="/">Inicio</a>
       <a href="/calendario/">Calendario sin año</a>
@@ -245,6 +254,33 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       <a href="/terminos-de-uso/">Términos de uso</a>
     </nav>
   </footer>
+
+  <button
+    type="button"
+    id="pc-favoritas-barra"
+    class="pc-favoritas-barra"
+    aria-label="Abrir dedicatorias guardadas"
+    hidden
+  >
+    <span aria-hidden="true">♥</span>
+    <span>Guardadas</span>
+    <span id="pc-favoritas-count" class="pc-favoritas-count">0</span>
+  </button>
+
+  <dialog id="pc-favoritas-dialog" class="pc-favoritas-dialog" aria-labelledby="pc-fav-titulo">
+    <div class="pc-fav-head">
+      <div>
+        <h2 id="pc-fav-titulo">Tus dedicatorias guardadas</h2>
+        <p class="pc-fav-sub">Quedan guardadas en este navegador para comparar, copiar o bajar como tarjeta PNG.</p>
+      </div>
+      <button type="button" id="pc-fav-cerrar" class="pc-fav-cerrar" aria-label="Cerrar guardadas">×</button>
+    </div>
+    <div id="pc-fav-lista" class="pc-fav-lista"></div>
+    <div class="pc-fav-pie">
+      <button type="button" id="pc-fav-vaciar" class="btn-leer-mas">Vaciar lista</button>
+      <button type="button" id="pc-fav-listo" class="btn btn-copiar">Seguir explorando</button>
+    </div>
+  </dialog>
 
   <div id="pc-toast" class="pc-toast" role="status" aria-live="polite" hidden></div>
 
@@ -532,6 +568,20 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           return;
         }
 
+        var favBtn = e.target.closest ? e.target.closest('.btn-favorita') : null;
+        if (favBtn) {
+          var fSlug = favBtn.getAttribute('data-fav-slug') || detectarSlugDesdeNodo(favBtn);
+          var fTitulo = favBtn.getAttribute('data-fav-titulo') || '';
+          var fEmoji = favBtn.getAttribute('data-fav-emoji') || '🎂';
+          var fCard = favBtn.closest ? favBtn.closest('article.card') : null;
+          var fCopyBtn = fCard ? fCard.querySelector('.btn-copiar') : null;
+          var fTexto = (fCopyBtn && fCopyBtn.getAttribute('data-text')) || (fCard && fCard.getAttribute('data-orig-texto')) || '';
+          if (fSlug && window.__pcToggleFavorita) {
+            window.__pcToggleFavorita({ slug: fSlug, titulo: fTitulo, emoji: fEmoji, texto: fTexto });
+          }
+          return;
+        }
+
         var wa = e.target.closest ? e.target.closest('.btn-wa') : null;
         if (wa) {
           var slugWa = detectarSlugDesdeNodo(wa);
@@ -716,6 +766,178 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           }
         });
       }
+
+      // Favoritas guardadas en localStorage entre colecciones
+      (function () {
+        var FAV_KEY = 'pc_favoritas_v1';
+        var barra = document.getElementById('pc-favoritas-barra');
+        var countEl = document.getElementById('pc-favoritas-count');
+        var dialog = document.getElementById('pc-favoritas-dialog');
+        var listaEl = document.getElementById('pc-fav-lista');
+        var btnCerrar = document.getElementById('pc-fav-cerrar');
+        var btnListo = document.getElementById('pc-fav-listo');
+        var btnVaciar = document.getElementById('pc-fav-vaciar');
+
+        function leerFavs() {
+          try {
+            var arr = JSON.parse(localStorage.getItem(FAV_KEY) || '[]');
+            return Array.isArray(arr) ? arr : [];
+          } catch (_) {
+            return [];
+          }
+        }
+
+        function guardarFavs(arr) {
+          try {
+            localStorage.setItem(FAV_KEY, JSON.stringify(arr.slice(0, 40)));
+          } catch (_) {}
+        }
+
+        function sincronizarBotones() {
+          var favs = leerFavs();
+          var setSlugs = {};
+          for (var i = 0; i < favs.length; i++) setSlugs[favs[i].slug] = true;
+          document.querySelectorAll('.btn-favorita').forEach(function (b) {
+            var sl = b.getAttribute('data-fav-slug') || '';
+            var activa = Boolean(sl && setSlugs[sl]);
+            b.setAttribute('aria-pressed', activa ? 'true' : 'false');
+            b.textContent = activa ? '♥ Guardada' : '♡ Guardar';
+          });
+          if (countEl) countEl.textContent = String(favs.length);
+          if (barra) barra.hidden = favs.length === 0;
+        }
+
+        function renderDialog() {
+          if (!listaEl) return;
+          var favs = leerFavs();
+          listaEl.innerHTML = '';
+          if (!favs.length) {
+            var pVacio = document.createElement('p');
+            pVacio.className = 'pc-fav-vacio';
+            pVacio.textContent = 'Todavía no guardaste dedicatorias. Tocá «♡ Guardar» en cualquier tarjeta para tenerla a mano.';
+            listaEl.appendChild(pVacio);
+            return;
+          }
+          favs.forEach(function (item) {
+            var art = document.createElement('article');
+            art.className = 'pc-fav-item';
+
+            var head = document.createElement('div');
+            head.className = 'pc-fav-item-head';
+            var titLink = document.createElement('a');
+            titLink.href = '/' + item.slug + '/';
+            titLink.className = 'pc-fav-item-titulo';
+            titLink.textContent = (item.emoji ? item.emoji + ' ' : '') + (item.titulo || item.slug);
+            head.appendChild(titLink);
+
+            var btnQuitar = document.createElement('button');
+            btnQuitar.type = 'button';
+            btnQuitar.className = 'pc-fav-quitar';
+            btnQuitar.setAttribute('aria-label', 'Quitar "' + (item.titulo || item.slug) + '" de guardadas');
+            btnQuitar.textContent = 'Quitar';
+            btnQuitar.addEventListener('click', function () {
+              var next = leerFavs().filter(function (f) { return f.slug !== item.slug; });
+              guardarFavs(next);
+              sincronizarBotones();
+              renderDialog();
+            });
+            head.appendChild(btnQuitar);
+            art.appendChild(head);
+
+            if (item.texto) {
+              var pTxt = document.createElement('p');
+              pTxt.className = 'pc-fav-item-texto';
+              pTxt.textContent = item.texto.length > 240 ? item.texto.slice(0, 237).trim() + '…' : item.texto;
+              art.appendChild(pTxt);
+            }
+
+            var acc = document.createElement('div');
+            acc.className = 'pc-fav-item-acciones';
+
+            if (item.texto) {
+              var bCop = document.createElement('button');
+              bCop.type = 'button';
+              bCop.className = 'btn btn-copiar btn-sm';
+              bCop.setAttribute('data-text', item.texto);
+              bCop.textContent = 'Copiar';
+              acc.appendChild(bCop);
+
+              var aWa = document.createElement('a');
+              aWa.className = 'btn btn-wa btn-sm';
+              aWa.target = '_blank';
+              aWa.rel = 'noopener noreferrer';
+              aWa.href = 'https://wa.me/?text=' + encodeURIComponent(item.texto);
+              aWa.textContent = 'WhatsApp';
+              acc.appendChild(aWa);
+            }
+
+            var aCard = document.createElement('a');
+            aCard.className = 'card-cta-tarjeta';
+            aCard.href = '/' + item.slug + '/';
+            aCard.textContent = 'Tarjeta PNG / Story →';
+            acc.appendChild(aCard);
+
+            art.appendChild(acc);
+            listaEl.appendChild(art);
+          });
+        }
+
+        window.__pcSincronizarFavoritas = sincronizarBotones;
+        window.__pcToggleFavorita = function (item) {
+          var favs = leerFavs();
+          var idx = favs.findIndex(function (f) { return f.slug === item.slug; });
+          if (idx !== -1) {
+            favs.splice(idx, 1);
+            guardarFavs(favs);
+            sincronizarBotones();
+            if (window.pcMostrarToast) window.pcMostrarToast('Quitada de tus guardadas.');
+          } else {
+            favs.unshift({
+              slug: item.slug,
+              titulo: item.titulo,
+              emoji: item.emoji,
+              texto: item.texto
+            });
+            guardarFavs(favs);
+            sincronizarBotones();
+            if (item.slug && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(item.slug, 2);
+            if (window.pcMostrarToast) window.pcMostrarToast('♥ Guardada en tu lista (' + favs.length + ').');
+          }
+          if (dialog && dialog.open) renderDialog();
+        };
+
+        if (barra && dialog) {
+          barra.addEventListener('click', function () {
+            renderDialog();
+            if (typeof dialog.showModal === 'function') {
+              dialog.showModal();
+            } else {
+              dialog.setAttribute('open', 'open');
+            }
+          });
+        }
+        function cerrarDialog() {
+          if (!dialog) return;
+          if (typeof dialog.close === 'function' && dialog.open) dialog.close();
+          else dialog.removeAttribute('open');
+        }
+        if (btnCerrar) btnCerrar.addEventListener('click', cerrarDialog);
+        if (btnListo) btnListo.addEventListener('click', cerrarDialog);
+        if (btnVaciar) {
+          btnVaciar.addEventListener('click', function () {
+            guardarFavs([]);
+            sincronizarBotones();
+            renderDialog();
+          });
+        }
+        if (dialog) {
+          dialog.addEventListener('click', function (ev) {
+            if (ev.target === dialog) cerrarDialog();
+          });
+        }
+
+        sincronizarBotones();
+      })();
     })();
   </script>
 </body>

@@ -38,6 +38,11 @@ const { totalMensajes, esDuelo = false } = Astro.props;
       />
     </div>
     <div class="prh-acciones">
+      {!esDuelo ? (
+        <button type="button" id="prh-azar" class="prh-azar" title="Elegir una dedicatoria al azar de esta página">
+          🎲 Sorprendeme
+        </button>
+      ) : null}
       <button type="button" id="prh-limpiar" class="prh-limpiar" hidden>Limpiar</button>
     </div>
   </div>
@@ -209,6 +214,37 @@ const { totalMensajes, esDuelo = false } = Astro.props;
         inputNombre.value = '';
         inputFirma.value = '';
         aplicarRapido(true);
+      });
+    }
+
+    var btnAzar = document.getElementById('prh-azar');
+    var ultimoAzarSlug = '';
+    if (btnAzar) {
+      btnAzar.addEventListener('click', function () {
+        var cards = Array.prototype.slice.call(document.querySelectorAll('#grilla-mensajes article.card[data-card-personalizable]'));
+        if (!cards.length) return;
+        var pool = cards.length > 1
+          ? cards.filter(function (c) { return c.getAttribute('data-slug') !== ultimoAzarSlug; })
+          : cards;
+        var elegida = pool[Math.floor(Math.random() * pool.length)] || cards[0];
+        ultimoAzarSlug = elegida.getAttribute('data-slug') || '';
+
+        cards.forEach(function (c) { c.classList.remove('card-destacada-azar'); });
+        elegida.classList.add('card-destacada-azar');
+
+        var btnExp = elegida.querySelector('.btn-leer-mas');
+        if (btnExp && btnExp.getAttribute('aria-expanded') !== 'true') {
+          btnExp.click();
+        }
+        try {
+          elegida.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (_) {}
+
+        if (estadoEl) {
+          var titAzar = elegida.getAttribute('data-orig-titulo') || 'Dedicatoria elegida';
+          estadoEl.textContent = '🎲 Sugerencia al azar: «' + titAzar + '». Tocá de nuevo si querés ver otra opción.';
+          estadoEl.hidden = false;
+        }
       });
     }
 
