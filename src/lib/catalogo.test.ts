@@ -67,10 +67,14 @@ import {
 } from './consentimiento';
 import {
   REDES_COMPARTIR,
+  ARCHIVO_COMPARTIDOS_PUBLICO,
   crearEstadoCompartidosVacio,
   normalizarEstadoCompartidos,
   registrarCompartidoEnEstado,
+  fusionarEstadosCompartidos,
   rankearMasCompartidos,
+  filtrarHistorialCompartidos,
+  formatearFechaHistorial,
   resumirRedesItem,
   formatearRespaldoFavoritas
 } from './compartidos';
@@ -1358,18 +1362,24 @@ test('AdSense, Google Tag Manager, Google Consent Mode v2, CMP RGPD Europa y cor
   assert.ok(robotsSrc.includes('Mediapartners-Google'), 'robots.txt debe permitir explicitamente Mediapartners-Google');
 });
 
-test('contador de lo mas compartido separado por red (WhatsApp, Instagram, Facebook, Copiar), respaldo y aviso de cookies/navegador', () => {
-  // 1. Logica pura de compartidos separados por red
+test('contador publico de lo mas compartido por red, archivo JSON visible, historial por cada compartido y aviso de cookies/navegador', () => {
+  // 1. Logica pura de compartidos separados por red + historial cronologico
   assert.deepEqual([...REDES_COMPARTIR], ['whatsapp', 'instagram', 'facebook', 'copiar']);
+  assert.equal(ARCHIVO_COMPARTIDOS_PUBLICO, '/compartidos-historial.json');
   let est = crearEstadoCompartidosVacio();
-  est = registrarCompartidoEnEstado(est, 'whatsapp', { slug: 'msg-a', titulo: 'Mensaje A', url: '/msg-a/' }, '2026-11-23T10:00:00Z');
-  est = registrarCompartidoEnEstado(est, 'whatsapp', { slug: 'msg-a', titulo: 'Mensaje A', url: '/msg-a/' }, '2026-11-23T10:01:00Z');
-  est = registrarCompartidoEnEstado(est, 'instagram', { slug: 'msg-b', titulo: 'Mensaje B', url: '/msg-b/' }, '2026-11-23T10:02:00Z');
-  est = registrarCompartidoEnEstado(est, 'facebook', { slug: 'msg-b', titulo: 'Mensaje B', url: '/msg-b/' }, '2026-11-23T10:03:00Z');
-  est = registrarCompartidoEnEstado(est, 'copiar', { slug: 'msg-b', titulo: 'Mensaje B', url: '/msg-b/' }, '2026-11-23T10:04:00Z');
+  est = registrarCompartidoEnEstado(est, 'whatsapp', { slug: 'msg-a', titulo: 'Mensaje A', url: '/msg-a/', pagina: '/' }, '2026-11-23T10:00:00Z', 'ev-1');
+  est = registrarCompartidoEnEstado(est, 'whatsapp', { slug: 'msg-a', titulo: 'Mensaje A', url: '/msg-a/', pagina: '/' }, '2026-11-23T10:01:00Z', 'ev-2');
+  est = registrarCompartidoEnEstado(est, 'instagram', { slug: 'msg-b', titulo: 'Mensaje B', url: '/msg-b/', pagina: '/' }, '2026-11-23T10:02:00Z', 'ev-3');
+  est = registrarCompartidoEnEstado(est, 'facebook', { slug: 'msg-b', titulo: 'Mensaje B', url: '/msg-b/', pagina: '/' }, '2026-11-23T10:03:00Z', 'ev-4');
+  est = registrarCompartidoEnEstado(est, 'copiar', { slug: 'msg-b', titulo: 'Mensaje B', url: '/msg-b/', pagina: '/' }, '2026-11-23T10:04:00Z', 'ev-5');
+  // Duplicado con mismo id no debe volver a sumar
+  est = registrarCompartidoEnEstado(est, 'copiar', { slug: 'msg-b', titulo: 'Mensaje B', url: '/msg-b/', pagina: '/' }, '2026-11-23T10:04:00Z', 'ev-5');
 
   assert.equal(est.totalGlobal, 5);
   assert.deepEqual(est.totales, { whatsapp: 2, instagram: 1, facebook: 1, copiar: 1 });
+  assert.equal(est.historial.length, 5, 'Cada compartido debe crear un registro en historial');
+  assert.equal(est.historial[0].id, 'ev-5', 'El historial debe quedar ordenado del mas reciente al mas antiguo');
+  assert.equal(est.historial[0].red, 'copiar');
   assert.equal(resumirRedesItem(est.items['msg-b'].redes), 'Instagram 1 · Facebook 1 · Copiar 1');
 
   const topTodas = rankearMasCompartidos(est, 'todas', 5);
@@ -1380,9 +1390,30 @@ test('contador de lo mas compartido separado por red (WhatsApp, Instagram, Faceb
   assert.equal(topWa.length, 1);
   assert.equal(topWa[0].slug, 'msg-a');
 
-  const topFb = rankearMasCompartidos(est, 'facebook', 5);
-  assert.equal(topFb.length, 1);
-  assert.equal(topFb[0].slug, 'msg-b');
+  const histWa = filtrarHistorialCompartidos(est, 'whatsapp', 10);
+  assert.equal(histWa.length, 2);
+  assert.ok(histWa.every((h) => h.red === 'whatsapp'));
+  assert.ok(/^\d{2}\/\d{2}\/\d{4} · \d{2}:\d{2}$/.test(formatearFechaHistorial('2026-11-23T10:04:00Z')));
+
+  // Fusion sin duplicados entre archivo publico y eventos locales pendientes
+  let localExtra = registrarCompartidoEnEstado(
+    crearEstadoCompartidosVacio(),
+    'copiar',
+    { slug: 'msg-b', titulo: 'Mensaje B', url: '/msg-b/' },
+    '2026-11-23T10:04:00Z',
+    'ev-5'
+  );
+  localExtra = registrarCompartidoEnEstado(
+    localExtra,
+    'instagram',
+    { slug: 'msg-c', titulo: 'Mensaje C', url: '/msg-c/' },
+    '2026-11-23T10:09:00Z',
+    'ev-6'
+  );
+  const fusion = fusionarEstadosCompartidos(est, localExtra);
+  assert.equal(fusion.totalGlobal, 6, 'Fusion debe sumar solo ev-6 y no duplicar ev-5');
+  assert.equal(fusion.historial.length, 6);
+  assert.equal(fusion.historial[0].id, 'ev-6');
 
   // Normalizacion resiliente frente a JSON roto o valores negativos
   const norm = normalizarEstadoCompartidos({
@@ -1401,9 +1432,21 @@ test('contador de lo mas compartido separado por red (WhatsApp, Instagram, Faceb
   ]);
   assert.ok(respaldo.includes('1. Mensaje A') && respaldo.includes('https://paracumpleanos.com/msg-a/'));
 
-  // 2. Presencia en Base.astro, Compartir.astro, index.astro y privacidad.astro
+  // 2. Archivo publico real en public/compartidos-historial.json + API middleware en astro.config.mjs
+  const archivoPubPath = path.resolve('public/compartidos-historial.json');
+  assert.ok(fs.existsSync(archivoPubPath), 'Debe existir el archivo publico public/compartidos-historial.json');
+  const archivoJson = JSON.parse(fs.readFileSync(archivoPubPath, 'utf8'));
+  assert.ok(archivoJson && typeof archivoJson.totales === 'object' && Array.isArray(archivoJson.historial), 'public/compartidos-historial.json debe tener estructura valida con totales e historial');
+
+  const astroCfg = fs.readFileSync(path.resolve('astro.config.mjs'), 'utf8');
+  assert.ok(astroCfg.includes('/api/compartidos') && astroCfg.includes('compartidos-historial.json'), 'astro.config.mjs debe exponer /api/compartidos respaldado en public/compartidos-historial.json');
+
+  // 3. Presencia en Base.astro, Compartir.astro, index.astro y privacidad.astro
   const baseSrc = fs.readFileSync(path.resolve('src/layouts/Base.astro'), 'utf8');
-  assert.ok(baseSrc.includes('pc_compartidos_v1'), 'Base.astro debe persistir pc_compartidos_v1');
+  assert.ok(baseSrc.includes('pc_compartidos_v1'), 'Base.astro debe persistir respaldo local pc_compartidos_v1');
+  assert.ok(baseSrc.includes('/compartidos-historial.json'), 'Base.astro debe cargar y enlazar /compartidos-historial.json');
+  assert.ok(baseSrc.includes('/api/compartidos'), 'Base.astro debe sincronizar compartidos con /api/compartidos');
+  assert.ok(baseSrc.includes('id="pc-modal-comp-historial"'), 'El modal debe incluir el historial reciente de cada compartido');
   assert.ok(baseSrc.includes("window.gtag('event', 'share'"), 'Base.astro debe enviar evento GA4 share con method por red');
   assert.ok(baseSrc.includes("pcRegistrarCompartido('facebook'"), 'Base.astro debe contabilizar Facebook');
   assert.ok(baseSrc.includes("pcRegistrarCompartido('instagram'"), 'Base.astro debe contabilizar Instagram');
@@ -1417,11 +1460,14 @@ test('contador de lo mas compartido separado por red (WhatsApp, Instagram, Faceb
 
   const indexSrc = fs.readFileSync(path.resolve('src/pages/index.astro'), 'utf8');
   assert.ok(indexSrc.includes('id="lo-mas-compartido"'), 'La portada debe incluir el panel Lo mas compartido por red');
-  assert.ok(indexSrc.includes('Si borrás cookies o datos del sitio'), 'La portada debe incluir aviso claro sobre borrado de cookies/navegador');
+  assert.ok(indexSrc.includes('id="pc-home-comp-historial"'), 'La portada debe incluir el historial cronologico de cada compartido');
+  assert.ok(indexSrc.includes('/compartidos-historial.json'), 'La portada debe enlazar el archivo publico /compartidos-historial.json');
+  assert.ok(/si borrás cookies o datos del sitio/i.test(indexSrc), 'La portada debe incluir aviso claro sobre borrado de cookies/navegador');
 
   const privSrc = fs.readFileSync(path.resolve('src/pages/privacidad.astro'), 'utf8');
-  assert.ok(privSrc.includes('lo más compartido por red') && privSrc.includes('si borrás cookies o datos del sitio'), 'privacidad.astro debe avisar sobre borrado de guardados y estadisticas locales');
+  assert.ok(privSrc.includes('/compartidos-historial.json') && privSrc.includes('si borrás cookies o datos del sitio'), 'privacidad.astro debe documentar el archivo publico anonimo y el aviso de cookies/navegador');
 });
+
 
 
 

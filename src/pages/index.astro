@@ -490,12 +490,13 @@ const jsonld = [
   <section class="portal-banda portal-compartidos" id="lo-mas-compartido" aria-labelledby="titulo-mas-compartido">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Estadísticas en tiempo real separadas por canal</p>
-        <h2 id="titulo-mas-compartido">Lo más compartido por red</h2>
+        <p class="banda-kicker">Archivo público visible para todos · Separado por canal e historial</p>
+        <h2 id="titulo-mas-compartido">Lo más compartido por red e historial</h2>
       </div>
       <div class="comp-cabecera-acciones">
         <span class="comp-total-badge" id="pc-home-comp-total">0 compartidos registrados</span>
-        <button type="button" class="btn-leer-mas" id="pc-home-comp-reset" hidden>Reiniciar contador</button>
+        <a class="btn-leer-mas comp-archivo-link" href="/compartidos-historial.json" target="_blank" rel="noopener">Ver archivo (.json)</a>
+        <button type="button" class="btn-leer-mas" id="pc-home-comp-descargar">Descargar historial</button>
       </div>
     </div>
 
@@ -526,7 +527,7 @@ const jsonld = [
       </div>
     </div>
 
-    <div class="filtros-tono comp-filtros" role="toolbar" aria-label="Filtrar lo más compartido por red">
+    <div class="filtros-tono comp-filtros" role="toolbar" aria-label="Filtrar lo más compartido y su historial por red">
       <button type="button" class="filtro-btn activo" data-comp-filtro="todas" aria-pressed="true">Todas las redes</button>
       <button type="button" class="filtro-btn" data-comp-filtro="whatsapp" aria-pressed="false">WhatsApp</button>
       <button type="button" class="filtro-btn" data-comp-filtro="instagram" aria-pressed="false">Instagram</button>
@@ -534,14 +535,34 @@ const jsonld = [
       <button type="button" class="filtro-btn" data-comp-filtro="copiar" aria-pressed="false">Copiar</button>
     </div>
 
-    <div id="pc-home-comp-lista" class="comp-lista" aria-live="polite">
-      <p class="comp-vacio">
-        Todavía no registraste compartidos en este navegador. Tocá <strong>WhatsApp</strong>, <strong>Instagram</strong>, <strong>Facebook</strong> o <strong>Copiar</strong> en cualquier dedicatoria para ver aquí el ranking separado por red.
-      </p>
+    <div class="comp-paneles-grid">
+      <div class="comp-panel-bloque">
+        <div class="comp-subhead">
+          <h3>Ranking más compartido</h3>
+          <span class="comp-submeta" id="pc-home-rank-count">0 publicaciones</span>
+        </div>
+        <div id="pc-home-comp-lista" class="comp-lista" aria-live="polite">
+          <p class="comp-vacio">
+            Todavía no hay compartidos registrados. Tocá <strong>WhatsApp</strong>, <strong>Instagram</strong>, <strong>Facebook</strong> o <strong>Copiar</strong> en cualquier dedicatoria para sumar al ranking público.
+          </p>
+        </div>
+      </div>
+
+      <div class="comp-panel-bloque">
+        <div class="comp-subhead">
+          <h3>Historial de cada compartido</h3>
+          <span class="comp-submeta" id="pc-home-hist-count">0 eventos</span>
+        </div>
+        <ol id="pc-home-comp-historial" class="comp-historial-lista" aria-live="polite">
+          <li class="comp-vacio">
+            Cada vez que un visitante comparte o copia una dedicatoria, queda registrado aquí con fecha, hora y red elegida.
+          </li>
+        </ol>
+      </div>
     </div>
 
     <p class="pc-aviso-local" role="note">
-      <strong>Aviso importante:</strong> tus dedicatorias guardadas y este contador se almacenan solo en este navegador (sin registro ni cuenta). Si borrás cookies o datos del sitio, limpiás el navegador o navegás en modo incógnito, esos datos se borrarán. Podés copiar un respaldo desde <button type="button" class="pie-link-btn" data-abrir-guardadas>Tus guardadas</button>.
+      <strong>Archivo público y guardadas:</strong> las estadísticas e historial de compartidos son anónimos (sin datos personales) y se consultan en el archivo público <a href="/compartidos-historial.json" target="_blank" rel="noopener"><code>/compartidos-historial.json</code></a>. En cambio, tus <strong>dedicatorias guardadas</strong> viven solo en tu navegador: si borrás cookies o datos del sitio se borrarán (podés copiar un respaldo desde <button type="button" class="pie-link-btn" data-abrir-guardadas>Tus guardadas</button>).
     </p>
   </section>
 

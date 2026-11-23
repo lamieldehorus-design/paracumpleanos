@@ -345,7 +345,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       </button>
     </div>
     <div class="pc-aviso-local pc-aviso-local--modal" role="note">
-      <strong>Aviso importante:</strong> tus guardadas y estadísticas se almacenan solo en este navegador. Si borrás cookies o datos del sitio, limpiás el navegador o usás modo incógnito, se perderán. Usá <em>Copiar respaldo</em> si querés guardarlas aparte.
+      <strong>Aviso importante:</strong> tus dedicatorias guardadas se almacenan solo en este navegador. Si borrás cookies o datos del sitio, limpiás el navegador o usás modo incógnito, tus guardadas se perderán (usá <em>Copiar respaldo</em>). Las estadísticas e historial de compartidos son públicos para todo visitante en <a href="/compartidos-historial.json" target="_blank" rel="noopener"><code>/compartidos-historial.json</code></a>.
     </div>
     <div id="pc-panel-favs" class="pc-fav-panel" role="tabpanel" aria-labelledby="pc-tab-favs">
       <div id="pc-fav-lista" class="pc-fav-lista"></div>
@@ -353,12 +353,17 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
     <div id="pc-panel-comp" class="pc-fav-panel" role="tabpanel" aria-labelledby="pc-tab-comp" hidden>
       <div class="pc-comp-modal-resumen" id="pc-modal-comp-redes"></div>
       <div id="pc-modal-comp-lista" class="pc-fav-lista"></div>
+      <div class="pc-modal-hist-wrap">
+        <p class="pc-modal-hist-titulo">Historial reciente de cada compartido</p>
+        <ol id="pc-modal-comp-historial" class="comp-historial-lista"></ol>
+      </div>
     </div>
     <div class="pc-fav-pie">
       <div class="pc-fav-pie-izq">
         <button type="button" id="pc-fav-respaldo" class="btn-leer-mas">Copiar respaldo</button>
         <button type="button" id="pc-fav-vaciar" class="btn-leer-mas">Vaciar lista</button>
-        <button type="button" id="pc-modal-comp-reset" class="btn-leer-mas" hidden>Reiniciar contador</button>
+        <a href="/compartidos-historial.json" target="_blank" rel="noopener" id="pc-modal-comp-archivo" class="btn-leer-mas comp-archivo-link" hidden>Ver archivo (.json)</a>
+        <button type="button" id="pc-modal-comp-descargar" class="btn-leer-mas" hidden>Descargar (.json)</button>
       </div>
       <button type="button" id="pc-fav-listo" class="btn btn-copiar">Seguir explorando</button>
     </div>
@@ -1008,10 +1013,15 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         var panelComp = document.getElementById('pc-panel-comp');
         var modalCompRedes = document.getElementById('pc-modal-comp-redes');
         var modalCompLista = document.getElementById('pc-modal-comp-lista');
-        var btnModalCompReset = document.getElementById('pc-modal-comp-reset');
-        var btnHomeCompReset = document.getElementById('pc-home-comp-reset');
+        var modalCompHistorial = document.getElementById('pc-modal-comp-historial');
+        var btnModalCompArchivo = document.getElementById('pc-modal-comp-archivo');
+        var btnModalCompDescargar = document.getElementById('pc-modal-comp-descargar');
+        var btnHomeCompDescargar = document.getElementById('pc-home-comp-descargar');
         var filtroRedHome = 'todas';
         var tabActiva = 'favs';
+        var ARCHIVO_PUBLICO_URL = '/compartidos-historial.json';
+        var API_COMPARTIDOS_URL = window.PC_COMPARTIDOS_API || '/api/compartidos';
+        var estadoPublicoCache = null;
 
         function leerFavs() {
           try {
@@ -1030,58 +1040,147 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
         function crearEstadoCompVacio() {
           return {
+            version: 1,
+            actualizado: '',
             totales: { whatsapp: 0, instagram: 0, facebook: 0, copiar: 0 },
             totalGlobal: 0,
-            items: {}
+            items: {},
+            historial: []
           };
         }
 
-        function leerCompartidos() {
+        function normalizarEstadoComp(raw) {
+          if (!raw || typeof raw !== 'object') return crearEstadoCompVacio();
+          var limpio = crearEstadoCompVacio();
+          var rawItems = raw.items && typeof raw.items === 'object' ? raw.items : {};
+          Object.keys(rawItems).forEach(function (k) {
+            var it = rawItems[k];
+            if (!it || !it.redes) return;
+            var r = {
+              whatsapp: Math.max(0, Math.floor(Number(it.redes.whatsapp) || 0)),
+              instagram: Math.max(0, Math.floor(Number(it.redes.instagram) || 0)),
+              facebook: Math.max(0, Math.floor(Number(it.redes.facebook) || 0)),
+              copiar: Math.max(0, Math.floor(Number(it.redes.copiar) || 0))
+            };
+            var tot = r.whatsapp + r.instagram + r.facebook + r.copiar;
+            if (tot <= 0) return;
+            var sl = String(it.slug || k).trim();
+            if (!sl) return;
+            limpio.items[sl] = {
+              slug: sl,
+              titulo: String(it.titulo || sl).trim(),
+              url: String(it.url || ('/' + sl + '/')).trim(),
+              emoji: String(it.emoji || '🎂'),
+              redes: r,
+              total: tot,
+              ultimo: String(it.ultimo || '')
+            };
+            limpio.totales.whatsapp += r.whatsapp;
+            limpio.totales.instagram += r.instagram;
+            limpio.totales.facebook += r.facebook;
+            limpio.totales.copiar += r.copiar;
+          });
+          limpio.totalGlobal =
+            limpio.totales.whatsapp +
+            limpio.totales.instagram +
+            limpio.totales.facebook +
+            limpio.totales.copiar;
+
+          if (Array.isArray(raw.historial)) {
+            var vistos = {};
+            for (var i = 0; i < raw.historial.length; i++) {
+              var ev = raw.historial[i];
+              if (!ev || typeof ev !== 'object') continue;
+              if (REDES.indexOf(ev.red) === -1) continue;
+              var slEv = String(ev.slug || '').trim();
+              if (!slEv) continue;
+              var idEv = String(ev.id || (slEv + '_' + ev.red + '_' + (ev.fecha || i))).trim();
+              if (vistos[idEv]) continue;
+              vistos[idEv] = true;
+              limpio.historial.push({
+                id: idEv,
+                red: ev.red,
+                slug: slEv,
+                titulo: String(ev.titulo || slEv).trim(),
+                url: String(ev.url || ('/' + slEv + '/')).trim(),
+                emoji: String(ev.emoji || '🎂'),
+                pagina: String(ev.pagina || ('/' + slEv + '/')).trim(),
+                fecha: String(ev.fecha || '')
+              });
+            }
+            limpio.historial.sort(function (a, b) {
+              return String(b.fecha || '').localeCompare(String(a.fecha || ''));
+            });
+            limpio.historial = limpio.historial.slice(0, 500);
+          }
+          limpio.actualizado = String(raw.actualizado || (limpio.historial[0] ? limpio.historial[0].fecha : ''));
+          return limpio;
+        }
+
+        function aplicarEventoEnEstado(estado, ev) {
+          if (!ev || REDES.indexOf(ev.red) === -1 || !ev.slug) return estado;
+          for (var i = 0; i < estado.historial.length; i++) {
+            if (estado.historial[i].id === ev.id) return estado;
+          }
+          var prev = estado.items[ev.slug] || {
+            slug: ev.slug,
+            titulo: ev.titulo || ev.slug,
+            url: ev.url || ('/' + ev.slug + '/'),
+            emoji: ev.emoji || '🎂',
+            redes: { whatsapp: 0, instagram: 0, facebook: 0, copiar: 0 },
+            total: 0,
+            ultimo: ''
+          };
+          prev.titulo = ev.titulo || prev.titulo;
+          prev.url = ev.url || prev.url;
+          prev.emoji = ev.emoji || prev.emoji;
+          prev.redes[ev.red] = (prev.redes[ev.red] || 0) + 1;
+          prev.total = prev.redes.whatsapp + prev.redes.instagram + prev.redes.facebook + prev.redes.copiar;
+          prev.ultimo = ev.fecha || prev.ultimo;
+          estado.items[ev.slug] = prev;
+          estado.totales[ev.red] = (estado.totales[ev.red] || 0) + 1;
+          estado.totalGlobal =
+            estado.totales.whatsapp +
+            estado.totales.instagram +
+            estado.totales.facebook +
+            estado.totales.copiar;
+          estado.actualizado = ev.fecha || estado.actualizado;
+          estado.historial.unshift(ev);
+          if (estado.historial.length > 500) estado.historial = estado.historial.slice(0, 500);
+          return estado;
+        }
+
+        function leerCompartidosLocal() {
           try {
             var raw = JSON.parse(localStorage.getItem(COMP_KEY) || 'null');
-            if (!raw || typeof raw !== 'object' || !raw.items) return crearEstadoCompVacio();
-            var limpio = crearEstadoCompVacio();
-            Object.keys(raw.items).forEach(function (k) {
-              var it = raw.items[k];
-              if (!it || !it.redes) return;
-              var r = {
-                whatsapp: Math.max(0, Math.floor(Number(it.redes.whatsapp) || 0)),
-                instagram: Math.max(0, Math.floor(Number(it.redes.instagram) || 0)),
-                facebook: Math.max(0, Math.floor(Number(it.redes.facebook) || 0)),
-                copiar: Math.max(0, Math.floor(Number(it.redes.copiar) || 0))
-              };
-              var tot = r.whatsapp + r.instagram + r.facebook + r.copiar;
-              if (tot <= 0) return;
-              var sl = String(it.slug || k).trim();
-              limpio.items[sl] = {
-                slug: sl,
-                titulo: String(it.titulo || sl).trim(),
-                url: String(it.url || ('/' + sl + '/')).trim(),
-                emoji: String(it.emoji || '🎂'),
-                redes: r,
-                total: tot,
-                ultimo: String(it.ultimo || '')
-              };
-              limpio.totales.whatsapp += r.whatsapp;
-              limpio.totales.instagram += r.instagram;
-              limpio.totales.facebook += r.facebook;
-              limpio.totales.copiar += r.copiar;
-            });
-            limpio.totalGlobal =
-              limpio.totales.whatsapp +
-              limpio.totales.instagram +
-              limpio.totales.facebook +
-              limpio.totales.copiar;
-            return limpio;
+            return normalizarEstadoComp(raw);
           } catch (_) {
             return crearEstadoCompVacio();
           }
         }
 
-        function guardarCompartidos(estado) {
+        function guardarCompartidosLocal(estado) {
           try {
             localStorage.setItem(COMP_KEY, JSON.stringify(estado));
           } catch (_) {}
+        }
+
+        function fusionarPublicoYLocal(publico, local) {
+          var base = normalizarEstadoComp(publico);
+          var loc = normalizarEstadoComp(local);
+          var idsPub = {};
+          for (var i = 0; i < base.historial.length; i++) idsPub[base.historial[i].id] = true;
+          var pendientes = loc.historial.filter(function (ev) { return !idsPub[ev.id]; }).reverse();
+          for (var j = 0; j < pendientes.length; j++) {
+            aplicarEventoEnEstado(base, pendientes[j]);
+          }
+          return base;
+        }
+
+        function leerCompartidos() {
+          var loc = leerCompartidosLocal();
+          if (estadoPublicoCache) return fusionarPublicoYLocal(estadoPublicoCache, loc);
+          return loc;
         }
 
         function rankearCompartidos(estado, filtro, limite) {
@@ -1097,6 +1196,26 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
             return String(b.ultimo || '').localeCompare(String(a.ultimo || ''));
           });
           return arr.slice(0, limite || 10);
+        }
+
+        function filtrarHistorial(estado, filtro, limite) {
+          var lista = estado.historial || [];
+          if (filtro && filtro !== 'todas') {
+            lista = lista.filter(function (ev) { return ev.red === filtro; });
+          }
+          return lista.slice(0, limite || 25);
+        }
+
+        function formatearFechaHora(iso) {
+          if (!iso) return 'Recién';
+          var d = new Date(iso);
+          if (isNaN(d.getTime())) return String(iso).slice(0, 16).replace('T', ' ');
+          var dd = String(d.getDate()).padStart(2, '0');
+          var mm = String(d.getMonth() + 1).padStart(2, '0');
+          var yyyy = d.getFullYear();
+          var hh = String(d.getHours()).padStart(2, '0');
+          var mi = String(d.getMinutes()).padStart(2, '0');
+          return dd + '/' + mm + '/' + yyyy + ' · ' + hh + ':' + mi;
         }
 
         function resumirRedesTexto(redes) {
@@ -1147,15 +1266,65 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           return art;
         }
 
+        function crearFilaHistorial(ev) {
+          var li = document.createElement('li');
+          li.className = 'comp-hist-row';
+
+          var main = document.createElement('div');
+          main.className = 'comp-hist-main';
+
+          var top = document.createElement('div');
+          top.className = 'comp-hist-top';
+
+          var badge = document.createElement('span');
+          badge.className = 'comp-badge comp-badge--' + ev.red;
+          badge.textContent = NOMBRES_RED[ev.red] || ev.red;
+          top.appendChild(badge);
+
+          var a = document.createElement('a');
+          a.className = 'comp-hist-link';
+          a.href = ev.url || ('/' + ev.slug + '/');
+          a.textContent = ev.titulo || ev.slug;
+          top.appendChild(a);
+
+          main.appendChild(top);
+          li.appendChild(main);
+
+          var timeEl = document.createElement('time');
+          timeEl.className = 'comp-hist-fecha';
+          if (ev.fecha) timeEl.setAttribute('datetime', ev.fecha);
+          timeEl.textContent = formatearFechaHora(ev.fecha);
+          li.appendChild(timeEl);
+
+          return li;
+        }
+
+        function descargarArchivoCompartidos() {
+          var est = leerCompartidos();
+          var contenido = JSON.stringify(est, null, 2) + '\n';
+          var blob = new Blob([contenido], { type: 'application/json;charset=utf-8' });
+          var urlBlob = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = urlBlob;
+          a.download = 'compartidos-historial.json';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(function () { URL.revokeObjectURL(urlBlob); }, 1000);
+          if (window.pcMostrarToast) {
+            window.pcMostrarToast('✓ Archivo compartidos-historial.json descargado.');
+          }
+        }
+
         function renderPanelHomeCompartidos() {
           var contLista = document.getElementById('pc-home-comp-lista');
-          if (!contLista) return;
+          var contHist = document.getElementById('pc-home-comp-historial');
+          if (!contLista && !contHist) return;
           var est = leerCompartidos();
           var totalBadge = document.getElementById('pc-home-comp-total');
           if (totalBadge) {
             totalBadge.textContent = est.totalGlobal + (est.totalGlobal === 1 ? ' compartido registrado' : ' compartidos registrados');
           }
-          if (btnHomeCompReset) btnHomeCompReset.hidden = est.totalGlobal === 0;
 
           REDES.forEach(function (r) {
             var n = est.totales[r] || 0;
@@ -1169,20 +1338,48 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           });
 
           var ranking = rankearCompartidos(est, filtroRedHome, 8);
-          contLista.innerHTML = '';
-          if (!ranking.length) {
-            var p = document.createElement('p');
-            p.className = 'comp-vacio';
-            p.textContent =
-              est.totalGlobal === 0
-                ? 'Todavía no registraste compartidos en este navegador. Tocá WhatsApp, Instagram, Facebook o Copiar en cualquier dedicatoria para ver aquí el ranking separado por red.'
-                : 'Todavía no compartiste dedicatorias en ' + NOMBRES_RED[filtroRedHome] + '. Probá otra red o tocá «Todas las redes».';
-            contLista.appendChild(p);
-            return;
+          var rankCount = document.getElementById('pc-home-rank-count');
+          if (rankCount) {
+            rankCount.textContent = ranking.length + (ranking.length === 1 ? ' publicación' : ' publicaciones');
           }
-          ranking.forEach(function (item, idx) {
-            contLista.appendChild(crearFilaRanking(item, idx));
-          });
+          if (contLista) {
+            contLista.innerHTML = '';
+            if (!ranking.length) {
+              var p = document.createElement('p');
+              p.className = 'comp-vacio';
+              p.textContent =
+                est.totalGlobal === 0
+                  ? 'Todavía no hay compartidos registrados. Tocá WhatsApp, Instagram, Facebook o Copiar en cualquier dedicatoria para sumar al ranking público.'
+                  : 'Todavía no hay dedicatorias compartidas en ' + NOMBRES_RED[filtroRedHome] + '. Probá otra red o tocá «Todas las redes».';
+              contLista.appendChild(p);
+            } else {
+              ranking.forEach(function (item, idx) {
+                contLista.appendChild(crearFilaRanking(item, idx));
+              });
+            }
+          }
+
+          var historial = filtrarHistorial(est, filtroRedHome, 25);
+          var histCount = document.getElementById('pc-home-hist-count');
+          if (histCount) {
+            histCount.textContent = historial.length + (historial.length === 1 ? ' evento' : ' eventos');
+          }
+          if (contHist) {
+            contHist.innerHTML = '';
+            if (!historial.length) {
+              var liV = document.createElement('li');
+              liV.className = 'comp-vacio';
+              liV.textContent =
+                est.totalGlobal === 0
+                  ? 'Cada vez que un visitante comparte o copia una dedicatoria, queda registrado aquí con fecha, hora y red elegida.'
+                  : 'Sin eventos registrados todavía en ' + NOMBRES_RED[filtroRedHome] + '.';
+              contHist.appendChild(liV);
+            } else {
+              historial.forEach(function (ev) {
+                contHist.appendChild(crearFilaHistorial(ev));
+              });
+            }
+          }
         }
 
         function renderResumenEnTarjetas() {
@@ -1195,7 +1392,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
               el.textContent = '';
               return;
             }
-            el.textContent = 'Compartido aquí: ' + resumirRedesTexto(item.redes);
+            el.textContent = 'Compartido: ' + resumirRedesTexto(item.redes);
             el.hidden = false;
           });
         }
@@ -1217,17 +1414,32 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           });
 
           modalCompLista.innerHTML = '';
-          var ranking = rankearCompartidos(est, 'todas', 12);
+          var ranking = rankearCompartidos(est, 'todas', 10);
           if (!ranking.length) {
             var p = document.createElement('p');
             p.className = 'pc-fav-vacio';
-            p.textContent = 'Aún no hay compartidos registrados en este navegador. Cuando compartas por WhatsApp, Instagram, Facebook o Copiar, aparecerán aquí separados por red.';
+            p.textContent = 'Aún no hay compartidos registrados. Cuando un visitante comparta por WhatsApp, Instagram, Facebook o Copiar, aparecerán aquí separados por red.';
             modalCompLista.appendChild(p);
-            return;
+          } else {
+            ranking.forEach(function (item, idx) {
+              modalCompLista.appendChild(crearFilaRanking(item, idx));
+            });
           }
-          ranking.forEach(function (item, idx) {
-            modalCompLista.appendChild(crearFilaRanking(item, idx));
-          });
+
+          if (modalCompHistorial) {
+            modalCompHistorial.innerHTML = '';
+            var hist = filtrarHistorial(est, 'todas', 15);
+            if (!hist.length) {
+              var liV = document.createElement('li');
+              liV.className = 'comp-vacio';
+              liV.textContent = 'Sin eventos en el historial todavía.';
+              modalCompHistorial.appendChild(liV);
+            } else {
+              hist.forEach(function (ev) {
+                modalCompHistorial.appendChild(crearFilaHistorial(ev));
+              });
+            }
+          }
         }
 
         function sincronizarBotones() {
@@ -1250,6 +1462,24 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           renderPanelHomeCompartidos();
         }
 
+        function cargarArchivoPublicoCompartidos() {
+          var intentar = function (url) {
+            return fetch(url, { cache: 'no-store' }).then(function (resp) {
+              if (!resp.ok) throw new Error('HTTP ' + resp.status);
+              return resp.json();
+            });
+          };
+          intentar(API_COMPARTIDOS_URL)
+            .catch(function () { return intentar(ARCHIVO_PUBLICO_URL); })
+            .then(function (data) {
+              if (!data || typeof data !== 'object') return;
+              estadoPublicoCache = normalizarEstadoComp(data);
+              sincronizarBotones();
+              if (dialog && dialog.open && tabActiva === 'comp') renderModalCompartidos();
+            })
+            .catch(function () {});
+        }
+
         function activarTab(nombre) {
           tabActiva = nombre === 'comp' ? 'comp' : 'favs';
           var esFavs = tabActiva === 'favs';
@@ -1265,7 +1495,8 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           if (panelComp) panelComp.hidden = esFavs;
           if (btnRespaldo) btnRespaldo.hidden = !esFavs;
           if (btnVaciar) btnVaciar.hidden = !esFavs;
-          if (btnModalCompReset) btnModalCompReset.hidden = esFavs;
+          if (btnModalCompArchivo) btnModalCompArchivo.hidden = esFavs;
+          if (btnModalCompDescargar) btnModalCompDescargar.hidden = esFavs;
           if (esFavs) renderDialog();
           else renderModalCompartidos();
         }
@@ -1358,13 +1589,6 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           }
         }
 
-        function reiniciarCompartidos() {
-          guardarCompartidos(crearEstadoCompVacio());
-          sincronizarBotones();
-          if (dialog && dialog.open && tabActiva === 'comp') renderModalCompartidos();
-          if (window.pcMostrarToast) window.pcMostrarToast('Contador de compartidos reiniciado en este navegador.');
-        }
-
         window.pcRegistrarCompartido = function (red, meta) {
           if (REDES.indexOf(red) === -1) return;
           var m = meta || {};
@@ -1372,27 +1596,24 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           var titulo = String(m.titulo || slug).trim();
           var url = String(m.url || ('/' + slug + '/')).trim();
           var emoji = String(m.emoji || '🎂');
+          var pagina = window.location.pathname || '/';
+          var fecha = new Date().toISOString();
+          var idEvento = 'sh_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
 
-          var est = leerCompartidos();
-          var prev = est.items[slug] || {
+          var evNuevo = {
+            id: idEvento,
+            red: red,
             slug: slug,
             titulo: titulo,
             url: url,
             emoji: emoji,
-            redes: { whatsapp: 0, instagram: 0, facebook: 0, copiar: 0 },
-            total: 0,
-            ultimo: ''
+            pagina: pagina,
+            fecha: fecha
           };
-          prev.titulo = titulo || prev.titulo;
-          prev.url = url || prev.url;
-          prev.emoji = emoji || prev.emoji;
-          prev.redes[red] = (prev.redes[red] || 0) + 1;
-          prev.total = prev.redes.whatsapp + prev.redes.instagram + prev.redes.facebook + prev.redes.copiar;
-          prev.ultimo = new Date().toISOString();
-          est.items[slug] = prev;
-          est.totales[red] = (est.totales[red] || 0) + 1;
-          est.totalGlobal = est.totales.whatsapp + est.totales.instagram + est.totales.facebook + est.totales.copiar;
-          guardarCompartidos(est);
+
+          var estLocal = leerCompartidosLocal();
+          aplicarEventoEnEstado(estLocal, evNuevo);
+          guardarCompartidosLocal(estLocal);
 
           try {
             window.dataLayer = window.dataLayer || [];
@@ -1401,7 +1622,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
               pc_red: red,
               pc_slug: slug,
               pc_titulo: titulo,
-              pc_pagina: window.location.pathname
+              pc_pagina: pagina
             });
             if (typeof window.gtag === 'function') {
               window.gtag('event', 'share', {
@@ -1414,6 +1635,26 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
           sincronizarBotones();
           if (dialog && dialog.open && tabActiva === 'comp') renderModalCompartidos();
+
+          try {
+            fetch(API_COMPARTIDOS_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(evNuevo),
+              keepalive: true
+            })
+              .then(function (resp) {
+                if (!resp.ok) return null;
+                return resp.json();
+              })
+              .then(function (data) {
+                if (!data || typeof data !== 'object' || !data.totales) return;
+                estadoPublicoCache = normalizarEstadoComp(data);
+                sincronizarBotones();
+                if (dialog && dialog.open && tabActiva === 'comp') renderModalCompartidos();
+              })
+              .catch(function () {});
+          } catch (_) {}
         };
 
         window.__pcSincronizarFavoritas = sincronizarBotones;
@@ -1503,8 +1744,8 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
             });
           });
         }
-        if (btnHomeCompReset) btnHomeCompReset.addEventListener('click', reiniciarCompartidos);
-        if (btnModalCompReset) btnModalCompReset.addEventListener('click', reiniciarCompartidos);
+        if (btnHomeCompDescargar) btnHomeCompDescargar.addEventListener('click', descargarArchivoCompartidos);
+        if (btnModalCompDescargar) btnModalCompDescargar.addEventListener('click', descargarArchivoCompartidos);
         if (dialog) {
           dialog.addEventListener('click', function (ev) {
             if (ev.target === dialog) cerrarDialog();
@@ -1512,6 +1753,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         }
 
         sincronizarBotones();
+        cargarArchivoPublicoCompartidos();
       })();
 
       // Consentimiento RGPD Europa (CMP) integrado con Google Consent Mode v2
