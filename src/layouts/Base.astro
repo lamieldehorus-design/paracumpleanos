@@ -320,25 +320,46 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
     type="button"
     id="pc-favoritas-barra"
     class="pc-favoritas-barra"
-    aria-label="Abrir dedicatorias guardadas"
+    aria-label="Abrir dedicatorias guardadas y más compartidos"
     hidden
   >
     <span aria-hidden="true">♥</span>
-    <span>Guardadas</span>
+    <span id="pc-favoritas-barra-label">Guardadas</span>
     <span id="pc-favoritas-count" class="pc-favoritas-count">0</span>
   </button>
 
   <dialog id="pc-favoritas-dialog" class="pc-favoritas-dialog" aria-labelledby="pc-fav-titulo">
     <div class="pc-fav-head">
       <div>
-        <h2 id="pc-fav-titulo">Tus dedicatorias guardadas</h2>
-        <p class="pc-fav-sub">Quedan guardadas en este navegador para comparar, copiar o bajar como tarjeta PNG.</p>
+        <h2 id="pc-fav-titulo">Tus guardadas y más compartidos</h2>
+        <p class="pc-fav-sub">Compará tus dedicatorias favoritas y revisá tus compartidos por red (WhatsApp, Instagram, Facebook y Copiar).</p>
       </div>
-      <button type="button" id="pc-fav-cerrar" class="pc-fav-cerrar" aria-label="Cerrar guardadas">×</button>
+      <button type="button" id="pc-fav-cerrar" class="pc-fav-cerrar" aria-label="Cerrar guardadas y estadísticas">×</button>
     </div>
-    <div id="pc-fav-lista" class="pc-fav-lista"></div>
+    <div class="pc-fav-tabs" role="tablist" aria-label="Secciones de tu actividad">
+      <button type="button" role="tab" id="pc-tab-favs" class="pc-fav-tab activo" aria-selected="true" aria-controls="pc-panel-favs">
+        ♥ Guardadas (<span id="pc-tab-favs-count">0</span>)
+      </button>
+      <button type="button" role="tab" id="pc-tab-comp" class="pc-fav-tab" aria-selected="false" aria-controls="pc-panel-comp">
+        📊 Más compartidos (<span id="pc-tab-comp-count">0</span>)
+      </button>
+    </div>
+    <div class="pc-aviso-local pc-aviso-local--modal" role="note">
+      <strong>Aviso importante:</strong> tus guardadas y estadísticas se almacenan solo en este navegador. Si borrás cookies o datos del sitio, limpiás el navegador o usás modo incógnito, se perderán. Usá <em>Copiar respaldo</em> si querés guardarlas aparte.
+    </div>
+    <div id="pc-panel-favs" class="pc-fav-panel" role="tabpanel" aria-labelledby="pc-tab-favs">
+      <div id="pc-fav-lista" class="pc-fav-lista"></div>
+    </div>
+    <div id="pc-panel-comp" class="pc-fav-panel" role="tabpanel" aria-labelledby="pc-tab-comp" hidden>
+      <div class="pc-comp-modal-resumen" id="pc-modal-comp-redes"></div>
+      <div id="pc-modal-comp-lista" class="pc-fav-lista"></div>
+    </div>
     <div class="pc-fav-pie">
-      <button type="button" id="pc-fav-vaciar" class="btn-leer-mas">Vaciar lista</button>
+      <div class="pc-fav-pie-izq">
+        <button type="button" id="pc-fav-respaldo" class="btn-leer-mas">Copiar respaldo</button>
+        <button type="button" id="pc-fav-vaciar" class="btn-leer-mas">Vaciar lista</button>
+        <button type="button" id="pc-modal-comp-reset" class="btn-leer-mas" hidden>Reiniciar contador</button>
+      </div>
       <button type="button" id="pc-fav-listo" class="btn btn-copiar">Seguir explorando</button>
     </div>
   </dialog>
@@ -721,12 +742,21 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         if (wa) {
           var slugWa = detectarSlugDesdeNodo(wa);
           if (slugWa && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugWa, 3);
+          if (window.pcRegistrarCompartido) window.pcRegistrarCompartido('whatsapp', detectarMetaCompartido(wa));
+        }
+
+        var fb = e.target.closest ? e.target.closest('.btn-fb') : null;
+        if (fb) {
+          var slugFb = detectarSlugDesdeNodo(fb);
+          if (slugFb && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugFb, 3);
+          if (window.pcRegistrarCompartido) window.pcRegistrarCompartido('facebook', detectarMetaCompartido(fb));
         }
 
         var btn = e.target.closest ? e.target.closest('.btn-copiar') : null;
-        if (btn) {
+        if (btn && btn.hasAttribute('data-text')) {
           var slugCop = detectarSlugDesdeNodo(btn);
           if (slugCop && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugCop, 3);
+          if (window.pcRegistrarCompartido) window.pcRegistrarCompartido('copiar', detectarMetaCompartido(btn));
           var texto = btn.getAttribute('data-text') || '';
           var original = btn.textContent;
           var enTarjetaGrilla = Boolean(btn.closest && btn.closest('article.card'));
@@ -769,6 +799,9 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
         var ig = e.target.closest ? e.target.closest('.btn-ig') : null;
         if (ig) {
+          var slugIg = detectarSlugDesdeNodo(ig);
+          if (slugIg && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugIg, 3);
+          if (window.pcRegistrarCompartido) window.pcRegistrarCompartido('instagram', detectarMetaCompartido(ig));
           var visualIg = (ig.closest && ig.closest('.herr-modulo') && ig.closest('.herr-modulo').querySelector('.tarjeta-visual')) || document.querySelector('.tarjeta-visual');
           var igTitulo = ig.getAttribute('data-ig-title') || 'Feliz cumpleaños';
           var igCuerpo = ig.getAttribute('data-ig-body') || '';
@@ -902,16 +935,83 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         });
       }
 
-      // Favoritas guardadas en localStorage entre colecciones
+      function detectarMetaCompartido(nodo) {
+        var slug = detectarSlugDesdeNodo(nodo);
+        var card = nodo && nodo.closest ? nodo.closest('article.card') : null;
+        if (card) {
+          var favB = card.querySelector('.btn-favorita');
+          var h3a = card.querySelector('h3 a');
+          return {
+            slug: slug || (h3a ? h3a.getAttribute('href').replace(/^\/|\/$/g, '') : ''),
+            titulo: card.getAttribute('data-orig-titulo') || (h3a ? h3a.textContent.trim() : '') || slug,
+            url: slug ? '/' + slug + '/' : window.location.pathname,
+            emoji: (favB && favB.getAttribute('data-fav-emoji')) || '🎂'
+          };
+        }
+        var favItem = nodo && nodo.closest ? nodo.closest('.pc-fav-item') : null;
+        if (favItem) {
+          var fLink = favItem.querySelector('.pc-fav-item-titulo');
+          var fHref = fLink ? fLink.getAttribute('href') : '';
+          var fSlug = fHref ? fHref.replace(/^\/|\/$/g, '') : slug;
+          return {
+            slug: fSlug || 'guardada',
+            titulo: (fLink ? fLink.textContent.trim() : '') || fSlug,
+            url: fHref || '/',
+            emoji: '🎂'
+          };
+        }
+        if (nodo && nodo.id === 'studio-btn-copiar') {
+          return {
+            slug: 'estudio-rapido-portada',
+            titulo: 'Tarjeta personalizada (Estudio rápido)',
+            url: '/',
+            emoji: '🎂'
+          };
+        }
+        var h1 = document.querySelector('main h1');
+        var det = document.getElementById('mensaje-cuerpo');
+        var pathSlug = window.location.pathname.replace(/^\/|\/$/g, '') || 'inicio';
+        return {
+          slug: slug || (det && det.getAttribute('data-slug')) || pathSlug,
+          titulo: (h1 ? h1.textContent.trim() : '') || document.title.replace(/\s*-\s*ParaCumpleanos.*$/, ''),
+          url: window.location.pathname || '/',
+          emoji: '🎂'
+        };
+      }
+
+      // Favoritas guardadas + Contador de lo mas compartido por red (WhatsApp, Instagram, Facebook, Copiar)
       (function () {
         var FAV_KEY = 'pc_favoritas_v1';
+        var COMP_KEY = 'pc_compartidos_v1';
+        var REDES = ['whatsapp', 'instagram', 'facebook', 'copiar'];
+        var NOMBRES_RED = {
+          whatsapp: 'WhatsApp',
+          instagram: 'Instagram',
+          facebook: 'Facebook',
+          copiar: 'Copiar'
+        };
+
         var barra = document.getElementById('pc-favoritas-barra');
+        var barraLabel = document.getElementById('pc-favoritas-barra-label');
         var countEl = document.getElementById('pc-favoritas-count');
         var dialog = document.getElementById('pc-favoritas-dialog');
         var listaEl = document.getElementById('pc-fav-lista');
         var btnCerrar = document.getElementById('pc-fav-cerrar');
         var btnListo = document.getElementById('pc-fav-listo');
         var btnVaciar = document.getElementById('pc-fav-vaciar');
+        var btnRespaldo = document.getElementById('pc-fav-respaldo');
+        var tabFavs = document.getElementById('pc-tab-favs');
+        var tabComp = document.getElementById('pc-tab-comp');
+        var tabFavsCount = document.getElementById('pc-tab-favs-count');
+        var tabCompCount = document.getElementById('pc-tab-comp-count');
+        var panelFavs = document.getElementById('pc-panel-favs');
+        var panelComp = document.getElementById('pc-panel-comp');
+        var modalCompRedes = document.getElementById('pc-modal-comp-redes');
+        var modalCompLista = document.getElementById('pc-modal-comp-lista');
+        var btnModalCompReset = document.getElementById('pc-modal-comp-reset');
+        var btnHomeCompReset = document.getElementById('pc-home-comp-reset');
+        var filtroRedHome = 'todas';
+        var tabActiva = 'favs';
 
         function leerFavs() {
           try {
@@ -928,8 +1028,211 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           } catch (_) {}
         }
 
+        function crearEstadoCompVacio() {
+          return {
+            totales: { whatsapp: 0, instagram: 0, facebook: 0, copiar: 0 },
+            totalGlobal: 0,
+            items: {}
+          };
+        }
+
+        function leerCompartidos() {
+          try {
+            var raw = JSON.parse(localStorage.getItem(COMP_KEY) || 'null');
+            if (!raw || typeof raw !== 'object' || !raw.items) return crearEstadoCompVacio();
+            var limpio = crearEstadoCompVacio();
+            Object.keys(raw.items).forEach(function (k) {
+              var it = raw.items[k];
+              if (!it || !it.redes) return;
+              var r = {
+                whatsapp: Math.max(0, Math.floor(Number(it.redes.whatsapp) || 0)),
+                instagram: Math.max(0, Math.floor(Number(it.redes.instagram) || 0)),
+                facebook: Math.max(0, Math.floor(Number(it.redes.facebook) || 0)),
+                copiar: Math.max(0, Math.floor(Number(it.redes.copiar) || 0))
+              };
+              var tot = r.whatsapp + r.instagram + r.facebook + r.copiar;
+              if (tot <= 0) return;
+              var sl = String(it.slug || k).trim();
+              limpio.items[sl] = {
+                slug: sl,
+                titulo: String(it.titulo || sl).trim(),
+                url: String(it.url || ('/' + sl + '/')).trim(),
+                emoji: String(it.emoji || '🎂'),
+                redes: r,
+                total: tot,
+                ultimo: String(it.ultimo || '')
+              };
+              limpio.totales.whatsapp += r.whatsapp;
+              limpio.totales.instagram += r.instagram;
+              limpio.totales.facebook += r.facebook;
+              limpio.totales.copiar += r.copiar;
+            });
+            limpio.totalGlobal =
+              limpio.totales.whatsapp +
+              limpio.totales.instagram +
+              limpio.totales.facebook +
+              limpio.totales.copiar;
+            return limpio;
+          } catch (_) {
+            return crearEstadoCompVacio();
+          }
+        }
+
+        function guardarCompartidos(estado) {
+          try {
+            localStorage.setItem(COMP_KEY, JSON.stringify(estado));
+          } catch (_) {}
+        }
+
+        function rankearCompartidos(estado, filtro, limite) {
+          var arr = Object.keys(estado.items).map(function (k) { return estado.items[k]; });
+          arr = arr.filter(function (it) {
+            return filtro === 'todas' ? it.total > 0 : (it.redes[filtro] || 0) > 0;
+          });
+          arr.sort(function (a, b) {
+            var sa = filtro === 'todas' ? a.total : (a.redes[filtro] || 0);
+            var sb = filtro === 'todas' ? b.total : (b.redes[filtro] || 0);
+            if (sb !== sa) return sb - sa;
+            if (b.total !== a.total) return b.total - a.total;
+            return String(b.ultimo || '').localeCompare(String(a.ultimo || ''));
+          });
+          return arr.slice(0, limite || 10);
+        }
+
+        function resumirRedesTexto(redes) {
+          var partes = [];
+          for (var i = 0; i < REDES.length; i++) {
+            var r = REDES[i];
+            if (redes[r] > 0) partes.push(NOMBRES_RED[r] + ' ' + redes[r]);
+          }
+          return partes.join(' · ');
+        }
+
+        function crearFilaRanking(item, idx) {
+          var art = document.createElement('article');
+          art.className = 'comp-item';
+
+          var rank = document.createElement('span');
+          rank.className = 'comp-rank';
+          rank.textContent = '#' + (idx + 1);
+          art.appendChild(rank);
+
+          var body = document.createElement('div');
+          body.className = 'comp-item-body';
+
+          var a = document.createElement('a');
+          a.className = 'comp-item-titulo';
+          a.href = item.url || ('/' + item.slug + '/');
+          a.textContent = item.titulo || item.slug;
+          body.appendChild(a);
+
+          var badges = document.createElement('div');
+          badges.className = 'comp-item-badges';
+          REDES.forEach(function (r) {
+            if (item.redes[r] > 0) {
+              var sp = document.createElement('span');
+              sp.className = 'comp-badge comp-badge--' + r;
+              sp.textContent = NOMBRES_RED[r] + ': ' + item.redes[r];
+              badges.appendChild(sp);
+            }
+          });
+          body.appendChild(badges);
+          art.appendChild(body);
+
+          var totalEl = document.createElement('span');
+          totalEl.className = 'comp-item-total';
+          totalEl.textContent = item.total + (item.total === 1 ? ' vez' : ' veces');
+          art.appendChild(totalEl);
+
+          return art;
+        }
+
+        function renderPanelHomeCompartidos() {
+          var contLista = document.getElementById('pc-home-comp-lista');
+          if (!contLista) return;
+          var est = leerCompartidos();
+          var totalBadge = document.getElementById('pc-home-comp-total');
+          if (totalBadge) {
+            totalBadge.textContent = est.totalGlobal + (est.totalGlobal === 1 ? ' compartido registrado' : ' compartidos registrados');
+          }
+          if (btnHomeCompReset) btnHomeCompReset.hidden = est.totalGlobal === 0;
+
+          REDES.forEach(function (r) {
+            var n = est.totales[r] || 0;
+            var pct = est.totalGlobal > 0 ? Math.round((n / est.totalGlobal) * 100) : 0;
+            var elNum = document.getElementById('pc-stat-' + r);
+            var elPct = document.getElementById('pc-pct-' + r);
+            var elBar = document.getElementById('pc-bar-' + r);
+            if (elNum) elNum.textContent = String(n);
+            if (elPct) elPct.textContent = pct + '%';
+            if (elBar) elBar.style.width = pct + '%';
+          });
+
+          var ranking = rankearCompartidos(est, filtroRedHome, 8);
+          contLista.innerHTML = '';
+          if (!ranking.length) {
+            var p = document.createElement('p');
+            p.className = 'comp-vacio';
+            p.textContent =
+              est.totalGlobal === 0
+                ? 'Todavía no registraste compartidos en este navegador. Tocá WhatsApp, Instagram, Facebook o Copiar en cualquier dedicatoria para ver aquí el ranking separado por red.'
+                : 'Todavía no compartiste dedicatorias en ' + NOMBRES_RED[filtroRedHome] + '. Probá otra red o tocá «Todas las redes».';
+            contLista.appendChild(p);
+            return;
+          }
+          ranking.forEach(function (item, idx) {
+            contLista.appendChild(crearFilaRanking(item, idx));
+          });
+        }
+
+        function renderResumenEnTarjetas() {
+          var est = leerCompartidos();
+          document.querySelectorAll('[data-share-resumen]').forEach(function (el) {
+            var slug = detectarSlugDesdeNodo(el);
+            var item = slug ? est.items[slug] : null;
+            if (!item || item.total <= 0) {
+              el.hidden = true;
+              el.textContent = '';
+              return;
+            }
+            el.textContent = 'Compartido aquí: ' + resumirRedesTexto(item.redes);
+            el.hidden = false;
+          });
+        }
+
+        function renderModalCompartidos() {
+          if (!modalCompRedes || !modalCompLista) return;
+          var est = leerCompartidos();
+          modalCompRedes.innerHTML = '';
+          REDES.forEach(function (r) {
+            var pill = document.createElement('div');
+            pill.className = 'comp-mini-stat comp-mini-stat--' + r;
+            var lbl = document.createElement('span');
+            lbl.textContent = NOMBRES_RED[r];
+            var val = document.createElement('strong');
+            val.textContent = String(est.totales[r] || 0);
+            pill.appendChild(lbl);
+            pill.appendChild(val);
+            modalCompRedes.appendChild(pill);
+          });
+
+          modalCompLista.innerHTML = '';
+          var ranking = rankearCompartidos(est, 'todas', 12);
+          if (!ranking.length) {
+            var p = document.createElement('p');
+            p.className = 'pc-fav-vacio';
+            p.textContent = 'Aún no hay compartidos registrados en este navegador. Cuando compartas por WhatsApp, Instagram, Facebook o Copiar, aparecerán aquí separados por red.';
+            modalCompLista.appendChild(p);
+            return;
+          }
+          ranking.forEach(function (item, idx) {
+            modalCompLista.appendChild(crearFilaRanking(item, idx));
+          });
+        }
+
         function sincronizarBotones() {
           var favs = leerFavs();
+          var est = leerCompartidos();
           var setSlugs = {};
           for (var i = 0; i < favs.length; i++) setSlugs[favs[i].slug] = true;
           document.querySelectorAll('.btn-favorita').forEach(function (b) {
@@ -938,14 +1241,41 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
             b.setAttribute('aria-pressed', activa ? 'true' : 'false');
             b.textContent = activa ? '♥ Guardada' : '♡ Guardar';
           });
-          if (countEl) countEl.textContent = String(favs.length);
-          if (barra) barra.hidden = favs.length === 0;
+          if (tabFavsCount) tabFavsCount.textContent = String(favs.length);
+          if (tabCompCount) tabCompCount.textContent = String(est.totalGlobal);
+          if (barraLabel) barraLabel.textContent = favs.length > 0 ? 'Guardadas' : 'Compartidos';
+          if (countEl) countEl.textContent = String(favs.length > 0 ? favs.length : est.totalGlobal);
+          if (barra) barra.hidden = favs.length === 0 && est.totalGlobal === 0;
+          renderResumenEnTarjetas();
+          renderPanelHomeCompartidos();
+        }
+
+        function activarTab(nombre) {
+          tabActiva = nombre === 'comp' ? 'comp' : 'favs';
+          var esFavs = tabActiva === 'favs';
+          if (tabFavs) {
+            tabFavs.classList.toggle('activo', esFavs);
+            tabFavs.setAttribute('aria-selected', esFavs ? 'true' : 'false');
+          }
+          if (tabComp) {
+            tabComp.classList.toggle('activo', !esFavs);
+            tabComp.setAttribute('aria-selected', !esFavs ? 'true' : 'false');
+          }
+          if (panelFavs) panelFavs.hidden = !esFavs;
+          if (panelComp) panelComp.hidden = esFavs;
+          if (btnRespaldo) btnRespaldo.hidden = !esFavs;
+          if (btnVaciar) btnVaciar.hidden = !esFavs;
+          if (btnModalCompReset) btnModalCompReset.hidden = esFavs;
+          if (esFavs) renderDialog();
+          else renderModalCompartidos();
         }
 
         function renderDialog() {
           if (!listaEl) return;
           var favs = leerFavs();
           listaEl.innerHTML = '';
+          if (btnRespaldo) btnRespaldo.disabled = favs.length === 0;
+          if (btnVaciar) btnVaciar.disabled = favs.length === 0;
           if (!favs.length) {
             var pVacio = document.createElement('p');
             pVacio.className = 'pc-fav-vacio';
@@ -956,6 +1286,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           favs.forEach(function (item) {
             var art = document.createElement('article');
             art.className = 'pc-fav-item';
+            art.setAttribute('data-slug', item.slug);
 
             var head = document.createElement('div');
             head.className = 'pc-fav-item-head';
@@ -1017,6 +1348,74 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           });
         }
 
+        function abrirModalActividad(tabInicial) {
+          if (!dialog) return;
+          activarTab(tabInicial || (leerFavs().length > 0 ? 'favs' : 'comp'));
+          if (typeof dialog.showModal === 'function') {
+            if (!dialog.open) dialog.showModal();
+          } else {
+            dialog.setAttribute('open', 'open');
+          }
+        }
+
+        function reiniciarCompartidos() {
+          guardarCompartidos(crearEstadoCompVacio());
+          sincronizarBotones();
+          if (dialog && dialog.open && tabActiva === 'comp') renderModalCompartidos();
+          if (window.pcMostrarToast) window.pcMostrarToast('Contador de compartidos reiniciado en este navegador.');
+        }
+
+        window.pcRegistrarCompartido = function (red, meta) {
+          if (REDES.indexOf(red) === -1) return;
+          var m = meta || {};
+          var slug = String(m.slug || '').trim() || window.location.pathname.replace(/^\/|\/$/g, '') || 'inicio';
+          var titulo = String(m.titulo || slug).trim();
+          var url = String(m.url || ('/' + slug + '/')).trim();
+          var emoji = String(m.emoji || '🎂');
+
+          var est = leerCompartidos();
+          var prev = est.items[slug] || {
+            slug: slug,
+            titulo: titulo,
+            url: url,
+            emoji: emoji,
+            redes: { whatsapp: 0, instagram: 0, facebook: 0, copiar: 0 },
+            total: 0,
+            ultimo: ''
+          };
+          prev.titulo = titulo || prev.titulo;
+          prev.url = url || prev.url;
+          prev.emoji = emoji || prev.emoji;
+          prev.redes[red] = (prev.redes[red] || 0) + 1;
+          prev.total = prev.redes.whatsapp + prev.redes.instagram + prev.redes.facebook + prev.redes.copiar;
+          prev.ultimo = new Date().toISOString();
+          est.items[slug] = prev;
+          est.totales[red] = (est.totales[red] || 0) + 1;
+          est.totalGlobal = est.totales.whatsapp + est.totales.instagram + est.totales.facebook + est.totales.copiar;
+          guardarCompartidos(est);
+
+          try {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+              event: 'pc_compartir',
+              pc_red: red,
+              pc_slug: slug,
+              pc_titulo: titulo,
+              pc_pagina: window.location.pathname
+            });
+            if (typeof window.gtag === 'function') {
+              window.gtag('event', 'share', {
+                method: red,
+                content_type: 'dedicatoria',
+                item_id: slug
+              });
+            }
+          } catch (_) {}
+
+          sincronizarBotones();
+          if (dialog && dialog.open && tabActiva === 'comp') renderModalCompartidos();
+        };
+
         window.__pcSincronizarFavoritas = sincronizarBotones;
         window.__pcToggleFavorita = function (item) {
           var favs = leerFavs();
@@ -1036,21 +1435,42 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
             guardarFavs(favs);
             sincronizarBotones();
             if (item.slug && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(item.slug, 2);
-            if (window.pcMostrarToast) window.pcMostrarToast('♥ Guardada en tu lista (' + favs.length + ').');
+            if (window.pcMostrarToast) {
+              var aviso =
+                favs.length === 1
+                  ? '♥ Guardada en este navegador (si borrás cookies o datos del sitio se borrará).'
+                  : '♥ Guardada en tu lista (' + favs.length + ').';
+              window.pcMostrarToast(aviso);
+            }
           }
-          if (dialog && dialog.open) renderDialog();
+          if (dialog && dialog.open && tabActiva === 'favs') renderDialog();
         };
 
         if (barra && dialog) {
-          barra.addEventListener('click', function () {
-            renderDialog();
-            if (typeof dialog.showModal === 'function') {
-              dialog.showModal();
-            } else {
-              dialog.setAttribute('open', 'open');
-            }
-          });
+          barra.addEventListener('click', function () { abrirModalActividad(); });
         }
+        document.addEventListener('click', function (ev) {
+          var abrirGuard = ev.target && ev.target.closest ? ev.target.closest('[data-abrir-guardadas]') : null;
+          if (abrirGuard) {
+            ev.preventDefault();
+            abrirModalActividad('favs');
+          }
+        });
+        if (tabFavs) tabFavs.addEventListener('click', function () { activarTab('favs'); });
+        if (tabComp) tabComp.addEventListener('click', function () { activarTab('comp'); });
+
+        document.querySelectorAll('[data-comp-filtro]').forEach(function (fBtn) {
+          fBtn.addEventListener('click', function () {
+            filtroRedHome = fBtn.getAttribute('data-comp-filtro') || 'todas';
+            document.querySelectorAll('[data-comp-filtro]').forEach(function (b) {
+              var on = b === fBtn;
+              b.classList.toggle('activo', on);
+              b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            renderPanelHomeCompartidos();
+          });
+        });
+
         function cerrarDialog() {
           if (!dialog) return;
           if (typeof dialog.close === 'function' && dialog.open) dialog.close();
@@ -1065,6 +1485,26 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
             renderDialog();
           });
         }
+        if (btnRespaldo) {
+          btnRespaldo.addEventListener('click', function () {
+            var favs = leerFavs();
+            if (!favs.length) return;
+            var txt =
+              'Mis dedicatorias guardadas — ParaCumpleanos (https://paracumpleanos.com)\n\n' +
+              favs
+                .map(function (it, idx) {
+                  return (idx + 1) + '. ' + (it.titulo || it.slug) + '\n' + (it.texto ? it.texto + '\n' : '') + 'https://paracumpleanos.com/' + it.slug + '/';
+                })
+                .join('\n\n---\n\n');
+            copiarAlPortapapeles(txt).then(function (ok) {
+              if (ok && window.pcMostrarToast) {
+                window.pcMostrarToast('✓ Respaldo de ' + favs.length + ' guardadas copiado. Pegalo en WhatsApp o Notas.');
+              }
+            });
+          });
+        }
+        if (btnHomeCompReset) btnHomeCompReset.addEventListener('click', reiniciarCompartidos);
+        if (btnModalCompReset) btnModalCompReset.addEventListener('click', reiniciarCompartidos);
         if (dialog) {
           dialog.addEventListener('click', function (ev) {
             if (ev.target === dialog) cerrarDialog();

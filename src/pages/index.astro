@@ -487,6 +487,64 @@ const jsonld = [
     </div>
   </section>
 
+  <section class="portal-banda portal-compartidos" id="lo-mas-compartido" aria-labelledby="titulo-mas-compartido">
+    <div class="banda-cabecera">
+      <div>
+        <p class="banda-kicker">Estadísticas en tiempo real separadas por canal</p>
+        <h2 id="titulo-mas-compartido">Lo más compartido por red</h2>
+      </div>
+      <div class="comp-cabecera-acciones">
+        <span class="comp-total-badge" id="pc-home-comp-total">0 compartidos registrados</span>
+        <button type="button" class="btn-leer-mas" id="pc-home-comp-reset" hidden>Reiniciar contador</button>
+      </div>
+    </div>
+
+    <div class="comp-redes-grid" role="list" aria-label="Totales compartidos por red social y copia">
+      <div class="comp-red-card comp-red-card--wa" role="listitem">
+        <span class="comp-red-etiqueta">WhatsApp</span>
+        <strong class="comp-red-num" id="pc-stat-whatsapp">0</strong>
+        <span class="comp-red-pct" id="pc-pct-whatsapp">0%</span>
+        <div class="comp-red-barra"><span id="pc-bar-whatsapp" style="width:0%"></span></div>
+      </div>
+      <div class="comp-red-card comp-red-card--ig" role="listitem">
+        <span class="comp-red-etiqueta">Instagram</span>
+        <strong class="comp-red-num" id="pc-stat-instagram">0</strong>
+        <span class="comp-red-pct" id="pc-pct-instagram">0%</span>
+        <div class="comp-red-barra"><span id="pc-bar-instagram" style="width:0%"></span></div>
+      </div>
+      <div class="comp-red-card comp-red-card--fb" role="listitem">
+        <span class="comp-red-etiqueta">Facebook</span>
+        <strong class="comp-red-num" id="pc-stat-facebook">0</strong>
+        <span class="comp-red-pct" id="pc-pct-facebook">0%</span>
+        <div class="comp-red-barra"><span id="pc-bar-facebook" style="width:0%"></span></div>
+      </div>
+      <div class="comp-red-card comp-red-card--copiar" role="listitem">
+        <span class="comp-red-etiqueta">Copiar texto</span>
+        <strong class="comp-red-num" id="pc-stat-copiar">0</strong>
+        <span class="comp-red-pct" id="pc-pct-copiar">0%</span>
+        <div class="comp-red-barra"><span id="pc-bar-copiar" style="width:0%"></span></div>
+      </div>
+    </div>
+
+    <div class="filtros-tono comp-filtros" role="toolbar" aria-label="Filtrar lo más compartido por red">
+      <button type="button" class="filtro-btn activo" data-comp-filtro="todas" aria-pressed="true">Todas las redes</button>
+      <button type="button" class="filtro-btn" data-comp-filtro="whatsapp" aria-pressed="false">WhatsApp</button>
+      <button type="button" class="filtro-btn" data-comp-filtro="instagram" aria-pressed="false">Instagram</button>
+      <button type="button" class="filtro-btn" data-comp-filtro="facebook" aria-pressed="false">Facebook</button>
+      <button type="button" class="filtro-btn" data-comp-filtro="copiar" aria-pressed="false">Copiar</button>
+    </div>
+
+    <div id="pc-home-comp-lista" class="comp-lista" aria-live="polite">
+      <p class="comp-vacio">
+        Todavía no registraste compartidos en este navegador. Tocá <strong>WhatsApp</strong>, <strong>Instagram</strong>, <strong>Facebook</strong> o <strong>Copiar</strong> en cualquier dedicatoria para ver aquí el ranking separado por red.
+      </p>
+    </div>
+
+    <p class="pc-aviso-local" role="note">
+      <strong>Aviso importante:</strong> tus dedicatorias guardadas y este contador se almacenan solo en este navegador (sin registro ni cuenta). Si borrás cookies o datos del sitio, limpiás el navegador o navegás en modo incógnito, esos datos se borrarán. Podés copiar un respaldo desde <button type="button" class="pie-link-btn" data-abrir-guardadas>Tus guardadas</button>.
+    </p>
+  </section>
+
   <section class="portal-estandares" aria-labelledby="titulo-criterio-portal">
     <h2 id="titulo-criterio-portal">Por qué miles de lectores eligen ParaCumpleanos</h2>
     <div class="estandares-grid">

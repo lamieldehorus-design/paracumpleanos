@@ -66,6 +66,15 @@ import {
   construirEstadoConsentimientoGoogle
 } from './consentimiento';
 import {
+  REDES_COMPARTIR,
+  crearEstadoCompartidosVacio,
+  normalizarEstadoCompartidos,
+  registrarCompartidoEnEstado,
+  rankearMasCompartidos,
+  resumirRedesItem,
+  formatearRespaldoFavoritas
+} from './compartidos';
+import {
   clasificarMensaje,
   calcularFiltrosHub,
   extraerCitaDestacada,
@@ -1348,6 +1357,72 @@ test('AdSense, Google Tag Manager, Google Consent Mode v2, CMP RGPD Europa y cor
   const robotsSrc = fs.readFileSync(path.resolve('public/robots.txt'), 'utf8');
   assert.ok(robotsSrc.includes('Mediapartners-Google'), 'robots.txt debe permitir explicitamente Mediapartners-Google');
 });
+
+test('contador de lo mas compartido separado por red (WhatsApp, Instagram, Facebook, Copiar), respaldo y aviso de cookies/navegador', () => {
+  // 1. Logica pura de compartidos separados por red
+  assert.deepEqual([...REDES_COMPARTIR], ['whatsapp', 'instagram', 'facebook', 'copiar']);
+  let est = crearEstadoCompartidosVacio();
+  est = registrarCompartidoEnEstado(est, 'whatsapp', { slug: 'msg-a', titulo: 'Mensaje A', url: '/msg-a/' }, '2026-11-23T10:00:00Z');
+  est = registrarCompartidoEnEstado(est, 'whatsapp', { slug: 'msg-a', titulo: 'Mensaje A', url: '/msg-a/' }, '2026-11-23T10:01:00Z');
+  est = registrarCompartidoEnEstado(est, 'instagram', { slug: 'msg-b', titulo: 'Mensaje B', url: '/msg-b/' }, '2026-11-23T10:02:00Z');
+  est = registrarCompartidoEnEstado(est, 'facebook', { slug: 'msg-b', titulo: 'Mensaje B', url: '/msg-b/' }, '2026-11-23T10:03:00Z');
+  est = registrarCompartidoEnEstado(est, 'copiar', { slug: 'msg-b', titulo: 'Mensaje B', url: '/msg-b/' }, '2026-11-23T10:04:00Z');
+
+  assert.equal(est.totalGlobal, 5);
+  assert.deepEqual(est.totales, { whatsapp: 2, instagram: 1, facebook: 1, copiar: 1 });
+  assert.equal(resumirRedesItem(est.items['msg-b'].redes), 'Instagram 1 · Facebook 1 · Copiar 1');
+
+  const topTodas = rankearMasCompartidos(est, 'todas', 5);
+  assert.equal(topTodas[0].slug, 'msg-b', 'msg-b tiene 3 compartidos totales y debe liderar en todas');
+  assert.equal(topTodas[1].slug, 'msg-a');
+
+  const topWa = rankearMasCompartidos(est, 'whatsapp', 5);
+  assert.equal(topWa.length, 1);
+  assert.equal(topWa[0].slug, 'msg-a');
+
+  const topFb = rankearMasCompartidos(est, 'facebook', 5);
+  assert.equal(topFb.length, 1);
+  assert.equal(topFb[0].slug, 'msg-b');
+
+  // Normalizacion resiliente frente a JSON roto o valores negativos
+  const norm = normalizarEstadoCompartidos({
+    items: {
+      malo: { slug: 'malo', redes: { whatsapp: -4, instagram: 'x', facebook: 0, copiar: 0 } },
+      bueno: { slug: 'bueno', titulo: 'Bueno', redes: { whatsapp: 1, instagram: 0, facebook: 2, copiar: 0 } }
+    }
+  });
+  assert.equal(norm.totalGlobal, 3);
+  assert.equal(Object.keys(norm.items).length, 1);
+  assert.equal(norm.totales.facebook, 2);
+
+  // Respaldo legible de guardadas
+  const respaldo = formatearRespaldoFavoritas([
+    { slug: 'msg-a', titulo: 'Mensaje A', texto: 'Feliz cumple querido papá.' }
+  ]);
+  assert.ok(respaldo.includes('1. Mensaje A') && respaldo.includes('https://paracumpleanos.com/msg-a/'));
+
+  // 2. Presencia en Base.astro, Compartir.astro, index.astro y privacidad.astro
+  const baseSrc = fs.readFileSync(path.resolve('src/layouts/Base.astro'), 'utf8');
+  assert.ok(baseSrc.includes('pc_compartidos_v1'), 'Base.astro debe persistir pc_compartidos_v1');
+  assert.ok(baseSrc.includes("window.gtag('event', 'share'"), 'Base.astro debe enviar evento GA4 share con method por red');
+  assert.ok(baseSrc.includes("pcRegistrarCompartido('facebook'"), 'Base.astro debe contabilizar Facebook');
+  assert.ok(baseSrc.includes("pcRegistrarCompartido('instagram'"), 'Base.astro debe contabilizar Instagram');
+  assert.ok(baseSrc.includes("pcRegistrarCompartido('whatsapp'"), 'Base.astro debe contabilizar WhatsApp');
+  assert.ok(baseSrc.includes("pcRegistrarCompartido('copiar'"), 'Base.astro debe contabilizar Copiar');
+  assert.ok(baseSrc.includes('Si borrás cookies o datos del sitio'), 'El modal de guardadas debe avisar que borrar cookies/datos del navegador borra guardados');
+  assert.ok(baseSrc.includes('id="pc-fav-respaldo"'), 'El modal debe ofrecer boton de Copiar respaldo');
+
+  const compSrc = fs.readFileSync(path.resolve('src/components/Compartir.astro'), 'utf8');
+  assert.ok(compSrc.includes('data-share-resumen'), 'Compartir.astro debe mostrar resumen de compartidos por red');
+
+  const indexSrc = fs.readFileSync(path.resolve('src/pages/index.astro'), 'utf8');
+  assert.ok(indexSrc.includes('id="lo-mas-compartido"'), 'La portada debe incluir el panel Lo mas compartido por red');
+  assert.ok(indexSrc.includes('Si borrás cookies o datos del sitio'), 'La portada debe incluir aviso claro sobre borrado de cookies/navegador');
+
+  const privSrc = fs.readFileSync(path.resolve('src/pages/privacidad.astro'), 'utf8');
+  assert.ok(privSrc.includes('lo más compartido por red') && privSrc.includes('si borrás cookies o datos del sitio'), 'privacidad.astro debe avisar sobre borrado de guardados y estadisticas locales');
+});
+
 
 
 
