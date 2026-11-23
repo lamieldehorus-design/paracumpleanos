@@ -3,6 +3,9 @@ Allow: /
 Disallow: /admin/
 Disallow: /data/
 
+User-agent: Mediapartners-Google
+Allow: /
+
 User-agent: GPTBot
 Allow: /
 

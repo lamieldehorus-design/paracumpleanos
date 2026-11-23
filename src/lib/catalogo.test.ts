@@ -56,6 +56,16 @@ import {
   prepararParrafosTarjeta
 } from './personalizador';
 import {
+  ADSENSE_CLIENT_ID,
+  GTM_CONTAINER_ID,
+  GTM_ANALYTICS_CONTAINER_ID,
+  CONTACTO_EMAIL,
+  REGIONES_RGPD_EEE,
+  esZonaHorariaEuropea,
+  normalizarPreferenciasConsentimiento,
+  construirEstadoConsentimientoGoogle
+} from './consentimiento';
+import {
   clasificarMensaje,
   calcularFiltrosHub,
   extraerCitaDestacada,
@@ -1271,5 +1281,73 @@ test('Estrategia Superman+Batman GSC: 120 hubs prioritarios, enlazado interno si
   const guiaSlugSrc = fs.readFileSync(path.resolve('src/pages/guias/[slug].astro'), 'utf8');
   assert.ok(guiaSlugSrc.includes('class="guia-cta-rapida"'), 'guias/[slug].astro debe incluir CTA temprano al hub');
 });
+
+test('AdSense, Google Tag Manager, Google Consent Mode v2, CMP RGPD Europa y correo de contacto oficial', () => {
+  // 1. Utilidades puras de consentimiento RGPD / Consent Mode v2
+  assert.equal(ADSENSE_CLIENT_ID, 'ca-pub-7933111729537978');
+  assert.equal(GTM_CONTAINER_ID, 'GTM-NKFBN6X5');
+  assert.equal(GTM_ANALYTICS_CONTAINER_ID, 'GTM-WKC77GT5');
+  assert.equal(CONTACTO_EMAIL, 'lamieldehorus@gmail.com');
+  assert.equal(REGIONES_RGPD_EEE.length, 32, 'Debe cubrir los 30 paises EEE + Reino Unido (GB) + Suiza (CH)');
+  assert.ok(REGIONES_RGPD_EEE.includes('ES') && REGIONES_RGPD_EEE.includes('GB') && REGIONES_RGPD_EEE.includes('CH'));
+
+  assert.equal(esZonaHorariaEuropea('Europe/Madrid'), true);
+  assert.equal(esZonaHorariaEuropea('Atlantic/Canary'), true);
+  assert.equal(esZonaHorariaEuropea('America/Argentina/Buenos_Aires'), false);
+  assert.equal(esZonaHorariaEuropea('America/Mexico_City'), false);
+  assert.equal(esZonaHorariaEuropea(''), false);
+
+  const prefDef = normalizarPreferenciasConsentimiento(null);
+  assert.deepEqual(prefDef, { esenciales: true, analitica: false, publicidad: false, actualizado: undefined });
+
+  const estadoRechazado = construirEstadoConsentimientoGoogle({ analitica: false, publicidad: false });
+  assert.deepEqual(estadoRechazado, {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted'
+  });
+
+  const estadoParcial = construirEstadoConsentimientoGoogle({ analitica: true, publicidad: false });
+  assert.equal(estadoParcial.analytics_storage, 'granted');
+  assert.equal(estadoParcial.ad_storage, 'denied');
+  assert.equal(estadoParcial.ad_personalization, 'denied');
+
+  // 2. Orden estricto en Base.astro: Consent Mode v2 default -> GTM (ambos contenedores) -> AdSense + noscript + CMP banner/dialog
+  const baseSrc = fs.readFileSync(path.resolve('src/layouts/Base.astro'), 'utf8');
+  const idxConsent = baseSrc.indexOf("gtag('consent', 'default'");
+  const idxGtm = baseSrc.indexOf('https://www.googletagmanager.com/gtm.js?id=GTM-NKFBN6X5');
+  const idxGtm2 = baseSrc.indexOf('https://www.googletagmanager.com/gtm.js?id=GTM-WKC77GT5');
+  const idxAdsense = baseSrc.indexOf('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7933111729537978');
+  assert.ok(idxConsent !== -1, 'Base.astro debe declarar Consent Mode v2 default');
+  assert.ok(idxGtm > idxConsent, 'GTM principal debe cargarse despues de Consent Mode v2 default');
+  assert.ok(idxGtm2 > idxConsent, 'GTM analitica (GTM-WKC77GT5) debe cargarse despues de Consent Mode v2 default');
+  assert.ok(idxAdsense > idxConsent, 'AdSense debe cargarse despues de Consent Mode v2 default');
+  assert.ok(baseSrc.includes('https://www.googletagmanager.com/ns.html?id=GTM-NKFBN6X5'), 'Base.astro debe incluir iframe noscript de GTM-NKFBN6X5');
+  assert.ok(baseSrc.includes('https://www.googletagmanager.com/ns.html?id=GTM-WKC77GT5'), 'Base.astro debe incluir iframe noscript de GTM-WKC77GT5');
+  assert.ok(baseSrc.includes('id="pc-cmp-banner"'), 'Base.astro debe incluir el banner CMP RGPD');
+  assert.ok(baseSrc.includes('id="pc-cmp-dialog"'), 'Base.astro debe incluir el modal granular CMP RGPD');
+  assert.ok(baseSrc.includes('data-abrir-cmp'), 'Base.astro debe permitir reabrir preferencias de cookies desde el footer');
+
+  // 3. Correo actualizado a lamieldehorus@gmail.com en las 4 paginas institucionales y cero referencias viejas
+  for (const relPath of ['src/pages/contacto.astro', 'src/pages/sobre-nosotros.astro', 'src/pages/privacidad.astro', 'src/pages/terminos-de-uso.astro']) {
+    const src = fs.readFileSync(path.resolve(relPath), 'utf8');
+    assert.ok(src.includes(CONTACTO_EMAIL), `${relPath} debe incluir ${CONTACTO_EMAIL}`);
+    assert.ok(!src.includes('contacto@paracumpleanos.com'), `${relPath} aun contiene el correo anterior contacto@paracumpleanos.com`);
+  }
+
+  // 4. Privacidad actualizada y Mediapartners-Google permitido en robots.txt
+  const privSrc = fs.readFileSync(path.resolve('src/pages/privacidad.astro'), 'utf8');
+  assert.ok(privSrc.includes('localStorage'), 'privacidad.astro debe documentar localStorage');
+  assert.ok(privSrc.includes(GTM_CONTAINER_ID), 'privacidad.astro debe documentar GTM-NKFBN6X5');
+  assert.ok(privSrc.includes(GTM_ANALYTICS_CONTAINER_ID), 'privacidad.astro debe documentar GTM-WKC77GT5');
+  assert.ok(privSrc.includes(ADSENSE_CLIENT_ID), 'privacidad.astro debe documentar Google AdSense');
+  assert.ok(privSrc.includes('data-abrir-cmp'), 'privacidad.astro debe incluir boton para gestionar cookies RGPD');
+  const robotsSrc = fs.readFileSync(path.resolve('public/robots.txt'), 'utf8');
+  assert.ok(robotsSrc.includes('Mediapartners-Google'), 'robots.txt debe permitir explicitamente Mediapartners-Google');
+});
+
 
 

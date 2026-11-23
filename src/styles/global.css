@@ -3364,7 +3364,10 @@ input, textarea, select { font-size: 16px; }
   text-align: center;
 }
 .home-mas-btn {
-  min-width: 260px;
+  min-width: min(260px, 100%);
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.35;
 }
 
 .banderines-guias-sep {
@@ -4098,15 +4101,235 @@ input, textarea, select { font-size: 16px; }
   }
 }
 
+/* ==========================================================================
+   CMP RGPD Europa + Preferencias de cookies
+   ========================================================================== */
+.pie-link-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: inherit;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.pie-link-btn:hover {
+  color: var(--rosa-oscuro, #9f1239);
+}
+.privacidad-cmp-accion {
+  margin: 14px 0 6px;
+}
+
+.pc-cmp-banner {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  max-width: 1060px;
+  margin: 0 auto;
+  background: #ffffff;
+  color: var(--texto, #1f2937);
+  border: 1px solid #e5d0dc;
+  border-top: 3px solid var(--rosa-oscuro, #9f1239);
+  border-radius: 14px;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.22);
+}
+.pc-cmp-banner[hidden] {
+  display: none !important;
+}
+.pc-cmp-banner-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 20px;
+  padding: 16px 20px;
+}
+.pc-cmp-texto {
+  flex: 1 1 380px;
+  min-width: 0;
+}
+.pc-cmp-titulo {
+  margin: 0 0 4px;
+  font-family: var(--fuente-display, Georgia, serif);
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--texto, #1f2937);
+}
+.pc-cmp-desc {
+  margin: 0;
+  font-size: 0.87rem;
+  line-height: 1.5;
+  color: var(--suave, #4b5563);
+}
+.pc-cmp-desc a {
+  color: var(--rosa-oscuro, #9f1239);
+  font-weight: 600;
+}
+.pc-cmp-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.pc-cmp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.pc-cmp-btn--sec {
+  background: #ffffff;
+  color: var(--texto, #1f2937);
+  border: 1px solid #d1d5db;
+}
+.pc-cmp-btn--sec:hover {
+  border-color: var(--rosa-oscuro, #9f1239);
+  color: var(--rosa-oscuro, #9f1239);
+  background: #fffafb;
+}
+.pc-cmp-btn--pri {
+  background: var(--rosa-oscuro, #9f1239);
+  color: #ffffff;
+  border: 1px solid var(--rosa-oscuro, #9f1239);
+}
+.pc-cmp-btn--pri:hover {
+  background: #881337;
+  border-color: #881337;
+}
+
+.pc-cmp-dialog {
+  width: min(580px, calc(100vw - 24px));
+  max-height: min(86vh, 720px);
+  padding: 0;
+  border: 1px solid var(--borde, #e5e7eb);
+  border-radius: 16px;
+  background: #ffffff;
+  color: var(--texto, #1f2937);
+  box-shadow: 0 24px 54px rgba(15, 23, 42, 0.25);
+  overflow: hidden;
+}
+.pc-cmp-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.48);
+}
+.pc-cmp-cuerpo {
+  padding: 16px 18px;
+  max-height: 56vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pc-cmp-opcion {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--borde, #e5e7eb);
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+}
+.pc-cmp-opcion--fija {
+  background: #fafafa;
+  cursor: default;
+}
+.pc-cmp-opcion-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.pc-cmp-opcion-info strong {
+  font-size: 0.92rem;
+  color: var(--texto, #1f2937);
+}
+.pc-cmp-opcion-info span {
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--suave, #4b5563);
+}
+.pc-cmp-opcion input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--rosa-oscuro, #9f1239);
+  cursor: pointer;
+}
+.pc-cmp-legal-nota {
+  margin: 2px 0 0;
+  font-size: 0.83rem;
+  color: var(--suave, #4b5563);
+}
+.pc-cmp-legal-nota a {
+  color: var(--rosa-oscuro, #9f1239);
+  font-weight: 600;
+}
+.pc-cmp-modal-pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--borde, #e5e7eb);
+  background: #fafafa;
+}
+
+@media (max-width: 640px) {
+  .pc-cmp-banner {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+  }
+  .pc-cmp-banner-inner {
+    padding: 14px;
+    gap: 12px;
+  }
+  .pc-cmp-acciones {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .pc-cmp-acciones .pc-cmp-btn--pri {
+    grid-column: 1 / -1;
+  }
+  .pc-cmp-modal-pie {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .pc-cmp-modal-pie .pc-cmp-btn--pri {
+    grid-column: 1 / -1;
+  }
+}
+
 @media print {
   .personalizador-rapido-hub,
   .card-expand-row,
   .nav-dedicatorias,
   .pc-favoritas-barra,
   .pc-favoritas-dialog,
+  .pc-cmp-banner,
+  .pc-cmp-dialog,
   .guia-cta-rapida {
     display: none !important;
   }
 }
+
 
 
