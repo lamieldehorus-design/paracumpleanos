@@ -3,7 +3,7 @@ import { AUTOR_BIO_DEFAULT, AUTOR_ROL_DEFAULT, type GuiaEditorial } from './guia
 export const GUIAS_PARTE_5: GuiaEditorial[] = [
   {
     slug: 'feliz-cumpleanos-en-otros-idiomas-ingles-italiano-frances-y-portugues',
-    seoTitle: 'Feliz cumpleaños en otros idiomas: guía y uso correcto hoy',
+    seoTitle: 'Feliz cumpleaños en otros idiomas: fórmulas y registros',
     titulo: 'Feliz cumpleaños en otros idiomas: inglés, italiano, portugués y francés con traducción real',
     h1: 'Cómo decir feliz cumpleaños en otros idiomas sin errores de traducción ni tono',
     descripcion: 'Aprendé a decir feliz cumpleaños en otros idiomas (inglés, italiano, portugués y francés) con frases naturales, registro formal o cercano y traducción exacta.',
@@ -165,7 +165,7 @@ export const GUIAS_PARTE_5: GuiaEditorial[] = [
   },
   {
     slug: 'como-agradecer-los-mensajes-de-cumpleanos-por-whatsapp-y-redes',
-    seoTitle: 'Cómo agradecer los mensajes de cumpleaños por WhatsApp hoy',
+    seoTitle: 'Cómo agradecer los mensajes de cumpleaños por WhatsApp',
     titulo: 'Cómo agradecer los mensajes de cumpleaños por WhatsApp, estados e Instagram sin sonar robótico',
     h1: 'Cómo agradecer los mensajes de cumpleaños por WhatsApp y redes con calidez real',
     descripcion: 'Aprendé cómo agradecer los mensajes de cumpleaños por WhatsApp, grupos familiares e Instagram Stories con respuestas breves, cercanas y listas para editar hoy.',
@@ -489,7 +489,7 @@ export const GUIAS_PARTE_5: GuiaEditorial[] = [
   },
   {
     slug: 'cumpleanos-solo-o-en-momentos-dificiles-ideas-para-pasar-el-dia-con-calma',
-    seoTitle: 'Cumpleaños solo o lejos: cómo pasar el día con calma hoy',
+    seoTitle: 'Cumpleaños solo o lejos: cómo pasar el día con calma',
     titulo: 'Cumpleaños solo, lejos o en momentos difíciles: ideas reales para atravesar el día con serenidad',
     h1: 'Pasar un cumpleaños solo o lejos de casa: cómo cuidarte y encontrar calma en tu fecha',
     descripcion: 'Ideas concretas para un cumpleaños solo, lejos de casa o tras un año difícil: rituales simples sin presión festiva y palabras honestas para vos o quien querés.',
@@ -650,7 +650,7 @@ export const GUIAS_PARTE_5: GuiaEditorial[] = [
   },
   {
     slug: 'canciones-de-cumpleanos-las-mananitas-feliz-cumpleanos-y-tradiciones',
-    seoTitle: 'Canciones de cumpleaños y Las Mañanitas: letras y uso hoy',
+    seoTitle: 'Canciones de cumpleaños: Las Mañanitas y tradiciones',
     titulo: 'Canciones de cumpleaños, Las Mañanitas y brindis: tradiciones, letras y cómo presentar la torta',
     h1: 'Canciones de cumpleaños: Las Mañanitas, Feliz Cumpleaños y tradiciones para celebrar juntos',
     descripcion: 'Todo sobre las canciones de cumpleaños en español: origen de Las Mañanitas y Que los cumpla feliz, cómo abrir el canto con humor o emoción y frases previas.',

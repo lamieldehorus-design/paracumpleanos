@@ -134,7 +134,7 @@ export interface GuiaAdaptacionMensaje {
 }
 
 const REGEX_DUELO = /fallecid|hasta-el-cielo|condolencias|pesame|consuelo|luctuoso|duelo|tristes|nostalgia|extranas/;
-const REGEX_ANIV = /^(?!.*luctuoso).*(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/;
+const REGEX_ANIV = /^(?!.*luctuoso).*(mes(es)?-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/;
 const REGEX_POEMA = /^poema|poesia|-poema/;
 
 function contarPalabras(texto: string): number {
@@ -234,7 +234,7 @@ export function detectarPerfilEditorial(hub?: any, msg?: any): PerfilEditorial {
 
   if (slug === 'banderines-de-cumpleanos-para-imprimir' || slug.includes('banderin')) return 'banderines';
   if (slug === 'motivaciones' || slug.includes('motivacion')) return 'motivaciones';
-  if (grupo === 'meses' || /^cumpleanos-en-/.test(slug)) return 'meses';
+  if (grupo === 'meses' || /^cumpleanos-en-(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)$/.test(slug)) return 'meses';
   if (/jubilacion/.test(slug)) return 'jubilacion';
   if (/nacimiento|cumplemes/.test(slug)) return 'nacimiento';
   if (
@@ -244,7 +244,7 @@ export function detectarPerfilEditorial(hub?: any, msg?: any): PerfilEditorial {
     return 'fecha_especial';
   }
   if (REGEX_DUELO.test(slug) || grupo === 'duelo_recuerdos') return 'duelo';
-  if (/meses-de-novios/.test(slug)) return 'aniv_meses';
+  if (/mes(es)?-de-novios/.test(slug)) return 'aniv_meses';
   if (REGEX_ANIV.test(slug)) return 'aniv_anos';
   if (/ingles|english|biling|italiano|portugues|frances/.test(slug)) return 'bilingue';
   if (/invitacion/.test(slug)) return 'invitacion';
@@ -487,10 +487,13 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
   const slug = String((hub && hub.slug) || '');
   const grupo = String((hub && hub.grupo) || '');
 
-  let target = 'como-personalizar-tarjetas-y-dedicatorias-whatsapp';
+  let target = 'mensajes-de-cumpleanos-cortos-emotivos-o-reflexivos-como-elegir';
   if (slug === 'motivaciones') {
     target = 'como-escribir-frases-motivacionales-diarias-que-inspiren';
-  } else if (grupo === 'meses' || /^cumpleanos-en-/.test(slug)) {
+  } else if (
+    grupo === 'meses' ||
+    /^cumpleanos-en-(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)$/.test(slug)
+  ) {
     target = 'cumpleanos-segun-tu-signo-del-zodiaco-como-felicitar';
   } else if (slug === 'brindis-de-cumpleanos' || slug === 'discursos-cortos-de-cumpleanos-para-leer') {
     target = 'como-dar-un-brindis-de-cumpleanos-inolvidable-en-60-segundos';
@@ -500,10 +503,14 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'que-regalar-y-como-decorar-un-cumpleanos-con-presupuesto-inteligente';
   } else if (/superheroes|princesas|futbol|retro-vintage/.test(slug)) {
     target = 'tematicas-de-cumpleanos-ideas-originales-para-fiestas';
-  } else if (slug === 'agradecimiento-por-saludos-cumpleanos') {
+  } else if (slug === 'agradecimiento-por-saludos-cumpleanos' || /^((frases|palabras)-de-agradecimiento)$/.test(slug)) {
     target = 'como-agradecer-los-mensajes-de-cumpleanos-por-whatsapp-y-redes';
   } else if (slug === 'feliz-cumpleanos-para-mi-si-estoy-lejos-o-solo') {
     target = 'cumpleanos-solo-o-en-momentos-dificiles-ideas-para-pasar-el-dia-con-calma';
+  } else if (/jubilacion|nacimiento|cumplemes|graduacion/.test(slug)) {
+    target = 'que-escribir-en-nacimiento-jubilacion-y-graduacion-hitos-de-vida';
+  } else if (/perros|gatos/.test(slug)) {
+    target = 'como-celebrar-y-escribir-por-el-cumpleanos-de-perros-y-gatos';
   } else if (slug === 'feliz-dia-del-padre') {
     target = 'que-regalar-a-papa-que-dice-que-no-quiere-nada-ideas-con-dedicatoria';
   } else if (/30-anos-para-mi|bodas-de-plata/.test(slug)) {
@@ -511,18 +518,21 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
   } else if (
     hub && (
       hub.grupo === 'fechas_especiales' ||
-      /feliz-dia-|jubilacion|cumplemes|nacimiento|navidad|nochebuena|ano-nuevo|san-valentin|pascuas|halloween|primavera/.test(slug)
+      /feliz-dia-|navidad|nochebuena|ano-nuevo|san-valentin|pascuas|halloween|primavera/.test(slug)
     )
   ) {
-    target = 'regalos-economicos-con-valor-emocional-y-tarjeta-personalizada';
+    target = 'mensajes-para-fechas-especiales-del-ano-navidad-madre-san-valentin';
   } else if (slug === 'banderines-de-cumpleanos-para-imprimir') {
     target = 'banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas';
   } else if (
-    slug.startsWith('condolencias') ||
-    /pesame|consuelo|luctuoso|duelo-recuerdos|acompanar-a-una-familia-en-duelo/.test(slug) ||
     slug === 'frases-tristes-para-recordar-momentos' ||
     slug === 'frases-de-nostalgia-y-recuerdos' ||
     slug === 'mensajes-cuando-extranas-a-alguien'
+  ) {
+    target = 'como-escribir-mensajes-de-nostalgia-y-cuando-extranas-a-alguien';
+  } else if (
+    slug.startsWith('condolencias') ||
+    /pesame|consuelo|luctuoso|duelo-recuerdos|acompanar-a-una-familia-en-duelo/.test(slug)
   ) {
     target = 'como-escribir-condolencias-y-palabras-de-pesame-respetuosas';
   } else if (REGEX_DUELO.test(slug)) {
@@ -545,6 +555,8 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'cumpleanos-de-15-anos-dedicatorias-y-reglas-del-festejo';
   } else if (/18-anos/.test(slug)) {
     target = 'ideas-para-cumpleanos-de-18-anos-regalos-y-dedicatorias';
+  } else if (/(?:^|-)(25|30|35|40|45)-anos/.test(slug)) {
+    target = 'cumpleanos-de-30-y-40-anos-palabras-sinceras-sin-cliches-de-edad';
   } else if (/50-anos|65-anos/.test(slug)) {
     target = 'como-celebrar-cumpleanos-de-50-anos-homenajes-y-palabras';
   } else if (/90-anos|abuel/.test(slug)) {
@@ -553,22 +565,24 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'como-felicitar-a-una-embarazada-en-su-cumpleanos';
   } else if (/gracioso|divertido|chist|humor|risa/.test(slug)) {
     target = 'frases-de-cumpleanos-graciosas-sin-incomodar';
-  } else if (/para-mi\b/.test(slug)) {
+  } else if (/(?:^|-)para-mi($|-mism|-si-)|frases-por-mi-cumpleanos/.test(slug)) {
     target = 'auto-felicitacion-por-mi-cumpleanos-para-agradecer-y-reflexionar';
-  } else if (/whatsapp/.test(slug)) {
-    target = 'como-felicitar-por-whatsapp-sin-sonar-automatico';
-  } else if (/herman/.test(slug)) {
-    target = 'como-escribir-dedicatorias-de-cumpleanos-para-hermanos-complices';
-  } else if (grupo === 'cartas' && /(novi|espos|mi-amor|pareja)/.test(slug)) {
-    target = 'como-escribir-una-carta-de-cumpleanos-a-tu-pareja';
-  } else if (grupo === 'cartas') {
-    target = 'como-escribir-una-carta-de-cumpleanos-que-emocione';
   } else if (grupo === 'profesionales' || /oficina-y-equipo/.test(slug)) {
     target = 'como-felicitar-en-el-trabajo-jefe-companeros-clientes';
   } else if (grupo === 'distancia') {
     target = 'como-celebrar-un-cumpleanos-a-la-distancia';
   } else if (grupo === 'cristiano' || /oracion/.test(slug)) {
     target = 'frases-de-fe-y-agradecimiento-para-cumpleanos-cristianos';
+  } else if (grupo === 'cartas' && /(novi|espos|mi-amor|pareja)/.test(slug)) {
+    target = 'como-escribir-una-carta-de-cumpleanos-a-tu-pareja';
+  } else if (grupo === 'cartas') {
+    target = 'como-escribir-una-carta-de-cumpleanos-que-emocione';
+  } else if (/whatsapp/.test(slug)) {
+    target = 'como-felicitar-por-whatsapp-sin-sonar-automatico';
+  } else if (/facebook/.test(slug)) {
+    target = 'frases-para-estados-de-whatsapp-e-instagram-de-cumpleanos';
+  } else if (/herman/.test(slug)) {
+    target = 'como-escribir-dedicatorias-de-cumpleanos-para-hermanos-complices';
   } else if (/(bebe|primer-anito|nino|nina)/.test(slug)) {
     target = 'cumpleanos-infantiles-entre-amigos-y-companeros-de-colegio';
   } else if (grupo === 'edades') {
@@ -581,6 +595,15 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'mensajes-de-cumpleanos-para-padres-e-hijos-por-etapa';
   } else if (/(novi|espos|mi-amor|pareja|crush)/.test(slug)) {
     target = 'como-escribir-una-carta-de-cumpleanos-a-tu-pareja';
+  } else if (/(amig|compadre|comadre)/.test(slug)) {
+    target = 'mensajes-de-cumpleanos-para-amigos-y-mejores-amigos';
+  } else if (
+    grupo === 'familia' ||
+    /(suegr|cunad|tia|tio|prim[oa]|sobrin|yerno|nuera|niet[oa]|padrino|madrina|ahijad|gemel)/.test(slug)
+  ) {
+    target = 'como-felicitar-a-familia-politica-y-extendida-suegra-cunados-tios';
+  } else if (/tarjetas-/.test(slug)) {
+    target = 'como-personalizar-tarjetas-y-dedicatorias-whatsapp';
   }
 
   return guiaPorSlug(target) || GUIAS_EDITORIALES[0];

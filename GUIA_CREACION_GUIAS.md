@@ -1,40 +1,54 @@
-# Manual de Creación y Auditoría de Guías — ParaCumpleanos (SEO + GEO 2026)
+# Manual de Creación y Auditoría de Guías — ParaCumpleanos (Ultra Guía Cósmica v3.0 + SEO/GEO)
 
-Toda guía editorial publicada o actualizada en `src/data/guias.ts` debe cumplir las reglas SEO y GEO 2026 verificadas automáticamente por `src/lib/catalogo.test.ts`.
+Toda guía editorial y publicación en `src/data/guias.ts` y `data/` debe cumplir el estándar de **Alto Valor Unitario (Ultra Guía Cósmica · Edición 3.0)**, verificado automáticamente por `scripts/validador-titulos.cjs` y `src/lib/catalogo.test.ts`.
 
-## 1. Reglas de oro antes de escribir
-1. **Una guía = una intención de búsqueda real**: definí 1 `keywordPrincipal` y entre 3 y 6 `keywordsSecundarias` (variantes y preguntas relacionadas). Nunca mezcles intenciones incompatibles en un mismo artículo.
-2. **Respuesta directa en las primeras 100 palabras**: el campo `respuestaDirecta` (40 a 100 palabras) debe responder de forma completa y autónoma la pregunta principal al inicio de la guía.
-3. **H2 en forma de pregunta + índice con anclas**: cada sección en `secciones` debe usar un subtítulo en forma de pregunta (`¿... ?`). Al menos un H2 debe incluir `keywordPrincipal` (o su variante exacta normalizada). El índice de contenidos se genera automáticamente en `src/pages/guias/[slug].astro`.
-4. **Bloques extractables y legibilidad**: abrí cada sección con un párrafo autónomo de 40–60 palabras que responda esa subpregunta sin depender de contexto previo. Mantené párrafos de 2–4 líneas, oraciones cortas y definí cualquier término técnico enseguida.
-5. **E-E-A-T y datos propios verificables**:
-   - Incluí `datosPropios` con cifras reales medidas de nuestro catálogo (`352 categorías`, `14.080 dedicatorias`, distribución por longitudes o reglas editoriales reales) o estudios con fuente citada.
-   - Mantené visible la bio del autor (`autor`, `autorRol`, `autorBio`) y actualizá `fechaActualizacion` (`dateModified` en JSON-LD) en cada revisión (meta: frescura < 90 días).
-6. **Schema y rastreo IA (GEO)**:
-   - Cada guía emite `BreadcrumbList`, `Article` (`datePublished` + `dateModified` + `author`), `FAQPage` y `HowTo` (si incluye `pasosHowTo`).
-   - `public/robots.txt` habilita `GPTBot`, `OAI-SearchBot`, `ClaudeBot`, `PerplexityBot` y `Google-Extended`.
+## 1. Principios de lectura en pantalla (Patrón F y Valor Unitario)
+1. **Necesidad humana antes que keyword**: toda pieza responde a una necesidad real enunciable en una sola oración.
+2. **Coordenada vertical + horizontal**: el valor más alto vive **arriba y a la izquierda** (pliegue superior, tercio izquierdo, primeras 2 palabras del titular).
+3. **Una sola voz (sin triple repetición)**: el titular declara, el lead completa con datos nuevos y cada H2 desarrolla un ángulo distinto. Nunca repetir tres veces lo mismo.
+4. **Sintaxis web viva**: oraciones promedio cortas (meta <= 18 palabras en piezas nuevas), verbos concretos, voz activa por defecto, párrafos de 1 a 3 oraciones y voseo rioplatense consistente (sin mezclar `vos`/`tenés` con `contigo`/`eres`/`tienes`, ni jerga SMS).
+5. **Honestidad y dignidad**: cero citas, autores o recuerdos inventados. Sin infantilizar a mayores, sin humor humillante, sin dramatizar el duelo ni encasquillar por edad o género.
 
-## 2. Checklist obligatorio On-Page
+## 2. Prueba triple del titular y Doble Título
+Todo titular (`seoTitle` + `h1`) debe superar las tres pruebas simultáneamente:
+- **Contexto cero**: mostrado aislado (Google, WhatsApp, feed), se entiende exactamente qué ofrece y para quién.
+- **1 segundo / 2 palabras**: las primeras dos palabras cargan información real o gancho concreto.
+- **Promesa fiel**: el contenido cumple exactamente lo prometido. Prohibidos superlativos sin criterio verificable (`los mejores`, `únicos`, `definitivos`), adverbios de relleno (`hoy`, `ahora`), siglas/abreviaturas innecesarias (`30s`) y signos `?`/`!` en el `seoTitle`.
+- **Doble título**: `seoTitle` disciplinado (50–60 caracteres, máx. 70) + `h1` más vivo y editorial con la `keywordPrincipal`.
 
-| Campo en `GuiaEditorial` | Regla obligatoria (validada por tests) |
+## 3. Catálogo de leads y arquitectura de página
+Cada guía nueva declara su `tipoLead` del catálogo (`sumario`, `impacto`, `retrato`, `ambiente`, `cita`, `contraste`, `interrogante`, `color`, `cronologica`, `complementaria`, `espacial`, `pregunta`) e incluye:
+- **Respuesta directa** (40–100 palabras) sobre el pliegue.
+- **Índice navegable** y secciones en nivel 2 de pirámide con H2 en pregunta (`¿...?`).
+- **Comparación práctica** (evitar genérico vs. ejemplo concreto con escena).
+- **Tabla comparativa** de 3 columnas y >= 3 filas.
+- **Plantillas adaptables** (>= 10, con anatomía de 5 capas: apertura, idea central, detalle vivo, deseo concreto y cierre con sello).
+- **Caja «Cómo hacerlo tuyo»** (`comoHacerloTuyo`): instrucciones concretas para personalizar la dedicatoria.
+- **Etiquetas temáticas** (`etiquetas`): 2 a 3 etiquetas reales de búsqueda.
+- **Checklist interactiva** (>= 4 pasos), **3 FAQs**, **datos propios reales** (`441 categorías`, `22.280 textos`), **2–3 fuentes externas HTTPS** verificadas y **3–5 enlaces internos** a categorías existentes.
+
+## 4. Checklist obligatorio On-Page (validado por tests)
+
+| Campo en `GuiaEditorial` | Regla obligatoria |
 | --- | --- |
-| `seoTitle` | **50 a 60 caracteres**, con `keywordPrincipal` al inicio |
-| `descripcion` | **150 a 160 caracteres**, con keyword y llamada a la acción |
-| `h1` | Uno solo, incluye `keywordPrincipal` |
-| `slug` | Corto, minúsculas y guiones, sin tildes ni caracteres especiales |
+| `seoTitle` | **50 a 60 caracteres**, incluye `keywordPrincipal`, sin `hoy`, sin abreviaturas, sin `!/?`, sin superlativos vacíos |
+| `descripcion` | **150 a 160 caracteres**, pitch claro y fiel |
+| `h1` | Uno solo, incluye `keywordPrincipal`, sin relleno `hoy` |
+| `slug` | Minúsculas y guiones (`^[a-z0-9-]+$`), único |
 | `respuestaDirecta` | **40 a 100 palabras**, incluye `keywordPrincipal` |
-| `secciones` | Mínimo **3 secciones**, todos los `subtitulo` en formato `¿... ?`, al menos uno con `keywordPrincipal` |
-| `tablaComparativa` | Tabla clara de 3 columnas y >= 3 filas |
-| `ejemplosAdaptables` | Mínimo 2 plantillas concretas |
-| `checklistPractica` | Mínimo **4 acciones prácticas verificables** |
-| `faqs` | Mínimo **3 preguntas frecuentes** literales |
-| `categoriasRelacionadas` | **3 a 5** slugs internos reales existentes en `data/` |
-| `fuentesAutoridad` | **2 a 3** enlaces externos `https://` reales y verificados (`200 OK`) |
+| `secciones` | Mínimo **3 secciones**, H2 en pregunta (`¿...?`), al menos uno con `keywordPrincipal` |
+| `ejemplosAdaptables` | Mínimo **10 plantillas** con etiquetas y textos únicos |
+| `comoHacerloTuyo` | 3 a 5 pautas concretas de personalización (obligatorio en guías v3) |
+| `etiquetas` | 2 a 3 etiquetas temáticas reales (obligatorio en guías v3) |
+| `checklistPractica` | Mínimo **4 acciones verificables** |
+| `faqs` | **3 preguntas frecuentes** literales |
+| `categoriasRelacionadas` | **3 a 5** slugs existentes en `data/` |
+| `fuentesAutoridad` | **2 a 3** URLs `https://` reales |
 | Extensión total | **>= 900 palabras** útiles editoriales por guía |
+| Voseo y tono | Voseo rioplatense consistente; cero contaminación temática |
 
-## 3. Flujo para agregar una guía nueva
-1. Verificá la intención de búsqueda y elegí la `keywordPrincipal` sin canibalizar ninguna categoría ni guía existente.
-2. Agregá el objeto completo a `src/data/guias-parte1.ts` o `src/data/guias-parte2.ts` (reunidas en `GUIAS_EDITORIALES` en `src/data/guias.ts`) respetando la interfaz `GuiaEditorial`.
-3. Ejecutá `npx --yes tsx --test src/lib/catalogo.test.ts` — el test valida automáticamente longitudes, keywords, H2 en pregunta, `checklistPractica`, enlaces internos, fuentes externas, bio E-E-A-T y extensión mínima.
-4. Ejecutá `npm run build` y verificá que `dist/sitemap.xml` y `/guias/<slug>/` compilen sin errores.
-5. Revisá cada 30–60 días en Search Console y actualizá `fechaActualizacion` tras cada mejora real.
+## 5. Flujo para publicar o corregir
+1. Auditá `src/lib/editorial.ts` (`guiaRelacionadaParaHub`) para confirmar que ninguna guía o categoría existente cubra ya el mismo ángulo.
+2. Sumá o corregí la guía en `src/data/guias-parte*.ts` y conectala en `src/data/guias.ts` y `src/lib/editorial.ts`.
+3. Ejecutá `npm run validate` y `npx --yes tsx --test src/lib/catalogo.test.ts`.
+4. Ejecutá `npm run build` y verificá que `/guias/`, `/guias/<slug>/` y `dist/sitemap.xml` compilen sin errores.

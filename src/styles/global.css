@@ -917,6 +917,43 @@ img { max-width: 100%; }
   font-variant-numeric: tabular-nums;
 }
 
+.guia-personalizar-box {
+  background: linear-gradient(180deg, #fffdf9 0%, var(--superficie) 100%);
+  border: 1px solid var(--dorado-borde);
+  border-left: 4px solid var(--dorado);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 22px 0;
+  max-width: 72ch;
+}
+.guia-personalizar-box h2 { margin-top: 0; }
+.guia-personalizar-intro {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  color: var(--texto-suave);
+}
+.guia-etiquetas-linea {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--borde);
+  font-size: 0.86rem;
+  color: var(--texto-suave);
+}
+.guia-etiquetas-label { font-weight: 700; color: var(--texto); }
+.guia-etiqueta-item {
+  display: inline-block;
+  padding: 3px 10px;
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 6px;
+  color: var(--texto);
+  font-size: 0.84rem;
+}
+
 .guia-checklist-box {
   background: var(--superficie);
   border: 1px solid var(--borde);

@@ -168,7 +168,7 @@ test('descripciones lead, seoTitulo y seoTexto son unicos y ningun titulo queda 
   assert.equal(new Set(cat.hubs.map((h) => h.seoTexto)).size, 441, 'Cada categoria debe tener un seoTexto unico');
   assert.equal(new Set(cat.hubs.map((h) => h.titulo)).size, 441, 'Cada categoria debe tener un titulo unico');
 
-  const cortePrep = /(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(de|del|en|con|a|al|para|por|sin|y|el|la|los|las|un|una|tu|su)$/i;
+  const cortePrep = /(?<![A-Za-zÁÉÍÓÚÜÑÇáéíóúüñç])(de|del|en|con|a|al|para|por|sin|y|el|la|los|las|un|una|tu|su)$/i;
   for (const h of cat.hubs) {
     assert.ok(!cortePrep.test(h.titulo.trim()), `Hub ${h.slug} termina en preposicion/articulo: "${h.titulo}"`);
     assert.ok((h.lead || '').length >= 300, `Hub ${h.slug} lead demasiado corto: ${(h.lead || '').length}`);
@@ -179,7 +179,7 @@ test('descripciones lead, seoTitulo y seoTexto son unicos y ningun titulo queda 
       const seoBlob = `${h.lead} ${h.seoTitulo} ${h.seoTexto}`;
       assert.ok(!/(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(torta|pastel|soplá|velas|fiesta|festej\w*|brindis|regalos)(?![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])/i.test(seoBlob), `Hub de duelo/recuerdos ${h.slug} contiene palabra festiva en lead/seo`);
     }
-    if (/^(?!.*luctuoso).*(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(h.slug)) {
+    if (/^(?!.*luctuoso).*(mes(es)?-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(h.slug)) {
       const seoBlob = `${h.lead} ${h.seoTitulo} ${h.seoTexto}`;
       assert.ok(!/cumpleaños/i.test(seoBlob), `Hub de aniversario ${h.slug} menciona cumpleaños en lead/seo`);
     }
@@ -190,7 +190,8 @@ test('descripciones lead, seoTitulo y seoTexto son unicos y ningun titulo queda 
     assert.ok(!/,\s*quien cumple\b|quien cumple\s+de\s+alma|\bpara quien cumple:/i.test(m.texto), `Mensaje ${m.slug} contiene vocativo literal "quien cumple"`);
     assert.ok(!/Querida persona especial/i.test(m.texto), `Mensaje ${m.slug} contiene saludo generico "Querida persona especial"`);
     assert.ok(!/\(\d+\/36 para [^)]+\)/.test(m.texto), `Mensaje ${m.slug} contiene marcador interno (/36 para ...)`);
-    assert.ok(!/\b([a-záéíóúüñ]{2,})\s+\1\b/i.test(m.texto), `Mensaje ${m.slug} tiene palabra duplicada consecutiva`);
+    assert.ok(!/\([^)\n]{4,100},\s*texto\s+\d+\)/i.test(m.texto), `Mensaje ${m.slug} contiene marcador interno (..., texto N)`);
+    assert.ok(!/(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])([a-záéíóúüñ]{2,})\s+\1(?![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])/i.test(m.texto), `Mensaje ${m.slug} tiene palabra duplicada consecutiva`);
     assert.ok(!/de corazón\.\s+Deseo de corazón/i.test(m.texto), `Mensaje ${m.slug} repite "de corazon" pegado`);
     assert.ok(!/(,\s+(hija|hijo|mamá|papá|hermana|hermano|amiga|amigo|novia|novio|esposa|esposo|abuela|abuelo|prima|primo)\.\s+Cuando pienso en tu cumpleaños),\s+\2,/i.test(m.texto), `Mensaje ${m.slug} repite vocativo en oraciones seguidas`);
   }
@@ -210,7 +211,7 @@ test('cartas largas, poemas en estrofas, duelo respetuoso y aniversarios coheren
     cat.hubs.filter((h) => /fallecid|hasta-el-cielo|condolencias|pesame|consuelo|luctuoso|tristes|nostalgia|extranas/.test(h.slug) || h.grupo === 'duelo_recuerdos').map((h) => h.slug)
   );
   const anivHubs = new Set(
-    cat.hubs.filter((h) => /^(?!.*luctuoso).*(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(h.slug)).map((h) => h.slug)
+    cat.hubs.filter((h) => /^(?!.*luctuoso).*(mes(es)?-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(h.slug)).map((h) => h.slug)
   );
 
   for (const m of cat.todosMensajes) {
@@ -255,7 +256,7 @@ test('modulo editorial genera 20 perfiles distintos, citas, FAQs y posdatas cohe
     assert.ok(ed.claves.length >= 3);
 
     const isDuelo = /fallecid|hasta-el-cielo|condolencias|pesame|consuelo|luctuoso|tristes|nostalgia|extranas/.test(hub.slug) || hub.grupo === 'duelo_recuerdos';
-    const isAniv = /^(?!.*luctuoso).*(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(hub.slug);
+    const isAniv = /^(?!.*luctuoso).*(mes(es)?-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(hub.slug);
 
     if (isDuelo) {
       assert.equal(ed.perfil, 'duelo', `Hub duelo mal clasificado: ${hub.slug}`);
@@ -344,7 +345,7 @@ test('guias editoriales cumplen checklist completo SEO y GEO 2026 para guias act
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
 
-  assert.equal(GUIAS_EDITORIALES.length, 45, `Se esperaban 45 guias editoriales, hay ${GUIAS_EDITORIALES.length}`);
+  assert.equal(GUIAS_EDITORIALES.length, 53, `Se esperaban 53 guias editoriales, hay ${GUIAS_EDITORIALES.length}`);
   const slugsGuias = new Set<string>();
   for (const g of GUIAS_EDITORIALES) {
     assert.ok(!slugsGuias.has(g.slug), `Slug de guia duplicado: ${g.slug}`);
@@ -352,6 +353,10 @@ test('guias editoriales cumplen checklist completo SEO y GEO 2026 para guias act
     slugsGuias.add(g.slug);
 
     assert.ok(g.seoTitle.length >= 50 && g.seoTitle.length <= 60, `Guia ${g.slug} seoTitle fuera de 50-60 chars: ${g.seoTitle.length}`);
+    assert.ok(!/\bhoy\b/i.test(g.seoTitle), `Guia ${g.slug} incluye adverbio de relleno "hoy" en seoTitle: ${g.seoTitle}`);
+    assert.ok(!/\bhoy\b/i.test(g.h1), `Guia ${g.slug} incluye adverbio de relleno "hoy" en h1: ${g.h1}`);
+    assert.ok(!/\b30s\b/i.test(g.seoTitle), `Guia ${g.slug} incluye abreviatura en seoTitle: ${g.seoTitle}`);
+    assert.ok(!/[!?¡¿]/.test(g.seoTitle), `Guia ${g.slug} incluye signo !/? en seoTitle: ${g.seoTitle}`);
     assert.ok(g.descripcion.length >= 150 && g.descripcion.length <= 160, `Guia ${g.slug} meta description fuera de 150-160 chars: ${g.descripcion.length}`);
     assert.ok(g.keywordPrincipal.trim().length >= 5, `Guia ${g.slug} requiere keywordPrincipal`);
     assert.ok(g.keywordsSecundarias.length >= 3 && g.keywordsSecundarias.length <= 6, `Guia ${g.slug} requiere 3-6 keywordsSecundarias`);
@@ -361,6 +366,17 @@ test('guias editoriales cumplen checklist completo SEO y GEO 2026 para guias act
     assert.ok(norm(g.h1).includes(kw), `Guia ${g.slug} debe incluir keywordPrincipal en h1`);
     assert.ok(norm(g.respuestaDirecta).includes(kw), `Guia ${g.slug} debe incluir keywordPrincipal en respuestaDirecta`);
     assert.ok(g.secciones.some((s) => norm(s.subtitulo).includes(kw)), `Guia ${g.slug} debe incluir keywordPrincipal en al menos un H2`);
+
+    if (g.tipoLead) {
+      assert.ok(Array.isArray(g.comoHacerloTuyo) && g.comoHacerloTuyo.length >= 3, `Guia v3 ${g.slug} requiere caja comoHacerloTuyo (>= 3 pautas)`);
+      assert.ok(Array.isArray(g.etiquetas) && g.etiquetas.length >= 2 && g.etiquetas.length <= 3, `Guia v3 ${g.slug} requiere 2-3 etiquetas tematicas`);
+      const sents = g.secciones
+        .flatMap((s) => s.parrafos)
+        .flatMap((p) => p.split(/(?<=[.!?])\s+/))
+        .filter((s) => s.trim().length > 5);
+      const avgWords = sents.reduce((acc, s) => acc + s.trim().split(/\s+/).length, 0) / (sents.length || 1);
+      assert.ok(avgWords <= 22, `Guia v3 ${g.slug} tiene oraciones promedio muy largas (${avgWords.toFixed(1)} palabras)`);
+    }
 
     const rdWords = g.respuestaDirecta.trim().split(/\s+/).filter(Boolean).length;
     assert.ok(rdWords >= 40 && rdWords <= 100, `Guia ${g.slug} respuestaDirecta fuera de 40-100 palabras: ${rdWords}`);
@@ -489,7 +505,7 @@ test('personalizador adapta saludos, cartas, bilingues, poemas y firma sin corta
   assert.equal(Object.keys(FORMATOS_TARJETA).length, 2);
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren las 24760 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
+test('generarUrlsSitio y generarSitemapXml cubren las 24768 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
@@ -497,8 +513,8 @@ test('generarUrlsSitio y generarSitemapXml cubren las 24760 URLs indexables sin 
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
   const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises);
 
-  assert.equal(urls.length, 24760, `Se esperaban 24760 URLs indexables, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 24760, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(urls.length, 24768, `Se esperaban 24768 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 24768, 'Las URLs del sitemap deben ser todas unicas');
   assert.ok(urls.every((url) => url.startsWith('https://paracumpleanos.com/')));
   assert.ok(urls.every((url) => !/[?#]/.test(url)));
   assert.ok(urls.includes('https://paracumpleanos.com/'));
@@ -528,6 +544,7 @@ test('generarUrlsSitio y generarSitemapXml cubren las 24760 URLs indexables sin 
   assert.ok(urls.includes('https://paracumpleanos.com/terminos-de-uso/'));
   assert.ok(urls.includes('https://paracumpleanos.com/guias/como-escribir-una-carta-de-cumpleanos-que-emocione/'));
   assert.ok(urls.includes('https://paracumpleanos.com/guias/banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/guias/mensajes-de-cumpleanos-para-amigos-y-mejores-amigos/'));
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/'));
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/2/'));
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-cumpleanos-mama/4/'));
@@ -553,13 +570,13 @@ test('generarUrlsSitio y generarSitemapXml cubren las 24760 URLs indexables sin 
   assert.ok(xmlSinLastmod.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xmlSinLastmod.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xmlSinLastmod.match(/<loc>/g) || [];
-  assert.equal(locs.length, 24760);
+  assert.equal(locs.length, 24768);
   assert.ok(!xmlSinLastmod.includes('<lastmod>'), 'Sin mapa lastmod no debe emitir etiquetas lastmod');
 
   const mapaLastmod = construirMapaLastmodSitemap(cat, GUIAS_EDITORIALES, slugsSignos, slugsPaises, '2026-11-22');
   const xmlConLastmod = generarSitemapXml(urls, mapaLastmod);
   const lastmods = xmlConLastmod.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || [];
-  assert.equal(lastmods.length, 24760, 'Cada una de las 24760 URLs debe recibir su lastmod real YYYY-MM-DD');
+  assert.equal(lastmods.length, 24768, 'Cada una de las 24768 URLs debe recibir su lastmod real YYYY-MM-DD');
   assert.ok(
     xmlConLastmod.includes('<loc>https://paracumpleanos.com/banderines-de-cumpleanos-para-imprimir/</loc><lastmod>2026-11-22</lastmod>'),
     'El sitemap debe reflejar el lastmod real de banderines'
@@ -567,7 +584,7 @@ test('generarUrlsSitio y generarSitemapXml cubren las 24760 URLs indexables sin 
   assert.throws(() => generarSitemapXml(['https://paracumpleanos.com/'], { 'https://paracumpleanos.com/': '2026-02-31' }));
 });
 
-test('Bing IndexNow cubre las 24760 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre las 24768 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -580,14 +597,14 @@ test('Bing IndexNow cubre las 24760 URLs en lotes validos de hasta 10000 y tiene
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
   const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises));
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 24760);
+  assert.equal(extraidas.length, 24768);
 
   const payloads = construirPayloadsIndexNow(extraidas);
   assert.equal(payloads.length, 3);
-  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 24760);
+  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 24768);
   assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
   assert.equal(payloads[1].urlList.length, INDEXNOW_MAX_BATCH);
-  assert.equal(payloads[2].urlList.length, 4760);
+  assert.equal(payloads[2].urlList.length, 4768);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);
@@ -993,4 +1010,70 @@ test('impresion aisla solo la postal o banderines, descargas omiten titulo SEO y
   assert.ok(cssSrc.includes('.selector-anios-aniv'), '@media print debe ocultar .selector-anios-aniv');
   assert.ok(cssSrc.includes('.meta-linea-editorial'), '@media print debe ocultar .meta-linea-editorial');
   assert.ok(cssSrc.includes('.banderines-print-area'), '@media print debe formatear las hojas A4 de banderines');
+});
+
+test('estandar Ultra Guia Cosmica v3.0: cero contaminacion tematica, cero mezcla voseo/tuteo y ruteo exacto de 53 guias', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+
+  // 1. Cero "Hoy" de relleno en titulos de hubs
+  for (const h of cat.hubs) {
+    assert.ok(!/\bhoy\b/i.test(h.titulo), `Hub ${h.slug} contiene "hoy" de relleno en titulo: ${h.titulo}`);
+  }
+
+  // 2. Cero mezcla voseo/tuteo, cero ?/! en titulos y cero cliches "momentos inolvidables"
+  const tuteoMixRe = /\b(tienes|puedes|quieres|sabes|haces|dices|eres|recuerdas|necesitas|buscas|escribes|eliges|envías|compartes|tú|contigo)\b/i;
+  const voseoRe = /\b(tenés|podés|querés|sabés|hacés|decís|sos|buscás|escribís|elegís|enviás|compartís|vos)\b/i;
+  for (const m of cat.todosMensajes) {
+    assert.ok(!/[!?¡¿]/.test(m.titulo), `Mensaje ${m.slug} contiene signo !/? en titulo: ${m.titulo}`);
+    assert.ok(!/momentos inolvidables/i.test(m.texto), `Mensaje ${m.slug} contiene cliche "momentos inolvidables"`);
+    if (voseoRe.test(m.texto)) {
+      assert.ok(!tuteoMixRe.test(m.texto), `Mensaje ${m.slug} (${m.categoria}) mezcla voseo con tuteo`);
+    }
+  }
+
+  // 3. Cero contaminacion de "cumpleaños" en fechas especiales, hitos no-cumpleanos y primer mes de novios
+  const noCumpleHubs = cat.hubs.filter(
+    (h) =>
+      h.grupo === 'fechas_especiales' ||
+      h.slug === 'frases-de-primer-mes-de-novios' ||
+      /jubilacion|nacimiento|cumplemes|graduacion/.test(h.slug)
+  );
+  assert.ok(noCumpleHubs.length >= 22);
+  for (const h of noCumpleHubs) {
+    for (const m of cat.mensajesDe(h.slug)) {
+      assert.ok(
+        !/cumplea[ñn]os/i.test(m.titulo + ' ' + m.texto),
+        `Contaminacion de "cumpleaños" en ${h.slug} (${m.slug}): ${m.titulo}`
+      );
+    }
+  }
+
+  // 4. Ruteo exacto de guiaRelacionadaParaHub (bugs corregidos + 8 nuevas guias)
+  const casosRuteo: [string, string][] = [
+    ['cumpleanos-en-la-oficina-y-equipo', 'como-felicitar-en-el-trabajo-jefe-companeros-clientes'],
+    ['feliz-cumpleanos-para-mi-jefa', 'como-felicitar-en-el-trabajo-jefe-companeros-clientes'],
+    ['cartas-para-mi-madre', 'como-escribir-una-carta-de-cumpleanos-que-emocione'],
+    ['feliz-cumpleanos-amiga', 'mensajes-de-cumpleanos-para-amigos-y-mejores-amigos'],
+    ['feliz-cumpleanos-mejor-amigo', 'mensajes-de-cumpleanos-para-amigos-y-mejores-amigos'],
+    ['feliz-cumpleanos-suegra', 'como-felicitar-a-familia-politica-y-extendida-suegra-cunados-tios'],
+    ['feliz-cumpleanos-para-una-cunada', 'como-felicitar-a-familia-politica-y-extendida-suegra-cunados-tios'],
+    ['feliz-navidad-en-familia', 'mensajes-para-fechas-especiales-del-ano-navidad-madre-san-valentin'],
+    ['feliz-san-valentin', 'mensajes-para-fechas-especiales-del-ano-navidad-madre-san-valentin'],
+    ['mensajes-cuando-extranas-a-alguien', 'como-escribir-mensajes-de-nostalgia-y-cuando-extranas-a-alguien'],
+    ['frases-de-nostalgia-y-recuerdos', 'como-escribir-mensajes-de-nostalgia-y-cuando-extranas-a-alguien'],
+    ['feliz-jubilacion-y-retiro', 'que-escribir-en-nacimiento-jubilacion-y-graduacion-hitos-de-vida'],
+    ['bienvenida-nacimiento-bebe', 'que-escribir-en-nacimiento-jubilacion-y-graduacion-hitos-de-vida'],
+    ['cumpleanos-para-perros', 'como-celebrar-y-escribir-por-el-cumpleanos-de-perros-y-gatos'],
+    ['feliz-cumpleanos-para-gatos', 'como-celebrar-y-escribir-por-el-cumpleanos-de-perros-y-gatos'],
+    ['feliz-cumpleanos-30-anos', 'cumpleanos-de-30-y-40-anos-palabras-sinceras-sin-cliches-de-edad'],
+    ['feliz-cumpleanos-40-anos', 'cumpleanos-de-30-y-40-anos-palabras-sinceras-sin-cliches-de-edad'],
+    ['mensajes-de-cumpleanos-emotivos', 'mensajes-de-cumpleanos-cortos-emotivos-o-reflexivos-como-elegir'],
+    ['feliz-cumpleanos-para-mi', 'auto-felicitacion-por-mi-cumpleanos-para-agradecer-y-reflexionar']
+  ];
+  for (const [hubSlug, guiaEsperada] of casosRuteo) {
+    const h = cat.hubsPorSlug.get(hubSlug);
+    assert.ok(h, `Hub faltante en prueba de ruteo: ${hubSlug}`);
+    assert.equal(guiaRelacionadaParaHub(h).slug, guiaEsperada, `Hub ${hubSlug} mapeo a guia incorrecta`);
+  }
 });
