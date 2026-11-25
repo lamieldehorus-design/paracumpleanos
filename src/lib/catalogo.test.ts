@@ -112,6 +112,20 @@ import {
   REDIRECCIONES_RAIZ_LEGADAS,
   sugerirHubParaRutaLegada
 } from './redirecciones-legadas';
+import {
+  COMPARATIVA_ENFOQUES,
+  GLOSARIO_FORMATOS,
+  ORG_ID,
+  WEBSITE_ID,
+  WEBPAGE_ID,
+  WEBAPP_ID,
+  SECCIONES_ID,
+  FAQ_ID,
+  calcularRadiografiaCatalogo,
+  construirFaqsPortada,
+  construirGrafoPortadaLd,
+  construirTransparenciaPortada
+} from './geo-portada';
 
 function cargarDatosCompletos() {
   const base = JSON.parse(fs.readFileSync(path.resolve('data/contenido.json'), 'utf8'));
@@ -1593,12 +1607,104 @@ test('Correccion Bing /publicaciones/, recuperacion GSC (esposa/esposo/mama/papa
   // 4. Portada y directorio con guia pilar Ultra Guia Cosmica SEO y FAQPage
   const idxSrc = fs.readFileSync(path.resolve('src/pages/index.astro'), 'utf8');
   assert.ok(idxSrc.includes('portal-guia-cosmica'), 'La portada debe incluir la seccion pilar portal-guia-cosmica');
-  assert.ok(idxSrc.includes("'@type': 'FAQPage'"), 'La portada debe emitir JSON-LD FAQPage');
+  assert.ok(idxSrc.includes('construirGrafoPortadaLd'), 'La portada debe emitir JSON-LD @graph con FAQPage conectado');
   assert.ok(idxSrc.includes('class="tabla-comparativa"'), 'La portada debe incluir la tabla comparativa por canal y horario');
   assert.ok(idxSrc.includes('class="comparacion-concreta"'), 'La portada debe incluir comparaciones concretas evitar vs mejor');
 
   const catsSrc = fs.readFileSync(path.resolve('src/pages/categorias.astro'), 'utf8');
   assert.ok(catsSrc.includes('class="cats-guia-editorial"'), '/categorias/ debe incluir la guia editorial de orientacion');
+});
+
+test('Arquitectura GEO de portada: radiografia real, grafo @graph con @id, FAQs visibles sin acordeon y Entity Home coherente', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+
+  // 1. Radiografia cuantitativa real del catalogo (Information Gain sin datos inventados)
+  const rad = calcularRadiografiaCatalogo({
+    hubs: cat.hubs,
+    todosMensajes: cat.todosMensajes,
+    hubsPorGrupo: cat.hubsPorGrupo,
+    totalGuias: GUIAS_EDITORIALES.length,
+    totalPaisesHitos: PAISES_HITOS.length
+  });
+  assert.equal(rad.totalColecciones, 441);
+  assert.equal(rad.totalMensajes, 22280);
+  assert.equal(rad.cortos + rad.medios + rad.largos, 22280, 'La suma de cortos+medios+largos debe ser exacta');
+  assert.equal(rad.coleccionesDuelo, 17);
+  assert.equal(rad.coleccionesAniversarios, 27);
+  assert.equal(rad.totalGuias, 53);
+  assert.equal(rad.totalPaisesHitos, 196);
+  assert.ok(rad.promedioPalabras >= 40 && rad.promedioPalabras <= 200, `Promedio de palabras inesperado: ${rad.promedioPalabras}`);
+  assert.ok(Math.abs(rad.cortosPct + rad.mediosPct + rad.largosPct - 100) <= 0.3, 'Los porcentajes de extension deben sumar ~100%');
+
+  // 2. Grafo JSON-LD @graph con 6 entidades enlazadas por @id
+  const faqs = construirFaqsPortada(rad);
+  assert.equal(faqs.length, 8, 'La portada GEO debe incluir 8 preguntas frecuentes visibles');
+
+  const grafo = construirGrafoPortadaLd({
+    marca: 'ParaCumpleanos',
+    sitio: 'https://paracumpleanos.com',
+    tituloPagina: 'Frases y mensajes de feliz cumpleaños, postales y calendario - ParaCumpleanos',
+    descripcionPagina: 'Archivo editorial de dedicatorias.',
+    grupos: GRUPOS,
+    hubsPorGrupo: cat.hubsPorGrupo,
+    rad,
+    faqs
+  });
+  assert.equal(grafo['@context'], 'https://schema.org');
+  assert.equal(grafo['@graph'].length, 6);
+
+  const porTipo = new Map<string, any>(grafo['@graph'].map((n: any) => [n['@type'], n]));
+  const org = porTipo.get('Organization');
+  const site = porTipo.get('WebSite');
+  const page = porTipo.get('CollectionPage');
+  const app = porTipo.get('WebApplication');
+  const list = porTipo.get('ItemList');
+  const faqNode = porTipo.get('FAQPage');
+
+  assert.equal(org['@id'], ORG_ID);
+  assert.equal(site['@id'], WEBSITE_ID);
+  assert.equal(site.publisher['@id'], ORG_ID);
+  assert.equal(page['@id'], WEBPAGE_ID);
+  assert.equal(page.isPartOf['@id'], WEBSITE_ID);
+  assert.equal(page.about['@id'], ORG_ID);
+  assert.equal(page.mainEntity['@id'], SECCIONES_ID);
+  assert.ok(Array.isArray(page.speakable.cssSelector) && page.speakable.cssSelector.length >= 3);
+  assert.equal(app['@id'], WEBAPP_ID);
+  assert.equal(app.isAccessibleForFree, true);
+  assert.equal(app.creator['@id'], ORG_ID);
+  assert.equal(list['@id'], SECCIONES_ID);
+  assert.equal(list.numberOfItems, 15, 'ItemList debe listar las 14 secciones + Hitos historicos');
+  assert.equal(faqNode['@id'], FAQ_ID);
+  assert.equal(faqNode.isPartOf['@id'], WEBPAGE_ID);
+  assert.equal(faqNode.mainEntity.length, faqs.length, 'FAQPage JSON-LD debe coincidir 1:1 con las FAQs visibles');
+
+  // 3. Portada y Sobre nosotros alineados (Primacia, 3 capas, glosario, transparencia, Recencia y FAQs visibles sin acordeon)
+  const idxSrc = fs.readFileSync(path.resolve('src/pages/index.astro'), 'utf8');
+  assert.ok(idxSrc.includes('class="portal-tldr"'), 'La portada debe incluir el bloque Primacia TL;DR (.portal-tldr)');
+  assert.ok(idxSrc.includes('class="geo-respuesta-directa"'), 'La portada debe abrir subsecciones con respuesta directa');
+  assert.ok(idxSrc.includes('tabla-comparativa--enfoques'), 'La portada debe incluir tabla comparativa honesta de enfoques');
+  assert.ok(idxSrc.includes('tabla-comparativa--datos'), 'La portada debe incluir radiografia cuantitativa verificable');
+  assert.ok(idxSrc.includes('class="geo-glosario"'), 'La portada debe incluir glosario <dl> de formatos');
+  assert.ok(idxSrc.includes('class="geo-transparencia"'), 'La portada debe incluir bloque de alcance real y limites');
+  assert.ok(idxSrc.includes('class="geo-cierre"'), 'La portada debe incluir sintesis de cierre (efecto recencia)');
+  assert.ok(idxSrc.includes('class="faq-grid-visible"'), 'Las FAQs de portada deben renderizarse visibles sin acordeones cerrados');
+  assert.ok(!idxSrc.includes('<details class="faq-item"'), 'Las FAQs de portada no deben ocultarse en acordeones <details>');
+
+  const aboutSrc = fs.readFileSync(path.resolve('src/pages/sobre-nosotros.astro'), 'utf8');
+  assert.ok(aboutSrc.includes('construirOrganizacionLd') && aboutSrc.includes('AboutPage'), 'Sobre nosotros debe emitir Entity Home AboutPage + Organization con el mismo @id');
+
+  // 4. Pureza de voseo rioplatense en todo el contenido GEO nuevo
+  const transparencia = construirTransparenciaPortada(rad);
+  const blobGeo = [
+    ...faqs.flatMap((f) => [f.pregunta, f.respuesta]),
+    ...COMPARATIVA_ENFOQUES.flatMap((r) => [r.enfoque, r.especificidad, r.cuidadoContexto, r.privacidadCosto, r.limiteReal]),
+    ...GLOSARIO_FORMATOS.flatMap((g) => [g.termino, g.definicion]),
+    ...transparencia.queEs,
+    ...transparencia.queNoEs
+  ].join(' ');
+  const tuteoMixRe = /\b(tienes|puedes|quieres|sabes|haces|dices|eres|recuerdas|necesitas|buscas|escribes|eliges|envías|compartes|tú|contigo)\b/i;
+  assert.ok(!tuteoMixRe.test(blobGeo), 'El contenido GEO de portada no debe mezclar tuteo con voseo rioplatense');
 });
 
 

@@ -23,6 +23,16 @@ import {
   BLOQUES_PORTADA_GSC,
   etiquetaCortaGsc
 } from '../lib/gsc-estrategia.ts';
+import {
+  COMPARATIVA_ENFOQUES,
+  FECHA_ACTUALIZACION_PORTADA,
+  FECHA_ACTUALIZACION_TEXTO,
+  GLOSARIO_FORMATOS,
+  calcularRadiografiaCatalogo,
+  construirFaqsPortada,
+  construirGrafoPortadaLd,
+  construirTransparenciaPortada
+} from '../lib/geo-portada.ts';
 
 // Pool mixto de las publicaciones mas populares de TODAS las categorias del sitio (32 totales, 6 iniciales para lectura agil)
 const poolPopular = seleccionarPoolPopularMixto(catalogo, 32);
@@ -136,7 +146,15 @@ const indiceBuscador = hubs
   ]);
 
 const temas = Object.values(TEMAS_TARJETA);
-const totalPublicacionesPortal = todosMensajes.length + PAISES_HITOS.length + GUIAS_EDITORIALES.length;
+const radiografia = calcularRadiografiaCatalogo({
+  hubs,
+  todosMensajes,
+  hubsPorGrupo,
+  totalGuias: GUIAS_EDITORIALES.length,
+  totalPaisesHitos: PAISES_HITOS.length
+});
+const totalPublicacionesPortal = radiografia.totalPublicaciones;
+const transparenciaPortada = construirTransparenciaPortada(radiografia);
 
 const utilidadesPortal = [
   { href: '/calendario/', label: 'Calendario 366 días' },
@@ -148,71 +166,26 @@ const utilidadesPortal = [
   { href: '/herramientas/', label: 'Calculadora y acrósticos' }
 ];
 
-const faqsPortada = [
-  {
-    pregunta: '¿Cómo desear feliz cumpleaños sin sonar repetitivo ni genérico?',
-    respuesta:
-      'Seguí una estructura concreta de cuatro piezas: nombrá a la persona por su apodo real, recordá una escena puntual que compartieron en el último año (un café, un consejo, un viaje o una risa de entrecasa), sumá un deseo específico para sus proyectos actuales y cerrá con tu firma habitual. Evitar los clichés de cadena hace que incluso cuatro líneas se sientan escritas solo para esa persona.'
-  },
-  {
-    pregunta: '¿Conviene enviar un mensaje corto por WhatsApp o una carta larga emotiva?',
-    respuesta:
-      'Depende del canal y del horario. Apenas empieza la mañana por WhatsApp o en un estado de Instagram, los textos breves de 30 a 65 palabras se leen completos sin quedar cortados entre decenas de notificaciones. En cambio, las cartas largas de varios párrafos lucen muchísimo mejor entregadas en una tarjeta impresa junto a un regalo, al final del día o en vínculos íntimos como mamá, papá, pareja e hijos.'
-  },
-  {
-    pregunta: '¿Cómo personalizar las tarjetas con nombre y descargar PNG o Story gratis?',
-    respuesta:
-      'En la portada o dentro de cualquiera de las 441 colecciones podés escribir el nombre real y tu firma en el personalizador en vivo: todos los textos se adaptan automáticamente respetando puntuación, saludos y estrofas. Después tocás «Copiar texto» para enviarlo limpio por WhatsApp o «Descargar PNG» para elegir paleta de color, tipografía y formato cuadrado (1080×1080) o vertical Story (1080×1920) sin registro.'
-  },
-  {
-    pregunta: '¿Qué conviene escribir en un cumpleaños a distancia o con cambio de huso horario?',
-    respuesta:
-      'El secreto de un gran saludo a la distancia es celebrar su presente en la ciudad donde vive y mirar hacia el próximo reencuentro, en lugar de teñir el día de tristeza. Calculá el desayuno según su reloj local para llegar temprano, sumá una foto vieja que despierte sonrisas y proponé una videollamada corta o brindis simultáneo a la tarde.'
-  },
-  {
-    pregunta: '¿Cómo redactar condolencias y mensajes en fechas de duelo con tacto real?',
-    respuesta:
-      'En fechas sensibles o ante una pérdida, la sobriedad acompaña mucho más que las explicaciones grandilocuentes. Elegí frases breves que validen el recuerdo, nombren con respeto a la persona homenajeada y ofrezcan presencia concreta sin apuros. Todas nuestras 17 colecciones de condolencias, duelo y recuerdos están auditadas para quedar libres de vocabulario festivo.'
-  },
-  {
-    pregunta: '¿Cómo funcionan los aniversarios de más de 10 años y los banderines A4 imprimibles?',
-    respuesta:
-      'Para parejas que superan la década, la colección «Más de 10 años de novios» permite elegir el número exacto entre 11 y 80 años y adapta los 50 textos al instante sin mezclar palabras de cumpleaños. Además, desde nuestra sección de banderines A4 podés escribir el nombre del agasajado, elegir entre 6 paletas o versión para colorear e imprimir gratis las letras listas para recortar.'
-  }
-];
+const faqsPortada = construirFaqsPortada(radiografia);
+const tituloPortada = 'Frases y mensajes de feliz cumpleaños, postales y calendario - ParaCumpleanos';
+const descripcionPortada = `Buscá entre ${hubs.length} colecciones, ${todosMensajes.length.toLocaleString('es-AR')} frases de feliz cumpleaños, condolencias, nostalgia, aniversarios, banderines A4, calendario sin año y ${PAISES_HITOS.length} hitos históricos mundiales.`;
 
 const jsonld = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: MARCA,
-    url: SITIO + '/',
-    inLanguage: 'es-AR',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: SITIO + '/categorias/?q={search_term_string}',
-      'query-input': 'required name=search_term_string'
-    }
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqsPortada.map(function (f) {
-      return {
-        '@type': 'Question',
-        name: f.pregunta,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: f.respuesta
-        }
-      };
-    })
-  }
+  construirGrafoPortadaLd({
+    marca: MARCA,
+    sitio: SITIO,
+    tituloPagina: tituloPortada,
+    descripcionPagina: descripcionPortada,
+    grupos: GRUPOS,
+    hubsPorGrupo,
+    rad: radiografia,
+    faqs: faqsPortada
+  })
 ];
 ---
 <Base
-  titulo="Frases y mensajes de feliz cumpleaños, postales y calendario - ParaCumpleanos"
-  descripcion={`Buscá entre ${hubs.length} colecciones, ${todosMensajes.length.toLocaleString('es-AR')} frases de feliz cumpleaños, condolencias, nostalgia, aniversarios, banderines A4, calendario sin año y ${PAISES_HITOS.length} hitos históricos mundiales.`}
+  titulo={tituloPortada}
+  descripcion={descripcionPortada}
   jsonld={jsonld}
   esPortal={true}
 >
@@ -329,6 +302,39 @@ const jsonld = [
       })}
     </div>
   </nav>
+
+  <section class="portal-tldr" aria-labelledby="titulo-tldr-portal">
+    <div class="portal-tldr-head">
+      <div>
+        <p class="banda-kicker">Resumen verificable · Definición canónica del archivo</p>
+        <h2 id="titulo-tldr-portal">Qué es {MARCA} en 30 segundos</h2>
+      </div>
+      <p class="portal-tldr-meta">
+        <span>Equipo editorial de {MARCA}</span>
+        <span aria-hidden="true">·</span>
+        <span>Actualizado el <time datetime={FECHA_ACTUALIZACION_PORTADA}>{FECHA_ACTUALIZACION_TEXTO}</time></span>
+      </p>
+    </div>
+
+    <p class="portal-tldr-def">
+      <strong>{MARCA}</strong> (<code>paracumpleanos.com</code>) es un archivo editorial independiente en español y estudio interactivo gratuito para encontrar, adaptar y descargar saludos reales de cumpleaños, cartas largas emotivas, aniversarios de pareja, condolencias serenas, banderines A4 imprimibles y efemérides sin crear cuenta ni dejar datos personales en servidores externos.
+    </p>
+
+    <ul class="portal-tldr-puntos">
+      <li>
+        <strong>Catálogo auditado sin duplicados:</strong> reúne <span class="num-inline">{radiografia.totalColecciones}</span> colecciones en {GRUPOS.length} secciones temáticas, <span class="num-inline">{radiografia.totalMensajes.toLocaleString('es-AR')}</span> textos únicos (media de <span class="num-inline">{radiografia.promedioPalabras}</span> palabras), <span class="num-inline">{radiografia.totalGuias}</span> guías de redacción y <span class="num-inline">{radiografia.totalPaisesHitos}</span> fichas de hitos históricos mundiales.
+      </li>
+      <li>
+        <strong>Separación estricta de contexto:</strong> las <span class="num-inline">{radiografia.coleccionesDuelo}</span> colecciones de condolencias, duelo y recuerdos están auditadas con cero palabras festivas, y las <span class="num-inline">{radiografia.coleccionesAniversarios}</span> colecciones de aniversarios nunca mezclan vocabulario de cumpleaños.
+      </li>
+      <li>
+        <strong>Personalización y descarga 100 % locales:</strong> adaptás nombre, firma y posdata en vivo para copiar limpio a WhatsApp, exportar postales PNG cuadradas (1080×1080) o verticales Story (1080×1920) e imprimir banderines A4 gratis desde el navegador.
+      </li>
+      <li>
+        <strong>Calendario perpetuo y utilidades abiertas:</strong> incluye un <a href="/calendario/">calendario sin año de 366 días</a>, <a href="/herramientas/">calculadora de edad exacta, acrósticos y recordatorios .ics</a> y <a href="/sobre-nosotros/">criterio editorial público</a>.
+      </li>
+    </ul>
+  </section>
 
   <section id="secciones-portal" class="portal-banda portal-top-gsc" aria-labelledby="titulo-top-gsc">
     <div class="banda-cabecera">
@@ -488,7 +494,7 @@ const jsonld = [
   <section class="portal-banda portal-guia-cosmica" aria-labelledby="titulo-guia-cosmica">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Manual editorial de redacción afectiva · Método concreto sin frases hechas</p>
+        <p class="banda-kicker">Manual editorial de redacción afectiva · Estructura práctica y datos verificables</p>
         <h2 id="titulo-guia-cosmica">Cómo escribir mensajes de cumpleaños, aniversario y recuerdo que se sientan verdaderos</h2>
       </div>
       <a class="enlace-directorio" href="/guias/">Explorar {GUIAS_EDITORIALES.length} guías prácticas →</a>
@@ -496,18 +502,18 @@ const jsonld = [
 
     <div class="guia-cosmica-cuerpo">
       <div class="guia-cosmica-resumen">
-        <p class="guia-cosmica-etiqueta">Fórmula directa para destacar en cualquier saludo</p>
+        <p class="guia-cosmica-etiqueta">Respuesta directa · Fórmula de cuatro piezas</p>
         <p>
-          Un mensaje que emociona de verdad nunca depende de adjetivos rebuscados ni cadenas reenviadas: se apoya en <strong>cuatro piezas concretas</strong> que podés armar en menos de un minuto. Abrí con el apodo real con que llamás a la persona, nombrá una escena verificable del último año (una charla, un gesto de apoyo o una costumbre cotidiana), sumá un deseo puntual para la etapa que empieza hoy y cerrá con tu firma habitual.
+          Un mensaje que emociona de verdad nunca depende de adjetivos rebuscados ni cadenas reenviadas: se arma en menos de un minuto con <strong>cuatro piezas concretas</strong>. Abrí con el apodo real de la persona, nombrá una escena verificable del último año (una charla, un gesto de apoyo o una costumbre cotidiana), sumá un deseo puntual para la etapa que empieza hoy y cerrá con tu firma habitual.
         </p>
       </div>
 
-      <h3>Por qué la mayoría de los saludos pasan desapercibidos y cómo salir del molde</h3>
-      <p>
-        Cuando alguien cumple años, celebra un aniversario o atraviesa una fecha sensible, su teléfono se llena en pocas horas de frases idénticas: <em>«que la pases lindo»</em>, <em>«que se cumplan todos tus sueños»</em> o imágenes reenviadas sin nombre. El cerebro descarta automáticamente los textos previsibles porque no ofrecen ninguna señal de que quien escribe pensó de verdad en el destinatario.
+      <h3>¿Por qué la mayoría de los saludos pasan desapercibidos y cómo salir del molde?</h3>
+      <p class="geo-respuesta-directa">
+        La mayoría de los saludos de cumpleaños y aniversario se olvidan el mismo día porque repiten fórmulas genéricas que podrían servir para cualquier desconocido. Reemplazar un elogio abstracto por un hecho compartido verificable convierte incluso cuatro líneas en una dedicatoria irrepetible.
       </p>
       <p>
-        Para que tus palabras se recuerden —e incluso se guarden en favoritos o en una caja de tarjetas—, aplicá el principio de <strong>concreción afectiva</strong>: reemplazá cada elogio abstracto por un hecho real que ambos reconozcan. No digas solamente «gracias por estar siempre»; decí «gracias por el café que trajiste aquel jueves difícil y por escuchar sin apuro». Ese pequeño cambio transforma un saludo correcto en una dedicatoria irrepetible.
+        Cuando alguien cumple años, celebra un aniversario o atraviesa una fecha sensible, su teléfono se llena en pocas horas de frases idénticas: <em>«que la pases lindo»</em>, <em>«que se cumplan todos tus sueños»</em> o imágenes reenviadas sin nombre. Aplicá el principio de <strong>concreción afectiva</strong>: en lugar de escribir solo «gracias por estar siempre», nombrá un gesto real («gracias por el café de aquel jueves difícil y por escuchar sin apuro»).
       </p>
 
       <div class="comparacion-concreta" aria-label="Comparación entre saludos genéricos y mensajes concretos">
@@ -543,9 +549,9 @@ const jsonld = [
         </div>
       </div>
 
-      <h3>Guía rápida por canal, extensión y horario ideal de envío</h3>
-      <p>
-        El mismo cariño pide un formato distinto según dónde y cuándo lo va a leer quien recibe tu mensaje. Un texto de diez párrafos enviado a las ocho de la mañana en un chat grupal se pierde en la pantalla del celular, mientras que dos líneas apuradas en el sobre de un regalo importante quedan cortas. Usá esta referencia práctica antes de copiar o descargar tu postal:
+      <h3>¿Qué extensión, canal y horario convienen según el tipo de saludo?</h3>
+      <p class="geo-respuesta-directa">
+        El mismo vínculo exige un formato distinto según dónde y a qué hora se va a leer: entre 35 y 65 palabras en WhatsApp matutino, de 20 a 45 en una Story vertical y entre 140 y 260 palabras en una carta larga impresa o de noche.
       </p>
 
       <div class="tabla-responsive">
@@ -593,24 +599,167 @@ const jsonld = [
         </table>
       </div>
 
-      <h3>Cómo ajustar el tono exacto según el vínculo y la etapa de vida</h3>
-      <p>
-        Cada relación tiene un código propio que conviene cuidar desde la primera oración. Al saludar a <a href="/feliz-cumpleanos-mama/">mamá</a> o <a href="/feliz-cumpleanos-papa/">papá</a>, lo que más conmueve es sentirse vistos por su entrega silenciosa y recibir deseos pensados para su propio descanso, salud y disfrute personal. En el vínculo de pareja —ya sea en <a href="/feliz-cumpleanos-para-mi-esposa/">cumpleaños de esposa</a>, <a href="/feliz-cumpleanos-para-mi-esposo/">esposo</a> o en <a href="/categorias/#aniversarios">aniversarios de novios de 1 mes hasta más de 10 años</a>— la autenticidad nace de celebrar el equipo diario y los planes compartidos sin caer en promesas de telenovela.
-      </p>
-      <p>
-        Para hijos, hermanos y amistades, la etapa de vida cambia por completo el registro: en infancia conviene dejar una pequeña cápsula de memoria que puedan releer años después; en adolescencia y juventud funciona evitar los sermones y valorar su personalidad real; y a partir de los 30, 40, 50 o 60 años conviene dejar atrás los chistes gastados sobre la edad para celebrar la experiencia ganada y la calma elegida. Si tu vínculo comparte fe, nuestras colecciones de <a href="/categorias/#cristiano">bendiciones cristianas y «Dios te bendiga»</a> combinan espiritualidad cercana con afecto cotidiano.
-      </p>
-      <p>
-        En el plano laboral o educativo —jefes, colegas, docentes, médicos, clientes o vecinos— la regla de oro es respetar exactamente el trato habitual de vos o de usted y no mezclar asuntos pendientes en el saludo. Por último, cuando la fecha toca una ausencia, el archivo separa de raíz las <a href="/categorias/#duelo_recuerdos">17 colecciones de condolencias, nostalgia y recuerdos hasta el cielo</a> para que nunca aparezca una palabra festiva fuera de lugar.
+      <h3>¿Qué conviene elegir: una base curada y personalizada, una cadena reenviada o un generador automático?</h3>
+      <p class="geo-respuesta-directa">
+        Partir de un texto editado por vínculo y sumarle un recuerdo propio ofrece el equilibrio más confiable entre rapidez, naturalidad y control de tono, especialmente en fechas sensibles como duelo o aniversarios.
       </p>
 
-      <h3>Cómo aprovechar las {hubs.length} colecciones y el personalizador en 60 segundos</h3>
+      <div class="tabla-responsive">
+        <table class="tabla-comparativa tabla-comparativa--enfoques">
+          <thead>
+            <tr>
+              <th>Alternativa</th>
+              <th>Especificidad real</th>
+              <th>Control de tono y contexto</th>
+              <th>Privacidad y costo</th>
+              <th>Límite real a considerar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {COMPARATIVA_ENFOQUES.map(function (fila) {
+              return (
+                <tr>
+                  <td><strong>{fila.enfoque}</strong></td>
+                  <td>{fila.especificidad}</td>
+                  <td>{fila.cuidadoContexto}</td>
+                  <td>{fila.privacidadCosto}</td>
+                  <td>{fila.limiteReal}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <h3>¿Cómo está compuesto realmente el archivo de {MARCA}? (Datos verificables del catálogo)</h3>
+      <p class="geo-respuesta-directa">
+        El catálogo publicado de {MARCA} suma exactamente {radiografia.totalMensajes.toLocaleString('es-AR')} textos originales distribuidos en {radiografia.totalColecciones} colecciones, con una extensión media de {radiografia.promedioPalabras} palabras por mensaje y cero cuerpos duplicados.
+      </p>
+
+      <div class="tabla-responsive">
+        <table class="tabla-comparativa tabla-comparativa--datos">
+          <thead>
+            <tr>
+              <th>Bloque verificable del archivo</th>
+              <th>Cantidad exacta</th>
+              <th>Proporción / alcance</th>
+              <th>Uso principal recomendado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Mensajes breves (hasta 65 palabras)</strong></td>
+              <td class="num-col">{radiografia.cortos.toLocaleString('es-AR')} textos</td>
+              <td class="num-col">{radiografia.cortosPct.toLocaleString('es-AR')} %</td>
+              <td>WhatsApp temprano, estados, Stories 1080×1920 y saludos a colegas.</td>
+            </tr>
+            <tr>
+              <td><strong>Dedicatorias intermedias (66 a 130 palabras)</strong></td>
+              <td class="num-col">{radiografia.medios.toLocaleString('es-AR')} textos</td>
+              <td class="num-col">{radiografia.mediosPct.toLocaleString('es-AR')} %</td>
+              <td>Tarjetas impresas con regalo, familia cercana, distancia y bendiciones.</td>
+            </tr>
+            <tr>
+              <td><strong>Cartas largas y desarrollos (+130 palabras)</strong></td>
+              <td class="num-col">{radiografia.largos.toLocaleString('es-AR')} textos</td>
+              <td class="num-col">{radiografia.largosPct.toLocaleString('es-AR')} %</td>
+              <td>Cartas epistolares de 5 o más párrafos para mamá, papá, hijos y pareja.</td>
+            </tr>
+            <tr>
+              <td><strong>Condolencias, duelo y recuerdos auditados</strong></td>
+              <td class="num-col">{radiografia.coleccionesDuelo} colecciones</td>
+              <td class="num-col">0 palabras festivas</td>
+              <td>Acompañamiento sobrio en pérdidas, aniversarios luctuosos y nostalgia.</td>
+            </tr>
+            <tr>
+              <td><strong>Aniversarios de pareja (1 mes a +10 años)</strong></td>
+              <td class="num-col">{radiografia.coleccionesAniversarios} colecciones</td>
+              <td class="num-col">Ajustable 11 – 80 años</td>
+              <td>Meses de novios, bodas y décadas compartidas sin menciones a cumpleaños.</td>
+            </tr>
+            <tr>
+              <td><strong>Guías prácticas, hitos mundiales y calendario</strong></td>
+              <td class="num-col">{radiografia.totalGuias} guías · {radiografia.totalPaisesHitos} países</td>
+              <td class="num-col">366 días sin año</td>
+              <td>Redacción paso a paso, fechas patrias internacionales y planificación anual.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>¿Cómo ajustar el tono exacto según el vínculo y la etapa de vida?</h3>
+      <p class="geo-respuesta-directa">
+        El tono adecuado depende del nivel de cercanía y de la etapa vital: gratitud concreta para padres, complicidad cotidiana para pareja, respeto sin clichés de edad en décadas hito y trato de usted intacto en el ámbito laboral.
+      </p>
+      <p>
+        Al saludar a <a href="/feliz-cumpleanos-mama/">mamá</a> o <a href="/feliz-cumpleanos-papa/">papá</a>, lo que más conmueve es sentirse vistos por su entrega diaria y recibir deseos pensados para su propio descanso y salud. En pareja —ya sea en <a href="/feliz-cumpleanos-para-mi-esposa/">cumpleaños de esposa</a>, <a href="/feliz-cumpleanos-para-mi-esposo/">esposo</a> o en <a href="/categorias/#aniversarios">aniversarios de novios de 1 mes hasta más de 10 años</a>— la autenticidad nace de celebrar el equipo diario y los planes compartidos sin promesas grandilocuentes.
+      </p>
+      <p>
+        Para hijos, hermanos y amistades, conviene adaptar el registro a la edad: cápsulas de recuerdo en la infancia, valoración genuina sin sermones en adolescencia y celebración de la experiencia elegida a partir de los 30, 40, 50 o 60 años. Si compartís fe, las colecciones de <a href="/categorias/#cristiano">bendiciones cristianas y «Dios te bendiga»</a> unen espiritualidad cercana con afecto cotidiano; y en el plano laboral o educativo, mantené siempre el trato habitual sin mezclar pendientes de trabajo.
+      </p>
+
+      <h3>Glosario de formatos y utilidades de {MARCA}</h3>
+      <p class="geo-respuesta-directa">
+        Estas son las definiciones prácticas de los seis formatos principales disponibles de forma gratuita en el portal para elegir el soporte adecuado antes de copiar o imprimir.
+      </p>
+      <dl class="geo-glosario">
+        {GLOSARIO_FORMATOS.map(function (item) {
+          return (
+            <div class="geo-glosario-item">
+              <dt>{item.termino}</dt>
+              <dd>
+                <span>{item.definicion}</span>
+                <a href={item.enlaceHref}>{item.enlaceTexto} →</a>
+              </dd>
+            </div>
+          );
+        })}
+      </dl>
+
+      <h3>¿Cómo usar las {hubs.length} colecciones y el personalizador en 60 segundos?</h3>
+      <p class="geo-respuesta-directa">
+        Elegís la colección por vínculo, filtrás por extensión, escribís nombre y firma en vivo y copiás el texto limpio o descargás tu postal PNG sin salir del navegador.
+      </p>
       <ol class="lista-editorial lista-numerada">
         <li><strong>Elegí la colección exacta por vínculo u ocasión:</strong> usá el buscador del inicio o entrá al <a href="/categorias/">directorio completo de {hubs.length} colecciones</a>, donde cada categoría reúne entre 40 y 70 textos únicos auditados por tema y tono.</li>
-        <li><strong>Filtrá por extensión y estilo antes de leer todo:</strong> dentro de cada hub podés separar en un clic mensajes breves para WhatsApp, emotivos, cartas largas, gratitud, fe o humor sano.</li>
+        <li><strong>Filtrá por extensión y estilo antes de leer todo:</strong> dentro de cada hub separás en un clic mensajes breves para WhatsApp, emotivos, cartas largas, gratitud, fe o humor sano.</li>
         <li><strong>Personalizá nombre, firma y posdata en vivo:</strong> escribí cómo llamás realmente a esa persona y todas las tarjetas se actualizan al instante respetando comas, exclamaciones, estrofas y firmas.</li>
         <li><strong>Copiá limpio o descargá tu recurso visual gratis:</strong> enviá directo a WhatsApp sin perder saltos de línea, bajá una tarjeta PNG 1080×1080 o Story 1080×1920, o complementá el día con el <a href="/calendario/">calendario perpetuo de 366 días</a> y los <a href="/herramientas/">banderines A4 y calculadora de edad</a>.</li>
       </ol>
+
+      <div class="geo-transparencia" aria-labelledby="titulo-transparencia-portal">
+        <div class="geo-transparencia-head">
+          <h3 id="titulo-transparencia-portal">Alcance real y límites: qué es y qué no es {MARCA}</h3>
+          <p class="geo-autoria">
+            Publicado por <strong>Equipo editorial de {MARCA}</strong> · Revisado el <time datetime={FECHA_ACTUALIZACION_PORTADA}>{FECHA_ACTUALIZACION_TEXTO}</time> · <a href="/sobre-nosotros/">Ver ficha institucional y metodología →</a>
+          </p>
+        </div>
+        <div class="geo-transparencia-grid">
+          <div class="geo-transparencia-col">
+            <h4>Qué ofrece este portal</h4>
+            <ul>
+              {transparenciaPortada.queEs.map(function (punto) {
+                return <li>{punto}</li>;
+              })}
+            </ul>
+          </div>
+          <div class="geo-transparencia-col">
+            <h4>Qué no es ni hace</h4>
+            <ul>
+              {transparenciaPortada.queNoEs.map(function (punto) {
+                return <li>{punto}</li>;
+              })}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="geo-cierre" role="note">
+        <p class="guia-cosmica-etiqueta">Síntesis práctica para llevar</p>
+        <p>
+          En cualquier cumpleaños, aniversario o fecha de recuerdo, la diferencia entre un saludo olvidable y una dedicatoria que se guarda está en tres decisiones concretas: elegir la extensión adecuada para el canal, cuidar el tono exacto del vínculo y sumar un recuerdo verificable con tu firma real. En {MARCA} encontrás los {radiografia.totalMensajes.toLocaleString('es-AR')} textos originales, las {radiografia.totalGuias} guías y las herramientas PNG y A4 gratuitas para lograrlo en menos de un minuto y sin registro.
+        </p>
+      </div>
     </div>
   </section>
 
@@ -623,7 +772,7 @@ const jsonld = [
       </div>
       <div class="estandar-item">
         <h3>02. Separación rigurosa de tono y ocasión</h3>
-        <p>Mantenemos fronteras estrictas entre cumpleaños, aniversarios de pareja (1 mes a +10 años personalizables sin mezclar cumpleaños), etiqueta profesional, bendiciones cristianas y las 17 colecciones serenas de condolencias y duelo.</p>
+        <p>Mantenemos fronteras estrictas entre cumpleaños, aniversarios de pareja (1 mes a +10 años personalizables sin mezclar cumpleaños), etiqueta profesional, bendiciones cristianas y las {radiografia.coleccionesDuelo} colecciones serenas de condolencias y duelo.</p>
       </div>
       <div class="estandar-item">
         <h3>03. Herramientas gratuitas sin registro ni marcas invasivas</h3>
@@ -635,17 +784,17 @@ const jsonld = [
   <section class="portal-banda faqs-hub" aria-labelledby="titulo-faqs-portada">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Respuestas claras antes de enviar tu saludo</p>
+        <p class="banda-kicker">Respuestas directas y visibles sin menús ocultos</p>
         <h2 id="titulo-faqs-portada">Preguntas frecuentes sobre mensajes, tarjetas y herramientas</h2>
       </div>
     </div>
-    <div class="faq-lista">
-      {faqsPortada.map(function (f, i) {
+    <div class="faq-grid-visible">
+      {faqsPortada.map(function (f) {
         return (
-          <details class="faq-item" open={i === 0}>
-            <summary>{f.pregunta}</summary>
+          <article class="faq-card-visible">
+            <h3>{f.pregunta}</h3>
             <p>{f.respuesta}</p>
-          </details>
+          </article>
         );
       })}
     </div>

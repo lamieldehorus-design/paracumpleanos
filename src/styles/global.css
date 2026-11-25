@@ -4960,6 +4960,275 @@ input, textarea, select { font-size: 16px; }
   font-size: 0.97rem;
   color: var(--texto);
 }
+
+/* Modulos GEO de portada: Primacia TL;DR, glosario, transparencia, recencia y FAQs visibles */
+.portal-tldr {
+  margin: 22px 0 10px;
+  padding: 22px 24px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+}
+.portal-tldr-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px 18px;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--borde-suave);
+}
+.portal-tldr-head h2 {
+  margin: 0;
+  font-size: clamp(1.24rem, 2vw, 1.52rem);
+  color: var(--texto);
+  text-wrap: balance;
+}
+.portal-tldr-meta {
+  margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+.portal-tldr-def {
+  margin: 0 0 14px;
+  max-width: 78ch;
+  font-size: 0.99rem;
+  line-height: 1.68;
+  color: var(--texto);
+}
+.portal-tldr-def code {
+  font-size: 0.9em;
+  background: #fff;
+  border: 1px solid var(--borde-suave);
+  padding: 1px 6px;
+  border-radius: 5px;
+  color: var(--rosa-oscuro);
+}
+.portal-tldr-puntos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px 18px;
+  grid-template-columns: 1fr;
+}
+.portal-tldr-puntos li {
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid var(--borde-suave);
+  border-radius: 10px;
+  font-size: 0.93rem;
+  line-height: 1.58;
+  color: var(--texto);
+}
+.portal-tldr-puntos li strong {
+  color: var(--texto);
+}
+.portal-tldr-puntos a {
+  color: var(--rosa-oscuro);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.num-inline {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+}
+
+.geo-respuesta-directa {
+  font-size: 1.02rem !important;
+  font-weight: 500;
+  color: var(--texto);
+  line-height: 1.68;
+}
+.tabla-comparativa--enfoques td,
+.tabla-comparativa--datos td {
+  vertical-align: top;
+}
+.tabla-comparativa--datos td.num-col {
+  white-space: nowrap;
+}
+
+.geo-glosario {
+  margin: 6px 0 4px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+.geo-glosario-item {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 15px 18px;
+}
+.geo-glosario-item dt {
+  font-family: var(--fuente-display);
+  font-size: 1.04rem;
+  font-weight: 700;
+  color: var(--texto);
+  margin: 0 0 6px;
+}
+.geo-glosario-item dd {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.94rem;
+  line-height: 1.62;
+  color: var(--texto-suave);
+}
+.geo-glosario-item dd a {
+  align-self: flex-start;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+  text-decoration: none;
+}
+.geo-glosario-item dd a:hover {
+  text-decoration: underline;
+}
+
+.geo-transparencia {
+  margin-top: 10px;
+  padding: 20px 22px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+}
+.geo-transparencia-head {
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--borde-suave);
+}
+.geo-transparencia-head h3 {
+  margin: 0 0 6px !important;
+  max-width: none !important;
+}
+.geo-autoria {
+  margin: 0 !important;
+  font-size: 0.86rem !important;
+  color: var(--texto-suave) !important;
+  font-variant-numeric: tabular-nums;
+}
+.geo-transparencia-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr;
+}
+.geo-transparencia-col {
+  background: #fff;
+  border: 1px solid var(--borde-suave);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.geo-transparencia-col h4 {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--rosa-oscuro);
+}
+.geo-transparencia-col ul {
+  margin: 0;
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.geo-transparencia-col li {
+  font-size: 0.93rem;
+  line-height: 1.58;
+  color: var(--texto);
+}
+
+.geo-cierre {
+  margin-top: 6px;
+  max-width: 78ch;
+  padding: 18px 22px;
+  background: #fff;
+  border-top: 1px solid var(--borde);
+  border-bottom: 1px solid var(--borde);
+}
+.geo-cierre p:last-child {
+  font-size: 0.98rem;
+  line-height: 1.68;
+  color: var(--texto);
+}
+
+.faq-grid-visible {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr;
+  margin-top: 14px;
+}
+.faq-card-visible {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.faq-card-visible h3 {
+  margin: 0;
+  font-family: var(--fuente-display);
+  font-size: 1.06rem;
+  line-height: 1.35;
+  color: var(--texto);
+  text-wrap: balance;
+}
+.faq-card-visible p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.64;
+  color: var(--texto-suave);
+}
+
+.portal-tldr,
+.portal-guia-cosmica,
+.geo-transparencia,
+.faqs-hub {
+  scroll-margin-top: 96px;
+}
+
+@media (min-width: 820px) {
+  .portal-tldr-puntos,
+  .geo-glosario,
+  .geo-transparencia-grid,
+  .faq-grid-visible {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .portal-tldr,
+  .portal-guia-cosmica,
+  .geo-transparencia,
+  .faqs-hub {
+    scroll-margin-top: 132px;
+  }
+  .portal-tldr,
+  .geo-transparencia {
+    padding: 16px;
+  }
+  .portal-tldr-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .portal-tldr-meta [aria-hidden="true"] {
+    display: none;
+  }
+}
 .cats-guia-editorial {
   margin-top: 34px;
   padding-top: 26px;
