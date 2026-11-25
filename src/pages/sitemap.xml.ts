@@ -43,7 +43,7 @@ export const GET: APIRoute = () => {
     GUIAS_EDITORIALES,
     slugsSignos,
     slugsPaises,
-    '2026-11-20'
+    '2026-11-23'
   );
   const xml = generarSitemapXml(urls, lastmodPorUrl);
 

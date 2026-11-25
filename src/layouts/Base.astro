@@ -3,6 +3,7 @@ import '../styles/global.css';
 import { GRUPOS, hubs, hubsPorGrupo, nombreHub, todosMensajes } from '../lib/contenido.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { PAISES_HITOS } from '../data/hitos-historicos.ts';
+import { TOP_FOOTER_GSC } from '../lib/gsc-estrategia.ts';
 interface Props {
   titulo: string;
   descripcion: string;
@@ -10,6 +11,7 @@ interface Props {
   grupoActual?: string;
   slugActual?: string;
   noindex?: boolean;
+  sinAnuncios?: boolean;
   esPortal?: boolean;
   relPrev?: string;
   relNext?: string;
@@ -21,6 +23,7 @@ const {
   grupoActual = 'destinatarios',
   slugActual = '',
   noindex = false,
+  sinAnuncios = false,
   esPortal = false,
   relPrev,
   relNext
@@ -33,8 +36,8 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
-  <meta name="yandex-verification" content="3c0fa054dfa66068" />
   <meta name="google-adsense-account" content="ca-pub-7933111729537978" />
+  <meta name="yandex-verification" content="3c0fa054dfa66068" />
   <title>{titulo}</title>
   <meta name="description" content={descripcion} />
   <link rel="canonical" href={url} />
@@ -49,13 +52,11 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <link rel="alternate" type="application/rss+xml" title="ParaCumpleanos RSS" href="https://paracumpleanos.com/rss.xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  {!noindex ? <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin /> : null}
   <link rel="preconnect" href="https://www.statcounter.com" crossorigin />
   <link rel="preconnect" href="https://c.statcounter.com" crossorigin />
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+  <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  {!noindex ? (
-    <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7933111729537978" crossorigin="anonymous"></script>
-  ) : null}
   <meta property="og:title" content={titulo} />
   <meta property="og:description" content={descripcion} />
   <meta property="og:type" content="website" />
@@ -69,8 +70,68 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <meta name="twitter:description" content={descripcion} />
   <meta name="twitter:image" content="https://paracumpleanos.com/logopc.png" />
   {jsonld.map(function (d) { return <script type="application/ld+json" set:html={JSON.stringify(d)} />; })}
+  <!-- Google Consent Mode v2 (RGPD Europa / EEE / Reino Unido / Suiza) antes de GTM y AdSense -->
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { window.dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      functionality_storage: 'granted',
+      security_storage: 'granted',
+      region: [
+        'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR',
+        'DE', 'GR', 'HU', 'IS', 'IE', 'IT', 'LV', 'LI', 'LT', 'LU',
+        'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE',
+        'GB', 'CH'
+      ],
+      wait_for_update: 500
+    });
+    gtag('consent', 'default', {
+      ad_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted',
+      analytics_storage: 'granted',
+      functionality_storage: 'granted',
+      security_storage: 'granted'
+    });
+    gtag('set', 'ads_data_redaction', true);
+    try {
+      var pcConsentRaw = localStorage.getItem('pc_consentimiento_v1');
+      if (pcConsentRaw) {
+        var pcConsentSaved = JSON.parse(pcConsentRaw);
+        var pubEstado = pcConsentSaved && pcConsentSaved.publicidad ? 'granted' : 'denied';
+        var anaEstado = pcConsentSaved && pcConsentSaved.analitica ? 'granted' : 'denied';
+        gtag('consent', 'update', {
+          ad_storage: pubEstado,
+          ad_user_data: pubEstado,
+          ad_personalization: pubEstado,
+          analytics_storage: anaEstado,
+          functionality_storage: 'granted',
+          security_storage: 'granted'
+        });
+      }
+    } catch (_) {}
+  </script>
+  <!-- Google Tag Manager (contenedores principal y analitica) -->
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+    gtag('js', new Date());
+  </script>
+  <script is:inline async src="https://www.googletagmanager.com/gtm.js?id=GTM-NKFBN6X5"></script>
+  <script is:inline async src="https://www.googletagmanager.com/gtm.js?id=GTM-WKC77GT5"></script>
+  <!-- Google AdSense -->
+  {!sinAnuncios ? (
+    <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7933111729537978" crossorigin="anonymous"></script>
+  ) : null}
 </head>
 <body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NKFBN6X5" height="0" width="0" style="display:none;visibility:hidden"></iframe><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WKC77GT5" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Statcounter temprano con respaldo keepalive sin duplicacion -->
   <script is:inline type="text/javascript">
   var sc_project=13334162;
@@ -231,7 +292,15 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         <span class="logo-fallback" style="display:none">ParaCumpleanos 🎂</span>
       </a>
     </div>
-    <p>ParaCumpleanos — {hubs.length} colecciones, {PAISES_HITOS.length} hitos históricos mundiales, {GUIAS_EDITORIALES.length} guías prácticas y {todosMensajes.length.toLocaleString('es-AR')} textos originales en español · Contacto directo: <a href="mailto:lamieldehorus@gmail.com">lamieldehorus@gmail.com</a></p>
+    <p>ParaCumpleanos — {hubs.length} colecciones, {PAISES_HITOS.length} hitos históricos mundiales, {GUIAS_EDITORIALES.length} guías prácticas y {todosMensajes.length.toLocaleString('es-AR')} textos originales en español.</p>
+    <div class="pie-gsc-strip" aria-label="Colecciones más buscadas">
+      <p class="pie-gsc-titulo">Colecciones más buscadas:</p>
+      <div class="pie-gsc-links">
+        {TOP_FOOTER_GSC.map(function (item) {
+          return <a href={'/' + item.slug + '/'}>{item.label}</a>;
+        })}
+      </div>
+    </div>
     <nav aria-label="Páginas institucionales">
       <a href="/">Inicio</a>
       <a href="/calendario/">Calendario sin año</a>
@@ -248,8 +317,126 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       <a href="/contacto/">Contacto</a>
       <a href="/privacidad/">Privacidad</a>
       <a href="/terminos-de-uso/">Términos de uso</a>
+      <button type="button" class="pie-link-btn" data-abrir-cmp>Preferencias de cookies</button>
     </nav>
   </footer>
+
+  <button
+    type="button"
+    id="pc-favoritas-barra"
+    class="pc-favoritas-barra"
+    aria-label="Abrir dedicatorias guardadas y más compartidos"
+    hidden
+  >
+    <span aria-hidden="true">♥</span>
+    <span id="pc-favoritas-barra-label">Guardadas</span>
+    <span id="pc-favoritas-count" class="pc-favoritas-count">0</span>
+  </button>
+
+  <dialog id="pc-favoritas-dialog" class="pc-favoritas-dialog" aria-labelledby="pc-fav-titulo">
+    <div class="pc-fav-head">
+      <div>
+        <h2 id="pc-fav-titulo">Tus guardadas y más compartidos</h2>
+        <p class="pc-fav-sub">Compará tus dedicatorias favoritas y revisá tus compartidos por red (WhatsApp, Instagram, Facebook y Copiar).</p>
+      </div>
+      <button type="button" id="pc-fav-cerrar" class="pc-fav-cerrar" aria-label="Cerrar guardadas y estadísticas">×</button>
+    </div>
+    <div class="pc-fav-tabs" role="tablist" aria-label="Secciones de tu actividad">
+      <button type="button" role="tab" id="pc-tab-favs" class="pc-fav-tab activo" aria-selected="true" aria-controls="pc-panel-favs">
+        ♥ Guardadas (<span id="pc-tab-favs-count">0</span>)
+      </button>
+      <button type="button" role="tab" id="pc-tab-comp" class="pc-fav-tab" aria-selected="false" aria-controls="pc-panel-comp">
+        📊 Más compartidos (<span id="pc-tab-comp-count">0</span>)
+      </button>
+    </div>
+    <div class="pc-aviso-local pc-aviso-local--modal" role="note">
+      <strong>Aviso importante:</strong> tus dedicatorias guardadas se almacenan solo en este navegador. Si borrás cookies o datos del sitio, limpiás el navegador o usás modo incógnito, tus guardadas se perderán (usá <em>Copiar respaldo</em>). Las estadísticas e historial de compartidos son públicos para todo visitante en <a href="/compartidos-historial.json" target="_blank" rel="noopener"><code>/compartidos-historial.json</code></a>.
+    </div>
+    <div id="pc-panel-favs" class="pc-fav-panel" role="tabpanel" aria-labelledby="pc-tab-favs">
+      <div id="pc-fav-lista" class="pc-fav-lista"></div>
+    </div>
+    <div id="pc-panel-comp" class="pc-fav-panel" role="tabpanel" aria-labelledby="pc-tab-comp" hidden>
+      <div class="pc-comp-modal-resumen" id="pc-modal-comp-redes"></div>
+      <div id="pc-modal-comp-lista" class="pc-fav-lista"></div>
+      <div class="pc-modal-hist-wrap">
+        <p class="pc-modal-hist-titulo">Historial reciente de cada compartido</p>
+        <ol id="pc-modal-comp-historial" class="comp-historial-lista"></ol>
+      </div>
+    </div>
+    <div class="pc-fav-pie">
+      <div class="pc-fav-pie-izq">
+        <button type="button" id="pc-fav-respaldo" class="btn-leer-mas">Copiar respaldo</button>
+        <button type="button" id="pc-fav-vaciar" class="btn-leer-mas">Vaciar lista</button>
+        <a href="/compartidos-historial.json" target="_blank" rel="noopener" id="pc-modal-comp-archivo" class="btn-leer-mas comp-archivo-link" hidden>Ver archivo (.json)</a>
+        <button type="button" id="pc-modal-comp-descargar" class="btn-leer-mas" hidden>Descargar (.json)</button>
+      </div>
+      <button type="button" id="pc-fav-listo" class="btn btn-copiar">Seguir explorando</button>
+    </div>
+  </dialog>
+
+  <aside
+    id="pc-cmp-banner"
+    class="pc-cmp-banner"
+    role="region"
+    aria-label="Aviso de privacidad y cookies RGPD"
+    hidden
+  >
+    <div class="pc-cmp-banner-inner">
+      <div class="pc-cmp-texto">
+        <p class="pc-cmp-titulo">Tu privacidad en ParaCumpleanos (RGPD)</p>
+        <p class="pc-cmp-desc">
+          Usamos almacenamiento esencial para el funcionamiento del sitio y, solo si lo autorizás, cookies de analítica (Google Tag Manager) y publicidad (Google AdSense) para mantener gratis el catálogo.
+          <a href="/privacidad/">Ver política de privacidad</a>.
+        </p>
+      </div>
+      <div class="pc-cmp-acciones">
+        <button type="button" id="pc-cmp-rechazar" class="pc-cmp-btn pc-cmp-btn--sec">Rechazar opcionales</button>
+        <button type="button" id="pc-cmp-configurar" class="pc-cmp-btn pc-cmp-btn--sec">Configurar</button>
+        <button type="button" id="pc-cmp-aceptar" class="pc-cmp-btn pc-cmp-btn--pri">Aceptar todo</button>
+      </div>
+    </div>
+  </aside>
+
+  <dialog id="pc-cmp-dialog" class="pc-cmp-dialog" aria-labelledby="pc-cmp-titulo">
+    <div class="pc-fav-head">
+      <div>
+        <h2 id="pc-cmp-titulo">Preferencias de privacidad y cookies (RGPD)</h2>
+        <p class="pc-fav-sub">Elegí qué categorías querés permitir en este navegador. Tu elección actualiza Google Consent Mode v2 al instante.</p>
+      </div>
+      <button type="button" id="pc-cmp-cerrar" class="pc-fav-cerrar" aria-label="Cerrar preferencias de privacidad">×</button>
+    </div>
+    <div class="pc-cmp-cuerpo">
+      <label class="pc-cmp-opcion pc-cmp-opcion--fija">
+        <span class="pc-cmp-opcion-info">
+          <strong>Almacenamiento esencial (siempre activo)</strong>
+          <span>Necesario para recordar tus dedicatorias guardadas, tu elección de privacidad y el correcto funcionamiento de las herramientas.</span>
+        </span>
+        <input type="checkbox" checked disabled aria-label="Almacenamiento esencial siempre activo" />
+      </label>
+      <label class="pc-cmp-opcion" for="pc-cmp-chk-analitica">
+        <span class="pc-cmp-opcion-info">
+          <strong>Analítica y medición (Google Tag Manager)</strong>
+          <span>Nos ayuda a entender qué categorías son más útiles mediante métricas agregadas (<code>analytics_storage</code>).</span>
+        </span>
+        <input type="checkbox" id="pc-cmp-chk-analitica" />
+      </label>
+      <label class="pc-cmp-opcion" for="pc-cmp-chk-publicidad">
+        <span class="pc-cmp-opcion-info">
+          <strong>Publicidad personalizada (Google AdSense)</strong>
+          <span>Permite mostrar anuncios relevantes para sostener el acceso gratuito al sitio (<code>ad_storage</code>, <code>ad_user_data</code>, <code>ad_personalization</code>).</span>
+        </span>
+        <input type="checkbox" id="pc-cmp-chk-publicidad" />
+      </label>
+      <p class="pc-cmp-legal-nota">
+        Consultá el detalle completo de cookies, proveedores y contacto en nuestra <a href="/privacidad/">Política de privacidad</a>.
+      </p>
+    </div>
+    <div class="pc-cmp-modal-pie">
+      <button type="button" id="pc-cmp-modal-rechazar" class="pc-cmp-btn pc-cmp-btn--sec">Solo esenciales</button>
+      <button type="button" id="pc-cmp-modal-guardar" class="pc-cmp-btn pc-cmp-btn--sec">Guardar preferencias</button>
+      <button type="button" id="pc-cmp-modal-aceptar" class="pc-cmp-btn pc-cmp-btn--pri">Aceptar todo</button>
+    </div>
+  </dialog>
 
   <div id="pc-toast" class="pc-toast" role="status" aria-live="polite" hidden></div>
 
@@ -506,6 +693,16 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           map[slug] = (Number(map[slug]) || 0) + (Number(peso) || 1);
           localStorage.setItem(key, JSON.stringify(map));
         } catch (_) {}
+        try {
+          var acciones = { 1: 'leer_completo', 2: 'guardar_favorita', 3: 'copiar_o_compartir', 4: 'descargar_tarjeta' };
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'pc_interaccion_dedicatoria',
+            pc_accion: acciones[Number(peso)] || 'interaccion',
+            pc_slug: slug,
+            pc_pagina: window.location.pathname
+          });
+        } catch (_) {}
       };
 
       function detectarSlugDesdeNodo(nodo) {
@@ -518,22 +715,68 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       }
 
       document.addEventListener('click', function (e) {
+        var leerMas = e.target.closest ? e.target.closest('.btn-leer-mas') : null;
+        if (leerMas) {
+          var cardExp = leerMas.closest ? leerMas.closest('.card') : null;
+          if (cardExp) {
+            var resEl = cardExp.querySelector('.card-resumen');
+            var compEl = cardExp.querySelector('.card-texto-completo');
+            var abierto = leerMas.getAttribute('aria-expanded') === 'true';
+            if (compEl) compEl.hidden = abierto;
+            if (resEl) resEl.hidden = !abierto;
+            leerMas.setAttribute('aria-expanded', abierto ? 'false' : 'true');
+            leerMas.textContent = abierto ? 'Leer completo ▾' : 'Ver resumen ▴';
+            var slugExp = detectarSlugDesdeNodo(leerMas);
+            if (!abierto && slugExp && window.pcRegistrarPopularidadPub) {
+              window.pcRegistrarPopularidadPub(slugExp, 1);
+            }
+          }
+          return;
+        }
+
+        var favBtn = e.target.closest ? e.target.closest('.btn-favorita') : null;
+        if (favBtn) {
+          var fSlug = favBtn.getAttribute('data-fav-slug') || detectarSlugDesdeNodo(favBtn);
+          var fTitulo = favBtn.getAttribute('data-fav-titulo') || '';
+          var fEmoji = favBtn.getAttribute('data-fav-emoji') || '🎂';
+          var fCard = favBtn.closest ? favBtn.closest('article.card') : null;
+          var fCopyBtn = fCard ? fCard.querySelector('.btn-copiar') : null;
+          var fTexto = (fCopyBtn && fCopyBtn.getAttribute('data-text')) || (fCard && fCard.getAttribute('data-orig-texto')) || '';
+          if (fSlug && window.__pcToggleFavorita) {
+            window.__pcToggleFavorita({ slug: fSlug, titulo: fTitulo, emoji: fEmoji, texto: fTexto });
+          }
+          return;
+        }
+
         var wa = e.target.closest ? e.target.closest('.btn-wa') : null;
         if (wa) {
           var slugWa = detectarSlugDesdeNodo(wa);
           if (slugWa && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugWa, 3);
+          if (window.pcRegistrarCompartido) window.pcRegistrarCompartido('whatsapp', detectarMetaCompartido(wa));
+        }
+
+        var fb = e.target.closest ? e.target.closest('.btn-fb') : null;
+        if (fb) {
+          var slugFb = detectarSlugDesdeNodo(fb);
+          if (slugFb && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugFb, 3);
+          if (window.pcRegistrarCompartido) window.pcRegistrarCompartido('facebook', detectarMetaCompartido(fb));
         }
 
         var btn = e.target.closest ? e.target.closest('.btn-copiar') : null;
-        if (btn) {
+        if (btn && btn.hasAttribute('data-text')) {
           var slugCop = detectarSlugDesdeNodo(btn);
           if (slugCop && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugCop, 3);
+          if (window.pcRegistrarCompartido) window.pcRegistrarCompartido('copiar', detectarMetaCompartido(btn));
           var texto = btn.getAttribute('data-text') || '';
           var original = btn.textContent;
+          var enTarjetaGrilla = Boolean(btn.closest && btn.closest('article.card'));
           copiarAlPortapapeles(texto).then(function (ok) {
             if (!ok) return;
             btn.textContent = '¡Copiado! ✓';
             setTimeout(function () { btn.textContent = original; }, 2000);
+            if (enTarjetaGrilla && slugCop && window.pcMostrarToast) {
+              window.pcMostrarToast('✓ Texto copiado. ¿Querés bajarlo en tarjeta PNG o Story?', '/' + slugCop + '/', 'Abrir tarjeta →');
+            }
           });
           return;
         }
@@ -566,6 +809,9 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
 
         var ig = e.target.closest ? e.target.closest('.btn-ig') : null;
         if (ig) {
+          var slugIg = detectarSlugDesdeNodo(ig);
+          if (slugIg && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(slugIg, 3);
+          if (window.pcRegistrarCompartido) window.pcRegistrarCompartido('instagram', detectarMetaCompartido(ig));
           var visualIg = (ig.closest && ig.closest('.herr-modulo') && ig.closest('.herr-modulo').querySelector('.tarjeta-visual')) || document.querySelector('.tarjeta-visual');
           var igTitulo = ig.getAttribute('data-ig-title') || 'Feliz cumpleaños';
           var igCuerpo = ig.getAttribute('data-ig-body') || '';
@@ -698,6 +944,973 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
           }
         });
       }
+
+      function detectarMetaCompartido(nodo) {
+        var slug = detectarSlugDesdeNodo(nodo);
+        var card = nodo && nodo.closest ? nodo.closest('article.card') : null;
+        if (card) {
+          var favB = card.querySelector('.btn-favorita');
+          var h3a = card.querySelector('h3 a');
+          return {
+            slug: slug || (h3a ? h3a.getAttribute('href').replace(/^\/|\/$/g, '') : ''),
+            titulo: card.getAttribute('data-orig-titulo') || (h3a ? h3a.textContent.trim() : '') || slug,
+            url: slug ? '/' + slug + '/' : window.location.pathname,
+            emoji: (favB && favB.getAttribute('data-fav-emoji')) || '🎂'
+          };
+        }
+        var favItem = nodo && nodo.closest ? nodo.closest('.pc-fav-item') : null;
+        if (favItem) {
+          var fLink = favItem.querySelector('.pc-fav-item-titulo');
+          var fHref = fLink ? fLink.getAttribute('href') : '';
+          var fSlug = fHref ? fHref.replace(/^\/|\/$/g, '') : slug;
+          return {
+            slug: fSlug || 'guardada',
+            titulo: (fLink ? fLink.textContent.trim() : '') || fSlug,
+            url: fHref || '/',
+            emoji: '🎂'
+          };
+        }
+        if (nodo && nodo.id === 'studio-btn-copiar') {
+          return {
+            slug: 'estudio-rapido-portada',
+            titulo: 'Tarjeta personalizada (Estudio rápido)',
+            url: '/',
+            emoji: '🎂'
+          };
+        }
+        var h1 = document.querySelector('main h1');
+        var det = document.getElementById('mensaje-cuerpo');
+        var pathSlug = window.location.pathname.replace(/^\/|\/$/g, '') || 'inicio';
+        return {
+          slug: slug || (det && det.getAttribute('data-slug')) || pathSlug,
+          titulo: (h1 ? h1.textContent.trim() : '') || document.title.replace(/\s*-\s*ParaCumpleanos.*$/, ''),
+          url: window.location.pathname || '/',
+          emoji: '🎂'
+        };
+      }
+
+      // Favoritas guardadas + Contador de lo mas compartido por red (WhatsApp, Instagram, Facebook, Copiar)
+      (function () {
+        var FAV_KEY = 'pc_favoritas_v1';
+        var COMP_KEY = 'pc_compartidos_v1';
+        var REDES = ['whatsapp', 'instagram', 'facebook', 'copiar'];
+        var NOMBRES_RED = {
+          whatsapp: 'WhatsApp',
+          instagram: 'Instagram',
+          facebook: 'Facebook',
+          copiar: 'Copiar'
+        };
+
+        var barra = document.getElementById('pc-favoritas-barra');
+        var barraLabel = document.getElementById('pc-favoritas-barra-label');
+        var countEl = document.getElementById('pc-favoritas-count');
+        var dialog = document.getElementById('pc-favoritas-dialog');
+        var listaEl = document.getElementById('pc-fav-lista');
+        var btnCerrar = document.getElementById('pc-fav-cerrar');
+        var btnListo = document.getElementById('pc-fav-listo');
+        var btnVaciar = document.getElementById('pc-fav-vaciar');
+        var btnRespaldo = document.getElementById('pc-fav-respaldo');
+        var tabFavs = document.getElementById('pc-tab-favs');
+        var tabComp = document.getElementById('pc-tab-comp');
+        var tabFavsCount = document.getElementById('pc-tab-favs-count');
+        var tabCompCount = document.getElementById('pc-tab-comp-count');
+        var panelFavs = document.getElementById('pc-panel-favs');
+        var panelComp = document.getElementById('pc-panel-comp');
+        var modalCompRedes = document.getElementById('pc-modal-comp-redes');
+        var modalCompLista = document.getElementById('pc-modal-comp-lista');
+        var modalCompHistorial = document.getElementById('pc-modal-comp-historial');
+        var btnModalCompArchivo = document.getElementById('pc-modal-comp-archivo');
+        var btnModalCompDescargar = document.getElementById('pc-modal-comp-descargar');
+        var btnHomeCompDescargar = document.getElementById('pc-home-comp-descargar');
+        var filtroRedHome = 'todas';
+        var tabActiva = 'favs';
+        var ARCHIVO_PUBLICO_URL = '/compartidos-historial.json';
+        var API_COMPARTIDOS_URL = window.PC_COMPARTIDOS_API || '/api/compartidos';
+        var estadoPublicoCache = null;
+
+        function leerFavs() {
+          try {
+            var arr = JSON.parse(localStorage.getItem(FAV_KEY) || '[]');
+            return Array.isArray(arr) ? arr : [];
+          } catch (_) {
+            return [];
+          }
+        }
+
+        function guardarFavs(arr) {
+          try {
+            localStorage.setItem(FAV_KEY, JSON.stringify(arr.slice(0, 40)));
+          } catch (_) {}
+        }
+
+        function crearEstadoCompVacio() {
+          return {
+            version: 1,
+            actualizado: '',
+            totales: { whatsapp: 0, instagram: 0, facebook: 0, copiar: 0 },
+            totalGlobal: 0,
+            items: {},
+            historial: []
+          };
+        }
+
+        function normalizarEstadoComp(raw) {
+          if (!raw || typeof raw !== 'object') return crearEstadoCompVacio();
+          var limpio = crearEstadoCompVacio();
+          var rawItems = raw.items && typeof raw.items === 'object' ? raw.items : {};
+          Object.keys(rawItems).forEach(function (k) {
+            var it = rawItems[k];
+            if (!it || !it.redes) return;
+            var r = {
+              whatsapp: Math.max(0, Math.floor(Number(it.redes.whatsapp) || 0)),
+              instagram: Math.max(0, Math.floor(Number(it.redes.instagram) || 0)),
+              facebook: Math.max(0, Math.floor(Number(it.redes.facebook) || 0)),
+              copiar: Math.max(0, Math.floor(Number(it.redes.copiar) || 0))
+            };
+            var tot = r.whatsapp + r.instagram + r.facebook + r.copiar;
+            if (tot <= 0) return;
+            var sl = String(it.slug || k).trim();
+            if (!sl) return;
+            limpio.items[sl] = {
+              slug: sl,
+              titulo: String(it.titulo || sl).trim(),
+              url: String(it.url || ('/' + sl + '/')).trim(),
+              emoji: String(it.emoji || '🎂'),
+              redes: r,
+              total: tot,
+              ultimo: String(it.ultimo || '')
+            };
+            limpio.totales.whatsapp += r.whatsapp;
+            limpio.totales.instagram += r.instagram;
+            limpio.totales.facebook += r.facebook;
+            limpio.totales.copiar += r.copiar;
+          });
+          limpio.totalGlobal =
+            limpio.totales.whatsapp +
+            limpio.totales.instagram +
+            limpio.totales.facebook +
+            limpio.totales.copiar;
+
+          if (Array.isArray(raw.historial)) {
+            var vistos = {};
+            for (var i = 0; i < raw.historial.length; i++) {
+              var ev = raw.historial[i];
+              if (!ev || typeof ev !== 'object') continue;
+              if (REDES.indexOf(ev.red) === -1) continue;
+              var slEv = String(ev.slug || '').trim();
+              if (!slEv) continue;
+              var idEv = String(ev.id || (slEv + '_' + ev.red + '_' + (ev.fecha || i))).trim();
+              if (vistos[idEv]) continue;
+              vistos[idEv] = true;
+              limpio.historial.push({
+                id: idEv,
+                red: ev.red,
+                slug: slEv,
+                titulo: String(ev.titulo || slEv).trim(),
+                url: String(ev.url || ('/' + slEv + '/')).trim(),
+                emoji: String(ev.emoji || '🎂'),
+                pagina: String(ev.pagina || ('/' + slEv + '/')).trim(),
+                fecha: String(ev.fecha || '')
+              });
+            }
+            limpio.historial.sort(function (a, b) {
+              return String(b.fecha || '').localeCompare(String(a.fecha || ''));
+            });
+            limpio.historial = limpio.historial.slice(0, 500);
+          }
+          limpio.actualizado = String(raw.actualizado || (limpio.historial[0] ? limpio.historial[0].fecha : ''));
+          return limpio;
+        }
+
+        function aplicarEventoEnEstado(estado, ev) {
+          if (!ev || REDES.indexOf(ev.red) === -1 || !ev.slug) return estado;
+          for (var i = 0; i < estado.historial.length; i++) {
+            if (estado.historial[i].id === ev.id) return estado;
+          }
+          var prev = estado.items[ev.slug] || {
+            slug: ev.slug,
+            titulo: ev.titulo || ev.slug,
+            url: ev.url || ('/' + ev.slug + '/'),
+            emoji: ev.emoji || '🎂',
+            redes: { whatsapp: 0, instagram: 0, facebook: 0, copiar: 0 },
+            total: 0,
+            ultimo: ''
+          };
+          prev.titulo = ev.titulo || prev.titulo;
+          prev.url = ev.url || prev.url;
+          prev.emoji = ev.emoji || prev.emoji;
+          prev.redes[ev.red] = (prev.redes[ev.red] || 0) + 1;
+          prev.total = prev.redes.whatsapp + prev.redes.instagram + prev.redes.facebook + prev.redes.copiar;
+          prev.ultimo = ev.fecha || prev.ultimo;
+          estado.items[ev.slug] = prev;
+          estado.totales[ev.red] = (estado.totales[ev.red] || 0) + 1;
+          estado.totalGlobal =
+            estado.totales.whatsapp +
+            estado.totales.instagram +
+            estado.totales.facebook +
+            estado.totales.copiar;
+          estado.actualizado = ev.fecha || estado.actualizado;
+          estado.historial.unshift(ev);
+          if (estado.historial.length > 500) estado.historial = estado.historial.slice(0, 500);
+          return estado;
+        }
+
+        function leerCompartidosLocal() {
+          try {
+            var raw = JSON.parse(localStorage.getItem(COMP_KEY) || 'null');
+            return normalizarEstadoComp(raw);
+          } catch (_) {
+            return crearEstadoCompVacio();
+          }
+        }
+
+        function guardarCompartidosLocal(estado) {
+          try {
+            localStorage.setItem(COMP_KEY, JSON.stringify(estado));
+          } catch (_) {}
+        }
+
+        function fusionarPublicoYLocal(publico, local) {
+          var base = normalizarEstadoComp(publico);
+          var loc = normalizarEstadoComp(local);
+          var idsPub = {};
+          for (var i = 0; i < base.historial.length; i++) idsPub[base.historial[i].id] = true;
+          var pendientes = loc.historial.filter(function (ev) { return !idsPub[ev.id]; }).reverse();
+          for (var j = 0; j < pendientes.length; j++) {
+            aplicarEventoEnEstado(base, pendientes[j]);
+          }
+          return base;
+        }
+
+        function leerCompartidos() {
+          var loc = leerCompartidosLocal();
+          if (estadoPublicoCache) return fusionarPublicoYLocal(estadoPublicoCache, loc);
+          return loc;
+        }
+
+        function rankearCompartidos(estado, filtro, limite) {
+          var arr = Object.keys(estado.items).map(function (k) { return estado.items[k]; });
+          arr = arr.filter(function (it) {
+            return filtro === 'todas' ? it.total > 0 : (it.redes[filtro] || 0) > 0;
+          });
+          arr.sort(function (a, b) {
+            var sa = filtro === 'todas' ? a.total : (a.redes[filtro] || 0);
+            var sb = filtro === 'todas' ? b.total : (b.redes[filtro] || 0);
+            if (sb !== sa) return sb - sa;
+            if (b.total !== a.total) return b.total - a.total;
+            return String(b.ultimo || '').localeCompare(String(a.ultimo || ''));
+          });
+          return arr.slice(0, limite || 10);
+        }
+
+        function filtrarHistorial(estado, filtro, limite) {
+          var lista = estado.historial || [];
+          if (filtro && filtro !== 'todas') {
+            lista = lista.filter(function (ev) { return ev.red === filtro; });
+          }
+          return lista.slice(0, limite || 25);
+        }
+
+        function formatearFechaHora(iso) {
+          if (!iso) return 'Recién';
+          var d = new Date(iso);
+          if (isNaN(d.getTime())) return String(iso).slice(0, 16).replace('T', ' ');
+          var dd = String(d.getDate()).padStart(2, '0');
+          var mm = String(d.getMonth() + 1).padStart(2, '0');
+          var yyyy = d.getFullYear();
+          var hh = String(d.getHours()).padStart(2, '0');
+          var mi = String(d.getMinutes()).padStart(2, '0');
+          return dd + '/' + mm + '/' + yyyy + ' · ' + hh + ':' + mi;
+        }
+
+        function resumirRedesTexto(redes) {
+          var partes = [];
+          for (var i = 0; i < REDES.length; i++) {
+            var r = REDES[i];
+            if (redes[r] > 0) partes.push(NOMBRES_RED[r] + ' ' + redes[r]);
+          }
+          return partes.join(' · ');
+        }
+
+        function crearFilaRanking(item, idx) {
+          var art = document.createElement('article');
+          art.className = 'comp-item';
+
+          var rank = document.createElement('span');
+          rank.className = 'comp-rank';
+          rank.textContent = '#' + (idx + 1);
+          art.appendChild(rank);
+
+          var body = document.createElement('div');
+          body.className = 'comp-item-body';
+
+          var a = document.createElement('a');
+          a.className = 'comp-item-titulo';
+          a.href = item.url || ('/' + item.slug + '/');
+          a.textContent = item.titulo || item.slug;
+          body.appendChild(a);
+
+          var badges = document.createElement('div');
+          badges.className = 'comp-item-badges';
+          REDES.forEach(function (r) {
+            if (item.redes[r] > 0) {
+              var sp = document.createElement('span');
+              sp.className = 'comp-badge comp-badge--' + r;
+              sp.textContent = NOMBRES_RED[r] + ': ' + item.redes[r];
+              badges.appendChild(sp);
+            }
+          });
+          body.appendChild(badges);
+          art.appendChild(body);
+
+          var totalEl = document.createElement('span');
+          totalEl.className = 'comp-item-total';
+          totalEl.textContent = item.total + (item.total === 1 ? ' vez' : ' veces');
+          art.appendChild(totalEl);
+
+          return art;
+        }
+
+        function crearFilaHistorial(ev) {
+          var li = document.createElement('li');
+          li.className = 'comp-hist-row';
+
+          var main = document.createElement('div');
+          main.className = 'comp-hist-main';
+
+          var top = document.createElement('div');
+          top.className = 'comp-hist-top';
+
+          var badge = document.createElement('span');
+          badge.className = 'comp-badge comp-badge--' + ev.red;
+          badge.textContent = NOMBRES_RED[ev.red] || ev.red;
+          top.appendChild(badge);
+
+          var a = document.createElement('a');
+          a.className = 'comp-hist-link';
+          a.href = ev.url || ('/' + ev.slug + '/');
+          a.textContent = ev.titulo || ev.slug;
+          top.appendChild(a);
+
+          main.appendChild(top);
+          li.appendChild(main);
+
+          var timeEl = document.createElement('time');
+          timeEl.className = 'comp-hist-fecha';
+          if (ev.fecha) timeEl.setAttribute('datetime', ev.fecha);
+          timeEl.textContent = formatearFechaHora(ev.fecha);
+          li.appendChild(timeEl);
+
+          return li;
+        }
+
+        function descargarArchivoCompartidos() {
+          var est = leerCompartidos();
+          var contenido = JSON.stringify(est, null, 2) + '\n';
+          var blob = new Blob([contenido], { type: 'application/json;charset=utf-8' });
+          var urlBlob = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = urlBlob;
+          a.download = 'compartidos-historial.json';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(function () { URL.revokeObjectURL(urlBlob); }, 1000);
+          if (window.pcMostrarToast) {
+            window.pcMostrarToast('✓ Archivo compartidos-historial.json descargado.');
+          }
+        }
+
+        function renderPanelHomeCompartidos() {
+          var contLista = document.getElementById('pc-home-comp-lista');
+          var contHist = document.getElementById('pc-home-comp-historial');
+          if (!contLista && !contHist) return;
+          var est = leerCompartidos();
+          var totalBadge = document.getElementById('pc-home-comp-total');
+          if (totalBadge) {
+            totalBadge.textContent = est.totalGlobal + (est.totalGlobal === 1 ? ' compartido registrado' : ' compartidos registrados');
+          }
+
+          REDES.forEach(function (r) {
+            var n = est.totales[r] || 0;
+            var pct = est.totalGlobal > 0 ? Math.round((n / est.totalGlobal) * 100) : 0;
+            var elNum = document.getElementById('pc-stat-' + r);
+            var elPct = document.getElementById('pc-pct-' + r);
+            var elBar = document.getElementById('pc-bar-' + r);
+            if (elNum) elNum.textContent = String(n);
+            if (elPct) elPct.textContent = pct + '%';
+            if (elBar) elBar.style.width = pct + '%';
+          });
+
+          var ranking = rankearCompartidos(est, filtroRedHome, 8);
+          var rankCount = document.getElementById('pc-home-rank-count');
+          if (rankCount) {
+            rankCount.textContent = ranking.length + (ranking.length === 1 ? ' publicación' : ' publicaciones');
+          }
+          if (contLista) {
+            contLista.innerHTML = '';
+            if (!ranking.length) {
+              var p = document.createElement('p');
+              p.className = 'comp-vacio';
+              p.textContent =
+                est.totalGlobal === 0
+                  ? 'Todavía no hay compartidos registrados. Tocá WhatsApp, Instagram, Facebook o Copiar en cualquier dedicatoria para sumar al ranking público.'
+                  : 'Todavía no hay dedicatorias compartidas en ' + NOMBRES_RED[filtroRedHome] + '. Probá otra red o tocá «Todas las redes».';
+              contLista.appendChild(p);
+            } else {
+              ranking.forEach(function (item, idx) {
+                contLista.appendChild(crearFilaRanking(item, idx));
+              });
+            }
+          }
+
+          var historial = filtrarHistorial(est, filtroRedHome, 25);
+          var histCount = document.getElementById('pc-home-hist-count');
+          if (histCount) {
+            histCount.textContent = historial.length + (historial.length === 1 ? ' evento' : ' eventos');
+          }
+          if (contHist) {
+            contHist.innerHTML = '';
+            if (!historial.length) {
+              var liV = document.createElement('li');
+              liV.className = 'comp-vacio';
+              liV.textContent =
+                est.totalGlobal === 0
+                  ? 'Cada vez que un visitante comparte o copia una dedicatoria, queda registrado aquí con fecha, hora y red elegida.'
+                  : 'Sin eventos registrados todavía en ' + NOMBRES_RED[filtroRedHome] + '.';
+              contHist.appendChild(liV);
+            } else {
+              historial.forEach(function (ev) {
+                contHist.appendChild(crearFilaHistorial(ev));
+              });
+            }
+          }
+        }
+
+        function renderResumenEnTarjetas() {
+          var est = leerCompartidos();
+          document.querySelectorAll('[data-share-resumen]').forEach(function (el) {
+            var slug = detectarSlugDesdeNodo(el);
+            var item = slug ? est.items[slug] : null;
+            if (!item || item.total <= 0) {
+              el.hidden = true;
+              el.textContent = '';
+              return;
+            }
+            el.textContent = 'Compartido: ' + resumirRedesTexto(item.redes);
+            el.hidden = false;
+          });
+        }
+
+        function renderModalCompartidos() {
+          if (!modalCompRedes || !modalCompLista) return;
+          var est = leerCompartidos();
+          modalCompRedes.innerHTML = '';
+          REDES.forEach(function (r) {
+            var pill = document.createElement('div');
+            pill.className = 'comp-mini-stat comp-mini-stat--' + r;
+            var lbl = document.createElement('span');
+            lbl.textContent = NOMBRES_RED[r];
+            var val = document.createElement('strong');
+            val.textContent = String(est.totales[r] || 0);
+            pill.appendChild(lbl);
+            pill.appendChild(val);
+            modalCompRedes.appendChild(pill);
+          });
+
+          modalCompLista.innerHTML = '';
+          var ranking = rankearCompartidos(est, 'todas', 10);
+          if (!ranking.length) {
+            var p = document.createElement('p');
+            p.className = 'pc-fav-vacio';
+            p.textContent = 'Aún no hay compartidos registrados. Cuando un visitante comparta por WhatsApp, Instagram, Facebook o Copiar, aparecerán aquí separados por red.';
+            modalCompLista.appendChild(p);
+          } else {
+            ranking.forEach(function (item, idx) {
+              modalCompLista.appendChild(crearFilaRanking(item, idx));
+            });
+          }
+
+          if (modalCompHistorial) {
+            modalCompHistorial.innerHTML = '';
+            var hist = filtrarHistorial(est, 'todas', 15);
+            if (!hist.length) {
+              var liV = document.createElement('li');
+              liV.className = 'comp-vacio';
+              liV.textContent = 'Sin eventos en el historial todavía.';
+              modalCompHistorial.appendChild(liV);
+            } else {
+              hist.forEach(function (ev) {
+                modalCompHistorial.appendChild(crearFilaHistorial(ev));
+              });
+            }
+          }
+        }
+
+        function sincronizarBotones() {
+          var favs = leerFavs();
+          var est = leerCompartidos();
+          var setSlugs = {};
+          for (var i = 0; i < favs.length; i++) setSlugs[favs[i].slug] = true;
+          document.querySelectorAll('.btn-favorita').forEach(function (b) {
+            var sl = b.getAttribute('data-fav-slug') || '';
+            var activa = Boolean(sl && setSlugs[sl]);
+            b.setAttribute('aria-pressed', activa ? 'true' : 'false');
+            b.textContent = activa ? '♥ Guardada' : '♡ Guardar';
+          });
+          if (tabFavsCount) tabFavsCount.textContent = String(favs.length);
+          if (tabCompCount) tabCompCount.textContent = String(est.totalGlobal);
+          if (barraLabel) barraLabel.textContent = favs.length > 0 ? 'Guardadas' : 'Compartidos';
+          if (countEl) countEl.textContent = String(favs.length > 0 ? favs.length : est.totalGlobal);
+          if (barra) barra.hidden = favs.length === 0 && est.totalGlobal === 0;
+          renderResumenEnTarjetas();
+          renderPanelHomeCompartidos();
+        }
+
+        function cargarArchivoPublicoCompartidos() {
+          var intentar = function (url) {
+            return fetch(url, { cache: 'no-store' }).then(function (resp) {
+              if (!resp.ok) throw new Error('HTTP ' + resp.status);
+              return resp.json();
+            });
+          };
+          intentar(ARCHIVO_PUBLICO_URL)
+            .catch(function () { return intentar(API_COMPARTIDOS_URL); })
+            .then(function (data) {
+              if (!data || typeof data !== 'object') return;
+              estadoPublicoCache = normalizarEstadoComp(data);
+              sincronizarBotones();
+              if (dialog && dialog.open && tabActiva === 'comp') renderModalCompartidos();
+            })
+            .catch(function () {});
+        }
+
+        function activarTab(nombre) {
+          tabActiva = nombre === 'comp' ? 'comp' : 'favs';
+          var esFavs = tabActiva === 'favs';
+          if (tabFavs) {
+            tabFavs.classList.toggle('activo', esFavs);
+            tabFavs.setAttribute('aria-selected', esFavs ? 'true' : 'false');
+          }
+          if (tabComp) {
+            tabComp.classList.toggle('activo', !esFavs);
+            tabComp.setAttribute('aria-selected', !esFavs ? 'true' : 'false');
+          }
+          if (panelFavs) panelFavs.hidden = !esFavs;
+          if (panelComp) panelComp.hidden = esFavs;
+          if (btnRespaldo) btnRespaldo.hidden = !esFavs;
+          if (btnVaciar) btnVaciar.hidden = !esFavs;
+          if (btnModalCompArchivo) btnModalCompArchivo.hidden = esFavs;
+          if (btnModalCompDescargar) btnModalCompDescargar.hidden = esFavs;
+          if (esFavs) renderDialog();
+          else renderModalCompartidos();
+        }
+
+        function renderDialog() {
+          if (!listaEl) return;
+          var favs = leerFavs();
+          listaEl.innerHTML = '';
+          if (btnRespaldo) btnRespaldo.disabled = favs.length === 0;
+          if (btnVaciar) btnVaciar.disabled = favs.length === 0;
+          if (!favs.length) {
+            var pVacio = document.createElement('p');
+            pVacio.className = 'pc-fav-vacio';
+            pVacio.textContent = 'Todavía no guardaste dedicatorias. Tocá «♡ Guardar» en cualquier tarjeta para tenerla a mano.';
+            listaEl.appendChild(pVacio);
+            return;
+          }
+          favs.forEach(function (item) {
+            var art = document.createElement('article');
+            art.className = 'pc-fav-item';
+            art.setAttribute('data-slug', item.slug);
+
+            var head = document.createElement('div');
+            head.className = 'pc-fav-item-head';
+            var titLink = document.createElement('a');
+            titLink.href = '/' + item.slug + '/';
+            titLink.className = 'pc-fav-item-titulo';
+            titLink.textContent = (item.emoji ? item.emoji + ' ' : '') + (item.titulo || item.slug);
+            head.appendChild(titLink);
+
+            var btnQuitar = document.createElement('button');
+            btnQuitar.type = 'button';
+            btnQuitar.className = 'pc-fav-quitar';
+            btnQuitar.setAttribute('aria-label', 'Quitar "' + (item.titulo || item.slug) + '" de guardadas');
+            btnQuitar.textContent = 'Quitar';
+            btnQuitar.addEventListener('click', function () {
+              var next = leerFavs().filter(function (f) { return f.slug !== item.slug; });
+              guardarFavs(next);
+              sincronizarBotones();
+              renderDialog();
+            });
+            head.appendChild(btnQuitar);
+            art.appendChild(head);
+
+            if (item.texto) {
+              var pTxt = document.createElement('p');
+              pTxt.className = 'pc-fav-item-texto';
+              pTxt.textContent = item.texto.length > 240 ? item.texto.slice(0, 237).trim() + '…' : item.texto;
+              art.appendChild(pTxt);
+            }
+
+            var acc = document.createElement('div');
+            acc.className = 'pc-fav-item-acciones';
+
+            if (item.texto) {
+              var bCop = document.createElement('button');
+              bCop.type = 'button';
+              bCop.className = 'btn btn-copiar btn-sm';
+              bCop.setAttribute('data-text', item.texto);
+              bCop.textContent = 'Copiar';
+              acc.appendChild(bCop);
+
+              var aWa = document.createElement('a');
+              aWa.className = 'btn btn-wa btn-sm';
+              aWa.target = '_blank';
+              aWa.rel = 'noopener noreferrer';
+              aWa.href = 'https://wa.me/?text=' + encodeURIComponent(item.texto);
+              aWa.textContent = 'WhatsApp';
+              acc.appendChild(aWa);
+            }
+
+            var aCard = document.createElement('a');
+            aCard.className = 'card-cta-tarjeta';
+            aCard.href = '/' + item.slug + '/';
+            aCard.textContent = 'Tarjeta PNG / Story →';
+            acc.appendChild(aCard);
+
+            art.appendChild(acc);
+            listaEl.appendChild(art);
+          });
+        }
+
+        function abrirModalActividad(tabInicial) {
+          if (!dialog) return;
+          activarTab(tabInicial || (leerFavs().length > 0 ? 'favs' : 'comp'));
+          if (typeof dialog.showModal === 'function') {
+            if (!dialog.open) dialog.showModal();
+          } else {
+            dialog.setAttribute('open', 'open');
+          }
+        }
+
+        window.pcRegistrarCompartido = function (red, meta) {
+          if (REDES.indexOf(red) === -1) return;
+          var m = meta || {};
+          var slug = String(m.slug || '').trim() || window.location.pathname.replace(/^\/|\/$/g, '') || 'inicio';
+          var titulo = String(m.titulo || slug).trim();
+          var url = String(m.url || ('/' + slug + '/')).trim();
+          var emoji = String(m.emoji || '🎂');
+          var pagina = window.location.pathname || '/';
+          var fecha = new Date().toISOString();
+          var idEvento = 'sh_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+
+          var evNuevo = {
+            id: idEvento,
+            red: red,
+            slug: slug,
+            titulo: titulo,
+            url: url,
+            emoji: emoji,
+            pagina: pagina,
+            fecha: fecha
+          };
+
+          var estLocal = leerCompartidosLocal();
+          aplicarEventoEnEstado(estLocal, evNuevo);
+          guardarCompartidosLocal(estLocal);
+
+          try {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+              event: 'pc_compartir',
+              pc_red: red,
+              pc_slug: slug,
+              pc_titulo: titulo,
+              pc_pagina: pagina
+            });
+            if (typeof window.gtag === 'function') {
+              window.gtag('event', 'share', {
+                method: red,
+                content_type: 'dedicatoria',
+                item_id: slug
+              });
+            }
+          } catch (_) {}
+
+          sincronizarBotones();
+          if (dialog && dialog.open && tabActiva === 'comp') renderModalCompartidos();
+
+          try {
+            fetch(API_COMPARTIDOS_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(evNuevo),
+              keepalive: true
+            })
+              .then(function (resp) {
+                if (!resp.ok) return null;
+                return resp.json();
+              })
+              .then(function (data) {
+                if (!data || typeof data !== 'object' || !data.totales) return;
+                estadoPublicoCache = normalizarEstadoComp(data);
+                sincronizarBotones();
+                if (dialog && dialog.open && tabActiva === 'comp') renderModalCompartidos();
+              })
+              .catch(function () {});
+          } catch (_) {}
+        };
+
+        window.__pcSincronizarFavoritas = sincronizarBotones;
+        window.__pcToggleFavorita = function (item) {
+          var favs = leerFavs();
+          var idx = favs.findIndex(function (f) { return f.slug === item.slug; });
+          if (idx !== -1) {
+            favs.splice(idx, 1);
+            guardarFavs(favs);
+            sincronizarBotones();
+            if (window.pcMostrarToast) window.pcMostrarToast('Quitada de tus guardadas.');
+          } else {
+            favs.unshift({
+              slug: item.slug,
+              titulo: item.titulo,
+              emoji: item.emoji,
+              texto: item.texto
+            });
+            guardarFavs(favs);
+            sincronizarBotones();
+            if (item.slug && window.pcRegistrarPopularidadPub) window.pcRegistrarPopularidadPub(item.slug, 2);
+            if (window.pcMostrarToast) {
+              var aviso =
+                favs.length === 1
+                  ? '♥ Guardada en este navegador (si borrás cookies o datos del sitio se borrará).'
+                  : '♥ Guardada en tu lista (' + favs.length + ').';
+              window.pcMostrarToast(aviso);
+            }
+          }
+          if (dialog && dialog.open && tabActiva === 'favs') renderDialog();
+        };
+
+        if (barra && dialog) {
+          barra.addEventListener('click', function () { abrirModalActividad(); });
+        }
+        document.addEventListener('click', function (ev) {
+          var abrirGuard = ev.target && ev.target.closest ? ev.target.closest('[data-abrir-guardadas]') : null;
+          if (abrirGuard) {
+            ev.preventDefault();
+            abrirModalActividad('favs');
+          }
+        });
+        if (tabFavs) tabFavs.addEventListener('click', function () { activarTab('favs'); });
+        if (tabComp) tabComp.addEventListener('click', function () { activarTab('comp'); });
+
+        document.querySelectorAll('[data-comp-filtro]').forEach(function (fBtn) {
+          fBtn.addEventListener('click', function () {
+            filtroRedHome = fBtn.getAttribute('data-comp-filtro') || 'todas';
+            document.querySelectorAll('[data-comp-filtro]').forEach(function (b) {
+              var on = b === fBtn;
+              b.classList.toggle('activo', on);
+              b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            renderPanelHomeCompartidos();
+          });
+        });
+
+        function cerrarDialog() {
+          if (!dialog) return;
+          if (typeof dialog.close === 'function' && dialog.open) dialog.close();
+          else dialog.removeAttribute('open');
+        }
+        if (btnCerrar) btnCerrar.addEventListener('click', cerrarDialog);
+        if (btnListo) btnListo.addEventListener('click', cerrarDialog);
+        if (btnVaciar) {
+          btnVaciar.addEventListener('click', function () {
+            guardarFavs([]);
+            sincronizarBotones();
+            renderDialog();
+          });
+        }
+        if (btnRespaldo) {
+          btnRespaldo.addEventListener('click', function () {
+            var favs = leerFavs();
+            if (!favs.length) return;
+            var txt =
+              'Mis dedicatorias guardadas — ParaCumpleanos (https://paracumpleanos.com)\n\n' +
+              favs
+                .map(function (it, idx) {
+                  return (idx + 1) + '. ' + (it.titulo || it.slug) + '\n' + (it.texto ? it.texto + '\n' : '') + 'https://paracumpleanos.com/' + it.slug + '/';
+                })
+                .join('\n\n---\n\n');
+            copiarAlPortapapeles(txt).then(function (ok) {
+              if (ok && window.pcMostrarToast) {
+                window.pcMostrarToast('✓ Respaldo de ' + favs.length + ' guardadas copiado. Pegalo en WhatsApp o Notas.');
+              }
+            });
+          });
+        }
+        if (btnHomeCompDescargar) btnHomeCompDescargar.addEventListener('click', descargarArchivoCompartidos);
+        if (btnModalCompDescargar) btnModalCompDescargar.addEventListener('click', descargarArchivoCompartidos);
+        if (dialog) {
+          dialog.addEventListener('click', function (ev) {
+            if (ev.target === dialog) cerrarDialog();
+          });
+        }
+
+        sincronizarBotones();
+        cargarArchivoPublicoCompartidos();
+      })();
+
+      // Consentimiento RGPD Europa (CMP) integrado con Google Consent Mode v2
+      (function () {
+        var CMP_KEY = 'pc_consentimiento_v1';
+        var EUROPA_PREFIJOS = [
+          'Europe/',
+          'Atlantic/Canary',
+          'Atlantic/Faroe',
+          'Atlantic/Madeira',
+          'Atlantic/Azores',
+          'Atlantic/Reykjavik'
+        ];
+        var banner = document.getElementById('pc-cmp-banner');
+        var dialog = document.getElementById('pc-cmp-dialog');
+        var chkAnalitica = document.getElementById('pc-cmp-chk-analitica');
+        var chkPublicidad = document.getElementById('pc-cmp-chk-publicidad');
+        var btnRechazar = document.getElementById('pc-cmp-rechazar');
+        var btnConfigurar = document.getElementById('pc-cmp-configurar');
+        var btnAceptar = document.getElementById('pc-cmp-aceptar');
+        var btnCerrar = document.getElementById('pc-cmp-cerrar');
+        var btnModalRechazar = document.getElementById('pc-cmp-modal-rechazar');
+        var btnModalGuardar = document.getElementById('pc-cmp-modal-guardar');
+        var btnModalAceptar = document.getElementById('pc-cmp-modal-aceptar');
+
+        function detectarZonaEuropea() {
+          try {
+            var params = new URLSearchParams(window.location.search || '');
+            if (params.get('cmp') === '1' || params.get('cmp') === 'reset') return true;
+            var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+            for (var i = 0; i < EUROPA_PREFIJOS.length; i++) {
+              if (tz === EUROPA_PREFIJOS[i] || tz.indexOf(EUROPA_PREFIJOS[i]) === 0) return true;
+            }
+          } catch (_) {}
+          return false;
+        }
+
+        function leerConsentimiento() {
+          try {
+            var raw = localStorage.getItem(CMP_KEY);
+            if (!raw) return null;
+            var obj = JSON.parse(raw);
+            if (!obj || typeof obj !== 'object') return null;
+            return {
+              esenciales: true,
+              analitica: Boolean(obj.analitica),
+              publicidad: Boolean(obj.publicidad),
+              actualizado: obj.actualizado || ''
+            };
+          } catch (_) {
+            return null;
+          }
+        }
+
+        function aplicarConsentimiento(analitica, publicidad, mostrarAviso) {
+          var prefs = {
+            esenciales: true,
+            analitica: Boolean(analitica),
+            publicidad: Boolean(publicidad),
+            actualizado: new Date().toISOString().slice(0, 10)
+          };
+          try {
+            localStorage.setItem(CMP_KEY, JSON.stringify(prefs));
+          } catch (_) {}
+
+          var pubEstado = prefs.publicidad ? 'granted' : 'denied';
+          var anaEstado = prefs.analitica ? 'granted' : 'denied';
+          if (typeof window.gtag === 'function') {
+            window.gtag('consent', 'update', {
+              ad_storage: pubEstado,
+              ad_user_data: pubEstado,
+              ad_personalization: pubEstado,
+              analytics_storage: anaEstado,
+              functionality_storage: 'granted',
+              security_storage: 'granted'
+            });
+          }
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'pc_consent_updated',
+            pc_consent_analytics: anaEstado,
+            pc_consent_ads: pubEstado
+          });
+
+          if (banner) banner.hidden = true;
+          cerrarModalCmp();
+          if (mostrarAviso && window.pcMostrarToast) {
+            window.pcMostrarToast('✓ Preferencias de privacidad guardadas.');
+          }
+        }
+
+        function abrirModalCmp() {
+          if (!dialog) return;
+          var actual = leerConsentimiento();
+          var porDefecto = !detectarZonaEuropea();
+          if (chkAnalitica) chkAnalitica.checked = actual ? actual.analitica : porDefecto;
+          if (chkPublicidad) chkPublicidad.checked = actual ? actual.publicidad : porDefecto;
+          if (typeof dialog.showModal === 'function') {
+            if (!dialog.open) dialog.showModal();
+          } else {
+            dialog.setAttribute('open', 'open');
+          }
+        }
+
+        function cerrarModalCmp() {
+          if (!dialog) return;
+          if (typeof dialog.close === 'function' && dialog.open) dialog.close();
+          else dialog.removeAttribute('open');
+        }
+
+        window.__pcAbrirCmp = abrirModalCmp;
+
+        document.addEventListener('click', function (ev) {
+          var trigger = ev.target && ev.target.closest ? ev.target.closest('[data-abrir-cmp]') : null;
+          if (trigger) {
+            ev.preventDefault();
+            abrirModalCmp();
+          }
+        });
+
+        if (btnRechazar) btnRechazar.addEventListener('click', function () { aplicarConsentimiento(false, false, true); });
+        if (btnAceptar) btnAceptar.addEventListener('click', function () { aplicarConsentimiento(true, true, true); });
+        if (btnConfigurar) btnConfigurar.addEventListener('click', abrirModalCmp);
+        if (btnCerrar) btnCerrar.addEventListener('click', cerrarModalCmp);
+        if (btnModalRechazar) btnModalRechazar.addEventListener('click', function () { aplicarConsentimiento(false, false, true); });
+        if (btnModalAceptar) btnModalAceptar.addEventListener('click', function () { aplicarConsentimiento(true, true, true); });
+        if (btnModalGuardar) {
+          btnModalGuardar.addEventListener('click', function () {
+            aplicarConsentimiento(
+              Boolean(chkAnalitica && chkAnalitica.checked),
+              Boolean(chkPublicidad && chkPublicidad.checked),
+              true
+            );
+          });
+        }
+        if (dialog) {
+          dialog.addEventListener('click', function (ev) {
+            if (ev.target === dialog) cerrarModalCmp();
+          });
+        }
+
+        try {
+          var paramsInit = new URLSearchParams(window.location.search || '');
+          if (paramsInit.get('cmp') === 'reset') {
+            localStorage.removeItem(CMP_KEY);
+          }
+        } catch (_) {}
+
+        if (banner && !leerConsentimiento() && detectarZonaEuropea()) {
+          banner.hidden = false;
+        }
+      })();
     })();
   </script>
 </body>

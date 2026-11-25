@@ -5,8 +5,9 @@ import Hermanas from '../../components/Hermanas.astro';
 import FiltrosSegmentacion from '../../components/FiltrosSegmentacion.astro';
 import PersonalizadorAniosAniversario from '../../components/PersonalizadorAniosAniversario.astro';
 import EstudioBanderines from '../../components/EstudioBanderines.astro';
+import PersonalizadorRapidoHub from '../../components/PersonalizadorRapidoHub.astro';
 import { hubs, POR_PAGINA, SITIO, MARCA, mensajesDe, nombreHub, migasLd } from '../../lib/contenido.ts';
-import { guiaRelacionadaParaHub } from '../../lib/editorial.ts';
+import { guiaRelacionadaParaHub, detectarPerfilEditorial } from '../../lib/editorial.ts';
 export function getStaticPaths() {
   const paths: any[] = [];
   hubs.forEach(function (h) {
@@ -56,7 +57,7 @@ const jsonld = [migasLd([
   </p>
   <p class="lead">{hub.meta}</p>
   {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="hub" /> : null}
-  {esBanderines ? <EstudioBanderines modo="hub" /> : null}
+  {esBanderines ? <EstudioBanderines modo="hub" /> : <PersonalizadorRapidoHub totalMensajes={msj.length} esDuelo={detectarPerfilEditorial(hub) === 'duelo'} />}
   <FiltrosSegmentacion mensajesTodos={msj} hub={hub} cantPaginaActual={lote.length} />
   <div class="grilla" id="grilla-mensajes">
     {lote.map(function (m) { return <TarjetaMensaje m={m} hub={hub} />; })}

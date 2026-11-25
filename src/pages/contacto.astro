@@ -12,25 +12,13 @@ const jsonld = [
     '@type': 'ContactPage',
     name: `Contacto - ${MARCA}`,
     url: `${SITIO}/contacto/`,
-    inLanguage: 'es-AR',
-    mainEntity: {
-      '@type': 'Organization',
-      name: MARCA,
-      url: `${SITIO}/`,
-      email: 'lamieldehorus@gmail.com',
-      contactPoint: {
-        '@type': 'ContactPoint',
-        contactType: 'editorial support',
-        email: 'lamieldehorus@gmail.com',
-        availableLanguage: ['es']
-      }
-    }
+    inLanguage: 'es-AR'
   }
 ];
 ---
 <Base
   titulo={`Contacto - ${MARCA}`}
-  descripcion={`Escribile al Equipo Editorial de ${MARCA} a lamieldehorus@gmail.com para sugerir nuevas categorías, reportar correcciones o hacer consultas sobre privacidad y uso del sitio.`}
+  descripcion={`Escribile al Equipo Editorial de ${MARCA} para sugerir nuevas categorías, reportar correcciones o hacer consultas sobre privacidad y uso del sitio.`}
   jsonld={jsonld}
 >
   <nav class="migas" aria-label="Migas de pan">
@@ -41,12 +29,12 @@ const jsonld = [
 
   <div class="contacto-tarjetas">
     <div class="card">
-      <h2>Correo directo de contacto</h2>
+      <h2>Correo editorial y soporte</h2>
       <p>Podés escribirnos de forma directa a nuestra casilla principal:</p>
       <p class="contacto-email">
         <a href="mailto:lamieldehorus@gmail.com">lamieldehorus@gmail.com</a>
       </p>
-      <p class="texto-ayuda">También podés copiar el correo o escribir para consultas editoriales, sugerencias de categorías nuevas y solicitudes vinculadas a nuestra <a href="/privacidad/">Política de privacidad</a>. Respondemos dentro de las 48 horas hábiles.</p>
+      <p class="texto-ayuda">Respondemos consultas editoriales, sugerencias de categorías nuevas y solicitudes vinculadas a nuestra <a href="/privacidad/">Política de privacidad</a> de lunes a viernes dentro de las 48 horas hábiles.</p>
     </div>
 
     <div class="card">
@@ -62,7 +50,7 @@ const jsonld = [
 
   <section class="form-contacto-bloque" aria-labelledby="titulo-form-contacto">
     <h2 id="titulo-form-contacto">Preparar mensaje rápido para enviar por correo</h2>
-    <p>Completá estos campos para armar tu mensaje listo y abrirlo en tu aplicación de correo hacia <strong>lamieldehorus@gmail.com</strong> (sin registros ni bases de datos externas).</p>
+    <p>Completá estos campos para armar tu mensaje listo y abrirlo en tu aplicación de correo (sin registros ni bases de datos externas).</p>
     <form id="form-contacto" class="form-contacto" novalidate>
       <div class="form-fila">
         <label for="c-nombre">Tu nombre</label>
@@ -119,7 +107,7 @@ const jsonld = [
 
       res.className = 'contacto-resultado ok';
       var p = document.createElement('p');
-      p.textContent = 'Tu mensaje quedó listo para enviar a lamieldehorus@gmail.com desde tu cliente de correo:';
+      p.textContent = 'Tu mensaje quedó listo para enviar desde tu cliente de correo:';
       res.appendChild(p);
 
       var a = document.createElement('a');

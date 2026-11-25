@@ -3,7 +3,7 @@ import { AUTOR_BIO_DEFAULT, AUTOR_ROL_DEFAULT, type GuiaEditorial } from './guia
 export const GUIAS_PARTE_2: GuiaEditorial[] = [
   {
     slug: 'ideas-para-cumpleanos-de-18-anos-regalos-y-dedicatorias',
-    seoTitle: 'Ideas para cumpleaños de 18 años: palabras y regalos hoy',
+    seoTitle: 'Ideas para cumpleaños de 18 años: palabras y regalos',
     titulo: 'Cómo celebrar un cumpleaños de 18 años con dedicatorias reales y regalos útiles',
     h1: 'Ideas para cumpleaños de 18 años que celebran su nueva autonomía sin sermones',
     descripcion: 'Descubrí ideas para cumpleaños de 18 años: regalos útiles para su etapa nueva, qué decir siendo padres o amigos, checklist y dedicatorias listas para usar.',
@@ -909,7 +909,7 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
   },
   {
     slug: 'como-organizar-video-sorpresa-de-cumpleanos-familiar',
-    seoTitle: 'Cómo organizar un video sorpresa de cumpleaños fácil hoy',
+    seoTitle: 'Video sorpresa de cumpleaños: cómo organizarlo en 5 pasos',
     titulo: 'Cómo armar un video sorpresa de cumpleaños con familia y amigos sin complicarte',
     h1: 'Cómo organizar un video sorpresa de cumpleaños emotivo en 5 pasos simples',
     descripcion: 'Aprendé cómo organizar un video sorpresa de cumpleaños coordinado por WhatsApp sin sufrir por la edición. Guion por persona, duración ideal y checklist.',
@@ -1039,9 +1039,9 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
   },
   {
     slug: 'cumpleanos-de-15-anos-dedicatorias-y-reglas-del-festejo',
-    seoTitle: 'Cumpleaños de 15 años: dedicatorias y guía de festejo hoy',
+    seoTitle: 'Cumpleaños de 15 años: dedicatorias y guía del festejo',
     titulo: 'Cumpleaños de 15 años: cómo escribir dedicatorias emotivas y cuidar el clima',
-    h1: 'Cumpleaños de 15 años: palabras sinceras de padres, madrinas y amigas hoy',
+    h1: 'Cumpleaños de 15 años: palabras sinceras de padres, madrinas y amigas',
     descripcion: 'Guía práctica para cumpleaños de 15 años: dedicatorias reales para la quinceañera, brindis familiar, libro de firmas, checklist y mensajes para adaptar hoy.',
     keywordPrincipal: 'cumpleaños de 15 años',
     keywordsSecundarias: [
@@ -1321,7 +1321,7 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
     citaDestacada: 'En una historia o estado, quince palabras bien elegidas emocionan muchísimo más que un bloque diminuto imposible de leer antes de que cambie la pantalla.',
     datosPropios: {
       titulo: 'Soporte directo de Story 1080×1920 y botón Instagram',
-      dato: 'Nuestro personalizador visual ahora permite cambiar en un clic entre cuadrado 1080×1080 y formato Story Instagram 1080×1920 en las 14.080 dedicatorias, además de incorporar botón dedicado para compartir a Instagram.',
+      dato: 'Nuestro personalizador visual ahora permite cambiar en un clic entre cuadrado 1080×1080 y formato Story Instagram 1080×1920 en las 22.280 dedicatorias, además de incorporar botón dedicado para compartir a Instagram.',
       fuente: 'Novedades funcionales del Estudio de Tarjetas ParaCumpleanos (2026).'
     },
     comparacionPractica: {
@@ -1558,9 +1558,9 @@ export const GUIAS_PARTE_2: GuiaEditorial[] = [
   },
   {
     slug: 'auto-felicitacion-por-mi-cumpleanos-para-agradecer-y-reflexionar',
-    seoTitle: 'Auto-felicitación por mi cumpleaños: gratitud sincera hoy',
+    seoTitle: 'Auto-felicitación por mi cumpleaños: balance y gratitud',
     titulo: 'Qué publicar en tu propio cumpleaños para agradecer sin caer en frases vacías',
-    h1: 'Auto-felicitación por mi cumpleaños: textos sinceros de balance y gratitud hoy',
+    h1: 'Auto-felicitación por mi cumpleaños: textos sinceros de balance y gratitud',
     descripcion: 'Ideas de auto-felicitación por mi cumpleaños para estados, Instagram o diario. Cómo hacer balance honesto sin humo, checklist y plantillas listas hoy.',
     keywordPrincipal: 'auto-felicitación por mi cumpleaños',
     keywordsSecundarias: [
