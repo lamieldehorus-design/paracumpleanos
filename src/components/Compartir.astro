@@ -11,11 +11,10 @@ interface Props {
 const { texto, url, tituloCard = '', cuerpoCard = '', emojiCard = '🎂', mostrarDescarga = false } = Astro.props;
 ---
 <div class="acciones">
-  <a class="btn btn-wa" data-red="whatsapp" href={'https://wa.me/?text=' + encodeURIComponent(texto)} target="_blank" rel="noopener">WhatsApp</a>
+  <a class="btn btn-wa" href={'https://wa.me/?text=' + encodeURIComponent(texto)} target="_blank" rel="noopener">WhatsApp</a>
   <button
     class="btn btn-ig"
     type="button"
-    data-red="instagram"
     data-ig-title={tituloCard}
     data-ig-body={cuerpoCard}
     data-ig-emoji={emojiCard}
@@ -24,8 +23,8 @@ const { texto, url, tituloCard = '', cuerpoCard = '', emojiCard = '🎂', mostra
   >
     Instagram
   </button>
-  <a class="btn btn-fb" data-red="facebook" href={'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url)} target="_blank" rel="noopener">Facebook</a>
-  <button class="btn btn-copiar" type="button" data-red="copiar" data-text={texto}>Copiar</button>
+  <a class="btn btn-fb" href={'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url)} target="_blank" rel="noopener">Facebook</a>
+  <button class="btn btn-copiar" type="button" data-text={texto}>Copiar</button>
   {mostrarDescarga ? (
     <>
       <button
@@ -43,4 +42,3 @@ const { texto, url, tituloCard = '', cuerpoCard = '', emojiCard = '🎂', mostra
     </>
   ) : null}
 </div>
-<p class="acciones-stats" data-share-resumen hidden aria-live="polite"></p>

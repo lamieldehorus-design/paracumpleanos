@@ -5,36 +5,7 @@ import { MARCA, SITIO, migasLd } from '../../lib/contenido.ts';
 
 export function getStaticPaths() {
   return GUIAS_EDITORIALES.map(function (guia, idx) {
-    const tokensActual = new Set(
-      `${guia.keywordPrincipal} ${guia.keywordsSecundarias.join(' ')} ${(guia.etiquetas || []).join(' ')}`
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .split(/[^a-z0-9]+/)
-        .filter(function (w) { return w.length >= 4; })
-    );
-    const otras = GUIAS_EDITORIALES
-      .map(function (cand, i) {
-        if (i === idx) return null;
-        const textoCand = `${cand.keywordPrincipal} ${cand.keywordsSecundarias.join(' ')} ${cand.titulo}`
-          .toLowerCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
-        let score = 0;
-        tokensActual.forEach(function (t) {
-          if (textoCand.includes(t)) score += 2;
-        });
-        // Pequeño impulso a guías más recientes para evitar mostrar siempre las primeras 4
-        if (cand.fechaPublicacion >= '2026-11-23') score += 1;
-        return { guia: cand, score, i };
-      })
-      .filter(Boolean)
-      .sort(function (a: any, b: any) {
-        return b.score - a.score || b.i - a.i;
-      })
-      .slice(0, 4)
-      .map(function (x: any) { return x.guia; });
-
+    const otras = GUIAS_EDITORIALES.filter(function (_, i) { return i !== idx; }).slice(0, 4);
     return {
       params: { slug: guia.slug },
       props: { guia, otras }
@@ -102,21 +73,6 @@ if (guia.pasosHowTo && guia.pasosHowTo.length) {
   });
 }
 
-const pasosPersonalizar =
-  guia.comoHacerloTuyo && guia.comoHacerloTuyo.length
-    ? guia.comoHacerloTuyo
-    : [
-        'Cambiá el saludo genérico por el nombre o apodo real con el que tratás a esa persona todos los días.',
-        'Reemplazá el detalle entre corchetes por una escena concreta vivida este último año (una charla, un favor o un plan compartido).',
-        'Elegí un solo deseo puntual vinculado con su etapa actual en lugar de sumar adjetivos repetidos.',
-        'Leelo una vez en voz alta antes de enviarlo: si suena igual a como hablás en persona, ya está listo.'
-      ];
-
-const etiquetasGuia =
-  guia.etiquetas && guia.etiquetas.length
-    ? guia.etiquetas.slice(0, 3)
-    : [guia.keywordPrincipal, ...guia.keywordsSecundarias].slice(0, 3);
-
 const indiceItems = [
   ...guia.secciones.map(function (s, i) {
     return { id: `sec-${i + 1}`, texto: s.subtitulo };
@@ -124,7 +80,6 @@ const indiceItems = [
   { id: 'guia-comparacion-titulo', texto: guia.comparacionPractica.titulo },
   { id: 'guia-tabla-titulo', texto: guia.tablaComparativa.titulo },
   { id: 'guia-ejemplos-titulo', texto: 'Plantillas rápidas listas para adaptar' },
-  { id: 'guia-personalizar-titulo', texto: 'Cómo hacerlo tuyo en 1 minuto' },
   { id: 'guia-checklist-titulo', texto: 'Checklist rápida antes de enviar' },
   { id: 'guia-faq-titulo', texto: 'Preguntas frecuentes' }
 ];
@@ -156,25 +111,6 @@ const indiceItems = [
       <p class="respuesta-etiqueta">Respuesta rápida</p>
       <p>{guia.respuestaDirecta}</p>
     </section>
-
-    {guia.categoriasRelacionadas && guia.categoriasRelacionadas.length ? (
-      <aside class="guia-cta-rapida" aria-label="Acceso directo a dedicatorias listas">
-        <div class="guia-cta-rapida-texto">
-          <p class="guia-cta-eyebrow">¿Necesitás el texto listo ahora mismo?</p>
-          <p class="guia-cta-desc">Pasá directo a las colecciones con 50 dedicatorias personalizables para copiar o bajar en tarjeta PNG:</p>
-        </div>
-        <div class="guia-cta-rapida-acciones">
-          <a class="btn btn-copiar" href={`/${guia.categoriasRelacionadas[0].slug}/`}>
-            {guia.categoriasRelacionadas[0].nombre} →
-          </a>
-          {guia.categoriasRelacionadas[1] ? (
-            <a class="btn-leer-mas" href={`/${guia.categoriasRelacionadas[1].slug}/`}>
-              {guia.categoriasRelacionadas[1].nombre} →
-            </a>
-          ) : null}
-        </div>
-      </aside>
-    ) : null}
 
     <nav class="indice-guia" aria-label="Índice de la guía">
       <p class="indice-titulo">Índice de contenidos</p>
@@ -273,16 +209,6 @@ const indiceItems = [
       </div>
     </section>
 
-    <section class="guia-personalizar-box" aria-labelledby="guia-personalizar-titulo">
-      <h2 id="guia-personalizar-titulo">Cómo hacerlo tuyo en 1 minuto</h2>
-      <p class="guia-personalizar-intro">Antes de copiar y pegar, aplicá estos ajustes rápidos para que el texto lleve tu voz real y no suene a plantilla:</p>
-      <ul class="lista-editorial">
-        {pasosPersonalizar.map(function (paso) {
-          return <li>{paso}</li>;
-        })}
-      </ul>
-    </section>
-
     <section class="articulo-seccion guia-checklist-box" aria-labelledby="guia-checklist-titulo" data-guia-checklist={guia.slug}>
       <div class="checklist-cabecera">
         <h2 id="guia-checklist-titulo">Checklist rápida antes de enviar</h2>
@@ -322,12 +248,6 @@ const indiceItems = [
       <div class="chips">
         {guia.categoriasRelacionadas.map(function (c) {
           return <a class="chip" href={`/${c.slug}/`}>{c.nombre}</a>;
-        })}
-      </div>
-      <div class="guia-etiquetas-linea" aria-label="Temas de esta guía">
-        <span class="guia-etiquetas-label">Temas:</span>
-        {etiquetasGuia.map(function (tag) {
-          return <span class="guia-etiqueta-item">{tag}</span>;
         })}
       </div>
     </section>

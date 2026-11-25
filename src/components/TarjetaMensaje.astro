@@ -15,9 +15,7 @@ const bloques = (m.texto || '').split('\n\n').map((b: string) => b.trim()).filte
 const bloquePrincipal = bloques.find((b: string) => !(b.length < 55 && /[:,]$/.test(b))) || bloques[0] || '';
 const plano = bloquePrincipal.replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim();
 const resumen = plano.length <= 130 ? plano : plano.slice(0, 130).replace(/\s+\S*$/, '') + '…';
-const tieneMasTexto = String(m.texto || '').replace(/\s+/g, ' ').trim().length > resumen.length + 10;
 const esBanderinGuia = hubRef?.slug === 'banderines-de-cumpleanos-para-imprimir';
-const parrafosCompletos = String(m.texto || '').split(/\n{2,}/).map((p: string) => p.trim()).filter(Boolean);
 ---
 <article
   class="card"
@@ -47,67 +45,6 @@ const parrafosCompletos = String(m.texto || '').split(/\n{2,}/).map((p: string) 
   </p>
   <h3><a href={'/' + m.slug + '/'}>{m.titulo}</a></h3>
   <p class="card-resumen">{resumen}</p>
-  {!esBanderinGuia && tieneMasTexto ? (
-    <>
-      <div class="card-texto-completo" hidden>
-        {parrafosCompletos.map(function (p: string) {
-          const lineas = p.split('\n');
-          return (
-            <p>
-              {lineas.map(function (linea: string, idx: number) {
-                return idx === 0 ? linea : <><br />{linea}</>;
-              })}
-            </p>
-          );
-        })}
-      </div>
-      <div class="card-expand-row">
-        <div class="card-expand-izq">
-          <button
-            type="button"
-            class="btn-leer-mas"
-            aria-expanded="false"
-            aria-label={`Leer completo: ${m.titulo}`}
-          >
-            Leer completo ▾
-          </button>
-          <button
-            type="button"
-            class="btn-favorita"
-            aria-pressed="false"
-            data-fav-slug={m.slug}
-            data-fav-titulo={m.titulo}
-            data-fav-emoji={hubRef.emoji || '🎂'}
-            aria-label={`Guardar en favoritas: ${m.titulo}`}
-          >
-            ♡ Guardar
-          </button>
-        </div>
-        <a class="card-cta-tarjeta" href={'/' + m.slug + '/'}>
-          Tarjeta PNG / Story →
-        </a>
-      </div>
-    </>
-  ) : !esBanderinGuia ? (
-    <div class="card-expand-row">
-      <div class="card-expand-izq">
-        <button
-          type="button"
-          class="btn-favorita"
-          aria-pressed="false"
-          data-fav-slug={m.slug}
-          data-fav-titulo={m.titulo}
-          data-fav-emoji={hubRef.emoji || '🎂'}
-          aria-label={`Guardar en favoritas: ${m.titulo}`}
-        >
-          ♡ Guardar
-        </button>
-      </div>
-      <a class="card-cta-tarjeta" href={'/' + m.slug + '/'}>
-        Personalizar tarjeta PNG →
-      </a>
-    </div>
-  ) : null}
   {esBanderinGuia ? (
     <p class="card-guia-leer">
       <a class="btn btn-copiar" href={'/' + m.slug + '/'}>Leer guía completa →</a>

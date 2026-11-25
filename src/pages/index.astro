@@ -19,12 +19,6 @@ import { ZODIACOS } from '../lib/horoscopo.ts';
 import { PAISES_HITOS, HITOS_MUNDIALES } from '../data/hitos-historicos.ts';
 import { rankearGuiasPorPopularidad, seleccionarPoolPopularMixto } from '../lib/popularidad.ts';
 import { ETIQUETAS_SEGMENTOS, type SegmentoTono } from '../lib/editorial.ts';
-import {
-  ACCESOS_RAPIDOS_PORTADA,
-  BLOQUES_PORTADA_GSC,
-  ordenarHubsPorDemandaGsc,
-  etiquetaCortaGsc
-} from '../lib/gsc-estrategia.ts';
 
 // Pool mixto de las publicaciones mas populares de TODAS las categorias del sitio
 const poolPopular = seleccionarPoolPopularMixto(catalogo, 32);
@@ -188,28 +182,27 @@ const jsonld = [
 
       <div class="portal-accesos-rapidos" aria-label="Accesos directos frecuentes">
         <span class="accesos-titulo">Más buscados hoy:</span>
-        {ACCESOS_RAPIDOS_PORTADA.map(function (acc, idx) {
-          return (
-            <>
-              {idx > 0 ? <span aria-hidden="true">·</span> : null}
-              <a href={acc.href}>{acc.label}</a>
-            </>
-          );
-        })}
+        <a href="/feliz-cumpleanos-amiga/">Amiga</a>
+        <span aria-hidden="true">·</span>
+        <a href="/feliz-cumpleanos-mama/">Mamá</a>
+        <span aria-hidden="true">·</span>
+        <a href="/mas-de-10-anos-de-novios/">+10 años novios 💞</a>
+        <span aria-hidden="true">·</span>
+        <a href="/banderines-de-cumpleanos-para-imprimir/">Banderines A4 🎏</a>
+        <span aria-hidden="true">·</span>
+        <a href="/frases-tristes-para-recordar-momentos/">Recuerdos y nostalgia 🌧️</a>
+        <span aria-hidden="true">·</span>
+        <a href="/condolencias/">Condolencias 🕊️</a>
+        <span aria-hidden="true">·</span>
+        <a href="/calendario/">Calendario 📅</a>
+        <span aria-hidden="true">·</span>
+        <a href="/hitos-historicos/">Hitos históricos 🌍</a>
       </div>
     </div>
 
     <div class="portal-hero-studio" aria-label="Vista previa del personalizador de tarjetas">
       <p class="studio-etiqueta">Estudio rápido · Probá personalizar acá mismo</p>
-      <div
-        class="tarjeta-visual studio-card"
-        id="portal-preview-card"
-        data-tema-inicio={temas[0].gradInicio}
-        data-tema-medio={temas[0].gradMedio}
-        data-tema-fin={temas[0].gradFin}
-        data-tema-borde={temas[0].borde}
-        data-tema-acento={temas[0].acento}
-      >
+      <div class="tarjeta-visual studio-card" id="portal-preview-card">
         <div class="tarjeta-visual-emoji" aria-hidden="true">🎂</div>
         <p class="tarjeta-visual-titulo" id="studio-titulo">Para alguien que hace la diferencia</p>
         <p class="tarjeta-visual-extracto" id="studio-cuerpo">
@@ -230,9 +223,6 @@ const jsonld = [
                 class={'pers-tema-btn' + (i === 0 ? ' activo' : '')}
                 data-studio-tema={t.id}
                 data-fondo={t.fondoCss}
-                data-inicio={t.gradInicio}
-                data-medio={t.gradMedio}
-                data-fin={t.gradFin}
                 data-borde={t.borde}
                 data-acento={t.acento}
               >
@@ -241,27 +231,6 @@ const jsonld = [
               </button>
             );
           })}
-        </div>
-        <div class="studio-acciones">
-          <button
-            type="button"
-            id="studio-btn-copiar"
-            class="btn btn-copiar btn-sm"
-            data-text="Que este nuevo año te traiga sobremesas tranquilas, salud firme y motivos reales para festejar cerca de los tuyos."
-          >
-            Copiar texto
-          </button>
-          <button
-            type="button"
-            id="studio-btn-png"
-            class="btn btn-descargar btn-sm"
-            data-title="Para alguien que hace la diferencia"
-            data-mostrar-titulo="1"
-            data-body="Que este nuevo año te traiga sobremesas tranquilas, salud firme y motivos reales para festejar cerca de los tuyos."
-            data-emoji="🎂"
-          >
-            Descargar PNG
-          </button>
         </div>
       </div>
     </div>
@@ -300,41 +269,6 @@ const jsonld = [
     </a>
   </section>
 
-  <section class="portal-banda portal-top-gsc" aria-labelledby="titulo-top-gsc">
-    <div class="banda-cabecera">
-      <div>
-        <p class="banda-kicker">Selección directa según lo que más buscan los lectores</p>
-        <h2 id="titulo-top-gsc">Lo más buscado ahora en cumpleaños</h2>
-      </div>
-      <a class="enlace-directorio" href="/categorias/">Ver todas las {hubs.length} colecciones →</a>
-    </div>
-    <div class="portal-top-gsc-grid">
-      {BLOQUES_PORTADA_GSC.map(function (bloque) {
-        return (
-          <article class="portal-gsc-col">
-            <h3><span aria-hidden="true">{bloque.emoji}</span> {bloque.titulo}</h3>
-            <p class="portal-gsc-sub">{bloque.subtitulo}</p>
-            <ul class="portal-gsc-links">
-              {bloque.slugs.map(function (sl) {
-                const h = catalogo.hubsPorSlug.get(sl);
-                if (!h) return null;
-                const cant = mensajesDe(sl).length;
-                return (
-                  <li>
-                    <a href={'/' + sl + '/'}>
-                      <span>{etiquetaCortaGsc(sl, h)}</span>
-                      <span class="portal-gsc-count">{cant}</span>
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </article>
-        );
-      })}
-    </div>
-  </section>
-
   <AlertaMotivacionDiaria />
 
   <section id="secciones-portal" class="portal-banda" aria-labelledby="titulo-secciones-portal">
@@ -350,7 +284,7 @@ const jsonld = [
       {GRUPOS.map(function (g) {
         const lista = hubsPorGrupo.get(g.id) || [];
         if (!lista.length) return null;
-        const destacadas = ordenarHubsPorDemandaGsc(lista).slice(0, 6);
+        const destacadas = lista.slice(0, 6);
         const totalMsgsGrupo = lista.reduce((acc, h) => acc + mensajesDe(h.slug).length, 0);
         return (
           <article class="portal-seccion-card">
@@ -487,85 +421,6 @@ const jsonld = [
     </div>
   </section>
 
-  <section class="portal-banda portal-compartidos" id="lo-mas-compartido" aria-labelledby="titulo-mas-compartido">
-    <div class="banda-cabecera">
-      <div>
-        <p class="banda-kicker">Archivo público visible para todos · Separado por canal e historial</p>
-        <h2 id="titulo-mas-compartido">Lo más compartido por red e historial</h2>
-      </div>
-      <div class="comp-cabecera-acciones">
-        <span class="comp-total-badge" id="pc-home-comp-total">0 compartidos registrados</span>
-        <a class="btn-leer-mas comp-archivo-link" href="/compartidos-historial.json" target="_blank" rel="noopener">Ver archivo (.json)</a>
-        <button type="button" class="btn-leer-mas" id="pc-home-comp-descargar">Descargar historial</button>
-      </div>
-    </div>
-
-    <div class="comp-redes-grid" role="list" aria-label="Totales compartidos por red social y copia">
-      <div class="comp-red-card comp-red-card--wa" role="listitem">
-        <span class="comp-red-etiqueta">WhatsApp</span>
-        <strong class="comp-red-num" id="pc-stat-whatsapp">0</strong>
-        <span class="comp-red-pct" id="pc-pct-whatsapp">0%</span>
-        <div class="comp-red-barra"><span id="pc-bar-whatsapp" style="width:0%"></span></div>
-      </div>
-      <div class="comp-red-card comp-red-card--ig" role="listitem">
-        <span class="comp-red-etiqueta">Instagram</span>
-        <strong class="comp-red-num" id="pc-stat-instagram">0</strong>
-        <span class="comp-red-pct" id="pc-pct-instagram">0%</span>
-        <div class="comp-red-barra"><span id="pc-bar-instagram" style="width:0%"></span></div>
-      </div>
-      <div class="comp-red-card comp-red-card--fb" role="listitem">
-        <span class="comp-red-etiqueta">Facebook</span>
-        <strong class="comp-red-num" id="pc-stat-facebook">0</strong>
-        <span class="comp-red-pct" id="pc-pct-facebook">0%</span>
-        <div class="comp-red-barra"><span id="pc-bar-facebook" style="width:0%"></span></div>
-      </div>
-      <div class="comp-red-card comp-red-card--copiar" role="listitem">
-        <span class="comp-red-etiqueta">Copiar texto</span>
-        <strong class="comp-red-num" id="pc-stat-copiar">0</strong>
-        <span class="comp-red-pct" id="pc-pct-copiar">0%</span>
-        <div class="comp-red-barra"><span id="pc-bar-copiar" style="width:0%"></span></div>
-      </div>
-    </div>
-
-    <div class="filtros-tono comp-filtros" role="toolbar" aria-label="Filtrar lo más compartido y su historial por red">
-      <button type="button" class="filtro-btn activo" data-comp-filtro="todas" aria-pressed="true">Todas las redes</button>
-      <button type="button" class="filtro-btn" data-comp-filtro="whatsapp" aria-pressed="false">WhatsApp</button>
-      <button type="button" class="filtro-btn" data-comp-filtro="instagram" aria-pressed="false">Instagram</button>
-      <button type="button" class="filtro-btn" data-comp-filtro="facebook" aria-pressed="false">Facebook</button>
-      <button type="button" class="filtro-btn" data-comp-filtro="copiar" aria-pressed="false">Copiar</button>
-    </div>
-
-    <div class="comp-paneles-grid">
-      <div class="comp-panel-bloque">
-        <div class="comp-subhead">
-          <h3>Ranking más compartido</h3>
-          <span class="comp-submeta" id="pc-home-rank-count">0 publicaciones</span>
-        </div>
-        <div id="pc-home-comp-lista" class="comp-lista" aria-live="polite">
-          <p class="comp-vacio">
-            Todavía no hay compartidos registrados. Tocá <strong>WhatsApp</strong>, <strong>Instagram</strong>, <strong>Facebook</strong> o <strong>Copiar</strong> en cualquier dedicatoria para sumar al ranking público.
-          </p>
-        </div>
-      </div>
-
-      <div class="comp-panel-bloque">
-        <div class="comp-subhead">
-          <h3>Historial de cada compartido</h3>
-          <span class="comp-submeta" id="pc-home-hist-count">0 eventos</span>
-        </div>
-        <ol id="pc-home-comp-historial" class="comp-historial-lista" aria-live="polite">
-          <li class="comp-vacio">
-            Cada vez que un visitante comparte o copia una dedicatoria, queda registrado aquí con fecha, hora y red elegida.
-          </li>
-        </ol>
-      </div>
-    </div>
-
-    <p class="pc-aviso-local" role="note">
-      <strong>Archivo público y guardadas:</strong> las estadísticas e historial de compartidos son anónimos (sin datos personales) y se consultan en el archivo público <a href="/compartidos-historial.json" target="_blank" rel="noopener"><code>/compartidos-historial.json</code></a>. En cambio, tus <strong>dedicatorias guardadas</strong> viven solo en tu navegador: si borrás cookies o datos del sitio se borrarán (podés copiar un respaldo desde <button type="button" class="pie-link-btn" data-abrir-guardadas>Tus guardadas</button>).
-    </p>
-  </section>
-
   <section class="portal-estandares" aria-labelledby="titulo-criterio-portal">
     <h2 id="titulo-criterio-portal">Por qué miles de lectores eligen ParaCumpleanos</h2>
     <div class="estandares-grid">
@@ -651,24 +506,14 @@ const jsonld = [
       var studioCue = document.getElementById('studio-cuerpo');
       var studioMar = document.getElementById('studio-firma');
       var previewCard = document.getElementById('portal-preview-card');
-      var studioBtnCopiar = document.getElementById('studio-btn-copiar');
-      var studioBtnPng = document.getElementById('studio-btn-png');
       var baseCuerpo = 'Que este nuevo año te traiga sobremesas tranquilas, salud firme y motivos reales para festejar cerca de los tuyos.';
 
       function actualizarStudio() {
         var nom = (studioNom && studioNom.value || '').trim();
         var fir = (studioFir && studioFir.value || '').trim();
-        var titTxt = nom ? '¡Feliz cumpleaños, ' + nom + '!' : 'Para alguien que hace la diferencia';
-        var cueTxt = nom ? nom + ', ' + baseCuerpo.charAt(0).toLowerCase() + baseCuerpo.slice(1) : baseCuerpo;
-        var cuerpoCompleto = fir ? cueTxt + '\n\n— ' + fir : cueTxt;
-        if (studioTit) studioTit.textContent = titTxt;
-        if (studioCue) studioCue.textContent = cueTxt;
+        if (studioTit) studioTit.textContent = nom ? '¡Feliz cumpleaños, ' + nom + '!' : 'Para alguien que hace la diferencia';
+        if (studioCue) studioCue.textContent = nom ? nom + ', ' + baseCuerpo.charAt(0).toLowerCase() + baseCuerpo.slice(1) : baseCuerpo;
         if (studioMar) studioMar.textContent = fir ? '— ' + fir + ' · paracumpleanos.com' : 'paracumpleanos.com';
-        if (studioBtnCopiar) studioBtnCopiar.setAttribute('data-text', cuerpoCompleto);
-        if (studioBtnPng) {
-          studioBtnPng.setAttribute('data-title', titTxt);
-          studioBtnPng.setAttribute('data-body', cuerpoCompleto);
-        }
       }
       if (studioNom) studioNom.addEventListener('input', actualizarStudio);
       if (studioFir) studioFir.addEventListener('input', actualizarStudio);
@@ -680,11 +525,6 @@ const jsonld = [
           if (previewCard) {
             previewCard.style.background = btn.getAttribute('data-fondo');
             previewCard.style.borderColor = btn.getAttribute('data-borde');
-            previewCard.setAttribute('data-tema-inicio', btn.getAttribute('data-inicio') || '#fdf2f8');
-            previewCard.setAttribute('data-tema-medio', btn.getAttribute('data-medio') || '#fff7ed');
-            previewCard.setAttribute('data-tema-fin', btn.getAttribute('data-fin') || '#e0f2fe');
-            previewCard.setAttribute('data-tema-borde', btn.getAttribute('data-borde') || '#e91e8c');
-            previewCard.setAttribute('data-tema-acento', btn.getAttribute('data-acento') || '#be185d');
           }
           if (studioTit) studioTit.style.color = btn.getAttribute('data-acento');
         });

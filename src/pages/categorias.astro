@@ -4,7 +4,6 @@ import { GRUPOS, hubs, todosMensajes, hubsPorGrupo, mensajesDe, nombreHub, SITIO
 import { PAISES_HITOS, HITOS_MUNDIALES } from '../data/hitos-historicos.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { ZODIACOS } from '../lib/horoscopo.ts';
-import { TOP_FOOTER_GSC, ordenarHubsPorDemandaGsc } from '../lib/gsc-estrategia.ts';
 
 const totalPublicacionesWeb = todosMensajes.length + PAISES_HITOS.length + GUIAS_EDITORIALES.length;
 const continentes = [
@@ -43,15 +42,6 @@ const jsonld = [migasLd([
   <label for="filtro-cats" style="display:block;font-weight:600;margin-top:12px;">Buscar categoría, destinatario, país o herramienta:</label>
   <input id="filtro-cats" class="buscador-cats" type="search" placeholder="Ej.: mamá, condolencias, nostalgia, 5 años de novios, banderines, Argentina, calendario…" autocomplete="off" />
 
-  <section class="cats-top-gsc" aria-label="Colecciones más buscadas ahora">
-    <p class="cats-top-gsc-titulo">Más buscadas ahora:</p>
-    <div class="cats-top-gsc-links">
-      {TOP_FOOTER_GSC.map(function (item) {
-        return <a href={'/' + item.slug + '/'}>{item.label}</a>;
-      })}
-    </div>
-  </section>
-
   <div class="chips" style="margin-top:12px;">
     {GRUPOS.map(function (g) {
       const lista = hubsPorGrupo.get(g.id) || [];
@@ -63,7 +53,7 @@ const jsonld = [migasLd([
 
   <div id="lista-categorias">
     {GRUPOS.map(function (g) {
-      const lista = ordenarHubsPorDemandaGsc(hubsPorGrupo.get(g.id) || []);
+      const lista = hubsPorGrupo.get(g.id) || [];
       if (!lista.length) return null;
       const totalGrupo = lista.reduce((acc, h) => acc + mensajesDe(h.slug).length, 0);
       return (
