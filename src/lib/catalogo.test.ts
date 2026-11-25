@@ -1300,7 +1300,7 @@ test('Estrategia Superman+Batman GSC: 120 hubs prioritarios, enlazado interno si
 
 test('AdSense, Google Tag Manager, Google Consent Mode v2, CMP RGPD Europa y correo de contacto oficial', () => {
   // 1. Utilidades puras de consentimiento RGPD / Consent Mode v2
-  assert.equal(ADSENSE_CLIENT_ID, 'ca-pub-7933111729537978');
+  assert.equal(ADSENSE_CLIENT_ID, 'ca-pub-7756135514831267');
   assert.equal(GTM_CONTAINER_ID, 'GTM-NKFBN6X5');
   assert.equal(GTM_ANALYTICS_CONTAINER_ID, 'GTM-WKC77GT5');
   assert.equal(CONTACTO_EMAIL, 'lamieldehorus@gmail.com');
@@ -1336,7 +1336,7 @@ test('AdSense, Google Tag Manager, Google Consent Mode v2, CMP RGPD Europa y cor
   const idxConsent = baseSrc.indexOf("gtag('consent', 'default'");
   const idxGtm = baseSrc.indexOf('https://www.googletagmanager.com/gtm.js?id=GTM-NKFBN6X5');
   const idxGtm2 = baseSrc.indexOf('https://www.googletagmanager.com/gtm.js?id=GTM-WKC77GT5');
-  const idxAdsense = baseSrc.indexOf('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7933111729537978');
+  const idxAdsense = baseSrc.indexOf('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7756135514831267');
   assert.ok(idxConsent !== -1, 'Base.astro debe declarar Consent Mode v2 default');
   assert.ok(idxGtm > idxConsent, 'GTM principal debe cargarse despues de Consent Mode v2 default');
   assert.ok(idxGtm2 > idxConsent, 'GTM analitica (GTM-WKC77GT5) debe cargarse despues de Consent Mode v2 default');
@@ -1362,7 +1362,7 @@ test('AdSense, Google Tag Manager, Google Consent Mode v2, CMP RGPD Europa y cor
   assert.ok(privSrc.includes(ADSENSE_CLIENT_ID), 'privacidad.astro debe documentar Google AdSense');
   assert.ok(privSrc.includes('data-abrir-cmp'), 'privacidad.astro debe incluir boton para gestionar cookies RGPD');
 
-  assert.equal(ADSENSE_PUBLISHER_ID, 'pub-7933111729537978');
+  assert.equal(ADSENSE_PUBLISHER_ID, 'pub-7756135514831267');
   assert.ok(
     baseSrc.includes(`<meta name="google-adsense-account" content="${ADSENSE_CLIENT_ID}" />`),
     'Base.astro debe incluir meta tag google-adsense-account para verificacion oficial de AdSense'
@@ -1380,11 +1380,11 @@ test('AdSense, Google Tag Manager, Google Consent Mode v2, CMP RGPD Europa y cor
 
   const publicAdsTxt = fs.readFileSync(path.resolve('public/ads.txt'), 'utf8');
   const rootAdsTxt = fs.readFileSync(path.resolve('ads.txt'), 'utf8');
-  assert.equal(validarAdsTxt(publicAdsTxt), true, 'public/ads.txt debe declarar exclusivamente pub-7933111729537978');
-  assert.equal(validarAdsTxt(rootAdsTxt), true, 'ads.txt raiz debe coincidir con pub-7933111729537978 sin IDs viejos');
+  assert.equal(validarAdsTxt(publicAdsTxt), true, 'public/ads.txt debe declarar exclusivamente pub-7756135514831267');
+  assert.equal(validarAdsTxt(rootAdsTxt), true, 'ads.txt raiz debe coincidir con pub-7756135514831267 sin IDs viejos');
   assert.equal(rootAdsTxt.trim(), ADSENSE_ADS_TXT_LINE);
   assert.equal(publicAdsTxt.trim(), ADSENSE_ADS_TXT_LINE);
-  assert.equal(validarAdsTxt('google.com, pub-7756135514831267, DIRECT, f08c47fec0942fa0'), false);
+  assert.equal(validarAdsTxt('google.com, pub-7933111729537978, DIRECT, f08c47fec0942fa0'), false);
 
   const robotsSrc = fs.readFileSync(path.resolve('public/robots.txt'), 'utf8');
   assert.ok(robotsSrc.includes('Mediapartners-Google'), 'robots.txt debe permitir explicitamente Mediapartners-Google');
