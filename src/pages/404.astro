@@ -64,7 +64,7 @@ const totalHubs = hubs.length;
         return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       }
 
-      var stop = new Set(['posts', 'post', 'frases', 'mensajes', 'cumpleanos', 'feliz', 'para', 'de', 'del', 'la', 'el', 'mi', 'un', 'una']);
+      var stop = new Set(['posts', 'post', 'publicaciones', 'publicacion', 'frases', 'mensajes', 'cumpleanos', 'feliz', 'para', 'de', 'del', 'la', 'el', 'mi', 'un', 'una', 'que', 'esta']);
       var pathTokens = norm(window.location.pathname).split(/[^a-z0-9]+/).filter(function (t) { return t.length >= 2 && !stop.has(t); });
       if (pathTokens.length && indice.length) {
         var mejor = null;
@@ -75,6 +75,7 @@ const totalHubs = hubs.length;
           pathTokens.forEach(function (t) {
             if (hs.indexOf(t) !== -1) pts += 2;
             else if (t === 'abuelos' && (hs.indexOf('abuelo') !== -1 || hs.indexOf('abuela') !== -1)) pts += 2;
+            else if (t === 'lejos' && hs.indexOf('distancia') !== -1) pts += 2;
           });
           if (pts > puntaje) { puntaje = pts; mejor = h; }
         });

@@ -22,6 +22,23 @@ const paisesDestacados = ['argentina', 'mexico', 'espana', 'colombia', 'chile', 
   .map((s) => PAISES_HITOS.find((p) => p.slug === s))
   .filter(Boolean) as typeof PAISES_HITOS;
 
+const DESCRIPCIONES_GRUPOS: Record<string, string> = {
+  destinatarios: 'Dedicatorias pensadas para el vínculo cotidiano más cercano: mamá, papá, esposa, esposo, hijos, hermanos, pareja y amistades clave.',
+  familia: 'Saludos adaptados a toda la familia extendida y política —abuelos, primos, sobrinos, tíos, suegros, cuñados, padrinos y nietos— con el tono justo.',
+  edades: 'Mensajes calibrados para cada etapa de la vida, desde el primer añito e infancia hasta los 15, 18, 20, 30, 40, 50, 60, 70, 80 y 90 años.',
+  cartas: 'Textos largos con estructura epistolar en varios párrafos para conmover en fechas importantes, imprimir en postal o dedicar sin apuro.',
+  cristiano: 'Bendiciones, oraciones de cumpleaños y agradecimientos a Dios redactados con fe cercana, calidez familiar y respeto.',
+  tono: 'Opciones filtradas por estilo: frases cortas para WhatsApp, humor sano, poemas en estrofas, mensajes reflexivos y agradecimientos.',
+  distancia: 'Saludos diseñados para acortar kilómetros y diferencias horarias con alegría luminosa y foco en el próximo reencuentro.',
+  profesionales: 'Etiqueta práctica para jefes, colegas, docentes, médicos, clientes y vecinos respetando el trato habitual de vos o de usted.',
+  aniversarios: 'Textos exclusivos para celebrar meses y años de noviazgo o matrimonio (incluido +10 años personalizable) sin mezclar vocabulario de cumpleaños.',
+  duelo_recuerdos: 'Palabras serenas y respetuosas para condolencias, recuerdos en ausencia, nostalgia y aniversarios luctuosos libres de expresiones festivas.',
+  meses: 'Colecciones de 70 mensajes por cada mes del año enlazadas con sus dos signos del zodíaco correspondientes y el calendario perpetuo.',
+  fechas_especiales: 'Dedicatorias originales para Navidad, Año Nuevo, Día de la Madre, Día del Padre, San Valentín, Pascuas y celebraciones anuales del calendario.',
+  especiales: 'Ocasiones puntuales y recursos prácticos: invitaciones, banderines A4 para imprimir, saludos en otros idiomas, jubilación, nacimiento y mascotas.',
+  motivaciones: 'Reflexiones diarias orientadas a claridad mental, disciplina serena y micro-acciones reales para empezar la mañana con foco.'
+};
+
 const jsonld = [migasLd([
   { name: 'Inicio', url: SITIO + '/' },
   { name: 'Categorías', url: SITIO + '/categorias/' }
@@ -69,6 +86,7 @@ const jsonld = [migasLd([
       return (
         <section class="cat-grupo-bloque" id={g.id}>
           <h2>{g.emoji} {g.nombre} ({lista.length} categorías · {totalGrupo.toLocaleString('es-AR')} publicaciones)</h2>
+          {DESCRIPCIONES_GRUPOS[g.id] ? <p class="cat-grupo-desc">{DESCRIPCIONES_GRUPOS[g.id]}</p> : null}
           <ul class="cat-lista">
             {lista.map(function (h) {
               const cant = mensajesDe(h.slug).length;

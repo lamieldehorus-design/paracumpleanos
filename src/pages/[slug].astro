@@ -1041,6 +1041,42 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
       { href: '/felicitaciones-de-cumpleanos-originales/', label: 'Felicitaciones originales' },
       { href: '/tarjetas-de-cumpleanos-para-whatsapp-estados/', label: 'Estados de WhatsApp' }
     ]
+  },
+  'feliz-cumpleanos-a-distancia': {
+    texto: 'Más mensajes de cumpleaños para quienes están lejos:',
+    enlaces: [
+      { href: '/frases-para-alguien-especial-que-esta-lejos/', label: 'Para alguien especial que está lejos' },
+      { href: '/frases-para-un-hijo-que-esta-lejos/', label: 'Para un hijo que está lejos' },
+      { href: '/frases-para-esposo-que-esta-lejos/', label: 'Para esposo a la distancia' },
+      { href: '/frases-para-mama-que-esta-lejos/', label: 'Para mamá que está lejos' }
+    ]
+  },
+  'frases-para-alguien-especial-que-esta-lejos': {
+    texto: 'Otras colecciones para saludar a la distancia:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-a-distancia/', label: 'Feliz cumpleaños a la distancia' },
+      { href: '/feliz-cumpleanos-a-distancia-mi-amor/', label: 'Para mi amor a la distancia' },
+      { href: '/frases-para-un-hijo-que-esta-lejos/', label: 'Para un hijo que está lejos' },
+      { href: '/frases-para-un-primo-que-esta-lejos/', label: 'Para un primo que está lejos' }
+    ]
+  },
+  'feliz-cumpleanos-mama': {
+    texto: 'Más formatos y dedicatorias para mamá:',
+    enlaces: [
+      { href: '/feliz-cumpleanos-mama-texto-largo/', label: 'Textos largos y cartas para mamá' },
+      { href: '/cartas-para-mi-madre/', label: 'Cartas para mi madre' },
+      { href: '/frases-para-mama-que-esta-lejos/', label: 'Para mamá que está lejos' },
+      { href: '/poemas-para-mi-mama/', label: 'Poemas para mamá' }
+    ]
+  },
+  'feliz-cumpleanos-papa': {
+    texto: 'Más formatos y saludos para papá:',
+    enlaces: [
+      { href: '/cartas-para-mi-papa-que-lo-haga-llorar/', label: 'Cartas para papá que lo hagan llorar' },
+      { href: '/cumpleanos-para-un-papa/', label: 'Saludos para un padre' },
+      { href: '/cumpleanos-para-papa-que-esta-lejos/', label: 'Para papá que está lejos' },
+      { href: '/feliz-cumpleanos-padrastro/', label: 'Dedicatorias para padrastro' }
+    ]
   }
 };
 const parContextual = esHub
@@ -1200,11 +1236,40 @@ const textoEnviar = esHub ? '' : registro.texto;
 
       <section class="guia-categoria" aria-labelledby="guia-seo-titulo">
         <h2 id="guia-seo-titulo">{registro.seoTitulo}</h2>
+
+        <div class="respuesta-directa guia-resumen-intencion">
+          <p class="respuesta-etiqueta">Clave rápida para elegir en esta categoría</p>
+          <p>{editorialHub.resumenIntencion}</p>
+        </div>
+
         {String(registro.seoTexto || '').split('\n\n').map(function (p) {
           return <p>{p}</p>;
         })}
 
         <blockquote class="cita-editorial">{editorialHub.citaClave}</blockquote>
+
+        <div class="comparacion-concreta" aria-label="Qué conviene evitar y qué funciona mejor">
+          <div class="comp-item comp-evitar">
+            <span class="comp-etiqueta">{editorialHub.comparacionValor.etiquetaEvitar}</span>
+            <p>«{editorialHub.comparacionValor.evitar}»</p>
+          </div>
+          <div class="comp-item comp-mejor">
+            <span class="comp-etiqueta">{editorialHub.comparacionValor.etiquetaMejor}</span>
+            <p>«{editorialHub.comparacionValor.mejor}»</p>
+          </div>
+        </div>
+        <p class="comp-explicacion"><strong>Por qué funciona:</strong> {editorialHub.comparacionValor.explicacion}</p>
+
+        {editorialHub.seccionesValor.map(function (sec) {
+          return (
+            <div class="guia-subseccion">
+              <h3>{sec.subtitulo}</h3>
+              {sec.parrafos.map(function (par) {
+                return <p>{par}</p>;
+              })}
+            </div>
+          );
+        })}
 
         <h3>{editorialHub.subtituloClaves}</h3>
         <ol class="lista-editorial lista-numerada">
@@ -1213,8 +1278,17 @@ const textoEnviar = esHub ? '' : registro.texto;
           })}
         </ol>
 
+        <div class="guia-checklist-hub">
+          <h3>{editorialHub.checklistEnvio.titulo}</h3>
+          <ul class="lista-editorial">
+            {editorialHub.checklistEnvio.pasos.map(function (paso) {
+              return <li>{paso}</li>;
+            })}
+          </ul>
+        </div>
+
         <p class="ver-tambien">
-          Lectura complementaria: <a href={`/guias/${editorialHub.guia.slug}/`}>{editorialHub.guia.titulo} →</a>
+          Lectura complementaria: <a href={`/guias/${editorialHub.guia.slug}/`}>{editorialHub.guia.titulo} →</a> · <a href="/herramientas/">Herramientas gratuitas de tarjetas y recordatorios →</a>
         </p>
       </section>
 

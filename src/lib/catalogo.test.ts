@@ -108,6 +108,7 @@ import {
 } from './google-notify';
 import {
   REDIRECCIONES_POSTS,
+  REDIRECCIONES_PUBLICACIONES,
   REDIRECCIONES_RAIZ_LEGADAS,
   sugerirHubParaRutaLegada
 } from './redirecciones-legadas';
@@ -1496,6 +1497,91 @@ test('contador publico de lo mas compartido por red, archivo JSON visible, histo
 
   const privSrc = fs.readFileSync(path.resolve('src/pages/privacidad.astro'), 'utf8');
   assert.ok(privSrc.includes('/compartidos-historial.json') && privSrc.includes('si borrás cookies o datos del sitio'), 'privacidad.astro debe documentar el archivo publico anonimo y el aviso de cookies/navegador');
+});
+
+test('Correccion Bing /publicaciones/, recuperacion GSC (esposa/esposo/mama/papa/lejos) y descripciones Ultra Guia Cosmica en las 441 categorias', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+
+  // 1. Redirecciones legadas /publicaciones/ (Bing Webmaster Tools)
+  assert.ok(fs.existsSync(path.resolve('src/pages/publicaciones/[slug].astro')), 'Falta ruta puente src/pages/publicaciones/[slug].astro');
+  assert.ok(fs.existsSync(path.resolve('src/pages/publicaciones/index.astro')), 'Falta indice puente src/pages/publicaciones/index.astro');
+  for (const r of REDIRECCIONES_PUBLICACIONES) {
+    assert.ok(cat.hubsPorSlug.has(r.destinoSlug), `Destino inexistente en REDIRECCIONES_PUBLICACIONES: ${r.destinoSlug}`);
+    if (r.alternativoSlug) {
+      assert.ok(cat.hubsPorSlug.has(r.alternativoSlug), `Alternativo inexistente en REDIRECCIONES_PUBLICACIONES: ${r.alternativoSlug}`);
+    }
+  }
+  assert.equal(
+    sugerirHubParaRutaLegada('/publicaciones/mensajes-de-cumpleanos-para-alguien-que-esta-lejos/', cat.hubs),
+    'feliz-cumpleanos-a-distancia'
+  );
+
+  // 2. FAQs y cobertura de consultas GSC en tendencia a la baja (esposa, esposo, mama, papa, distancia)
+  for (const sl of [
+    'feliz-cumpleanos-para-mi-esposa',
+    'frases-para-mi-esposa',
+    'feliz-cumpleanos-para-mi-esposo',
+    'frases-para-mi-esposo',
+    'feliz-cumpleanos-mama',
+    'feliz-cumpleanos-mama-texto-largo',
+    'feliz-cumpleanos-papa',
+    'cumpleanos-para-un-papa',
+    'feliz-cumpleanos-a-distancia',
+    'frases-para-alguien-especial-que-esta-lejos'
+  ]) {
+    const h = cat.hubsPorSlug.get(sl);
+    assert.ok(h, `Hub clave GSC/Bing faltante: ${sl}`);
+    const faqs = faqsGscParaHub(h, 50);
+    assert.ok(faqs && faqs.length === 3, `faqsGscParaHub debe devolver 3 FAQs especificas para ${sl}`);
+  }
+
+  // 3. Cero boilerplate antiguo y bloques editoriales de alto valor SEO en TODAS las 441 categorias
+  const tuteoMixRe = /\b(tienes|puedes|quieres|sabes|haces|dices|eres|recuerdas|necesitas|buscas|escribes|eliges|envías|compartes|tú|contigo)\b/i;
+  const voseoRe = /\b(tenés|podés|querés|sabés|hacés|decís|sos|buscás|escribís|elegís|enviás|compartís|vos)\b/i;
+
+  for (const hub of cat.hubs) {
+    assert.ok(!String(hub.seoTexto || '').includes('regla simple de causa y efecto'), `Boilerplate antiguo en seoTexto de ${hub.slug}`);
+    assert.ok(!/para\s+"[a-záéíóúüñ0-9\s]{6,}"/i.test(String(hub.lead || '')), `Lead con comillas roboticas en ${hub.slug}`);
+
+    const msgs = cat.mensajesDe(hub.slug);
+    const ed = editorialHubCompleto(hub, msgs);
+    assert.ok(ed.resumenIntencion.length >= 120, `resumenIntencion muy corto en ${hub.slug}`);
+    assert.ok(ed.comparacionValor.evitar.length >= 25 && ed.comparacionValor.mejor.length >= 40 && ed.comparacionValor.explicacion.length >= 40, `comparacionValor incompleta en ${hub.slug}`);
+    assert.equal(ed.seccionesValor.length, 2, `Se esperaban 2 seccionesValor H3 en ${hub.slug}`);
+    for (const sec of ed.seccionesValor) {
+      assert.ok(sec.subtitulo.length >= 20 && sec.parrafos.length >= 2, `Seccion editorial pobre en ${hub.slug}`);
+    }
+    assert.equal(ed.checklistEnvio.pasos.length, 4, `Se esperaban 4 pasos en checklistEnvio de ${hub.slug}`);
+
+    const blobEditorial = [
+      hub.lead,
+      hub.seoTitulo,
+      hub.seoTexto,
+      ed.resumenIntencion,
+      ed.comparacionValor.etiquetaEvitar,
+      ed.comparacionValor.evitar,
+      ed.comparacionValor.etiquetaMejor,
+      ed.comparacionValor.mejor,
+      ed.comparacionValor.explicacion,
+      ...ed.seccionesValor.flatMap((s) => [s.subtitulo, ...s.parrafos]),
+      ed.checklistEnvio.titulo,
+      ...ed.checklistEnvio.pasos
+    ].join(' ');
+
+    if (voseoRe.test(blobEditorial)) {
+      assert.ok(!tuteoMixRe.test(blobEditorial), `Mezcla voseo/tuteo en descripcion editorial de ${hub.slug}`);
+    }
+
+    const isDuelo = /fallecid|hasta-el-cielo|condolencias|pesame|consuelo|luctuoso|tristes|nostalgia|extranas/.test(hub.slug) || hub.grupo === 'duelo_recuerdos';
+    const isAniv = /^(?!.*luctuoso).*(mes(es)?-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(hub.slug);
+    if (isDuelo) {
+      assert.ok(!/(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(torta|pastel|soplá|velas|fiesta|festej\w*|brindis|regalos)(?![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])/i.test(blobEditorial), `Contaminacion festiva en bloque editorial de duelo: ${hub.slug}`);
+    }
+    if (isAniv) {
+      assert.ok(!/cumpleaños/i.test(blobEditorial), `Contaminacion de "cumpleaños" en bloque editorial de aniversario: ${hub.slug}`);
+    }
+  }
 });
 
 

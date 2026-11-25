@@ -29,7 +29,9 @@ export const REDIRECCIONES_POSTS: RedireccionLegada[] = [
   {
     slugOrigen: 'frases-de-cumpleanos-para-mi-mama',
     destinoSlug: 'feliz-cumpleanos-mama',
-    titulo: 'Frases de cumpleaños para mi mamá'
+    titulo: 'Frases de cumpleaños para mi mamá',
+    alternativoSlug: 'feliz-cumpleanos-mama-texto-largo',
+    alternativoTexto: 'Ver también cartas y textos largos para mamá'
   },
   {
     slugOrigen: 'frases-de-cumpleanos-para-mi-hija',
@@ -74,12 +76,16 @@ export const REDIRECCIONES_POSTS: RedireccionLegada[] = [
   {
     slugOrigen: 'frases-de-cumpleanos-para-mi-esposa',
     destinoSlug: 'feliz-cumpleanos-para-mi-esposa',
-    titulo: 'Frases de cumpleaños para mi esposa'
+    titulo: 'Frases de cumpleaños para mi esposa',
+    alternativoSlug: 'frases-para-mi-esposa',
+    alternativoTexto: 'Ver frases románticas y cortas para mi esposa'
   },
   {
     slugOrigen: 'frases-de-cumpleanos-para-mi-esposo',
     destinoSlug: 'feliz-cumpleanos-para-mi-esposo',
-    titulo: 'Frases de cumpleaños para mi esposo'
+    titulo: 'Frases de cumpleaños para mi esposo',
+    alternativoSlug: 'frases-para-mi-esposo',
+    alternativoTexto: 'Ver frases cortas y bonitas para mi esposo'
   },
   {
     slugOrigen: 'frases-de-cumpleanos-para-mi-tia',
@@ -193,10 +199,55 @@ export const REDIRECCIONES_RAIZ_LEGADAS: RedireccionLegada[] = [
   }
 ];
 
+export const REDIRECCIONES_PUBLICACIONES: RedireccionLegada[] = [
+  {
+    slugOrigen: 'mensajes-de-cumpleanos-para-alguien-que-esta-lejos',
+    destinoSlug: 'feliz-cumpleanos-a-distancia',
+    titulo: 'Mensajes de cumpleaños para alguien que está lejos',
+    alternativoSlug: 'frases-para-alguien-especial-que-esta-lejos',
+    alternativoTexto: 'Ver frases para alguien especial que está lejos'
+  },
+  {
+    slugOrigen: 'frases-de-cumpleanos-para-alguien-que-esta-lejos',
+    destinoSlug: 'frases-para-alguien-especial-que-esta-lejos',
+    titulo: 'Frases de cumpleaños para alguien que está lejos',
+    alternativoSlug: 'feliz-cumpleanos-a-distancia',
+    alternativoTexto: 'Ver todos los saludos de cumpleaños a la distancia'
+  },
+  {
+    slugOrigen: 'frases-de-cumpleanos-para-mi-esposa',
+    destinoSlug: 'feliz-cumpleanos-para-mi-esposa',
+    titulo: 'Frases de cumpleaños para mi esposa',
+    alternativoSlug: 'frases-para-mi-esposa',
+    alternativoTexto: 'Ver frases románticas para mi esposa'
+  },
+  {
+    slugOrigen: 'frases-de-cumpleanos-para-mi-esposo',
+    destinoSlug: 'feliz-cumpleanos-para-mi-esposo',
+    titulo: 'Frases de cumpleaños para mi esposo',
+    alternativoSlug: 'frases-para-mi-esposo',
+    alternativoTexto: 'Ver frases cortas para mi esposo'
+  },
+  {
+    slugOrigen: 'frases-de-cumpleanos-para-mi-mama',
+    destinoSlug: 'feliz-cumpleanos-mama',
+    titulo: 'Frases de cumpleaños para mi mamá',
+    alternativoSlug: 'feliz-cumpleanos-mama-texto-largo',
+    alternativoTexto: 'Ver cartas y textos largos para mamá'
+  },
+  {
+    slugOrigen: 'frases-de-cumpleanos-para-mi-papa',
+    destinoSlug: 'feliz-cumpleanos-papa',
+    titulo: 'Frases de cumpleaños para mi papá',
+    alternativoSlug: 'cumpleanos-para-un-papa',
+    alternativoTexto: 'Ver saludos para un padre'
+  }
+];
+
 const STOPWORDS_SLUG = new Set([
-  'posts', 'post', 'frases', 'mensajes', 'mensaje', 'frase', 'dedicatorias', 'dedicatoria',
+  'posts', 'post', 'publicaciones', 'publicacion', 'frases', 'mensajes', 'mensaje', 'frase', 'dedicatorias', 'dedicatoria',
   'cumpleanos', 'cumple', 'feliz', 'felices', 'para', 'de', 'del', 'la', 'el', 'los', 'las',
-  'un', 'una', 'mi', 'tu', 'su', 'que', 'con', 'por', 'en', 'y', 'a', 'al'
+  'un', 'una', 'mi', 'tu', 'su', 'que', 'con', 'por', 'en', 'y', 'a', 'al', 'esta'
 ]);
 
 function normTokens(texto: string): string[] {
@@ -220,8 +271,16 @@ export function sugerirHubParaRutaLegada(
 
   if (!limpio) return null;
 
-  const sinPrefijo = limpio.replace(/^posts\//, '');
+  const sinPrefijo = limpio.replace(/^(posts|publicaciones)\//, '');
+  if (limpio.startsWith('publicaciones/')) {
+    for (const r of REDIRECCIONES_PUBLICACIONES) {
+      if (r.slugOrigen === sinPrefijo) return r.destinoSlug;
+    }
+  }
   for (const r of REDIRECCIONES_POSTS) {
+    if (r.slugOrigen === sinPrefijo) return r.destinoSlug;
+  }
+  for (const r of REDIRECCIONES_PUBLICACIONES) {
     if (r.slugOrigen === sinPrefijo) return r.destinoSlug;
   }
   for (const r of REDIRECCIONES_RAIZ_LEGADAS) {
@@ -240,6 +299,7 @@ export function sugerirHubParaRutaLegada(
     for (const t of tokens) {
       if (hubTokens.has(t)) aciertos += 2;
       else if (t === 'abuelos' && (hubTokens.has('abuelo') || hubTokens.has('abuela'))) aciertos += 2;
+      else if (t === 'lejos' && hubTokens.has('distancia')) aciertos += 2;
     }
     if (aciertos > mejorPuntaje) {
       mejorPuntaje = aciertos;

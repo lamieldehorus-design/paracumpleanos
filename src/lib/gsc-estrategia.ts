@@ -177,7 +177,8 @@ export const HUBS_PRIORITARIOS_GSC: Record<string, HubPrioridadGsc> = {
   'feliz-cumpleanos-cortos-y-bonitos': { peso: 221, cluster: 'formatos_especiales', etiquetaCorta: 'Mensajes cortos y bonitos' },
   'mensajes-cortos-de-cumpleanos': { peso: 196, cluster: 'formatos_especiales', etiquetaCorta: 'Frases cortas WhatsApp' },
   'felicitaciones-de-cumpleanos-originales': { peso: 185, cluster: 'formatos_especiales', etiquetaCorta: 'Felicitaciones originales' },
-  'feliz-cumpleanos-a-distancia': { peso: 198, cluster: 'formatos_especiales', etiquetaCorta: 'Cumpleaños a la distancia' },
+  'feliz-cumpleanos-a-distancia': { peso: 208, cluster: 'formatos_especiales', etiquetaCorta: 'Cumpleaños a la distancia' },
+  'frases-para-alguien-especial-que-esta-lejos': { peso: 192, cluster: 'formatos_especiales', etiquetaCorta: 'Para alguien especial que está lejos' },
   'feliz-cumpleanos-gracioso': { peso: 184, cluster: 'formatos_especiales', etiquetaCorta: 'Cumpleaños gracioso' },
   'feliz-cumpleanos-alguien-especial': { peso: 183, cluster: 'formatos_especiales', etiquetaCorta: 'Para alguien especial' },
   'feliz-cumpleanos-mujer': { peso: 182, cluster: 'formatos_especiales', etiquetaCorta: 'Feliz cumpleaños mujer' },
@@ -497,22 +498,44 @@ export function faqsGscParaHub(hub: any, cantMensajes: number): FaqGsc[] | null 
       {
         pregunta: esPadrastro
           ? '¿Cómo felicitar a mi padrastro en su cumpleaños con gratitud genuina?'
-          : `¿Qué frases de "${nombre}" funcionan mejor para mandar temprano por WhatsApp?`,
+          : '¿Cómo desear feliz cumpleaños a mi papá sin caer en frases repetidas?',
         respuesta: esPadrastro
           ? 'Reconocé el valor de elegir estar presente cada día: nombrá un gesto concreto de apoyo o cariño y sumá su nombre en la barra de personalización rápida.'
-          : `Las dedicatorias breves que combinan cariño y reconocimiento por su ejemplo diario son las que más gustan. Podés filtrarlas por extensión entre las ${cantMensajes} opciones disponibles.`
+          : `Para desear feliz cumpleaños a tu papá con impacto real, nombrá un rasgo concreto de su ejemplo diario —un consejo que todavía usás, su paciencia o una sobremesa compartida— antes de sumar tus deseos. Acá tenés ${cantMensajes} opciones filtrables por tono y largo.`
       },
       {
         pregunta: esPadrastro
           ? '¿Conviene un texto breve o una carta larga para un padrastro?'
-          : '¿Cuál es la diferencia entre frases cortas y cartas largas para papá?',
+          : '¿Cuál es la diferencia entre frases cortas y cartas largas de cumpleaños para papá?',
         respuesta: esPadrastro
           ? 'Si tienen trato cercano de años, una carta emotiva emociona muchísimo; si prefieren algo sobrio, elegí un mensaje breve y respetuoso para acompañar el regalo.'
-          : 'Las frases breves son ideales para el primer saludo del día o una tarjeta de regalo; las cartas largas funcionan mejor para leer juntos o dedicarle en una fecha redonda.'
+          : 'Las frases cortas de 35 a 65 palabras funcionan mejor para el primer mensaje de WhatsApp a la mañana o una etiqueta de regalo; las cartas largas emocionan mucho más al leerlas en calma o en un cumpleaños redondo.'
       },
       {
-        pregunta: '¿Puedo agregar el nombre de papá y mi firma antes de copiar?',
-        respuesta: `Sí. Escribí el nombre o apodo en el personalizador rápido superior y las ${cantMensajes} dedicatorias, el botón de WhatsApp y la tarjeta PNG descargable se actualizan al instante.`
+        pregunta: '¿Puedo agregar el nombre de papá y mi firma antes de copiar o bajar la tarjeta?',
+        respuesta: `Sí. Escribí su nombre o apodo en el personalizador rápido superior y las ${cantMensajes} dedicatorias, el envío directo a WhatsApp y la tarjeta PNG cuadrada o Story se actualizan en el momento.`
+      }
+    ];
+  }
+
+  if (slug === 'feliz-cumpleanos-mama' || slug === 'feliz-cumpleanos-mama-texto-largo' || slug === 'frases-para-mama') {
+    const esLargo = slug === 'feliz-cumpleanos-mama-texto-largo';
+    return [
+      {
+        pregunta: esLargo
+          ? '¿Qué escribir en un texto largo de feliz cumpleaños para mi mamá que la emocione?'
+          : '¿Qué frases de cumpleaños para mi mamá funcionan mejor para WhatsApp o tarjeta?',
+        respuesta: esLargo
+          ? 'Un texto largo para mamá conmueve cuando sigue tres pasos claros: agradecé un gesto cotidiano concreto suyo, contá qué aprendiste de su forma de cuidar y cerrá con un deseo de descanso y disfrute para este año.'
+          : `Las frases de cumpleaños para mamá que más emocionan combinan gratitud específica por algo que hace todos los días con un saludo cálido y cercano. Entre las ${cantMensajes} opciones podés filtrar por breves para WhatsApp, emotivas o listas para tarjeta impresa.`
+      },
+      {
+        pregunta: '¿Cuál es el mejor horario para enviar un saludo de cumpleaños a mamá?',
+        respuesta: 'Enviá una frase breve apenas se despierta para arrancar su día con una sonrisa y reservá una carta larga, llamada tranquila o tarjeta impresa para el momento de verse o almorzar.'
+      },
+      {
+        pregunta: '¿Cómo personalizo y descargo una tarjeta de cumpleaños para mi mamá gratis?',
+        respuesta: `Escribí cómo la llamás («Mami», «Ma» o su nombre) y tu firma en el personalizador rápido superior para adaptar las ${cantMensajes} opciones al instante, y tocá «Tarjeta PNG / Story» en tu favorita.`
       }
     ];
   }
@@ -525,41 +548,60 @@ export function faqsGscParaHub(hub: any, cantMensajes: number): FaqGsc[] | null 
     slug === 'carta-de-feliz-cumpleanos-para-mi-esposo-que-lo-haga-llorar'
   ) {
     const esEsposa = slug.includes('esposa');
-    const pareja = esEsposa ? 'tu esposa' : 'tu esposo';
     return [
       {
-        pregunta: `¿Qué escribir en un mensaje de cumpleaños para ${pareja} sin caer en frases hechas?`,
-        respuesta: `Elegí una anécdota real de la vida cotidiana que comparten —el equipo que arman en casa, una risa reciente o un apoyo en un día difícil— y personalizá el saludo con el apodo con que llamás a ${pareja}.`
+        pregunta: esEsposa
+          ? '¿Qué saludos de cumpleaños para una esposa suenan auténticos y románticos?'
+          : '¿Qué palabras de feliz cumpleaños a mi esposo emocionan de verdad sin sonar copiadas?',
+        respuesta: esEsposa
+          ? `Para el cumpleaños de tu esposa, evitá clichés abstractos y nombrá una escena real que disfrutan juntos —el equipo que arman en casa, una risa compartida o cómo te acompaña en los días difíciles— usando su apodo real en cualquiera de estas ${cantMensajes} frases para esposa.`
+          : `Las mejores palabras de feliz cumpleaños para tu esposo combinan admiración por su forma de ser, gratitud por lo cotidiano que construyen juntos y una nota de complicidad real. Podés adaptar estas ${cantMensajes} dedicatorias con su apodo en segundos.`
       },
       {
-        pregunta: `¿Conviene mandar una frase corta a la mañana o una carta larga para ${pareja}?`,
-        respuesta: `Una fórmula que nunca falla es enviar una frase breve y cálida al despertar por WhatsApp y reservar una carta más profunda o tarjeta PNG para entregar junto al regalo o la cena.`
+        pregunta: esEsposa
+          ? '¿Conviene una frase corta de feliz cumpleaños esposa por WhatsApp o una carta larga?'
+          : '¿Es mejor mandar un mensaje breve a la mañana o una carta larga a mi esposo?',
+        respuesta: esEsposa
+          ? 'La combinación que mejor resulta en el cumpleaños de mi esposa es una frase corta y cariñosa junto al desayuno o por WhatsApp temprano, y una carta extensa o tarjeta PNG impresa junto a la cena o el regalo.'
+          : 'Mandá un saludo cálido y breve al comenzar el día para sorprenderlo antes de la rutina laboral, y guardá una carta emotiva o tarjeta visual personalizada para entregársela en mano a la noche.'
       },
       {
-        pregunta: `¿Cómo personalizo y descargo una tarjeta PNG de cumpleaños para ${pareja}?`,
-        respuesta: `Escribí su nombre y tu firma en la barra superior para actualizar las ${cantMensajes} opciones al instante, y tocá «Tarjeta PNG / Story» en la que más te guste para bajarla gratis.`
+        pregunta: esEsposa
+          ? '¿Cómo personalizo y descargo una tarjeta PNG de cumpleaños para mi esposa?'
+          : '¿Cómo personalizo y descargo una tarjeta PNG de cumpleaños para mi esposo?',
+        respuesta: `Escribí su nombre y tu firma en la barra superior para actualizar las ${cantMensajes} opciones al instante, y tocá «Tarjeta PNG / Story» en la que más te represente para descargarla gratis.`
       }
     ];
   }
 
-  if (slug === 'frases-para-un-hijo-que-esta-lejos' || slug === 'frases-para-un-primo-que-esta-lejos') {
+  if (
+    slug === 'feliz-cumpleanos-a-distancia' ||
+    slug === 'frases-para-alguien-especial-que-esta-lejos' ||
+    slug === 'frases-para-un-hijo-que-esta-lejos' ||
+    slug === 'frases-para-un-primo-que-esta-lejos'
+  ) {
     const esHijo = slug.includes('hijo');
+    const esPrimo = slug.includes('primo');
     return [
       {
         pregunta: esHijo
           ? '¿Cómo felicitar a un hijo que está lejos sin hacerlo sentir triste?'
-          : '¿Qué decirle a un primo en su cumpleaños desde la distancia?',
+          : esPrimo
+          ? '¿Qué decirle a un primo en su cumpleaños desde la distancia?'
+          : '¿Qué escribir en un mensaje de cumpleaños para alguien que está lejos?',
         respuesta: esHijo
           ? 'Combiná el abrazo que extrañás darle con orgullo por el camino que está construyendo, y mencioná la próxima videollamada o reencuentro para cerrar el mensaje con esperanza.'
-          : 'Recordá una anécdota familiar divertida que los una, deseale un gran año en la ciudad donde esté y prometé el brindis pendiente apenas vuelvan a cruzarse.'
+          : esPrimo
+          ? 'Recordá una anécdota familiar divertida que los una, deseale un gran año en la ciudad donde esté y prometé el brindis pendiente apenas vuelvan a cruzarse.'
+          : `Un buen mensaje de cumpleaños para alguien que está lejos equilibra el cariño sincero con energía luminosa: recordá una costumbre compartida, celebrá su presente en otra ciudad o país y proponé un brindis por videollamada o la próxima visita.`
       },
       {
         pregunta: '¿A qué hora conviene mandar un saludo de cumpleaños cuando hay diferencia horaria?',
-        respuesta: 'Calculá el desayuno de su hora local para que tu mensaje sea uno de los primeros que lea al empezar el día, y reservá un audio o llamada corta para la tarde.'
+        respuesta: 'Calculá el desayuno de su hora local para que tu saludo sea de los primeros que lea al empezar el día, y reservá un audio tranquilo o llamada breve para la tarde sin apuros.'
       },
       {
-        pregunta: '¿Puedo enviar el texto personalizado como imagen por WhatsApp?',
-        respuesta: `Sí. Poné su nombre en la barra de personalización arriba de la grilla, elegí una de las ${cantMensajes} dedicatorias y descargala en tarjeta PNG cuadrada o Story vertical.`
+        pregunta: '¿Puedo enviar el texto personalizado a la distancia como tarjeta imagen por WhatsApp?',
+        respuesta: `Sí. Escribí su nombre en la barra de personalización arriba de la grilla, elegí una de las ${cantMensajes} dedicatorias y descargala en tarjeta PNG cuadrada o Story vertical lista para compartir.`
       }
     ];
   }

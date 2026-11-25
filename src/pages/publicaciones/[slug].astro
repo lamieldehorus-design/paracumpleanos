@@ -1,0 +1,19 @@
+---
+import PuenteRedireccion from '../../components/PuenteRedireccion.astro';
+import { REDIRECCIONES_PUBLICACIONES } from '../../lib/redirecciones-legadas.ts';
+
+export function getStaticPaths() {
+  return REDIRECCIONES_PUBLICACIONES.map((r) => ({
+    params: { slug: r.slugOrigen },
+    props: { redir: r }
+  }));
+}
+
+const { redir } = Astro.props;
+---
+<PuenteRedireccion
+  titulo={redir.titulo}
+  destinoSlug={redir.destinoSlug}
+  alternativoSlug={redir.alternativoSlug}
+  alternativoTexto={redir.alternativoTexto}
+/>
