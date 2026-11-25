@@ -34,6 +34,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
   <meta name="yandex-verification" content="3c0fa054dfa66068" />
+  <meta name="google-adsense-account" content="ca-pub-7933111729537978" />
   <title>{titulo}</title>
   <meta name="description" content={descripcion} />
   <link rel="canonical" href={url} />
@@ -48,9 +49,13 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <link rel="alternate" type="application/rss+xml" title="ParaCumpleanos RSS" href="https://paracumpleanos.com/rss.xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  {!noindex ? <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin /> : null}
   <link rel="preconnect" href="https://www.statcounter.com" crossorigin />
   <link rel="preconnect" href="https://c.statcounter.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  {!noindex ? (
+    <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7933111729537978" crossorigin="anonymous"></script>
+  ) : null}
   <meta property="og:title" content={titulo} />
   <meta property="og:description" content={descripcion} />
   <meta property="og:type" content="website" />
@@ -226,7 +231,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         <span class="logo-fallback" style="display:none">ParaCumpleanos 🎂</span>
       </a>
     </div>
-    <p>ParaCumpleanos — {hubs.length} colecciones, {PAISES_HITOS.length} hitos históricos mundiales, {GUIAS_EDITORIALES.length} guías prácticas y {todosMensajes.length.toLocaleString('es-AR')} textos originales en español.</p>
+    <p>ParaCumpleanos — {hubs.length} colecciones, {PAISES_HITOS.length} hitos históricos mundiales, {GUIAS_EDITORIALES.length} guías prácticas y {todosMensajes.length.toLocaleString('es-AR')} textos originales en español · Contacto directo: <a href="mailto:lamieldehorus@gmail.com">lamieldehorus@gmail.com</a></p>
     <nav aria-label="Páginas institucionales">
       <a href="/">Inicio</a>
       <a href="/calendario/">Calendario sin año</a>

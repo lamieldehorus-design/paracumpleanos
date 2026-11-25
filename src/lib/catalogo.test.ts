@@ -994,3 +994,52 @@ test('impresion aisla solo la postal o banderines, descargas omiten titulo SEO y
   assert.ok(cssSrc.includes('.meta-linea-editorial'), '@media print debe ocultar .meta-linea-editorial');
   assert.ok(cssSrc.includes('.banderines-print-area'), '@media print debe formatear las hojas A4 de banderines');
 });
+
+test('AdSense pub-7933111729537978 etiqueta todas las paginas, ads.txt coincide, portada conserva interlinkeado y existe script SVD', () => {
+  const baseSrc = fs.readFileSync(path.resolve('src/layouts/Base.astro'), 'utf8');
+  assert.ok(baseSrc.includes('content="ca-pub-7933111729537978"'), 'Base.astro debe incluir meta google-adsense-account');
+  assert.ok(
+    baseSrc.includes('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7933111729537978'),
+    'Base.astro debe cargar adsbygoogle.js con ca-pub-7933111729537978 en todas las paginas'
+  );
+
+  const adsRoot = fs.readFileSync(path.resolve('ads.txt'), 'utf8').trim();
+  const adsPublic = fs.readFileSync(path.resolve('public/ads.txt'), 'utf8').trim();
+  assert.ok(adsRoot.includes('pub-7933111729537978'), 'ads.txt raiz debe incluir pub-7933111729537978');
+  assert.equal(adsPublic, adsRoot, 'public/ads.txt debe coincidir exactamente con ads.txt');
+
+  const indexSrc = fs.readFileSync(path.resolve('src/pages/index.astro'), 'utf8');
+  for (const enlace of [
+    'id="portal-buscador"',
+    'id="portal-preview-card"',
+    'id="secciones-portal"',
+    'id="portal-guias-populares"',
+    'id="home-muestra-grilla"',
+    '/calendario/',
+    '/hitos-historicos/',
+    '/condolencias/',
+    '/mas-de-10-anos-de-novios/',
+    '/herramientas/#banderines-imprimir',
+    '/herramientas/',
+    '/horoscopo/',
+    '/guias/',
+    '/categorias/',
+    '/sobre-nosotros/',
+    '/privacidad/'
+  ]) {
+    assert.ok(indexSrc.includes(enlace), `index.astro debe conservar el modulo/enlace ${enlace}`);
+  }
+
+  assert.ok(fs.existsSync(path.resolve('scripts/verificar-svd.mjs')), 'Debe existir scripts/verificar-svd.mjs');
+
+  for (const archivo of [
+    'src/layouts/Base.astro',
+    'src/pages/index.astro',
+    'src/pages/contacto.astro',
+    'src/pages/sobre-nosotros.astro',
+    'src/pages/privacidad.astro'
+  ]) {
+    const src = fs.readFileSync(path.resolve(archivo), 'utf8');
+    assert.ok(src.includes('lamieldehorus@gmail.com'), `${archivo} debe incluir el contacto lamieldehorus@gmail.com`);
+  }
+});

@@ -11,7 +11,8 @@ function asegurarActivosPublicos() {
     'apple-touch-icon.png',
     'android-chrome-192x192.png',
     'android-chrome-512x512.png',
-    'site.webmanifest'
+    'site.webmanifest',
+    'ads.txt'
   ];
   return {
     name: 'asegurar-activos-publicos',

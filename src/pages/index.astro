@@ -62,7 +62,7 @@ const guiasIndiceJson = guiasRankeadas.map((g) => ({
   scoreBase: g.scorePopularidad
 }));
 
-// Indice liviano de todas las categorías + guías + hitos para el buscador universal del portal
+// Indice liviano de todas las categorias + guias + hitos para el buscador universal del portal
 const indiceBuscador = hubs
   .map((h) => ({
     titulo: nombreHub(h),
@@ -151,23 +151,23 @@ const jsonld = [
 ];
 ---
 <Base
-  titulo="Frases y mensajes de feliz cumpleaños, postales y calendario - ParaCumpleanos"
-  descripcion={`Buscá entre ${hubs.length} colecciones, ${todosMensajes.length.toLocaleString('es-AR')} frases de feliz cumpleaños, condolencias, nostalgia, aniversarios, banderines A4, calendario sin año y ${PAISES_HITOS.length} hitos históricos mundiales.`}
+  titulo="Mensajes de cumpleaños, cartas y calendario · ParaCumpleanos"
+  descripcion={`Elegí entre ${hubs.length} colecciones y ${todosMensajes.length.toLocaleString('es-AR')} dedicatorias reales por vínculo, edad, aniversario o duelo. Personalizá con nombre y firma gratis antes de copiar.`}
   jsonld={jsonld}
   esPortal={true}
 >
   <section class="portal-hero" aria-labelledby="portal-h1">
     <div class="portal-hero-texto">
       <p class="portal-kicker">
-        Portal editorial en español · {hubs.length} colecciones · {totalPublicacionesPortal.toLocaleString('es-AR')} publicaciones únicas · {PAISES_HITOS.length} países
+        Archivo editorial en español · {hubs.length} colecciones · {totalPublicacionesPortal.toLocaleString('es-AR')} textos originales · {PAISES_HITOS.length} países
       </p>
-      <h1 id="portal-h1">Frases y mensajes reales para cada cumpleaños, fecha y recuerdo</h1>
+      <h1 id="portal-h1">Dedicatorias para cada vínculo, edad y fecha</h1>
       <p class="portal-sub">
-        Elegí entre {hubs.length} colecciones de feliz cumpleaños, aniversarios de 1 mes a +10 años personalizables, condolencias, nostalgia y banderines A4 para imprimir, o explorá el calendario anual con los hitos históricos de los {PAISES_HITOS.length} países.
+        Encontrá cartas largas, saludos breves, aniversarios de pareja o palabras serenas de acompañamiento listas para adaptar con nombre propio y firma antes de copiarlas o imprimir.
       </p>
 
       <div class="portal-buscador-caja">
-        <label for="portal-buscador" class="portal-buscador-label">Buscá destinatario, país, banderines, condolencias, aniversario o fecha en toda la web</label>
+        <label for="portal-buscador" class="portal-buscador-label">Buscá por destinatario, país, aniversario, duelo o imprimible</label>
         <div class="portal-buscador-fila">
           <input
             id="portal-buscador"
@@ -175,33 +175,52 @@ const jsonld = [
             placeholder="Ej.: amiga, 5 años de novios, nostalgia, banderines, condolencias, Argentina…"
             autocomplete="off"
           />
-          <a class="btn btn-copiar" href="#secciones-portal">Explorar secciones</a>
+          <a class="btn btn-copiar" href="#secciones-portal">Ver secciones</a>
         </div>
         <ul id="portal-resultados" class="portal-resultados" hidden></ul>
       </div>
 
+      <div class="portal-necesidades" aria-label="Rutas rápidas según lo que necesitás hoy">
+        <a class="portal-nec-card" href="/categorias/#destinatarios">
+          <span class="portal-nec-titulo">Saludar a alguien querido</span>
+          <span class="portal-nec-meta">Familia, pareja, amistades y trabajo</span>
+        </a>
+        <a class="portal-nec-card" href="/mas-de-10-anos-de-novios/">
+          <span class="portal-nec-titulo">Celebrar meses o años juntos</span>
+          <span class="portal-nec-meta">Aniversarios de 1 mes a +10 años</span>
+        </a>
+        <a class="portal-nec-card" href="/condolencias/">
+          <span class="portal-nec-titulo">Acompañar duelos o nostalgia</span>
+          <span class="portal-nec-meta">Pésame respetuoso y fecha de duelo</span>
+        </a>
+        <a class="portal-nec-card" href="/herramientas/#banderines-imprimir">
+          <span class="portal-nec-titulo">Imprimir banderines o postales</span>
+          <span class="portal-nec-meta">Plantillas A4 gratis y formato Story</span>
+        </a>
+      </div>
+
       <div class="portal-accesos-rapidos" aria-label="Accesos directos frecuentes">
-        <span class="accesos-titulo">Más buscados hoy:</span>
+        <span class="accesos-titulo">Accesos directos:</span>
         <a href="/feliz-cumpleanos-amiga/">Amiga</a>
         <span aria-hidden="true">·</span>
         <a href="/feliz-cumpleanos-mama/">Mamá</a>
         <span aria-hidden="true">·</span>
-        <a href="/mas-de-10-anos-de-novios/">+10 años novios 💞</a>
+        <a href="/mas-de-10-anos-de-novios/">+10 años novios</a>
         <span aria-hidden="true">·</span>
-        <a href="/banderines-de-cumpleanos-para-imprimir/">Banderines A4 🎏</a>
+        <a href="/banderines-de-cumpleanos-para-imprimir/">Banderines A4</a>
         <span aria-hidden="true">·</span>
-        <a href="/frases-tristes-para-recordar-momentos/">Recuerdos y nostalgia 🌧️</a>
+        <a href="/frases-tristes-para-recordar-momentos/">Recuerdos</a>
         <span aria-hidden="true">·</span>
-        <a href="/condolencias/">Condolencias 🕊️</a>
+        <a href="/condolencias/">Condolencias</a>
         <span aria-hidden="true">·</span>
-        <a href="/calendario/">Calendario 📅</a>
+        <a href="/calendario/">Calendario</a>
         <span aria-hidden="true">·</span>
-        <a href="/hitos-historicos/">Hitos históricos 🌍</a>
+        <a href="/hitos-historicos/">Hitos históricos</a>
       </div>
     </div>
 
     <div class="portal-hero-studio" aria-label="Vista previa del personalizador de tarjetas">
-      <p class="studio-etiqueta">Estudio rápido · Probá personalizar acá mismo</p>
+      <p class="studio-etiqueta">Prueba en vivo · Escribí un nombre y mirá el cambio</p>
       <div class="tarjeta-visual studio-card" id="portal-preview-card">
         <div class="tarjeta-visual-emoji" aria-hidden="true">🎂</div>
         <p class="tarjeta-visual-titulo" id="studio-titulo">Para alguien que hace la diferencia</p>
@@ -239,45 +258,64 @@ const jsonld = [
   <section class="portal-herramientas-tira" aria-label="Calendario, hitos históricos, condolencias y herramientas">
     <a class="portal-util-card" href="/calendario/">
       <span class="portal-util-kicker">Sin año · 366 días</span>
-      <span class="portal-util-titulo">📅 Calendario universal de fechas</span>
-      <span class="portal-util-desc">Elegí cualquier día y mes para ver celebraciones, hitos históricos, signo zodiacal, motivación y fecha de duelo.</span>
+      <span class="portal-util-titulo">Calendario de fechas</span>
+      <span class="portal-util-desc">Efemérides, hitos mundiales, signo y fecha de duelo por día y mes.</span>
     </a>
     <a class="portal-util-card" href="/hitos-historicos/">
       <span class="portal-util-kicker">{PAISES_HITOS.length} países del mundo</span>
-      <span class="portal-util-titulo">🌍 Hitos históricos mundiales</span>
-      <span class="portal-util-desc">Descubrí qué celebra cada país en su fiesta nacional o independencia, su historia, tradiciones y saludos.</span>
+      <span class="portal-util-titulo">Hitos históricos mundiales</span>
+      <span class="portal-util-desc">Fiestas nacionales, contexto cívico y tradiciones de cada país.</span>
     </a>
     <a class="portal-util-card" href="/condolencias/">
-      <span class="portal-util-kicker">Acompañamiento respetuoso</span>
-      <span class="portal-util-titulo">🕊️ Condolencias y fecha de duelo</span>
-      <span class="portal-util-desc">50 mensajes sobrios de pésame, nostalgia y selector interactivo para honrar una fecha de duelo con alerta anual .ics.</span>
+      <span class="portal-util-kicker">Acompañamiento sereno</span>
+      <span class="portal-util-titulo">Condolencias y duelo</span>
+      <span class="portal-util-desc">50 mensajes sobrios de pésame y recordatorio anual .ics.</span>
     </a>
     <a class="portal-util-card" href="/mas-de-10-anos-de-novios/">
       <span class="portal-util-kicker">11 a 80 años a medida</span>
-      <span class="portal-util-titulo">💞 Aniversario +10 años personalizable</span>
-      <span class="portal-util-desc">Elegí el número exacto de años juntos y adaptá al instante 50 frases y cartas, además de los 1–11 meses y 1–10 años.</span>
+      <span class="portal-util-titulo">Aniversario +10 años</span>
+      <span class="portal-util-desc">Elegí los años juntos y adaptá 50 dedicatorias en el acto.</span>
     </a>
     <a class="portal-util-card" href="/herramientas/#banderines-imprimir">
       <span class="portal-util-kicker">Imprimible gratis A4</span>
-      <span class="portal-util-titulo">🎏 Banderines para imprimir</span>
-      <span class="portal-util-desc">Armá banderines de feliz cumpleaños con el nombre que quieras, bordes para recortar y descarga lista para A4.</span>
+      <span class="portal-util-titulo">Banderines para imprimir</span>
+      <span class="portal-util-desc">Armá guirnaldas por nombre con bordes listos para recortar.</span>
     </a>
     <a class="portal-util-card" href="/herramientas/">
       <span class="portal-util-kicker">Herramientas gratuitas</span>
-      <span class="portal-util-titulo">🎂 Edad exacta, acróstico y agenda .ics</span>
-      <span class="portal-util-desc">Calculá días vividos e hito de 10.000 días, creá acrósticos por nombre y descargá alertas anuales.</span>
+      <span class="portal-util-titulo">Edad exacta, acróstico e .ics</span>
+      <span class="portal-util-desc">Días vividos, hito de 10.000 días, acrósticos y agenda local.</span>
     </a>
   </section>
 
-  <AlertaMotivacionDiaria />
+  <section class="portal-metodo-linea" aria-labelledby="titulo-metodo-portal">
+    <div class="banda-cabecera">
+      <div>
+        <p class="banda-kicker">Método editorial · 30 segundos</p>
+        <h2 id="titulo-metodo-portal">Cómo personalizar un saludo sin sonar genérico</h2>
+      </div>
+      <a class="enlace-directorio" href="/guias/como-escribir-una-carta-de-cumpleanos-que-emocione/">Ver guía completa →</a>
+    </div>
+    <div class="metodo-linea-grid">
+      <div class="metodo-linea-contraste">
+        <p class="metodo-linea-evitar"><strong>Evitá el molde vacío:</strong> “Feliz cumpleaños, que pases un hermoso día junto a los tuyos.”</p>
+        <p class="metodo-linea-funciona"><strong>Sumá una escena real:</strong> “Laura, gracias por bancarme con mates aquel martes de cierre. Que este año te regale mañanas tranquilas y ese viaje al sur. — Sofi”</p>
+      </div>
+      <ol class="metodo-linea-pasos">
+        <li><strong>1. Detalle concreto:</strong> mencioná una charla reciente o algo que admirás hoy.</li>
+        <li><strong>2. Deseo situado:</strong> salud, descanso firme o un proyecto claro para su etapa.</li>
+        <li><strong>3. Tono acorde:</strong> cercanía cotidiana para amigos y respeto sobrio en <a href="/condolencias/">duelo o condolencias</a>.</li>
+      </ol>
+    </div>
+  </section>
 
   <section id="secciones-portal" class="portal-banda" aria-labelledby="titulo-secciones-portal">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Mapa completo del portal</p>
-        <h2 id="titulo-secciones-portal">Navegá las {GRUPOS.length} secciones temáticas ({hubs.length} colecciones) + Hitos del Mundo</h2>
+        <p class="banda-kicker">Mapa completo del archivo</p>
+        <h2 id="titulo-secciones-portal">Categorías por vínculo, edad, fecha e hitos del mundo</h2>
       </div>
-      <a class="enlace-directorio" href="/categorias/">Ver directorio completo ({hubs.length} categorías) →</a>
+      <a class="enlace-directorio" href="/categorias/">Ver directorio ({hubs.length} categorías) →</a>
     </div>
 
     <div class="portal-secciones-grid">
@@ -339,14 +377,14 @@ const jsonld = [
   <section class="portal-banda portal-banda-guias" aria-labelledby="titulo-guias-portal">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Más visitadas y actualizadas</p>
-        <h2 id="titulo-guias-portal">Guías prácticas para escribir mejor y regalar con criterio</h2>
+        <p class="banda-kicker">Más visitadas y revisadas</p>
+        <h2 id="titulo-guias-portal">Guías prácticas para escribir y celebrar mejor</h2>
       </div>
       <a class="enlace-directorio" href="/guias/">Leer las {GUIAS_EDITORIALES.length} guías →</a>
     </div>
 
     <div class="portal-guias-salience" id="portal-guias-populares">
-      <article class="card guia-destacada" id="guia-popular-lead">
+      <article class="guia-destacada" id="guia-popular-lead">
         <p class="card-meta">
           <span id="guia-lead-etiqueta">{guiasLead.emoji} Guía más visitada</span>
           <span aria-hidden="true">·</span>
@@ -380,11 +418,13 @@ const jsonld = [
     </div>
   </section>
 
+  <AlertaMotivacionDiaria />
+
   <section class="portal-banda" aria-labelledby="titulo-muestra-portal">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Más populares de todas las categorías · Mezcla de todo el portal</p>
-        <h2 id="titulo-muestra-portal">Textos listos para copiar según el momento</h2>
+        <p class="banda-kicker">Selección transversal · Mezcla de todo el portal</p>
+        <h2 id="titulo-muestra-portal">Dedicatorias populares según el momento que atravesás</h2>
       </div>
       <a class="enlace-directorio" href="/categorias/">Explorar las {todosMensajes.length.toLocaleString('es-AR')} publicaciones →</a>
     </div>
@@ -407,7 +447,7 @@ const jsonld = [
     <div class="grilla" id="home-muestra-grilla">
       {poolPopular.map(function (it, idx) {
         return (
-          <div class="home-pub-slot" data-home-idx={idx} data-home-slug={it.mensaje.slug} data-home-score={it.scoreBase} data-home-segmentos={it.segmentos.join(',')} style={idx >= 12 ? 'display:none' : undefined}>
+          <div class="home-pub-slot" data-home-idx={idx} data-home-slug={it.mensaje.slug} data-home-score={it.scoreBase} data-home-segmentos={it.segmentos.join(',')} style={idx >= 6 ? 'display:none' : undefined}>
             <TarjetaMensaje m={it.mensaje} hub={it.hub} mostrarCategoria={true} scoreBase={it.scoreBase} />
           </div>
         );
@@ -416,25 +456,25 @@ const jsonld = [
 
     <div class="home-mas-wrap">
       <button type="button" class="btn btn-copiar home-mas-btn" id="home-ver-mas-populares">
-        Mostrar más publicaciones populares ({poolPopular.length - 12} más)
+        Mostrar más publicaciones populares ({poolPopular.length - 6} más)
       </button>
     </div>
   </section>
 
   <section class="portal-estandares" aria-labelledby="titulo-criterio-portal">
-    <h2 id="titulo-criterio-portal">Por qué miles de lectores eligen ParaCumpleanos</h2>
+    <h2 id="titulo-criterio-portal">Criterio editorial y contacto directo</h2>
     <div class="estandares-grid">
       <div class="estandar-item">
-        <h3>01. {totalPublicacionesPortal.toLocaleString('es-AR')} publicaciones únicas sin copias</h3>
-        <p>Cada dedicatoria, guía y reseña histórica tiene redacción original en español cercano o formal según el vínculo, sin párrafos reciclados.</p>
+        <h3>01. {totalPublicacionesPortal.toLocaleString('es-AR')} textos originales sin copias</h3>
+        <p>Cada dedicatoria, guía y reseña histórica pasa control de similitud antes de entrar al archivo. Podés sugerir mejoras o escribirnos a <a href="mailto:lamieldehorus@gmail.com">lamieldehorus@gmail.com</a> desde <a href="/contacto/">Contacto</a>.</p>
       </div>
       <div class="estandar-item">
-        <h3>02. Contexto respetado al detalle</h3>
-        <p>Separamos fechas sensibles de duelo y nostalgia, aniversarios de 1 mes a +10 años personalizables, entornos laborales, motivaciones y efemérides mundiales.</p>
+        <h3>02. Separación estricta de tonos</h3>
+        <p>Mantenemos aparte cumpleaños, aniversarios de pareja, entornos laborales, duelo y efemérides patrias para evitar cruces incómodos.</p>
       </div>
       <div class="estandar-item">
-        <h3>03. Personalización, Banderines A4 y Story IG</h3>
-        <p>Sumá nombre, firma, años exactos, posdata y tipografía en {temas.length} paletas, descargá tarjetas 1080×1920 o banderines A4. Conocé más en <a href="/sobre-nosotros/">Sobre nosotros</a>.</p>
+        <h3>03. Transparencia editorial y privacidad</h3>
+        <p>Personalizás tarjetas en {temas.length} paletas, banderines A4 o recordatorios .ics desde el navegador sin registro previo. Leé más en <a href="/sobre-nosotros/">Sobre nosotros</a> y <a href="/privacidad/">Privacidad</a>.</p>
       </div>
     </div>
   </section>
@@ -592,7 +632,6 @@ const jsonld = [
       var expandido = false;
 
       if (homeGrilla) {
-        // Reordenar slots segun popularidad local acumulada (vistas + copias + compartidos)
         try {
           var popMap = JSON.parse(localStorage.getItem('pc_popularidad_pubs_v1') || '{}');
           if (popMap && Object.keys(popMap).length > 0) {
@@ -618,7 +657,7 @@ const jsonld = [
               return;
             }
             totalCoinc++;
-            var limite = filtroActivo === 'todos' && !expandido ? 12 : 99;
+            var limite = filtroActivo === 'todos' && !expandido ? 6 : 99;
             if (visibles < limite) {
               slot.style.display = '';
               visibles++;
@@ -627,12 +666,12 @@ const jsonld = [
             }
           });
           if (btnVerMas) {
-            if (filtroActivo === 'todos' && !expandido && totalCoinc > 12) {
+            if (filtroActivo === 'todos' && !expandido && totalCoinc > 6) {
               btnVerMas.hidden = false;
-              btnVerMas.textContent = 'Mostrar más publicaciones populares (' + (totalCoinc - 12) + ' más)';
-            } else if (filtroActivo === 'todos' && expandido && totalCoinc > 12) {
+              btnVerMas.textContent = 'Mostrar más publicaciones populares (' + (totalCoinc - 6) + ' más)';
+            } else if (filtroActivo === 'todos' && expandido && totalCoinc > 6) {
               btnVerMas.hidden = false;
-              btnVerMas.textContent = 'Mostrar solo las 12 principales';
+              btnVerMas.textContent = 'Mostrar solo las 6 principales';
             } else {
               btnVerMas.hidden = true;
             }

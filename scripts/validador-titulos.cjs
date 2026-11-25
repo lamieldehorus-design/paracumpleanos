@@ -209,7 +209,11 @@ function modoGate() {
   r.avisos.forEach(function (a) { console.log('AVISO  ' + a); });
   r.errores.forEach(function (e) { console.log('ERROR  ' + e); });
   console.log('');
-  console.log('Registros: ' + todo.length + ' | Errores: ' + r.errores.length + ' | Avisos: ' + r.avisos.length);
+  if (r.errores.length === 0 && r.avisos.length === 0) {
+    console.log('Registros validados: ' + todo.length + ' | Estado: limpio (0 incidencias, 0 alertas).');
+  } else {
+    console.log('Registros: ' + todo.length + ' | Errores: ' + r.errores.length + ' | Avisos: ' + r.avisos.length);
+  }
   if (r.errores.length) { console.log('BUILD BLOQUEADO: corregi los errores antes de publicar.'); process.exit(1); }
   console.log('Validacion OK: listo para construir.');
 }

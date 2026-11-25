@@ -306,20 +306,22 @@ img { max-width: 100%; }
 
 /* Widget de alerta motivacional diaria */
 .alerta-motivacion {
-  margin-top: 28px;
-  padding: 24px 22px;
-  background: linear-gradient(135deg, #fff 0%, var(--rosa-claro) 55%, var(--durazno) 100%);
-  border: 1px solid var(--borde);
-  border-radius: 14px;
-  box-shadow: var(--sombra);
+  margin-top: 32px;
+  padding: 26px 0;
+  border-top: 1px solid var(--borde);
+  border-bottom: 1px solid var(--borde);
+  background: transparent;
 }
 .alerta-motivacion-compact {
   margin: 18px 0 22px;
   padding: 20px 18px;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
 }
 .motiv-layout {
   display: grid;
-  gap: 20px;
+  gap: 24px;
   grid-template-columns: 1fr;
   align-items: start;
 }
@@ -330,9 +332,8 @@ img { max-width: 100%; }
 .motiv-frase-card {
   background: #fff;
   border: 1px solid var(--borde);
-  border-left: 4px solid var(--rosa);
   border-radius: 12px;
-  padding: 18px;
+  padding: 20px;
 }
 .motiv-fecha-hoy {
   margin: 0 0 6px;
@@ -366,10 +367,10 @@ img { max-width: 100%; }
   margin-top: 14px;
 }
 .motiv-suscripcion-col {
-  background: #fff;
+  background: var(--superficie);
   border: 1px solid var(--borde);
   border-radius: 12px;
-  padding: 18px;
+  padding: 20px;
 }
 .motiv-suscripcion-col h3 {
   margin: 0 0 6px;
@@ -470,19 +471,17 @@ img { max-width: 100%; }
 
 .portal-secciones-grid {
   display: grid;
-  gap: 16px;
+  gap: 24px 28px;
   grid-template-columns: 1fr;
 }
 .portal-seccion-card {
-  background: #fff;
-  border: 1px solid var(--borde);
-  border-radius: 12px;
-  padding: 20px;
+  border-top: 1px solid var(--borde);
+  padding: 16px 0 6px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
-.portal-seccion-top h3 { margin: 0 0 4px; font-size: 1.18rem; }
+.portal-seccion-top h3 { margin: 0 0 4px; font-size: 1.14rem; }
 .portal-seccion-top h3 a { text-decoration: none; color: var(--texto); }
 .portal-seccion-top h3 a:hover { color: var(--rosa-oscuro); text-decoration: underline; }
 .portal-seccion-links {
@@ -491,45 +490,49 @@ img { max-width: 100%; }
   margin: 0;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 6px 14px;
+  gap: 6px 12px;
 }
 .portal-seccion-links li a {
   text-decoration: none;
   color: var(--texto-suave);
-  font-size: 0.92rem;
+  font-size: 0.91rem;
   font-weight: 500;
 }
 .portal-seccion-links li a:hover { color: var(--rosa-oscuro); text-decoration: underline; }
-.portal-seccion-pie { margin: auto 0 0; padding-top: 10px; border-top: 1px solid var(--borde-suave); font-size: 0.9rem; font-weight: 700; }
+.portal-seccion-pie { margin: auto 0 0; padding-top: 6px; font-size: 0.89rem; font-weight: 700; }
 .portal-seccion-pie a { text-decoration: none; }
 .portal-seccion-pie a:hover { text-decoration: underline; }
 
-.portal-guias-salience { display: grid; gap: 20px; grid-template-columns: 1fr; align-items: start; }
+.portal-guias-salience { display: grid; gap: 24px; grid-template-columns: 1fr; align-items: start; }
+.guia-destacada {
+  border-top: 2px solid var(--rosa-oscuro);
+  padding-top: 16px;
+}
 .guia-destacada h3 { font-size: 1.38rem; margin: 4px 0 10px; }
 .guia-destacada h3 a { text-decoration: none; color: var(--texto); }
 .guia-destacada h3 a:hover { color: var(--rosa-oscuro); text-decoration: underline; }
-.guias-secundarias-lista { display: flex; flex-direction: column; gap: 12px; }
+.guia-destacada > p { color: var(--texto-suave); margin: 0 0 10px; }
+.guias-secundarias-lista { display: flex; flex-direction: column; }
 .guia-fila {
-  background: #fff;
-  border: 1px solid var(--borde);
-  border-radius: 12px;
-  padding: 16px 18px;
+  border-top: 1px solid var(--borde);
+  padding: 14px 0;
 }
-.guia-fila h3 { margin: 2px 0 6px; font-size: 1.05rem; }
+.guia-fila:last-child {
+  border-bottom: 1px solid var(--borde);
+}
+.guia-fila h3 { margin: 2px 0 4px; font-size: 1.05rem; }
 .guia-fila h3 a { text-decoration: none; color: var(--texto); }
 .guia-fila h3 a:hover { color: var(--rosa-oscuro); text-decoration: underline; }
-.guia-fila p { margin: 0; font-size: 0.93rem; color: var(--texto-suave); }
+.guia-fila p { margin: 0; font-size: 0.92rem; color: var(--texto-suave); }
 
 .portal-estandares {
   margin-top: 40px;
-  padding: 26px 22px;
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-  border-radius: 14px;
+  padding: 28px 0 8px;
+  border-top: 1px solid var(--borde);
 }
-.portal-estandares h2 { margin: 0 0 16px; }
-.estandares-grid { display: grid; gap: 18px; grid-template-columns: 1fr; }
-.estandar-item h3 { margin: 0 0 6px; font-size: 1.05rem; color: var(--rosa-oscuro); }
+.portal-estandares h2 { margin: 0 0 18px; }
+.estandares-grid { display: grid; gap: 20px 28px; grid-template-columns: 1fr; }
+.estandar-item h3 { margin: 0 0 6px; font-size: 1.04rem; color: var(--rosa-oscuro); }
 .estandar-item p { margin: 0; font-size: 0.94rem; color: var(--texto-suave); }
 
 /* Filtros interactivos por tono/formato */
@@ -1217,15 +1220,18 @@ input, textarea, select { font-size: 16px; }
   .sidebar { margin-bottom: 0; align-self: start; position: sticky; top: 86px; max-height: calc(100vh - 104px); overflow-y: auto; }
   .grilla, .guias-grid, .contacto-tarjetas, .portal-secciones-grid, .comparacion-concreta, .ejemplos-guia { grid-template-columns: repeat(2, 1fr); }
   .portal-hero { grid-template-columns: 1.15fr 0.85fr; gap: 32px; }
-  .motiv-layout { grid-template-columns: 1.05fr 0.95fr; gap: 24px; }
-  .motiv-form-fila { grid-template-columns: 1fr 140px; }
-  .portal-guias-salience { grid-template-columns: 1.05fr 0.95fr; gap: 24px; }
+  .motiv-layout { grid-template-columns: 1.05fr 0.95fr; gap: 28px; }
+  .motiv-form-fila { grid-template-columns: 150px 1fr; align-items: end; }
+  .portal-guias-salience { grid-template-columns: 1.05fr 0.95fr; gap: 28px; }
   .estandares-grid { grid-template-columns: repeat(3, 1fr); }
-  .portal-seccion-links { grid-template-columns: repeat(2, 1fr); }
+  .portal-seccion-links { grid-template-columns: 1fr; }
   .studio-inputs { grid-template-columns: 1fr 1fr; }
   .personalizador-controles { grid-template-columns: 1fr 1fr; }
   .pers-campo-temas { grid-column: 1 / -1; }
   .cat-lista { columns: 2; gap: 24px; }
+}
+@media (min-width: 960px) {
+  .portal-secciones-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 819px) {
@@ -1292,39 +1298,39 @@ input, textarea, select { font-size: 16px; }
 
 /* Tira de utilidades y enlaces mes-horoscopo (estrictamente editorial sin pildoras) */
 .portal-herramientas-tira {
-  margin-top: 22px;
+  margin-top: 26px;
   display: grid;
-  gap: 12px;
+  gap: 16px 24px;
   grid-template-columns: 1fr;
 }
 .portal-util-card {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 16px 18px;
-  background: #fff;
-  border: 1px solid var(--borde);
-  border-radius: 12px;
+  padding: 14px 0 6px;
+  border-top: 1px solid var(--borde);
   text-decoration: none;
   color: var(--texto);
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 .portal-util-card:hover {
-  border-color: var(--rosa);
-  background: var(--rosa-claro);
+  border-top-color: var(--rosa-oscuro);
+}
+.portal-util-card:hover .portal-util-titulo {
+  color: var(--rosa-oscuro);
 }
 .portal-util-kicker {
   font-size: 0.78rem;
   font-weight: 700;
   color: var(--rosa-oscuro);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
 }
 .portal-util-titulo {
   font-family: var(--fuente-display);
   font-size: 1.08rem;
   font-weight: 700;
   color: var(--texto);
+  transition: color 0.15s ease;
 }
 .portal-util-desc {
   font-size: 0.9rem;
@@ -3303,17 +3309,12 @@ input, textarea, select { font-size: 16px; }
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 3px 9px;
-  border-radius: 6px;
-  background: #fdf2f8;
-  border: 1px solid #f5d0e3;
   color: var(--rosa-oscuro);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
   text-decoration: none;
 }
 .card-cat-link:hover {
-  background: #fce7f3;
   text-decoration: underline;
 }
 .home-pub-slot {
@@ -3327,7 +3328,11 @@ input, textarea, select { font-size: 16px; }
   text-align: center;
 }
 .home-mas-btn {
-  min-width: 260px;
+  min-width: min(260px, 100%);
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.35;
+  text-align: center;
 }
 
 .banderines-guias-sep {
@@ -3387,3 +3392,95 @@ input, textarea, select { font-size: 16px; }
 .card-guia-leer {
   margin: 12px 0 0;
 }
+
+/* Rutas rapidas por necesidad y bloque ligero de metodo en Portada */
+.portal-necesidades {
+  display: grid;
+  gap: 10px 18px;
+  grid-template-columns: 1fr;
+  margin-top: 16px;
+}
+.portal-nec-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 0 4px;
+  border-top: 1px solid var(--borde);
+  text-decoration: none;
+  color: var(--texto);
+  transition: border-color 0.15s ease;
+}
+.portal-nec-card:hover {
+  border-top-color: var(--rosa-oscuro);
+}
+.portal-nec-titulo {
+  font-weight: 700;
+  font-size: 0.94rem;
+  color: var(--rosa-oscuro);
+}
+.portal-nec-meta {
+  font-size: 0.84rem;
+  color: var(--texto-suave);
+}
+
+.portal-metodo-linea {
+  margin-top: 32px;
+  padding: 24px 0 6px;
+  border-top: 1px solid var(--borde);
+}
+.metodo-linea-grid {
+  display: grid;
+  gap: 18px 28px;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+.metodo-linea-contraste {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.metodo-linea-contraste p {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+.metodo-linea-evitar {
+  background: var(--superficie);
+  color: var(--texto-suave);
+}
+.metodo-linea-funciona {
+  background: #fff;
+  border: 1px solid var(--borde);
+  color: var(--texto);
+}
+.metodo-linea-funciona strong {
+  color: var(--rosa-oscuro);
+}
+.metodo-linea-pasos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.metodo-linea-pasos li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--borde-suave);
+  font-size: 0.93rem;
+  color: var(--texto-suave);
+  line-height: 1.5;
+}
+.metodo-linea-pasos li:last-child {
+  border-bottom: none;
+}
+.metodo-linea-pasos li strong {
+  color: var(--texto);
+}
+@media (min-width: 820px) {
+  .portal-necesidades { grid-template-columns: repeat(2, 1fr); }
+  .metodo-linea-grid { grid-template-columns: 1.05fr 0.95fr; }
+}
+
