@@ -14,7 +14,7 @@ const CONFIG = {
   metaMin: 120,
   metaMax: 165,
   textoMin: 40,
-  rutasEstaticas: ['calendario', 'categorias', 'guias', 'herramientas', 'hitos-historicos', 'horoscopo', 'contacto', 'sobre-nosotros', 'privacidad', 'terminos-de-uso']
+  rutasEstaticas: ['calendario', 'categorias', 'guias', 'herramientas', 'hitos-historicos', 'horoscopo', 'tarot-egipcio', 'contacto', 'sobre-nosotros', 'privacidad', 'terminos-de-uso']
 };
 
 function normalizar(s) {

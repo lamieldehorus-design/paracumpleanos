@@ -220,7 +220,8 @@ export function generarUrlsSitio(
   catalogo: ReturnType<typeof crearCatalogo>,
   slugsGuias: string[] = [],
   slugsSignos: string[] = [],
-  slugsPaises: string[] = []
+  slugsPaises: string[] = [],
+  slugsTarot: string[] = []
 ): string[] {
   const urls: string[] = [
     `${SITIO}/`,
@@ -229,6 +230,7 @@ export function generarUrlsSitio(
     `${SITIO}/categorias/`,
     `${SITIO}/herramientas/`,
     `${SITIO}/horoscopo/`,
+    `${SITIO}/tarot-egipcio/`,
     `${SITIO}/guias/`,
     `${SITIO}/sobre-nosotros/`,
     `${SITIO}/contacto/`,
@@ -242,6 +244,10 @@ export function generarUrlsSitio(
 
   for (const slugSigno of slugsSignos) {
     urls.push(`${SITIO}/horoscopo/${slugSigno}/`);
+  }
+
+  for (const slugArcano of slugsTarot) {
+    urls.push(`${SITIO}/tarot-egipcio/${slugArcano}/`);
   }
 
   for (const slugGuia of slugsGuias) {
@@ -289,7 +295,8 @@ export function construirMapaLastmodSitemap(
   guias: { slug: string; fechaActualizacion?: string; fechaPublicacion?: string }[] = [],
   slugsSignos: string[] = [],
   slugsPaises: string[] = [],
-  fechaBaseSitio: string = '2026-11-20'
+  fechaBaseSitio: string = '2026-11-20',
+  slugsTarot: string[] = []
 ): Record<string, string> {
   if (!esFechaIsoValida(fechaBaseSitio)) {
     throw new Error(`Fecha base lastmod inválida: ${fechaBaseSitio}`);
@@ -352,6 +359,9 @@ export function construirMapaLastmodSitemap(
   for (const slugSigno of slugsSignos) {
     mapa[`${SITIO}/horoscopo/${slugSigno}/`] = fechaBaseSitio;
   }
+  for (const slugArcano of slugsTarot) {
+    mapa[`${SITIO}/tarot-egipcio/${slugArcano}/`] = fechaBaseSitio;
+  }
 
   const estaticas = [
     `${SITIO}/`,
@@ -360,6 +370,7 @@ export function construirMapaLastmodSitemap(
     `${SITIO}/categorias/`,
     `${SITIO}/herramientas/`,
     `${SITIO}/horoscopo/`,
+    `${SITIO}/tarot-egipcio/`,
     `${SITIO}/guias/`,
     `${SITIO}/sobre-nosotros/`,
     `${SITIO}/contacto/`,

@@ -11,6 +11,7 @@ import {
 } from '../lib/contenido.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { ZODIACOS } from '../lib/horoscopo.ts';
+import { ARCANOS_MAYORES } from '../lib/tarot-egipcio.ts';
 import { PAISES_HITOS } from '../data/hitos-historicos.ts';
 import { ACCESOS_RAPIDOS_PORTADA } from '../lib/gsc-estrategia.ts';
 import {
@@ -79,6 +80,20 @@ const indiceBuscador = hubs
       emoji: '✨',
       q: 'horoscopo zodiaco signo fechas cumpleaños mes nacimiento'.toLowerCase()
     },
+    {
+      titulo: 'Tarot Egipcio gratis: tirada interactiva, Arcano de cumpleaños y 78 arcanos',
+      slug: '/tarot-egipcio/',
+      tipo: 'Tarot Egipcio',
+      emoji: '☉',
+      q: 'tarot egipcio tirada gratis 78 arcanos mayores menores libro de thot arcano natal cumpleanos cartas lectura'.toLowerCase()
+    },
+    ...ARCANOS_MAYORES.map((a) => ({
+      titulo: `Tarot Egipcio · ${a.romano} ${a.nombre} (${a.astrologiaTexto})`,
+      slug: `/tarot-egipcio/${a.slug}/`,
+      tipo: 'Arcano Mayor',
+      emoji: a.simboloGlyph,
+      q: `tarot egipcio arcano ${a.numero} ${a.romano} ${a.nombre} ${a.deidad} ${a.astrologiaTexto} ${a.esencia}`.toLowerCase()
+    })),
     ...ZODIACOS.map((s) => ({
       titulo: `Cumpleaños de ${s.nombre} (${s.rangoTexto})`,
       slug: `/horoscopo/${s.slug}/`,
@@ -113,10 +128,23 @@ const utilidadesPortal = [
   { href: '/mas-de-10-anos-de-novios/', label: 'Aniversarios a medida' },
   { href: '/herramientas/#banderines-imprimir', label: 'Banderines A4 gratis' },
   { href: '/guias/', label: `${GUIAS_EDITORIALES.length} guías prácticas` },
-  { href: '/horoscopo/', label: 'Horóscopo' }
+  { href: '/horoscopo/', label: 'Horóscopo' },
+  { href: '/tarot-egipcio/', label: 'Tarot Egipcio' }
 ];
 
 const verticalesComplementarias = [
+  {
+    href: '/tarot-egipcio/',
+    kicker: '78 arcanos y tirada gratis',
+    titulo: 'Tarot Egipcio interactivo',
+    desc: 'Tiradas clásicas de 1, 3, 5 y 7 cartas, calculadora de Arcano de cumpleaños y 22 fichas mayores con dedicatorias vinculadas al horóscopo.'
+  },
+  {
+    href: '/horoscopo/',
+    kicker: '12 signos y 12 meses',
+    titulo: 'Horóscopo de cumpleaños',
+    desc: 'Rasgos, elementos, Arcanos del Tarot Egipcio afines y acceso directo a las colecciones de cada mes de nacimiento.'
+  },
   {
     href: '/hitos-historicos/',
     kicker: `${PAISES_HITOS.length} países del mundo`,
@@ -140,12 +168,6 @@ const verticalesComplementarias = [
     kicker: '100 % gratis en el navegador',
     titulo: 'Banderines A4, edad exacta y acrósticos',
     desc: 'Plantillas imprimibles A4, calculadora de días vividos, acrósticos con nombre y agenda .ics.'
-  },
-  {
-    href: '/horoscopo/',
-    kicker: '12 signos y 12 meses',
-    titulo: 'Horóscopo de cumpleaños',
-    desc: 'Rasgos, elementos y acceso directo a las colecciones de cada mes de nacimiento.'
   }
 ];
 
@@ -257,7 +279,7 @@ function normTexto(s: string): string {
         <strong>Personalización y descarga 100 % en tu dispositivo:</strong> adaptás nombre, firma y posdata en tiempo real dentro de cada colección para copiar el texto limpio a WhatsApp, bajar postales PNG cuadradas (1080×1080) o Story (1080×1920) e imprimir banderines A4 sin crear cuenta ni dejar datos personales.
       </li>
       <li>
-        <strong>Recursos abiertos para todo el año:</strong> complementamos el archivo con un <a href="/calendario/">calendario perpetuo de 366 días</a>, <a href="/hitos-historicos/">efemérides de los {radiografia.totalPaisesHitos} países del mundo</a>, <a href="/herramientas/">calculadora de edad exacta, acrósticos y recordatorios .ics</a> y <a href="/sobre-nosotros/">criterio editorial público</a>.
+        <strong>Recursos abiertos para todo el año:</strong> complementamos el archivo con un <a href="/tarot-egipcio/">Tarot Egipcio interactivo de 78 arcanos</a>, el <a href="/horoscopo/">horóscopo de cumpleaños</a>, un <a href="/calendario/">calendario perpetuo de 366 días</a>, <a href="/hitos-historicos/">efemérides de los {radiografia.totalPaisesHitos} países del mundo</a>, <a href="/herramientas/">calculadora de edad exacta, acrósticos y recordatorios .ics</a> y <a href="/sobre-nosotros/">criterio editorial público</a>.
       </li>
     </ul>
   </section>

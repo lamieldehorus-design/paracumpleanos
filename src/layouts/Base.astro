@@ -3,6 +3,7 @@ import '../styles/global.css';
 import { GRUPOS, hubs, hubsPorGrupo, nombreHub, todosMensajes } from '../lib/contenido.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { PAISES_HITOS } from '../data/hitos-historicos.ts';
+import { ARCANOS_MAYORES } from '../lib/tarot-egipcio.ts';
 import { TOP_FOOTER_GSC } from '../lib/gsc-estrategia.ts';
 interface Props {
   titulo: string;
@@ -195,6 +196,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
         <a href="/condolencias/">Condolencias</a>
         <a href="/herramientas/">Herramientas</a>
         <a href="/horoscopo/">Horóscopo</a>
+        <a href="/tarot-egipcio/">Tarot Egipcio</a>
         <a href="/guias/">Guías</a>
       </nav>
       <a class="nav-cta" href="/categorias/">{hubs.length} categorías</a>
@@ -234,6 +236,31 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
             </details>
           );
         })}
+        <details class="sidebar-grupo" open={grupoActual === 'tarot_horoscopo'}>
+          <summary>
+            <span>☉ Tarot Egipcio y Horóscopo</span>
+            <span class="sidebar-count">{ARCANOS_MAYORES.length}</span>
+          </summary>
+          <ul class="sidebar-hitos-accesos">
+            <li><a href="/tarot-egipcio/" aria-current={slugActual === 'tarot-egipcio' ? 'page' : undefined}>Tirada y 78 arcanos</a></li>
+            <li><a href="/tarot-egipcio/#calculadora-arcano">Arcano de cumpleaños</a></li>
+            <li><a href="/horoscopo/">Horóscopo (12 signos)</a></li>
+          </ul>
+          <ul>
+            {ARCANOS_MAYORES.map(function (arc) {
+              return (
+                <li>
+                  <a
+                    href={'/tarot-egipcio/' + arc.slug + '/'}
+                    aria-current={slugActual === 'tarot:' + arc.slug ? 'page' : undefined}
+                  >
+                    {arc.romano} · {arc.nombre}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </details>
         <details class="sidebar-grupo sidebar-grupo--hitos" open={grupoActual === 'hitos_calendario'}>
           <summary>
             <span>🌍 Hitos históricos y calendario</span>
@@ -308,6 +335,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
       <a href="/condolencias/">Condolencias</a>
       <a href="/herramientas/">Herramientas</a>
       <a href="/horoscopo/">Horóscopo</a>
+      <a href="/tarot-egipcio/">Tarot Egipcio</a>
       <a href="/categorias/#meses">Meses</a>
       <a href="/categorias/#fechas_especiales">Fechas especiales</a>
       <a href="/categorias/">Categorías</a>

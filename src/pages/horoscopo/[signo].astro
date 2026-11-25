@@ -4,6 +4,7 @@ import Compartir from '../../components/Compartir.astro';
 import PersonalizadorTarjeta from '../../components/PersonalizadorTarjeta.astro';
 import { SITIO, MARCA, migasLd, mensajesDe } from '../../lib/contenido.ts';
 import { ZODIACOS, MESES_CON_SIGNOS, type SignoZodiaco } from '../../lib/horoscopo.ts';
+import { arcanosPorSigno } from '../../lib/tarot-egipcio.ts';
 
 export function getStaticPaths() {
   return ZODIACOS.map((signo) => ({
@@ -35,6 +36,7 @@ const mesesVinculados = signo.mesesSlugs.map((slugMes, idx) => {
 });
 
 const otrosSignos = ZODIACOS.filter((z) => z.slug !== signo.slug);
+const arcanosDelSigno = arcanosPorSigno(signo.slug);
 
 const etiquetasTono: Record<string, string> = {
   emotivo: 'Emotivo y cercano',
@@ -108,10 +110,36 @@ const jsonld = [
       ))}
     </div>
     <p class="enlace-horoscopo-pie">
+      <a href="/tarot-egipcio/">Hacer tirada gratis de Tarot Egipcio →</a>
       <a href="/herramientas/#calculadora-edad">Calcular edad exacta y 10.000 días →</a>
-      <a href="/horoscopo/">Ver tabla completa de los 12 signos →</a>
+      <a href="/horoscopo/">Ver los 12 signos →</a>
     </p>
   </aside>
+
+  {arcanosDelSigno.length > 0 ? (
+    <aside class="enlace-horoscopo-mes tarot-puente-signo" aria-labelledby="hor-tarot-signo-tit">
+      <h2 id="hor-tarot-signo-tit">
+        {arcanosDelSigno.length === 1
+          ? `Arcano del Tarot Egipcio vinculado a ${signo.nombre}`
+          : `Arcanos del Tarot Egipcio vinculados a ${signo.nombre}`}
+      </h2>
+      <p>
+        En la correspondencia astrológica del <strong>Tarot Egipcio</strong>, {signo.nombre} vibra directamente con {arcanosDelSigno.length === 1 ? 'este Arcano Mayor' : 'estos Arcanos Mayores'} y sus dedicatorias simbólicas:
+      </p>
+      <div class="enlace-horoscopo-grid">
+        {arcanosDelSigno.map((a) => (
+          <a class="signo-mes-card" href={`/tarot-egipcio/${a.slug}/`}>
+            <span class="signo-mes-nombre">{a.romano} · {a.nombre} ({a.deidad})</span>
+            <span class="signo-mes-rango">{a.astrologiaTexto} · {a.esencia}</span>
+          </a>
+        ))}
+      </div>
+      <p class="enlace-horoscopo-pie">
+        <a href="/tarot-egipcio/#estudio-tarot">Abrir tirada interactiva de Tarot Egipcio →</a>
+        <a href="/tarot-egipcio/#calculadora-arcano">Calcular tu Arcano por fecha de nacimiento →</a>
+      </p>
+    </aside>
+  ) : null}
 
   <dl class="horoscopo-ficha-dl">
     <div>

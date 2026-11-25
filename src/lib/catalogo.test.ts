@@ -20,6 +20,7 @@ import {
 } from './catalogo';
 import { GUIAS_EDITORIALES } from '../data/guias';
 import { ZODIACOS, MESES_CON_SIGNOS } from './horoscopo';
+import { ARCANOS_MAYORES } from './tarot-egipcio';
 import { PAISES_HITOS, HITOS_MUNDIALES, hitosPaisesPorDiaMes } from '../data/hitos-historicos';
 import {
   obtenerResumenFechaSinAnio,
@@ -556,16 +557,17 @@ test('personalizador adapta saludos, cartas, bilingues, poemas y firma sin corta
   assert.equal(Object.keys(FORMATOS_TARJETA).length, 2);
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren las 24768 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
+test('generarUrlsSitio y generarSitemapXml cubren las 24791 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
   const slugsSignos = ZODIACOS.map((s) => s.slug);
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
-  const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises);
+  const slugsTarot = ARCANOS_MAYORES.map((a) => a.slug);
+  const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises, slugsTarot);
 
-  assert.equal(urls.length, 24768, `Se esperaban 24768 URLs indexables, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 24768, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(urls.length, 24791, `Se esperaban 24791 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 24791, 'Las URLs del sitemap deben ser todas unicas');
   assert.ok(urls.every((url) => url.startsWith('https://paracumpleanos.com/')));
   assert.ok(urls.every((url) => !/[?#]/.test(url)));
   assert.ok(urls.includes('https://paracumpleanos.com/'));
@@ -583,6 +585,8 @@ test('generarUrlsSitio y generarSitemapXml cubren las 24768 URLs indexables sin 
   assert.ok(urls.includes('https://paracumpleanos.com/herramientas/'));
   assert.ok(urls.includes('https://paracumpleanos.com/horoscopo/'));
   assert.ok(urls.includes('https://paracumpleanos.com/horoscopo/geminis/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/tarot-egipcio/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/tarot-egipcio/el-mago/'));
   assert.ok(urls.includes('https://paracumpleanos.com/cumpleanos-en-junio/'));
   assert.ok(urls.includes('https://paracumpleanos.com/cumpleanos-en-junio/5/'));
   assert.ok(urls.includes('https://paracumpleanos.com/feliz-san-valentin/'));
@@ -621,13 +625,13 @@ test('generarUrlsSitio y generarSitemapXml cubren las 24768 URLs indexables sin 
   assert.ok(xmlSinLastmod.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xmlSinLastmod.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xmlSinLastmod.match(/<loc>/g) || [];
-  assert.equal(locs.length, 24768);
+  assert.equal(locs.length, 24791);
   assert.ok(!xmlSinLastmod.includes('<lastmod>'), 'Sin mapa lastmod no debe emitir etiquetas lastmod');
 
-  const mapaLastmod = construirMapaLastmodSitemap(cat, GUIAS_EDITORIALES, slugsSignos, slugsPaises, '2026-11-22');
+  const mapaLastmod = construirMapaLastmodSitemap(cat, GUIAS_EDITORIALES, slugsSignos, slugsPaises, '2026-11-22', slugsTarot);
   const xmlConLastmod = generarSitemapXml(urls, mapaLastmod);
   const lastmods = xmlConLastmod.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || [];
-  assert.equal(lastmods.length, 24768, 'Cada una de las 24768 URLs debe recibir su lastmod real YYYY-MM-DD');
+  assert.equal(lastmods.length, 24791, 'Cada una de las 24791 URLs debe recibir su lastmod real YYYY-MM-DD');
   assert.ok(
     xmlConLastmod.includes('<loc>https://paracumpleanos.com/banderines-de-cumpleanos-para-imprimir/</loc><lastmod>2026-11-22</lastmod>'),
     'El sitemap debe reflejar el lastmod real de banderines'
@@ -635,7 +639,7 @@ test('generarUrlsSitio y generarSitemapXml cubren las 24768 URLs indexables sin 
   assert.throws(() => generarSitemapXml(['https://paracumpleanos.com/'], { 'https://paracumpleanos.com/': '2026-02-31' }));
 });
 
-test('Bing IndexNow cubre las 24768 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre las 24791 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -646,16 +650,17 @@ test('Bing IndexNow cubre las 24768 URLs en lotes validos de hasta 10000 y tiene
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
   const slugsSignos = ZODIACOS.map((s) => s.slug);
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
-  const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises));
+  const slugsTarot = ARCANOS_MAYORES.map((a) => a.slug);
+  const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises, slugsTarot));
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 24768);
+  assert.equal(extraidas.length, 24791);
 
   const payloads = construirPayloadsIndexNow(extraidas);
   assert.equal(payloads.length, 3);
-  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 24768);
+  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 24791);
   assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
   assert.equal(payloads[1].urlList.length, INDEXNOW_MAX_BATCH);
-  assert.equal(payloads[2].urlList.length, 4768);
+  assert.equal(payloads[2].urlList.length, 4791);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);
@@ -1185,7 +1190,7 @@ test('Anti-canibalizacion GSC, sitemap/RSS actualizados, noindex en /posts y con
 
   // 3. Sitemap, RSS, robots.txt y PuenteRedireccion (noindex + canonical)
   const sitemapSrc = fs.readFileSync(path.resolve('src/pages/sitemap.xml.ts'), 'utf8');
-  assert.ok(sitemapSrc.includes("'2026-11-23'"), 'sitemap.xml.ts debe usar fecha base actualizada 2026-11-23');
+  assert.ok(sitemapSrc.includes("'2026-11-25'"), 'sitemap.xml.ts debe usar fecha base actualizada 2026-11-25');
   const robotsSrc = fs.readFileSync(path.resolve('public/robots.txt'), 'utf8');
   assert.ok(robotsSrc.includes('Sitemap: https://paracumpleanos.com/rss.xml'), 'robots.txt debe declarar rss.xml');
   const puenteSrc = fs.readFileSync(path.resolve('src/components/PuenteRedireccion.astro'), 'utf8');
