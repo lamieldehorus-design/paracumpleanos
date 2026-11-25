@@ -1581,7 +1581,24 @@ test('Correccion Bing /publicaciones/, recuperacion GSC (esposa/esposo/mama/papa
     if (isAniv) {
       assert.ok(!/cumpleaños/i.test(blobEditorial), `Contaminacion de "cumpleaños" en bloque editorial de aniversario: ${hub.slug}`);
     }
+
+    const leadWords = String(hub.lead || '').trim().split(/\s+/).filter(Boolean).length;
+    const seoWords = String(hub.seoTexto || '').trim().split(/\s+/).filter(Boolean).length;
+    const seoParas = String(hub.seoTexto || '').split('\n\n').filter(Boolean).length;
+    assert.ok(leadWords >= 75, `Lead demasiado corto en ${hub.slug}: ${leadWords} palabras (min 75)`);
+    assert.ok(seoWords >= 260, `seoTexto demasiado corto en ${hub.slug}: ${seoWords} palabras (min 260)`);
+    assert.ok(seoParas >= 6, `seoTexto requiere 6 parrafos sustantivos en ${hub.slug}, tiene ${seoParas}`);
   }
+
+  // 4. Portada y directorio con guia pilar Ultra Guia Cosmica SEO y FAQPage
+  const idxSrc = fs.readFileSync(path.resolve('src/pages/index.astro'), 'utf8');
+  assert.ok(idxSrc.includes('portal-guia-cosmica'), 'La portada debe incluir la seccion pilar portal-guia-cosmica');
+  assert.ok(idxSrc.includes("'@type': 'FAQPage'"), 'La portada debe emitir JSON-LD FAQPage');
+  assert.ok(idxSrc.includes('class="tabla-comparativa"'), 'La portada debe incluir la tabla comparativa por canal y horario');
+  assert.ok(idxSrc.includes('class="comparacion-concreta"'), 'La portada debe incluir comparaciones concretas evitar vs mejor');
+
+  const catsSrc = fs.readFileSync(path.resolve('src/pages/categorias.astro'), 'utf8');
+  assert.ok(catsSrc.includes('class="cats-guia-editorial"'), '/categorias/ debe incluir la guia editorial de orientacion');
 });
 
 

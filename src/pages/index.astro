@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import TarjetaMensaje from '../components/TarjetaMensaje.astro';
-import AlertaMotivacionDiaria from '../components/AlertaMotivacionDiaria.astro';
 import {
   catalogo,
   GRUPOS,
@@ -16,28 +15,26 @@ import {
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { TEMAS_TARJETA } from '../lib/personalizador.ts';
 import { ZODIACOS } from '../lib/horoscopo.ts';
-import { PAISES_HITOS, HITOS_MUNDIALES } from '../data/hitos-historicos.ts';
+import { PAISES_HITOS } from '../data/hitos-historicos.ts';
 import { rankearGuiasPorPopularidad, seleccionarPoolPopularMixto } from '../lib/popularidad.ts';
 import { ETIQUETAS_SEGMENTOS, type SegmentoTono } from '../lib/editorial.ts';
 import {
   ACCESOS_RAPIDOS_PORTADA,
   BLOQUES_PORTADA_GSC,
-  ordenarHubsPorDemandaGsc,
   etiquetaCortaGsc
 } from '../lib/gsc-estrategia.ts';
 
-// Pool mixto de las publicaciones mas populares de TODAS las categorias del sitio
+// Pool mixto de las publicaciones mas populares de TODAS las categorias del sitio (32 totales, 6 iniciales para lectura agil)
 const poolPopular = seleccionarPoolPopularMixto(catalogo, 32);
+const LIMITE_INICIAL_HOME = 6;
 const segmentosHomeDisponibles: SegmentoTono[] = [
   'corto',
   'emotivo',
   'recuerdo',
   'gratitud',
-  'reflexivo',
   'carta',
   'divertido',
   'fe',
-  'formal',
   'duelo'
 ];
 const filtrosHome = [
@@ -51,10 +48,10 @@ const filtrosHome = [
     .filter((f) => f.count > 0)
 ];
 
-// Guias ordenadas por popularidad (con re-ranking dinamico segun visitas acumuladas)
+// Guias ordenadas por popularidad (salience editorial: 1 guia principal + 3 secundarias)
 const guiasRankeadas = rankearGuiasPorPopularidad(GUIAS_EDITORIALES);
 const guiasLead = guiasRankeadas[0];
-const guiasSecundarias = guiasRankeadas.slice(1, 5);
+const guiasSecundarias = guiasRankeadas.slice(1, 4);
 const guiasIndiceJson = guiasRankeadas.map((g) => ({
   slug: g.slug,
   titulo: g.titulo,
@@ -68,7 +65,7 @@ const guiasIndiceJson = guiasRankeadas.map((g) => ({
   scoreBase: g.scorePopularidad
 }));
 
-// Indice liviano de todas las categorías + guías + hitos para el buscador universal del portal
+// Indice liviano de todas las categorias + guias + hitos para el buscador universal del portal
 const indiceBuscador = hubs
   .map((h) => ({
     titulo: nombreHub(h),
@@ -141,6 +138,49 @@ const indiceBuscador = hubs
 const temas = Object.values(TEMAS_TARJETA);
 const totalPublicacionesPortal = todosMensajes.length + PAISES_HITOS.length + GUIAS_EDITORIALES.length;
 
+const utilidadesPortal = [
+  { href: '/calendario/', label: 'Calendario 366 días' },
+  { href: '/hitos-historicos/', label: `Hitos de ${PAISES_HITOS.length} países` },
+  { href: '/condolencias/', label: 'Condolencias y duelo' },
+  { href: '/mas-de-10-anos-de-novios/', label: 'Aniversarios a medida' },
+  { href: '/herramientas/#banderines-imprimir', label: 'Banderines A4 gratis' },
+  { href: '/motivaciones/', label: 'Motivación diaria' },
+  { href: '/herramientas/', label: 'Calculadora y acrósticos' }
+];
+
+const faqsPortada = [
+  {
+    pregunta: '¿Cómo desear feliz cumpleaños sin sonar repetitivo ni genérico?',
+    respuesta:
+      'Seguí una estructura concreta de cuatro piezas: nombrá a la persona por su apodo real, recordá una escena puntual que compartieron en el último año (un café, un consejo, un viaje o una risa de entrecasa), sumá un deseo específico para sus proyectos actuales y cerrá con tu firma habitual. Evitar los clichés de cadena hace que incluso cuatro líneas se sientan escritas solo para esa persona.'
+  },
+  {
+    pregunta: '¿Conviene enviar un mensaje corto por WhatsApp o una carta larga emotiva?',
+    respuesta:
+      'Depende del canal y del horario. Apenas empieza la mañana por WhatsApp o en un estado de Instagram, los textos breves de 30 a 65 palabras se leen completos sin quedar cortados entre decenas de notificaciones. En cambio, las cartas largas de varios párrafos lucen muchísimo mejor entregadas en una tarjeta impresa junto a un regalo, al final del día o en vínculos íntimos como mamá, papá, pareja e hijos.'
+  },
+  {
+    pregunta: '¿Cómo personalizar las tarjetas con nombre y descargar PNG o Story gratis?',
+    respuesta:
+      'En la portada o dentro de cualquiera de las 441 colecciones podés escribir el nombre real y tu firma en el personalizador en vivo: todos los textos se adaptan automáticamente respetando puntuación, saludos y estrofas. Después tocás «Copiar texto» para enviarlo limpio por WhatsApp o «Descargar PNG» para elegir paleta de color, tipografía y formato cuadrado (1080×1080) o vertical Story (1080×1920) sin registro.'
+  },
+  {
+    pregunta: '¿Qué conviene escribir en un cumpleaños a distancia o con cambio de huso horario?',
+    respuesta:
+      'El secreto de un gran saludo a la distancia es celebrar su presente en la ciudad donde vive y mirar hacia el próximo reencuentro, en lugar de teñir el día de tristeza. Calculá el desayuno según su reloj local para llegar temprano, sumá una foto vieja que despierte sonrisas y proponé una videollamada corta o brindis simultáneo a la tarde.'
+  },
+  {
+    pregunta: '¿Cómo redactar condolencias y mensajes en fechas de duelo con tacto real?',
+    respuesta:
+      'En fechas sensibles o ante una pérdida, la sobriedad acompaña mucho más que las explicaciones grandilocuentes. Elegí frases breves que validen el recuerdo, nombren con respeto a la persona homenajeada y ofrezcan presencia concreta sin apuros. Todas nuestras 17 colecciones de condolencias, duelo y recuerdos están auditadas para quedar libres de vocabulario festivo.'
+  },
+  {
+    pregunta: '¿Cómo funcionan los aniversarios de más de 10 años y los banderines A4 imprimibles?',
+    respuesta:
+      'Para parejas que superan la década, la colección «Más de 10 años de novios» permite elegir el número exacto entre 11 y 80 años y adapta los 50 textos al instante sin mezclar palabras de cumpleaños. Además, desde nuestra sección de banderines A4 podés escribir el nombre del agasajado, elegir entre 6 paletas o versión para colorear e imprimir gratis las letras listas para recortar.'
+  }
+];
+
 const jsonld = [
   {
     '@context': 'https://schema.org',
@@ -153,6 +193,20 @@ const jsonld = [
       target: SITIO + '/categorias/?q={search_term_string}',
       'query-input': 'required name=search_term_string'
     }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqsPortada.map(function (f) {
+      return {
+        '@type': 'Question',
+        name: f.pregunta,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: f.respuesta
+        }
+      };
+    })
   }
 ];
 ---
@@ -165,29 +219,29 @@ const jsonld = [
   <section class="portal-hero" aria-labelledby="portal-h1">
     <div class="portal-hero-texto">
       <p class="portal-kicker">
-        Portal editorial en español · {hubs.length} colecciones · {totalPublicacionesPortal.toLocaleString('es-AR')} publicaciones únicas · {PAISES_HITOS.length} países
+        {hubs.length} colecciones · {totalPublicacionesPortal.toLocaleString('es-AR')} textos inéditos · Sin registro
       </p>
-      <h1 id="portal-h1">Frases y mensajes reales para cada cumpleaños, fecha y recuerdo</h1>
+      <h1 id="portal-h1">Mensajes reales para cada cumpleaños, aniversario y recuerdo</h1>
       <p class="portal-sub">
-        Elegí entre {hubs.length} colecciones de feliz cumpleaños, aniversarios de 1 mes a +10 años personalizables, condolencias, nostalgia y banderines A4 para imprimir, o explorá el calendario anual con los hitos históricos de los {PAISES_HITOS.length} países.
+        Encontrá palabras honestas y lejos de los clichés repetidos entre {hubs.length} colecciones temáticas: cumpleaños por vínculo y edad, cartas largas emotivas, aniversarios de pareja, bendiciones cristianas, saludos a la distancia y condolencias serenas. Personalizá con nombre y firma en vivo, copiá limpio para WhatsApp o bajá tu tarjeta PNG gratis.
       </p>
 
       <div class="portal-buscador-caja">
-        <label for="portal-buscador" class="portal-buscador-label">Buscá destinatario, país, banderines, condolencias, aniversario o fecha en toda la web</label>
+        <label for="portal-buscador" class="portal-buscador-label">Buscá destinatario, edad, aniversario, condolencias o país</label>
         <div class="portal-buscador-fila">
           <input
             id="portal-buscador"
             type="search"
-            placeholder="Ej.: amiga, 5 años de novios, nostalgia, banderines, condolencias, Argentina…"
+            placeholder="Ej.: esposa, papá, 5 años de novios, condolencias, banderines…"
             autocomplete="off"
           />
-          <a class="btn btn-copiar" href="#secciones-portal">Explorar secciones</a>
+          <a class="btn btn-copiar" href="/categorias/">Ver {hubs.length} categorías</a>
         </div>
         <ul id="portal-resultados" class="portal-resultados" hidden></ul>
       </div>
 
       <div class="portal-accesos-rapidos" aria-label="Accesos directos frecuentes">
-        <span class="accesos-titulo">Más buscados hoy:</span>
+        <span class="accesos-titulo">Más buscados:</span>
         {ACCESOS_RAPIDOS_PORTADA.map(function (acc, idx) {
           return (
             <>
@@ -200,7 +254,7 @@ const jsonld = [
     </div>
 
     <div class="portal-hero-studio" aria-label="Vista previa del personalizador de tarjetas">
-      <p class="studio-etiqueta">Estudio rápido · Probá personalizar acá mismo</p>
+      <p class="studio-etiqueta">Probá personalizar tu tarjeta acá mismo</p>
       <div
         class="tarjeta-visual studio-card"
         id="portal-preview-card"
@@ -267,52 +321,29 @@ const jsonld = [
     </div>
   </section>
 
-  <section class="portal-herramientas-tira" aria-label="Calendario, hitos históricos, condolencias y herramientas">
-    <a class="portal-util-card" href="/calendario/">
-      <span class="portal-util-kicker">Sin año · 366 días</span>
-      <span class="portal-util-titulo">📅 Calendario universal de fechas</span>
-      <span class="portal-util-desc">Elegí cualquier día y mes para ver celebraciones, hitos históricos, signo zodiacal, motivación y fecha de duelo.</span>
-    </a>
-    <a class="portal-util-card" href="/hitos-historicos/">
-      <span class="portal-util-kicker">{PAISES_HITOS.length} países del mundo</span>
-      <span class="portal-util-titulo">🌍 Hitos históricos mundiales</span>
-      <span class="portal-util-desc">Descubrí qué celebra cada país en su fiesta nacional o independencia, su historia, tradiciones y saludos.</span>
-    </a>
-    <a class="portal-util-card" href="/condolencias/">
-      <span class="portal-util-kicker">Acompañamiento respetuoso</span>
-      <span class="portal-util-titulo">🕊️ Condolencias y fecha de duelo</span>
-      <span class="portal-util-desc">50 mensajes sobrios de pésame, nostalgia y selector interactivo para honrar una fecha de duelo con alerta anual .ics.</span>
-    </a>
-    <a class="portal-util-card" href="/mas-de-10-anos-de-novios/">
-      <span class="portal-util-kicker">11 a 80 años a medida</span>
-      <span class="portal-util-titulo">💞 Aniversario +10 años personalizable</span>
-      <span class="portal-util-desc">Elegí el número exacto de años juntos y adaptá al instante 50 frases y cartas, además de los 1–11 meses y 1–10 años.</span>
-    </a>
-    <a class="portal-util-card" href="/herramientas/#banderines-imprimir">
-      <span class="portal-util-kicker">Imprimible gratis A4</span>
-      <span class="portal-util-titulo">🎏 Banderines para imprimir</span>
-      <span class="portal-util-desc">Armá banderines de feliz cumpleaños con el nombre que quieras, bordes para recortar y descarga lista para A4.</span>
-    </a>
-    <a class="portal-util-card" href="/herramientas/">
-      <span class="portal-util-kicker">Herramientas gratuitas</span>
-      <span class="portal-util-titulo">🎂 Edad exacta, acróstico y agenda .ics</span>
-      <span class="portal-util-desc">Calculá días vividos e hito de 10.000 días, creá acrósticos por nombre y descargá alertas anuales.</span>
-    </a>
-  </section>
+  <nav class="portal-ribbon" aria-label="Utilidades y verticales principales">
+    <span class="portal-ribbon-label">Accesos útiles</span>
+    <div class="portal-ribbon-links">
+      {utilidadesPortal.map(function (u) {
+        return <a href={u.href}>{u.label}</a>;
+      })}
+    </div>
+  </nav>
 
-  <section class="portal-banda portal-top-gsc" aria-labelledby="titulo-top-gsc">
+  <section id="secciones-portal" class="portal-banda portal-top-gsc" aria-labelledby="titulo-top-gsc">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Selección directa según lo que más buscan los lectores</p>
-        <h2 id="titulo-top-gsc">Lo más buscado ahora en cumpleaños</h2>
+        <p class="banda-kicker">Colecciones con mayor demanda · Acceso directo en un clic</p>
+        <h2 id="titulo-top-gsc">Lo más buscado ahora en cumpleaños y familia</h2>
       </div>
-      <a class="enlace-directorio" href="/categorias/">Ver todas las {hubs.length} colecciones →</a>
+      <a class="enlace-directorio" href="/categorias/">Directorio completo ({hubs.length}) →</a>
     </div>
+
     <div class="portal-top-gsc-grid">
       {BLOQUES_PORTADA_GSC.map(function (bloque) {
         return (
           <article class="portal-gsc-col">
-            <h3><span aria-hidden="true">{bloque.emoji}</span> {bloque.titulo}</h3>
+            <h3>{bloque.titulo}</h3>
             <p class="portal-gsc-sub">{bloque.subtitulo}</p>
             <ul class="portal-gsc-links">
               {bloque.slugs.map(function (sl) {
@@ -333,80 +364,88 @@ const jsonld = [
         );
       })}
     </div>
+
+    <div class="portal-temas-indice" aria-label="Índice rápido de las 14 secciones temáticas">
+      <div class="portal-temas-cabecera">
+        <p class="portal-temas-titulo">Explorar las {GRUPOS.length} secciones del archivo</p>
+        <a href="/categorias/">Ver todas las {hubs.length} colecciones →</a>
+      </div>
+      <ul class="portal-temas-lista">
+        {GRUPOS.map(function (g) {
+          const lista = hubsPorGrupo.get(g.id) || [];
+          if (!lista.length) return null;
+          return (
+            <li>
+              <a href={`/categorias/#${g.id}`}>
+                <span class="portal-tema-nombre">{g.nombre}</span>
+                <span class="portal-tema-count">{lista.length}</span>
+              </a>
+            </li>
+          );
+        })}
+        <li>
+          <a href="/hitos-historicos/">
+            <span class="portal-tema-nombre">Hitos históricos mundiales</span>
+            <span class="portal-tema-count">{PAISES_HITOS.length}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
   </section>
 
-  <AlertaMotivacionDiaria />
-
-  <section id="secciones-portal" class="portal-banda" aria-labelledby="titulo-secciones-portal">
+  <section class="portal-banda" aria-labelledby="titulo-muestra-portal">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Mapa completo del portal</p>
-        <h2 id="titulo-secciones-portal">Navegá las {GRUPOS.length} secciones temáticas ({hubs.length} colecciones) + Hitos del Mundo</h2>
+        <p class="banda-kicker">Selección curada · Copiar limpio o abrir en tarjeta PNG</p>
+        <h2 id="titulo-muestra-portal">Dedicatorias listas para enviar hoy</h2>
       </div>
-      <a class="enlace-directorio" href="/categorias/">Ver directorio completo ({hubs.length} categorías) →</a>
+      <a class="enlace-directorio" href="/categorias/">Ver las {todosMensajes.length.toLocaleString('es-AR')} publicaciones →</a>
     </div>
 
-    <div class="portal-secciones-grid">
-      {GRUPOS.map(function (g) {
-        const lista = hubsPorGrupo.get(g.id) || [];
-        if (!lista.length) return null;
-        const destacadas = ordenarHubsPorDemandaGsc(lista).slice(0, 6);
-        const totalMsgsGrupo = lista.reduce((acc, h) => acc + mensajesDe(h.slug).length, 0);
+    <div class="filtros-tono" role="toolbar" aria-label="Filtrar textos populares por estilo">
+      {filtrosHome.map(function (f, idx) {
         return (
-          <article class="portal-seccion-card">
-            <div class="portal-seccion-top">
-              <h3><a href={`/categorias/#${g.id}`}>{g.emoji} {g.nombre}</a></h3>
-              <p class="card-meta">
-                <span>{lista.length} colecciones</span>
-                <span aria-hidden="true">·</span>
-                <span>{totalMsgsGrupo.toLocaleString('es-AR')} textos</span>
-              </p>
-            </div>
-            <ul class="portal-seccion-links">
-              {destacadas.map(function (h) {
-                return (
-                  <li>
-                    <a href={'/' + h.slug + '/'}>{nombreHub(h)}</a>
-                  </li>
-                );
-              })}
-            </ul>
-            <p class="portal-seccion-pie">
-              <a href={`/categorias/#${g.id}`}>Explorar todas en {g.nombre} ({lista.length}) →</a>
-            </p>
-          </article>
+          <button
+            type="button"
+            class={'filtro-btn' + (idx === 0 ? ' activo' : '')}
+            data-home-filtro={f.id}
+            aria-pressed={idx === 0 ? 'true' : 'false'}
+          >
+            {f.label} ({f.count})
+          </button>
         );
       })}
+    </div>
 
-      <article class="portal-seccion-card">
-        <div class="portal-seccion-top">
-          <h3><a href="/hitos-historicos/">🌍 Hitos históricos mundiales y Calendario</a></h3>
-          <p class="card-meta">
-            <span>{PAISES_HITOS.length} países + {HITOS_MUNDIALES.length} globales</span>
-            <span aria-hidden="true">·</span>
-            <span>366 días sin año</span>
-          </p>
-        </div>
-        <ul class="portal-seccion-links">
-          <li><a href="/calendario/">Calendario perpetuo (sin año)</a></li>
-          <li><a href="/hitos-historicos/">Todos los {PAISES_HITOS.length} países del mundo</a></li>
-          <li><a href="/hitos-historicos/argentina/">Argentina · 9 de julio</a></li>
-          <li><a href="/hitos-historicos/mexico/">México · 16 de septiembre</a></li>
-          <li><a href="/hitos-historicos/espana/">España · 12 de octubre</a></li>
-          <li><a href="/horoscopo/">Horóscopo de cumpleaños (12 signos)</a></li>
-        </ul>
-        <p class="portal-seccion-pie">
-          <a href="/hitos-historicos/">Explorar los {PAISES_HITOS.length} hitos históricos →</a>
-        </p>
-      </article>
+    <div class="grilla" id="home-muestra-grilla">
+      {poolPopular.map(function (it, idx) {
+        return (
+          <div
+            class="home-pub-slot"
+            data-home-idx={idx}
+            data-home-slug={it.mensaje.slug}
+            data-home-score={it.scoreBase}
+            data-home-segmentos={it.segmentos.join(',')}
+            style={idx >= LIMITE_INICIAL_HOME ? 'display:none' : undefined}
+          >
+            <TarjetaMensaje m={it.mensaje} hub={it.hub} mostrarCategoria={true} scoreBase={it.scoreBase} />
+          </div>
+        );
+      })}
+    </div>
+
+    <div class="home-mas-wrap">
+      <button type="button" class="btn btn-copiar home-mas-btn" id="home-ver-mas-populares">
+        Mostrar más dedicatorias ({poolPopular.length - LIMITE_INICIAL_HOME} más)
+      </button>
     </div>
   </section>
 
   <section class="portal-banda portal-banda-guias" aria-labelledby="titulo-guias-portal">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Más visitadas y actualizadas</p>
-        <h2 id="titulo-guias-portal">Guías prácticas para escribir mejor y regalar con criterio</h2>
+        <p class="banda-kicker">Criterio editorial y redacción práctica</p>
+        <h2 id="titulo-guias-portal">Guías para escribir mejor y regalar con criterio</h2>
       </div>
       <a class="enlace-directorio" href="/guias/">Leer las {GUIAS_EDITORIALES.length} guías →</a>
     </div>
@@ -414,7 +453,7 @@ const jsonld = [
     <div class="portal-guias-salience" id="portal-guias-populares">
       <article class="card guia-destacada" id="guia-popular-lead">
         <p class="card-meta">
-          <span id="guia-lead-etiqueta">{guiasLead.emoji} Guía más visitada</span>
+          <span id="guia-lead-etiqueta">Guía destacada</span>
           <span aria-hidden="true">·</span>
           <span id="guia-lead-tiempo">{guiasLead.tiempoLectura}</span>
           <span aria-hidden="true">·</span>
@@ -433,7 +472,7 @@ const jsonld = [
           return (
             <article class="guia-fila">
               <p class="card-meta">
-                <span>{g.emoji} {g.tiempoLectura}</span>
+                <span>{g.tiempoLectura}</span>
                 <span aria-hidden="true">·</span>
                 <time datetime={g.fechaPublicacion}>{g.fechaPublicacion}</time>
               </p>
@@ -446,61 +485,186 @@ const jsonld = [
     </div>
   </section>
 
-  <section class="portal-banda" aria-labelledby="titulo-muestra-portal">
+  <section class="portal-banda portal-guia-cosmica" aria-labelledby="titulo-guia-cosmica">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Más populares de todas las categorías · Mezcla de todo el portal</p>
-        <h2 id="titulo-muestra-portal">Textos listos para copiar según el momento</h2>
+        <p class="banda-kicker">Manual editorial de redacción afectiva · Método concreto sin frases hechas</p>
+        <h2 id="titulo-guia-cosmica">Cómo escribir mensajes de cumpleaños, aniversario y recuerdo que se sientan verdaderos</h2>
       </div>
-      <a class="enlace-directorio" href="/categorias/">Explorar las {todosMensajes.length.toLocaleString('es-AR')} publicaciones →</a>
+      <a class="enlace-directorio" href="/guias/">Explorar {GUIAS_EDITORIALES.length} guías prácticas →</a>
     </div>
 
-    <div class="filtros-tono" role="toolbar" aria-label="Filtrar textos populares de todas las categorías por estilo">
-      {filtrosHome.map(function (f, idx) {
-        return (
-          <button
-            type="button"
-            class={'filtro-btn' + (idx === 0 ? ' activo' : '')}
-            data-home-filtro={f.id}
-            aria-pressed={idx === 0 ? 'true' : 'false'}
-          >
-            {f.label} ({f.count})
-          </button>
-        );
-      })}
-    </div>
+    <div class="guia-cosmica-cuerpo">
+      <div class="guia-cosmica-resumen">
+        <p class="guia-cosmica-etiqueta">Fórmula directa para destacar en cualquier saludo</p>
+        <p>
+          Un mensaje que emociona de verdad nunca depende de adjetivos rebuscados ni cadenas reenviadas: se apoya en <strong>cuatro piezas concretas</strong> que podés armar en menos de un minuto. Abrí con el apodo real con que llamás a la persona, nombrá una escena verificable del último año (una charla, un gesto de apoyo o una costumbre cotidiana), sumá un deseo puntual para la etapa que empieza hoy y cerrá con tu firma habitual.
+        </p>
+      </div>
 
-    <div class="grilla" id="home-muestra-grilla">
-      {poolPopular.map(function (it, idx) {
-        return (
-          <div class="home-pub-slot" data-home-idx={idx} data-home-slug={it.mensaje.slug} data-home-score={it.scoreBase} data-home-segmentos={it.segmentos.join(',')} style={idx >= 12 ? 'display:none' : undefined}>
-            <TarjetaMensaje m={it.mensaje} hub={it.hub} mostrarCategoria={true} scoreBase={it.scoreBase} />
-          </div>
-        );
-      })}
-    </div>
+      <h3>Por qué la mayoría de los saludos pasan desapercibidos y cómo salir del molde</h3>
+      <p>
+        Cuando alguien cumple años, celebra un aniversario o atraviesa una fecha sensible, su teléfono se llena en pocas horas de frases idénticas: <em>«que la pases lindo»</em>, <em>«que se cumplan todos tus sueños»</em> o imágenes reenviadas sin nombre. El cerebro descarta automáticamente los textos previsibles porque no ofrecen ninguna señal de que quien escribe pensó de verdad en el destinatario.
+      </p>
+      <p>
+        Para que tus palabras se recuerden —e incluso se guarden en favoritos o en una caja de tarjetas—, aplicá el principio de <strong>concreción afectiva</strong>: reemplazá cada elogio abstracto por un hecho real que ambos reconozcan. No digas solamente «gracias por estar siempre»; decí «gracias por el café que trajiste aquel jueves difícil y por escuchar sin apuro». Ese pequeño cambio transforma un saludo correcto en una dedicatoria irrepetible.
+      </p>
 
-    <div class="home-mas-wrap">
-      <button type="button" class="btn btn-copiar home-mas-btn" id="home-ver-mas-populares">
-        Mostrar más publicaciones populares ({poolPopular.length - 12} más)
-      </button>
+      <div class="comparacion-concreta" aria-label="Comparación entre saludos genéricos y mensajes concretos">
+        <div class="comp-item comp-evitar">
+          <span class="comp-etiqueta">Evitá el molde automático (pareja y familia)</span>
+          <p>«¡Feliz cumpleaños! Que Dios te bendiga mucho y que todos tus deseos se hagan realidad en este nuevo año de vida.»</p>
+        </div>
+        <div class="comp-item comp-mejor">
+          <span class="comp-etiqueta">Mejor con concreción real</span>
+          <p>«Feliz cumple, amor. Gracias por las risas en la cocina, por sostenernos en los días largos y por hacer que casa siempre se sienta refugio. Que este año te regale salud firme y tiempo propio.»</p>
+        </div>
+      </div>
+
+      <div class="comparacion-concreta" aria-label="Comparación en saludos a la distancia">
+        <div class="comp-item comp-evitar">
+          <span class="comp-etiqueta">Evitá cargar el día de melancolía (distancia)</span>
+          <p>«Qué tristeza no poder abrazarte hoy, te extraño demasiado y este día no es igual sin vos acá.»</p>
+        </div>
+        <div class="comp-item comp-mejor">
+          <span class="comp-etiqueta">Mejor luminoso y presente</span>
+          <p>«Aunque haya kilómetros de por medio, celebro a lo grande cada paso que estás dando allá. Te mando este abrazo temprano según tu horario y ya guardo el brindis para nuestro próximo reencuentro.»</p>
+        </div>
+      </div>
+
+      <div class="comparacion-concreta" aria-label="Comparación en condolencias y fechas de duelo">
+        <div class="comp-item comp-evitar">
+          <span class="comp-etiqueta">Evitá frases hechas en duelo</span>
+          <p>«Sé fuerte, todo pasa por algo y el tiempo cura todas las heridas. Ánimo en este día.»</p>
+        </div>
+        <div class="comp-item comp-mejor">
+          <span class="comp-etiqueta">Mejor sereno y honesto</span>
+          <p>«No existen palabras que alcancen, pero te abrazo fuerte hoy y recuerdo con enorme cariño su calma y sus charlas. No hace falta que respondas este mensaje; contá conmigo para lo que necesites esta semana.»</p>
+        </div>
+      </div>
+
+      <h3>Guía rápida por canal, extensión y horario ideal de envío</h3>
+      <p>
+        El mismo cariño pide un formato distinto según dónde y cuándo lo va a leer quien recibe tu mensaje. Un texto de diez párrafos enviado a las ocho de la mañana en un chat grupal se pierde en la pantalla del celular, mientras que dos líneas apuradas en el sobre de un regalo importante quedan cortas. Usá esta referencia práctica antes de copiar o descargar tu postal:
+      </p>
+
+      <div class="tabla-responsive">
+        <table class="tabla-comparativa">
+          <thead>
+            <tr>
+              <th>Canal y ocasión</th>
+              <th>Extensión recomendada</th>
+              <th>Mejor horario</th>
+              <th>Qué sumar para que emocione</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>WhatsApp matutino o chat privado</strong></td>
+              <td class="num-col">35 – 65 palabras</td>
+              <td>Primeras horas de su reloj local</td>
+              <td>Apodo afectuoso al inicio y una posdata concreta sobre el plan del día.</td>
+            </tr>
+            <tr>
+              <td><strong>Estado de WhatsApp o Story 1080×1920</strong></td>
+              <td class="num-col">20 – 45 palabras</td>
+              <td>Media mañana o mediodía</td>
+              <td>Una foto real o postal limpia con tipografía clara que se lea en 4 segundos.</td>
+            </tr>
+            <tr>
+              <td><strong>Tarjeta impresa junto a flores o regalo</strong></td>
+              <td class="num-col">65 – 125 palabras</td>
+              <td>En mano durante el encuentro</td>
+              <td>Gratitud por un gesto concreto del último año y tu firma escrita con calma.</td>
+            </tr>
+            <tr>
+              <td><strong>Carta larga emotiva (familia y pareja)</strong></td>
+              <td class="num-col">140 – 260 palabras</td>
+              <td>Desayuno tranquilo o cierre de la noche</td>
+              <td>Cuatro tiempos: apodo, recuerdo real, enseñanza valorada y deseo luminoso.</td>
+            </tr>
+            <tr>
+              <td><strong>Condolencias o aniversario luctuoso</strong></td>
+              <td class="num-col">35 – 95 palabras</td>
+              <td>En privado y sin exigir respuesta</td>
+              <td>Tono sereno, cero expresiones festivas y una memoria respetuosa del ser querido.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Cómo ajustar el tono exacto según el vínculo y la etapa de vida</h3>
+      <p>
+        Cada relación tiene un código propio que conviene cuidar desde la primera oración. Al saludar a <a href="/feliz-cumpleanos-mama/">mamá</a> o <a href="/feliz-cumpleanos-papa/">papá</a>, lo que más conmueve es sentirse vistos por su entrega silenciosa y recibir deseos pensados para su propio descanso, salud y disfrute personal. En el vínculo de pareja —ya sea en <a href="/feliz-cumpleanos-para-mi-esposa/">cumpleaños de esposa</a>, <a href="/feliz-cumpleanos-para-mi-esposo/">esposo</a> o en <a href="/categorias/#aniversarios">aniversarios de novios de 1 mes hasta más de 10 años</a>— la autenticidad nace de celebrar el equipo diario y los planes compartidos sin caer en promesas de telenovela.
+      </p>
+      <p>
+        Para hijos, hermanos y amistades, la etapa de vida cambia por completo el registro: en infancia conviene dejar una pequeña cápsula de memoria que puedan releer años después; en adolescencia y juventud funciona evitar los sermones y valorar su personalidad real; y a partir de los 30, 40, 50 o 60 años conviene dejar atrás los chistes gastados sobre la edad para celebrar la experiencia ganada y la calma elegida. Si tu vínculo comparte fe, nuestras colecciones de <a href="/categorias/#cristiano">bendiciones cristianas y «Dios te bendiga»</a> combinan espiritualidad cercana con afecto cotidiano.
+      </p>
+      <p>
+        En el plano laboral o educativo —jefes, colegas, docentes, médicos, clientes o vecinos— la regla de oro es respetar exactamente el trato habitual de vos o de usted y no mezclar asuntos pendientes en el saludo. Por último, cuando la fecha toca una ausencia, el archivo separa de raíz las <a href="/categorias/#duelo_recuerdos">17 colecciones de condolencias, nostalgia y recuerdos hasta el cielo</a> para que nunca aparezca una palabra festiva fuera de lugar.
+      </p>
+
+      <h3>Cómo aprovechar las {hubs.length} colecciones y el personalizador en 60 segundos</h3>
+      <ol class="lista-editorial lista-numerada">
+        <li><strong>Elegí la colección exacta por vínculo u ocasión:</strong> usá el buscador del inicio o entrá al <a href="/categorias/">directorio completo de {hubs.length} colecciones</a>, donde cada categoría reúne entre 40 y 70 textos únicos auditados por tema y tono.</li>
+        <li><strong>Filtrá por extensión y estilo antes de leer todo:</strong> dentro de cada hub podés separar en un clic mensajes breves para WhatsApp, emotivos, cartas largas, gratitud, fe o humor sano.</li>
+        <li><strong>Personalizá nombre, firma y posdata en vivo:</strong> escribí cómo llamás realmente a esa persona y todas las tarjetas se actualizan al instante respetando comas, exclamaciones, estrofas y firmas.</li>
+        <li><strong>Copiá limpio o descargá tu recurso visual gratis:</strong> enviá directo a WhatsApp sin perder saltos de línea, bajá una tarjeta PNG 1080×1080 o Story 1080×1920, o complementá el día con el <a href="/calendario/">calendario perpetuo de 366 días</a> y los <a href="/herramientas/">banderines A4 y calculadora de edad</a>.</li>
+      </ol>
     </div>
   </section>
 
-  <section class="portal-banda portal-compartidos" id="lo-mas-compartido" aria-labelledby="titulo-mas-compartido">
+  <section class="portal-estandares" aria-labelledby="titulo-criterio-portal">
+    <h2 id="titulo-criterio-portal">Criterio editorial y calidad verificada de {MARCA}</h2>
+    <div class="estandares-grid">
+      <div class="estandar-item">
+        <h3>01. {totalPublicacionesPortal.toLocaleString('es-AR')} textos originales y auditados</h3>
+        <p>Cada dedicatoria, carta larga, guía práctica y reseña de los {PAISES_HITOS.length} países se redacta desde cero en español natural y claro. Auditamos el catálogo completo para eliminar párrafos duplicados, frases de relleno y traducciones forzadas.</p>
+      </div>
+      <div class="estandar-item">
+        <h3>02. Separación rigurosa de tono y ocasión</h3>
+        <p>Mantenemos fronteras estrictas entre cumpleaños, aniversarios de pareja (1 mes a +10 años personalizables sin mezclar cumpleaños), etiqueta profesional, bendiciones cristianas y las 17 colecciones serenas de condolencias y duelo.</p>
+      </div>
+      <div class="estandar-item">
+        <h3>03. Herramientas gratuitas sin registro ni marcas invasivas</h3>
+        <p>Personalizá nombre y firma en tiempo real, guardá favoritas en tu navegador, descargá postales PNG cuadradas o Story 1080×1920 e imprimí banderines A4 gratis. Conocé nuestra metodología completa en <a href="/sobre-nosotros/">Sobre nosotros</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="portal-banda faqs-hub" aria-labelledby="titulo-faqs-portada">
     <div class="banda-cabecera">
       <div>
-        <p class="banda-kicker">Archivo público visible para todos · Separado por canal e historial</p>
-        <h2 id="titulo-mas-compartido">Lo más compartido por red e historial</h2>
+        <p class="banda-kicker">Respuestas claras antes de enviar tu saludo</p>
+        <h2 id="titulo-faqs-portada">Preguntas frecuentes sobre mensajes, tarjetas y herramientas</h2>
+      </div>
+    </div>
+    <div class="faq-lista">
+      {faqsPortada.map(function (f, i) {
+        return (
+          <details class="faq-item" open={i === 0}>
+            <summary>{f.pregunta}</summary>
+            <p>{f.respuesta}</p>
+          </details>
+        );
+      })}
+    </div>
+  </section>
+
+  <section class="portal-banda portal-compartidos portal-compartidos--compact" id="lo-mas-compartido" aria-labelledby="titulo-mas-compartido">
+    <div class="banda-cabecera comp-cabecera-compacta">
+      <div>
+        <p class="banda-kicker">Registro anónimo por canal</p>
+        <h2 id="titulo-mas-compartido">Lo más compartido en el portal</h2>
       </div>
       <div class="comp-cabecera-acciones">
-        <span class="comp-total-badge" id="pc-home-comp-total">0 compartidos registrados</span>
-        <a class="btn-leer-mas comp-archivo-link" href="/compartidos-historial.json" target="_blank" rel="noopener">Ver archivo (.json)</a>
+        <span class="comp-total-meta" id="pc-home-comp-total">0 compartidos registrados</span>
+        <a class="btn-leer-mas comp-archivo-link" href="/compartidos-historial.json" target="_blank" rel="noopener">Archivo (.json)</a>
         <button type="button" class="btn-leer-mas" id="pc-home-comp-descargar">Descargar historial</button>
       </div>
     </div>
 
-    <div class="comp-redes-grid" role="list" aria-label="Totales compartidos por red social y copia">
+    <div class="comp-redes-grid comp-redes-grid--compact" role="list" aria-label="Totales compartidos por red social y copia">
       <div class="comp-red-card comp-red-card--wa" role="listitem">
         <span class="comp-red-etiqueta">WhatsApp</span>
         <strong class="comp-red-num" id="pc-stat-whatsapp">0</strong>
@@ -527,61 +691,48 @@ const jsonld = [
       </div>
     </div>
 
-    <div class="filtros-tono comp-filtros" role="toolbar" aria-label="Filtrar lo más compartido y su historial por red">
-      <button type="button" class="filtro-btn activo" data-comp-filtro="todas" aria-pressed="true">Todas las redes</button>
-      <button type="button" class="filtro-btn" data-comp-filtro="whatsapp" aria-pressed="false">WhatsApp</button>
-      <button type="button" class="filtro-btn" data-comp-filtro="instagram" aria-pressed="false">Instagram</button>
-      <button type="button" class="filtro-btn" data-comp-filtro="facebook" aria-pressed="false">Facebook</button>
-      <button type="button" class="filtro-btn" data-comp-filtro="copiar" aria-pressed="false">Copiar</button>
-    </div>
-
-    <div class="comp-paneles-grid">
-      <div class="comp-panel-bloque">
-        <div class="comp-subhead">
-          <h3>Ranking más compartido</h3>
-          <span class="comp-submeta" id="pc-home-rank-count">0 publicaciones</span>
+    <details class="comp-detalles">
+      <summary>Ver ranking e historial cronológico por red</summary>
+      <div class="comp-detalles-cuerpo">
+        <div class="filtros-tono comp-filtros" role="toolbar" aria-label="Filtrar lo más compartido y su historial por red">
+          <button type="button" class="filtro-btn activo" data-comp-filtro="todas" aria-pressed="true">Todas las redes</button>
+          <button type="button" class="filtro-btn" data-comp-filtro="whatsapp" aria-pressed="false">WhatsApp</button>
+          <button type="button" class="filtro-btn" data-comp-filtro="instagram" aria-pressed="false">Instagram</button>
+          <button type="button" class="filtro-btn" data-comp-filtro="facebook" aria-pressed="false">Facebook</button>
+          <button type="button" class="filtro-btn" data-comp-filtro="copiar" aria-pressed="false">Copiar</button>
         </div>
-        <div id="pc-home-comp-lista" class="comp-lista" aria-live="polite">
-          <p class="comp-vacio">
-            Todavía no hay compartidos registrados. Tocá <strong>WhatsApp</strong>, <strong>Instagram</strong>, <strong>Facebook</strong> o <strong>Copiar</strong> en cualquier dedicatoria para sumar al ranking público.
-          </p>
+
+        <div class="comp-paneles-grid">
+          <div class="comp-panel-bloque">
+            <div class="comp-subhead">
+              <h3>Ranking más compartido</h3>
+              <span class="comp-submeta" id="pc-home-rank-count">0 publicaciones</span>
+            </div>
+            <div id="pc-home-comp-lista" class="comp-lista" aria-live="polite">
+              <p class="comp-vacio">
+                Todavía no hay compartidos registrados. Tocá <strong>WhatsApp</strong>, <strong>Instagram</strong>, <strong>Facebook</strong> o <strong>Copiar</strong> en cualquier dedicatoria para sumar al ranking público.
+              </p>
+            </div>
+          </div>
+
+          <div class="comp-panel-bloque">
+            <div class="comp-subhead">
+              <h3>Historial de cada compartido</h3>
+              <span class="comp-submeta" id="pc-home-hist-count">0 eventos</span>
+            </div>
+            <ol id="pc-home-comp-historial" class="comp-historial-lista" aria-live="polite">
+              <li class="comp-vacio">
+                Cada vez que un visitante comparte o copia una dedicatoria, queda registrado aquí con fecha, hora y red elegida.
+              </li>
+            </ol>
+          </div>
         </div>
       </div>
-
-      <div class="comp-panel-bloque">
-        <div class="comp-subhead">
-          <h3>Historial de cada compartido</h3>
-          <span class="comp-submeta" id="pc-home-hist-count">0 eventos</span>
-        </div>
-        <ol id="pc-home-comp-historial" class="comp-historial-lista" aria-live="polite">
-          <li class="comp-vacio">
-            Cada vez que un visitante comparte o copia una dedicatoria, queda registrado aquí con fecha, hora y red elegida.
-          </li>
-        </ol>
-      </div>
-    </div>
+    </details>
 
     <p class="pc-aviso-local" role="note">
-      <strong>Archivo público y guardadas:</strong> las estadísticas e historial de compartidos son anónimos (sin datos personales) y se consultan en el archivo público <a href="/compartidos-historial.json" target="_blank" rel="noopener"><code>/compartidos-historial.json</code></a>. En cambio, tus <strong>dedicatorias guardadas</strong> viven solo en tu navegador: si borrás cookies o datos del sitio se borrarán (podés copiar un respaldo desde <button type="button" class="pie-link-btn" data-abrir-guardadas>Tus guardadas</button>).
+      <strong>Archivo público y guardadas:</strong> el historial es anónimo y se consulta en <a href="/compartidos-historial.json" target="_blank" rel="noopener"><code>/compartidos-historial.json</code></a>. Tus <strong>dedicatorias guardadas</strong> viven solo en tu navegador: si borrás cookies o datos del sitio se borrarán (podés copiar un respaldo desde <button type="button" class="pie-link-btn" data-abrir-guardadas>Tus guardadas</button>).
     </p>
-  </section>
-
-  <section class="portal-estandares" aria-labelledby="titulo-criterio-portal">
-    <h2 id="titulo-criterio-portal">Por qué miles de lectores eligen ParaCumpleanos</h2>
-    <div class="estandares-grid">
-      <div class="estandar-item">
-        <h3>01. {totalPublicacionesPortal.toLocaleString('es-AR')} publicaciones únicas sin copias</h3>
-        <p>Cada dedicatoria, guía y reseña histórica tiene redacción original en español cercano o formal según el vínculo, sin párrafos reciclados.</p>
-      </div>
-      <div class="estandar-item">
-        <h3>02. Contexto respetado al detalle</h3>
-        <p>Separamos fechas sensibles de duelo y nostalgia, aniversarios de 1 mes a +10 años personalizables, entornos laborales, motivaciones y efemérides mundiales.</p>
-      </div>
-      <div class="estandar-item">
-        <h3>03. Personalización, Banderines A4 y Story IG</h3>
-        <p>Sumá nombre, firma, años exactos, posdata y tipografía en {temas.length} paletas, descargá tarjetas 1080×1920 o banderines A4. Conocé más en <a href="/sobre-nosotros/">Sobre nosotros</a>.</p>
-      </div>
-    </div>
   </section>
 
   <script id="portal-indice-json" type="application/json" set:html={JSON.stringify(indiceBuscador)} />
@@ -690,7 +841,7 @@ const jsonld = [
         });
       });
 
-      // Re-ranking dinamico de "Guias practicas..." segun visitas acumuladas
+      // Re-ranking dinamico de guias segun visitas acumuladas
       try {
         var visitasGuias = JSON.parse(localStorage.getItem('pc_visitas_guias_v1') || '{}');
         var guiasDataEl = document.getElementById('portal-guias-json');
@@ -702,7 +853,7 @@ const jsonld = [
             return sb - sa;
           });
           var topLead = todasGuias[0];
-          var topSec = todasGuias.slice(1, 5);
+          var topSec = todasGuias.slice(1, 4);
           if (topLead) {
             var elEt = document.getElementById('guia-lead-etiqueta');
             var elTi = document.getElementById('guia-lead-tiempo');
@@ -711,7 +862,7 @@ const jsonld = [
             var elDe = document.getElementById('guia-lead-desc');
             var elCi = document.getElementById('guia-lead-cita');
             var elCt = document.getElementById('guia-lead-cta');
-            if (elEt) elEt.textContent = topLead.emoji + ' Guía más visitada';
+            if (elEt) elEt.textContent = 'Guía más visitada';
             if (elTi) elTi.textContent = topLead.tiempoLectura;
             if (elFe) { elFe.textContent = topLead.fechaPublicacion; elFe.setAttribute('datetime', topLead.fechaPublicacion); }
             if (elLk) { elLk.href = '/guias/' + topLead.slug + '/'; elLk.textContent = topLead.h1; }
@@ -727,7 +878,7 @@ const jsonld = [
               art.className = 'guia-fila';
               var meta = document.createElement('p');
               meta.className = 'card-meta';
-              meta.innerHTML = '<span>' + g.emoji + ' ' + g.tiempoLectura + '</span><span aria-hidden="true">·</span><time datetime="' + g.fechaPublicacion + '">' + g.fechaPublicacion + '</time>';
+              meta.innerHTML = '<span>' + g.tiempoLectura + '</span><span aria-hidden="true">·</span><time datetime="' + g.fechaPublicacion + '">' + g.fechaPublicacion + '</time>';
               var h3 = document.createElement('h3');
               var a = document.createElement('a');
               a.href = '/guias/' + g.slug + '/';
@@ -744,15 +895,15 @@ const jsonld = [
         }
       } catch (_) {}
 
-      // Ranking dinamico + filtros multi-segmento + "Ver mas" en Textos populares mixtos
+      // Ranking dinamico + filtros multi-segmento + "Mostrar mas" en Textos populares mixtos
       var homeBtns = document.querySelectorAll('[data-home-filtro]');
       var homeGrilla = document.getElementById('home-muestra-grilla');
       var btnVerMas = document.getElementById('home-ver-mas-populares');
       var filtroActivo = 'todos';
       var expandido = false;
+      var LIMITE_INICIAL = 6;
 
       if (homeGrilla) {
-        // Reordenar slots segun popularidad local acumulada (vistas + copias + compartidos)
         try {
           var popMap = JSON.parse(localStorage.getItem('pc_popularidad_pubs_v1') || '{}');
           if (popMap && Object.keys(popMap).length > 0) {
@@ -778,7 +929,7 @@ const jsonld = [
               return;
             }
             totalCoinc++;
-            var limite = filtroActivo === 'todos' && !expandido ? 12 : 99;
+            var limite = filtroActivo === 'todos' && !expandido ? LIMITE_INICIAL : 99;
             if (visibles < limite) {
               slot.style.display = '';
               visibles++;
@@ -787,12 +938,12 @@ const jsonld = [
             }
           });
           if (btnVerMas) {
-            if (filtroActivo === 'todos' && !expandido && totalCoinc > 12) {
+            if (filtroActivo === 'todos' && !expandido && totalCoinc > LIMITE_INICIAL) {
               btnVerMas.hidden = false;
-              btnVerMas.textContent = 'Mostrar más publicaciones populares (' + (totalCoinc - 12) + ' más)';
-            } else if (filtroActivo === 'todos' && expandido && totalCoinc > 12) {
+              btnVerMas.textContent = 'Mostrar más dedicatorias (' + (totalCoinc - LIMITE_INICIAL) + ' más)';
+            } else if (filtroActivo === 'todos' && expandido && totalCoinc > LIMITE_INICIAL) {
               btnVerMas.hidden = false;
-              btnVerMas.textContent = 'Mostrar solo las 12 principales';
+              btnVerMas.textContent = 'Mostrar solo las 6 principales';
             } else {
               btnVerMas.hidden = true;
             }
