@@ -1608,7 +1608,7 @@ test('Correccion Bing /publicaciones/, recuperacion GSC (esposa/esposo/mama/papa
   const idxSrc = fs.readFileSync(path.resolve('src/pages/index.astro'), 'utf8');
   assert.ok(idxSrc.includes('portal-guia-cosmica'), 'La portada debe incluir la seccion pilar portal-guia-cosmica');
   assert.ok(idxSrc.includes('construirGrafoPortadaLd'), 'La portada debe emitir JSON-LD @graph con FAQPage conectado');
-  assert.ok(idxSrc.includes('class="tabla-comparativa"'), 'La portada debe incluir la tabla comparativa por canal y horario');
+  assert.ok(idxSrc.includes('lista-geo-prosa'), 'La portada debe desarrollar las comparativas en prosa fluida sin cuadros rigidos');
   assert.ok(idxSrc.includes('class="comparacion-concreta"'), 'La portada debe incluir comparaciones concretas evitar vs mejor');
 
   const catsSrc = fs.readFileSync(path.resolve('src/pages/categorias.astro'), 'utf8');
@@ -1679,22 +1679,35 @@ test('Arquitectura GEO de portada: radiografia real, grafo @graph con @id, FAQs 
   assert.equal(faqNode.isPartOf['@id'], WEBPAGE_ID);
   assert.equal(faqNode.mainEntity.length, faqs.length, 'FAQPage JSON-LD debe coincidir 1:1 con las FAQs visibles');
 
-  // 3. Portada y Sobre nosotros alineados (Primacia, 3 capas, glosario, transparencia, Recencia y FAQs visibles sin acordeon)
+  // 3. Portada simplificada movil-first: cero cuadros/tablas, total global destacado, cero conteo por categoria y todas las 441 categorias
   const idxSrc = fs.readFileSync(path.resolve('src/pages/index.astro'), 'utf8');
+  assert.ok(idxSrc.includes('class="portal-hero-simple"'), 'La portada simplificada debe usar el hero limpio (.portal-hero-simple)');
+  assert.ok(idxSrc.includes('class="portal-total-extraordinario"'), 'La portada debe destacar el total global extraordinario de alternativas');
   assert.ok(idxSrc.includes('class="portal-tldr"'), 'La portada debe incluir el bloque Primacia TL;DR (.portal-tldr)');
   assert.ok(idxSrc.includes('class="geo-respuesta-directa"'), 'La portada debe abrir subsecciones con respuesta directa');
-  assert.ok(idxSrc.includes('tabla-comparativa--enfoques'), 'La portada debe incluir tabla comparativa honesta de enfoques');
-  assert.ok(idxSrc.includes('tabla-comparativa--datos'), 'La portada debe incluir radiografia cuantitativa verificable');
+  assert.ok(!idxSrc.includes('<table'), 'La portada no debe renderizar cuadros/tablas que rompan la lectura movil');
+  assert.ok(!idxSrc.includes('portal-cat-card-meta'), 'Las categorias en portada no deben mostrar conteo individual por categoria');
   assert.ok(idxSrc.includes('class="geo-glosario"'), 'La portada debe incluir glosario <dl> de formatos');
   assert.ok(idxSrc.includes('class="geo-transparencia"'), 'La portada debe incluir bloque de alcance real y limites');
   assert.ok(idxSrc.includes('class="geo-cierre"'), 'La portada debe incluir sintesis de cierre (efecto recencia)');
+  assert.ok(idxSrc.includes('id="todas-las-categorias"'), 'La portada debe desplegar todas las 441 categorias a lo largo y ancho');
+  assert.ok(idxSrc.includes('id="home-filtro-cats"'), 'La portada debe incluir filtro en vivo para las 441 categorias');
+  assert.ok(idxSrc.includes('class="portal-cat-grid"'), 'La portada debe renderizar la grilla responsive de todas las categorias');
   assert.ok(idxSrc.includes('class="faq-grid-visible"'), 'Las FAQs de portada deben renderizarse visibles sin acordeones cerrados');
   assert.ok(!idxSrc.includes('<details class="faq-item"'), 'Las FAQs de portada no deben ocultarse en acordeones <details>');
 
   const aboutSrc = fs.readFileSync(path.resolve('src/pages/sobre-nosotros.astro'), 'utf8');
   assert.ok(aboutSrc.includes('construirOrganizacionLd') && aboutSrc.includes('AboutPage'), 'Sobre nosotros debe emitir Entity Home AboutPage + Organization con el mismo @id');
 
-  // 4. Pureza de voseo rioplatense en todo el contenido GEO nuevo
+  // 4. Verificacion de cobertura total de AdSense meta, Statcounter, GTM/Analytics y menus header/footer
+  const puenteSrc = fs.readFileSync(path.resolve('src/components/PuenteRedireccion.astro'), 'utf8');
+  assert.ok(puenteSrc.includes('ca-pub-7756135514831267'), 'PuenteRedireccion debe declarar meta google-adsense-account');
+  assert.ok(puenteSrc.includes('GTM-NKFBN6X5') && puenteSrc.includes('GTM-WKC77GT5'), 'PuenteRedireccion debe incluir ambos contenedores GTM/Analytics');
+  const baseSrc = fs.readFileSync(path.resolve('src/layouts/Base.astro'), 'utf8');
+  assert.ok(baseSrc.includes('<header class="cabecera">') && baseSrc.includes('<nav class="nav-principal"'), 'Base.astro debe incluir menu de navegacion en header');
+  assert.ok(baseSrc.includes('<footer class="pie">') && baseSrc.includes('<nav aria-label="Páginas institucionales">'), 'Base.astro debe incluir menu completo en footer');
+
+  // 5. Pureza de voseo rioplatense en todo el contenido GEO nuevo
   const transparencia = construirTransparenciaPortada(rad);
   const blobGeo = [
     ...faqs.flatMap((f) => [f.pregunta, f.respuesta]),

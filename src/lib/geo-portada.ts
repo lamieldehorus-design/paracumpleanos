@@ -14,6 +14,37 @@ export const FAQ_ID = 'https://paracumpleanos.com/#faq';
 export const DESCRIPCION_ENTIDAD_CANONICA =
   'ParaCumpleanos (paracumpleanos.com) es un archivo editorial independiente en español y estudio interactivo gratuito de dedicatorias de cumpleaños, aniversarios de pareja, condolencias serenas, cartas largas, calendario perpetuo sin año, hitos históricos de 196 países y banderines A4 imprimibles, usable sin registro ni almacenamiento de datos personales en servidor.';
 
+export const DESCRIPCIONES_GRUPOS: Record<string, string> = {
+  destinatarios:
+    'Dedicatorias pensadas para el vínculo cotidiano más cercano: mamá, papá, esposa, esposo, hijos, hermanos, pareja y amistades clave. Cada colección combina opciones breves para WhatsApp temprano, textos emotivos intermedios y cartas desarrolladas con personalización de apodo y firma en vivo.',
+  familia:
+    'Saludos adaptados a toda la familia extendida y política —abuelos, primos, sobrinos, tíos, suegros, cuñados, padrinos, ahijados y nietos— cuidando exactamente el nivel de cercanía. Incluimos tonos afectuosos y respetuosos que evitan la incomodidad de los textos genéricos.',
+  edades:
+    'Mensajes calibrados para cada etapa real de la vida, desde el primer añito e infancia hasta los 15, 18, 20, 30, 40, 50, 60, 70, 80 y 90 años. Celebramos lo propio de cada década sin caer en sermones para jóvenes ni en chistes gastados sobre cumplir años.',
+  cartas:
+    'Textos largos con estructura epistolar en cinco o más párrafos respirables para conmover en fechas importantes, imprimir en postal o leer en voz alta sin apuro. Cada carta ordena el afecto en cuatro tiempos: saludo cercano, recuerdo concreto, gratitud y deseo luminoso.',
+  cristiano:
+    'Bendiciones, oraciones de cumpleaños, agradecimientos a Dios y saludos de «Dios te bendiga» redactados con fe cercana, calidez familiar y respeto. Pensados para acompañar con paz, salud y esperanza sin sonar a cadenas impersonales reenviadas.',
+  tono:
+    'Opciones filtradas por intención y formato: frases cortas para WhatsApp y estados, humor sano con complicidad, poemas en estrofas limpias, textos reflexivos y agradecimientos por saludos recibidos. Elegí primero el estilo que mejor calza con tu voz habitual.',
+  distancia:
+    'Saludos diseñados para acortar kilómetros y diferencias horarias con alegría luminosa, cercanía real y foco en el próximo reencuentro. Ideales para sorprender en el desayuno de su huso horario local sin teñir la fecha de tristeza exagerada.',
+  profesionales:
+    'Etiqueta práctica para jefes, colegas, docentes, médicos, clientes y vecinos respetando estrictamente el trato habitual de vos o de usted. Textos cordiales, sobrios y limpios que fortalecen el vínculo laboral sin mezclar temas pendientes.',
+  aniversarios:
+    'Textos exclusivos para celebrar meses y años de noviazgo o matrimonio —incluido el generador de +10 años personalizable de 11 a 80 años— redactados sin mezclar vocabulario de cumpleaños. Ideales para desayunos, cenas, fotos o tarjetas íntimas.',
+  duelo_recuerdos:
+    'Palabras serenas, respetuosas y auditadas para condolencias, pésame breve, recuerdos hasta el cielo, nostalgia y aniversarios luctuosos completamente libres de expresiones festivas. Incluye selector de fecha de duelo para agendar recordatorios discretos.',
+  meses:
+    'Colecciones amplias de 70 mensajes por cada mes del año, enlazadas directamente con sus dos signos del zodíaco correspondientes y el calendario perpetuo. Conectan el saludo con el clima de la estación y la energía propia de cada mes.',
+  fechas_especiales:
+    'Dedicatorias originales para Navidad, Nochebuena, Año Nuevo, Día de la Madre, Día del Padre, Día del Amigo, San Valentín, Pascuas y celebraciones anuales. Escritas para destacar con calidez humana cuando el celular se llena de cadenas repetidas.',
+  fechas_hitos:
+    'Mensajes calibrados para grandes hitos vitales fuera del cumpleaños tradicional: graduaciones, nacimientos y cumplemeses de bebés, jubilaciones, bodas de plata y logros personales importantes. Cada texto celebra el cierre o inicio de etapa con orgullo genuino y respeto.',
+  especiales:
+    'Ocasiones puntuales y recursos imprimibles: banderines A4 con 6 paletas y versión para colorear, invitaciones listas para completar, saludos en inglés, italiano, portugués y francés traducidos, motivación diaria, embarazo y mascotas.'
+};
+
 export interface RadiografiaCatalogo {
   totalColecciones: number;
   totalMensajes: number;
@@ -288,7 +319,7 @@ export function construirGrafoPortadaLd(params: {
       return {
         name: `${g.nombre} (${lista.length} colecciones)`,
         url: `${sitio}/categorias/#${g.id}`,
-        description: g.desc
+        description: DESCRIPCIONES_GRUPOS[g.id] || `Colecciones curadas de ${g.nombre.toLowerCase()} en ${marca}.`
       };
     })
     .filter(Boolean) as Array<{ name: string; url: string; description: string }>;
