@@ -11,6 +11,7 @@ interface Props {
   grupoActual?: string;
   slugActual?: string;
   noindex?: boolean;
+  sinAnuncios?: boolean;
   esPortal?: boolean;
   relPrev?: string;
   relNext?: string;
@@ -22,6 +23,7 @@ const {
   grupoActual = 'destinatarios',
   slugActual = '',
   noindex = false,
+  sinAnuncios = false,
   esPortal = false,
   relPrev,
   relNext
@@ -34,6 +36,7 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
+  <meta name="google-adsense-account" content="ca-pub-7933111729537978" />
   <meta name="yandex-verification" content="3c0fa054dfa66068" />
   <title>{titulo}</title>
   <meta name="description" content={descripcion} />
@@ -122,7 +125,9 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
   <script is:inline async src="https://www.googletagmanager.com/gtm.js?id=GTM-NKFBN6X5"></script>
   <script is:inline async src="https://www.googletagmanager.com/gtm.js?id=GTM-WKC77GT5"></script>
   <!-- Google AdSense -->
-  <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7933111729537978" crossorigin="anonymous"></script>
+  {!sinAnuncios ? (
+    <script is:inline async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7933111729537978" crossorigin="anonymous"></script>
+  ) : null}
 </head>
 <body>
   <!-- Google Tag Manager (noscript) -->
@@ -1469,8 +1474,8 @@ const url = 'https://paracumpleanos.com' + Astro.url.pathname;
               return resp.json();
             });
           };
-          intentar(API_COMPARTIDOS_URL)
-            .catch(function () { return intentar(ARCHIVO_PUBLICO_URL); })
+          intentar(ARCHIVO_PUBLICO_URL)
+            .catch(function () { return intentar(API_COMPARTIDOS_URL); })
             .then(function (data) {
               if (!data || typeof data !== 'object') return;
               estadoPublicoCache = normalizarEstadoComp(data);

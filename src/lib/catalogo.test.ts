@@ -56,14 +56,17 @@ import {
   prepararParrafosTarjeta
 } from './personalizador';
 import {
+  ADSENSE_PUBLISHER_ID,
   ADSENSE_CLIENT_ID,
+  ADSENSE_ADS_TXT_LINE,
   GTM_CONTAINER_ID,
   GTM_ANALYTICS_CONTAINER_ID,
   CONTACTO_EMAIL,
   REGIONES_RGPD_EEE,
   esZonaHorariaEuropea,
   normalizarPreferenciasConsentimiento,
-  construirEstadoConsentimientoGoogle
+  construirEstadoConsentimientoGoogle,
+  validarAdsTxt
 } from './consentimiento';
 import {
   REDES_COMPARTIR,
@@ -1351,15 +1354,42 @@ test('AdSense, Google Tag Manager, Google Consent Mode v2, CMP RGPD Europa y cor
     assert.ok(!src.includes('contacto@paracumpleanos.com'), `${relPath} aun contiene el correo anterior contacto@paracumpleanos.com`);
   }
 
-  // 4. Privacidad actualizada y Mediapartners-Google permitido en robots.txt
+  // 4. Privacidad actualizada, verificacion AdSense completa (meta + script + ads.txt), exclusion en 404/redirecciones y crawlers en robots.txt
   const privSrc = fs.readFileSync(path.resolve('src/pages/privacidad.astro'), 'utf8');
   assert.ok(privSrc.includes('localStorage'), 'privacidad.astro debe documentar localStorage');
   assert.ok(privSrc.includes(GTM_CONTAINER_ID), 'privacidad.astro debe documentar GTM-NKFBN6X5');
   assert.ok(privSrc.includes(GTM_ANALYTICS_CONTAINER_ID), 'privacidad.astro debe documentar GTM-WKC77GT5');
   assert.ok(privSrc.includes(ADSENSE_CLIENT_ID), 'privacidad.astro debe documentar Google AdSense');
   assert.ok(privSrc.includes('data-abrir-cmp'), 'privacidad.astro debe incluir boton para gestionar cookies RGPD');
+
+  assert.equal(ADSENSE_PUBLISHER_ID, 'pub-7933111729537978');
+  assert.ok(
+    baseSrc.includes(`<meta name="google-adsense-account" content="${ADSENSE_CLIENT_ID}" />`),
+    'Base.astro debe incluir meta tag google-adsense-account para verificacion oficial de AdSense'
+  );
+  assert.ok(baseSrc.includes('sinAnuncios = false'), 'Base.astro debe soportar exclusion de script de anuncios en pantallas de error');
+  assert.ok(
+    baseSrc.indexOf('intentar(ARCHIVO_PUBLICO_URL)') < baseSrc.indexOf('.catch(function () { return intentar(API_COMPARTIDOS_URL); })'),
+    'Base.astro debe leer primero /compartidos-historial.json para evitar errores 404 en consola en produccion estatica'
+  );
+
+  const page404Src = fs.readFileSync(path.resolve('src/pages/404.astro'), 'utf8');
+  assert.ok(page404Src.includes('sinAnuncios={true}'), '404.astro no debe cargar adsbygoogle.js para cumplir politicas de AdSense en paginas de error');
+  const puenteSrc = fs.readFileSync(path.resolve('src/components/PuenteRedireccion.astro'), 'utf8');
+  assert.ok(!puenteSrc.includes('adsbygoogle'), 'PuenteRedireccion.astro no debe cargar anuncios en paginas puente de redireccion');
+
+  const publicAdsTxt = fs.readFileSync(path.resolve('public/ads.txt'), 'utf8');
+  const rootAdsTxt = fs.readFileSync(path.resolve('ads.txt'), 'utf8');
+  assert.equal(validarAdsTxt(publicAdsTxt), true, 'public/ads.txt debe declarar exclusivamente pub-7933111729537978');
+  assert.equal(validarAdsTxt(rootAdsTxt), true, 'ads.txt raiz debe coincidir con pub-7933111729537978 sin IDs viejos');
+  assert.equal(rootAdsTxt.trim(), ADSENSE_ADS_TXT_LINE);
+  assert.equal(publicAdsTxt.trim(), ADSENSE_ADS_TXT_LINE);
+  assert.equal(validarAdsTxt('google.com, pub-7756135514831267, DIRECT, f08c47fec0942fa0'), false);
+
   const robotsSrc = fs.readFileSync(path.resolve('public/robots.txt'), 'utf8');
   assert.ok(robotsSrc.includes('Mediapartners-Google'), 'robots.txt debe permitir explicitamente Mediapartners-Google');
+  assert.ok(robotsSrc.includes('Google-Display-Ads-Bot'), 'robots.txt debe permitir explicitamente Google-Display-Ads-Bot');
+  assert.ok(robotsSrc.includes('AdsBot-Google'), 'robots.txt debe permitir explicitamente AdsBot-Google');
 });
 
 test('contador publico de lo mas compartido por red, archivo JSON visible, historial por cada compartido y aviso de cookies/navegador', () => {

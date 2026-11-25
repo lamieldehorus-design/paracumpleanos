@@ -6,6 +6,12 @@ Disallow: /data/
 User-agent: Mediapartners-Google
 Allow: /
 
+User-agent: Google-Display-Ads-Bot
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
 User-agent: GPTBot
 Allow: /
 

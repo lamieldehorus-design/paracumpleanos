@@ -1,7 +1,9 @@
 // Utilidades puras para Consentimiento RGPD (Europa / EEE / Reino Unido / Suiza)
 // y Google Consent Mode v2 (compatible con Google Tag Manager y Google AdSense).
 
+export const ADSENSE_PUBLISHER_ID = 'pub-7933111729537978';
 export const ADSENSE_CLIENT_ID = 'ca-pub-7933111729537978';
+export const ADSENSE_ADS_TXT_LINE = 'google.com, pub-7933111729537978, DIRECT, f08c47fec0942fa0';
 export const GTM_CONTAINER_ID = 'GTM-NKFBN6X5';
 export const GTM_ANALYTICS_CONTAINER_ID = 'GTM-WKC77GT5';
 export const GTM_CONTAINER_IDS: readonly string[] = [GTM_CONTAINER_ID, GTM_ANALYTICS_CONTAINER_ID];
@@ -70,4 +72,14 @@ export function construirEstadoConsentimientoGoogle(
     functionality_storage: 'granted',
     security_storage: 'granted'
   };
+}
+
+export function validarAdsTxt(contenido: string, publisherId: string = ADSENSE_PUBLISHER_ID): boolean {
+  const lineas = String(contenido || '')
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith('#'));
+  if (!lineas.length) return false;
+  const esperada = `google.com, ${publisherId}, DIRECT, f08c47fec0942fa0`;
+  return lineas.includes(esperada) && lineas.every((l) => !/pub-\d+/.test(l) || l.includes(publisherId));
 }
