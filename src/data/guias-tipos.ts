@@ -42,20 +42,6 @@ export interface PasoHowToGuia {
   texto: string;
 }
 
-export type TipoLeadGuia =
-  | 'sumario'
-  | 'impacto'
-  | 'retrato'
-  | 'ambiente'
-  | 'cita'
-  | 'contraste'
-  | 'interrogante'
-  | 'color'
-  | 'cronologica'
-  | 'complementaria'
-  | 'espacial'
-  | 'pregunta';
-
 export interface GuiaEditorial {
   slug: string;
   seoTitle: string;
@@ -71,9 +57,6 @@ export interface GuiaEditorial {
   autor: string;
   autorRol: string;
   autorBio: string;
-  tipoLead?: TipoLeadGuia;
-  etiquetas?: string[];
-  comoHacerloTuyo?: string[];
   resumen: string;
   respuestaDirecta: string;
   citaDestacada: string;

@@ -3,28 +3,12 @@ import Base from '../layouts/Base.astro';
 import { MARCA, SITIO, GRUPOS, hubs, todosMensajes, migasLd } from '../lib/contenido.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { PAISES_HITOS } from '../data/hitos-historicos.ts';
-import { ORG_ID, WEBSITE_ID, construirOrganizacionLd } from '../lib/geo-portada.ts';
 
 const jsonld = [
   migasLd([
     { name: 'Inicio', url: `${SITIO}/` },
     { name: 'Sobre nosotros', url: `${SITIO}/sobre-nosotros/` }
-  ]),
-  {
-    '@context': 'https://schema.org',
-    '@graph': [
-      construirOrganizacionLd({ marca: MARCA, sitio: SITIO }),
-      {
-        '@type': 'AboutPage',
-        '@id': `${SITIO}/sobre-nosotros/#webpage`,
-        url: `${SITIO}/sobre-nosotros/`,
-        name: `Sobre nosotros - ${MARCA}`,
-        inLanguage: 'es-AR',
-        isPartOf: { '@id': WEBSITE_ID },
-        mainEntity: { '@id': ORG_ID }
-      }
-    ]
-  }
+  ])
 ];
 ---
 <Base

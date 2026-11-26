@@ -2,7 +2,6 @@
 import Base from '../../layouts/Base.astro';
 import { SITIO, MARCA, migasLd, mensajesDe } from '../../lib/contenido.ts';
 import { ZODIACOS, MESES_CON_SIGNOS } from '../../lib/horoscopo.ts';
-import { arcanosPorSigno } from '../../lib/tarot-egipcio.ts';
 
 const frasesPorSigno = ZODIACOS[0]?.frasesCumpleanos.length || 12;
 const frasesPorMes = mensajesDe(MESES_CON_SIGNOS[0].slug).length || 60;
@@ -117,56 +116,30 @@ const signosBuscador = ZODIACOS.map((s) => ({
   <section aria-labelledby="hor-grid-tit">
     <h2 id="hor-grid-tit">Los 12 signos del zodíaco y sus meses de cumpleaños</h2>
     <div class="horoscopo-grid">
-      {ZODIACOS.map((s) => {
-        const arcanosSigno = arcanosPorSigno(s.slug);
-        return (
-          <article class="horoscopo-card">
-            <div class="horoscopo-card-top">
-              <h3>
-                <a href={`/horoscopo/${s.slug}/`}>{s.simbolo} {s.nombre}</a>
-              </h3>
-              <span class="horoscopo-elemento">{s.elemento}</span>
-            </div>
-            <p class="horoscopo-rango">{s.rangoTexto}</p>
-            <p class="horoscopo-resumen">
-              <strong>Tono ideal:</strong> {s.tonoIdeal}. {s.comoSaludar}
-            </p>
-            {arcanosSigno.length > 0 ? (
-              <p class="horoscopo-tarot-link">
-                <span>Tarot Egipcio:</span>{' '}
-                {arcanosSigno.map((a, i) => (
-                  <>
-                    {i > 0 ? ' · ' : ''}
-                    <a href={`/tarot-egipcio/${a.slug}/`}>{a.romano} {a.nombre}</a>
-                  </>
-                ))}
-              </p>
-            ) : null}
-            <div class="horoscopo-enlaces-mes">
-              <span>{s.frasesCumpleanos.length} frases · Meses:</span>
-              <a href={`/${s.mesesSlugs[0]}/`}>{s.mesesNombres[0]}</a>
-              <span aria-hidden="true">·</span>
-              <a href={`/${s.mesesSlugs[1]}/`}>{s.mesesNombres[1]}</a>
-              <span aria-hidden="true">·</span>
-              <a href={`/horoscopo/${s.slug}/`}>Ver {s.frasesCumpleanos.length} frases →</a>
-            </div>
-          </article>
-        );
-      })}
+      {ZODIACOS.map((s) => (
+        <article class="horoscopo-card">
+          <div class="horoscopo-card-top">
+            <h3>
+              <a href={`/horoscopo/${s.slug}/`}>{s.simbolo} {s.nombre}</a>
+            </h3>
+            <span class="horoscopo-elemento">{s.elemento}</span>
+          </div>
+          <p class="horoscopo-rango">{s.rangoTexto}</p>
+          <p class="horoscopo-resumen">
+            <strong>Tono ideal:</strong> {s.tonoIdeal}. {s.comoSaludar}
+          </p>
+          <div class="horoscopo-enlaces-mes">
+            <span>{s.frasesCumpleanos.length} frases · Meses:</span>
+            <a href={`/${s.mesesSlugs[0]}/`}>{s.mesesNombres[0]}</a>
+            <span aria-hidden="true">·</span>
+            <a href={`/${s.mesesSlugs[1]}/`}>{s.mesesNombres[1]}</a>
+            <span aria-hidden="true">·</span>
+            <a href={`/horoscopo/${s.slug}/`}>Ver {s.frasesCumpleanos.length} frases →</a>
+          </div>
+        </article>
+      ))}
     </div>
   </section>
-
-  <!-- PUENTE DIRECTO AL TAROT EGIPCIO -->
-  <aside class="enlace-horoscopo-mes tarot-puente-horoscopo" aria-labelledby="hor-tarot-tit">
-    <h2 id="hor-tarot-tit">Explorá también el Tarot Egipcio vinculado a tu signo</h2>
-    <p>
-      Cada signo del zodíaco conversa directamente con uno o más de los <strong>22 Arcanos Mayores del Tarot Egipcio</strong>. Podés hacer una tirada gratuita en el navegador, calcular tu Arcano de cumpleaños según tu fecha exacta o recorrer las 78 láminas completas con dedicatorias originales.
-    </p>
-    <p class="enlace-horoscopo-pie">
-      <a href="/tarot-egipcio/">Abrir Tarot Egipcio (78 arcanos y tirada gratis) →</a>
-      <a href="/tarot-egipcio/#calculadora-arcano">Calcular mi Arcano de cumpleaños →</a>
-    </p>
-  </aside>
 
   <!-- TABLA COMPARATIVA DE LOS 12 SIGNOS -->
   <section class="bloque-tabla-hub" aria-labelledby="hor-tabla-tit">
@@ -213,7 +186,7 @@ const signosBuscador = ZODIACOS.map((s) => ({
       ))}
     </div>
     <p class="ver-tambien">
-      ¿Querés profundizar todavía más? Probá nuestra <a href="/tarot-egipcio/">tirada gratis de Tarot Egipcio (78 arcanos) →</a> o calculá edad exacta e hito de 10.000 días en <a href="/herramientas/">herramientas de cumpleaños →</a>
+      ¿Querés calcular también edad exacta, horas vividas e hito de 10.000 días? Usá nuestras <a href="/herramientas/">herramientas de cumpleaños →</a>
     </p>
   </section>
 

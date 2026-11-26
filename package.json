@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "astro dev --host 0.0.0.0 --port 3000",
     "validate": "node scripts/validador-titulos.cjs",
+    "lint": "node scripts/validador-titulos.cjs && node --check astro.config.mjs",
+    "svd": "node scripts/verificar-svd.mjs",
     "prebuild": "node scripts/validador-titulos.cjs",
     "build": "astro build",
     "preview": "astro preview --host 0.0.0.0 --port 3000",

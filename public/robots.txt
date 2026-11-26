@@ -3,15 +3,6 @@ Allow: /
 Disallow: /admin/
 Disallow: /data/
 
-User-agent: Mediapartners-Google
-Allow: /
-
-User-agent: Google-Display-Ads-Bot
-Allow: /
-
-User-agent: AdsBot-Google
-Allow: /
-
 User-agent: GPTBot
 Allow: /
 
@@ -28,4 +19,3 @@ User-agent: Google-Extended
 Allow: /
 
 Sitemap: https://paracumpleanos.com/sitemap.xml
-Sitemap: https://paracumpleanos.com/rss.xml

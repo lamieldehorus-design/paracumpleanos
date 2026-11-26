@@ -4,14 +4,12 @@ import TarjetaMensaje from '../components/TarjetaMensaje.astro';
 import Compartir from '../components/Compartir.astro';
 import Hermanas from '../components/Hermanas.astro';
 import PersonalizadorTarjeta from '../components/PersonalizadorTarjeta.astro';
-import PersonalizadorRapidoHub from '../components/PersonalizadorRapidoHub.astro';
 import AlertaMotivacionDiaria from '../components/AlertaMotivacionDiaria.astro';
 import SelectorFechaDuelo from '../components/SelectorFechaDuelo.astro';
 import FiltrosSegmentacion from '../components/FiltrosSegmentacion.astro';
 import PersonalizadorAniosAniversario from '../components/PersonalizadorAniosAniversario.astro';
 import EstudioBanderines from '../components/EstudioBanderines.astro';
 import {
-  catalogo,
   contenido,
   POR_PAGINA,
   SITIO,
@@ -29,7 +27,6 @@ import {
   guiaAdaptacionMensaje
 } from '../lib/editorial.ts';
 import { mesInfoPorSlug } from '../lib/horoscopo.ts';
-import { clusterGscDe } from '../lib/gsc-estrategia.ts';
 
 export function getStaticPaths() {
   return contenido.map(function (r) {
@@ -46,9 +43,6 @@ const totalMensajesHub = mensajesHub.length;
 const totalPaginas = Math.ceil(mensajesCat.length / POR_PAGINA);
 const mensajesPagina = mensajesCat.slice(0, POR_PAGINA);
 const relacionadas = esHub ? [] : relacionadasDe(registro);
-const idxMsgActual = esHub ? -1 : mensajesHub.findIndex((m) => m.slug === registro.slug);
-const prevMsg = !esHub && idxMsgActual > 0 ? mensajesHub[idxMsgActual - 1] : (!esHub && mensajesHub.length > 1 ? mensajesHub[mensajesHub.length - 1] : null);
-const nextMsg = !esHub && idxMsgActual >= 0 && idxMsgActual < mensajesHub.length - 1 ? mensajesHub[idxMsgActual + 1] : (!esHub && mensajesHub.length > 1 ? mensajesHub[0] : null);
 const titulo = esHub ? registro.titulo : registro.titulo + ' - ' + MARCA;
 const descripcion = esHub ? registro.meta : metaDe(registro.texto);
 const noindexPagina = !esHub && !esMensajeIndexable(registro);
@@ -86,7 +80,7 @@ if (esHub && editorialHub) {
 }
 
 const creado = hub.creado || '2026-11-15';
-const actualizado = hub.actualizado || '2026-11-23';
+const actualizado = hub.actualizado || '2026-11-19';
 const parrafosMsg = esHub ? [] : registro.texto.split('\n\n');
 const textoCompletoCard = esHub ? '' : registro.texto;
 
@@ -136,7 +130,7 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
   'feliz-cumpleanos-20-anos': {
     texto: '¿Cumplís 20 años vos hoy?',
     enlaces: [
-      { href: '/feliz-cumpleanos-20-anos-para-mi/', label: 'Felices 20 años para mí (textos propios)' },
+      { href: '/feliz-cumpleanos-para-mi/', label: 'Auto-felicitaciones y frases para mí' },
       { href: '/feliz-cumpleanos-para-mi-hija-de-20-anos/', label: 'Para hija de 20 años' }
     ]
   },
@@ -726,7 +720,7 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
     enlaces: [
       { href: '/agradecimiento-por-saludos-cumpleanos/', label: 'Agradecimiento por saludos' },
       { href: '/invitaciones-de-cumpleanos-para-editar-e-imprimir/', label: 'Invitaciones digitales e impresas' },
-      { href: '/mensajes-cortos-de-cumpleanos/', label: 'Frases cortas de cumpleaños' }
+      { href: '/feliz-cumpleanos-corto/', label: 'Frases cortas de cumpleaños' }
     ]
   },
   'agradecimiento-por-saludos-cumpleanos': {
@@ -776,312 +770,9 @@ const PARES_CONTEXTUALES: Record<string, { texto: string; enlaces: { href: strin
       { href: '/feliz-cumpleanos-a-distancia/', label: 'Cumpleaños a la distancia' },
       { href: '/motivaciones/', label: 'Motivaciones diarias ✨' }
     ]
-  },
-  // Clústeres prioritarios GSC (bendiciones, familia, pareja, distancia y edades)
-  'feliz-cumpleanos-prima-dios-te-bendiga': {
-    texto: 'Más bendiciones y mensajes de fe para celebrar:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-sobrina-dios-te-bendiga/', label: 'Sobrina, Dios te bendiga' },
-      { href: '/feliz-cumpleanos-amiga-dios-te-bendiga/', label: 'Amiga, Dios te bendiga' },
-      { href: '/feliz-cumpleanos-prima/', label: 'Más saludos para mi prima' }
-    ]
-  },
-  'feliz-cumpleanos-sobrina-dios-te-bendiga': {
-    texto: 'Más bendiciones y saludos para sobrinas:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-prima-dios-te-bendiga/', label: 'Prima, Dios te bendiga' },
-      { href: '/feliz-cumpleanos-para-una-sobrina/', label: 'Feliz cumpleaños sobrina (50 textos)' },
-      { href: '/feliz-cumpleanos-cristiano/', label: 'Cumpleaños cristianos' }
-    ]
-  },
-  'feliz-cumpleanos-amigo-dios-te-bendiga': {
-    texto: 'Más saludos cristianos y para amigos:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-amiga-dios-te-bendiga/', label: 'Amiga, Dios te bendiga' },
-      { href: '/feliz-cumpleanos-amigo/', label: 'Feliz cumpleaños amigo (50 mensajes)' },
-      { href: '/feliz-cumpleanos-hermano-dios-te-bendiga/', label: 'Hermano, Dios te bendiga' }
-    ]
-  },
-  'feliz-cumpleanos-amiga-dios-te-bendiga': {
-    texto: 'Más bendiciones y saludos para amigas:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-prima-dios-te-bendiga/', label: 'Prima, Dios te bendiga' },
-      { href: '/feliz-cumpleanos-amiga/', label: 'Feliz cumpleaños amiga (50 mensajes)' },
-      { href: '/feliz-cumpleanos-cristiano/', label: 'Más mensajes cristianos' }
-    ]
-  },
-  'feliz-cumpleanos-hijo-dios-te-bendiga': {
-    texto: 'Más dedicatorias llenas de orgullo para tu hijo:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-hijo/', label: 'Feliz cumpleaños hijo (50 mensajes)' },
-      { href: '/frases-para-un-hijo-que-esta-lejos/', label: 'Para un hijo que está lejos' },
-      { href: '/feliz-cumpleanos-cristiano/', label: 'Bendiciones cristianas' }
-    ]
-  },
-  'feliz-cumpleanos-hermano-dios-te-bendiga': {
-    texto: 'Más dedicatorias para tu hermano:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-para-un-hermano/', label: 'Feliz cumpleaños hermano (50 textos)' },
-      { href: '/feliz-cumpleanos-amigo-dios-te-bendiga/', label: 'Amigo, Dios te bendiga' },
-      { href: '/feliz-cumpleanos-cristiano/', label: 'Mensajes cristianos' }
-    ]
-  },
-  'palabras-de-agradecimiento-a-dios-por-mi-cumpleanos': {
-    texto: 'Más textos para agradecer tu nuevo año de vida:',
-    enlaces: [
-      { href: '/oracion-de-cumpleanos-cristiana/', label: 'Oraciones de cumpleaños cristianas' },
-      { href: '/feliz-cumpleanos-para-mi/', label: 'Feliz cumpleaños para mí' },
-      { href: '/agradecimiento-por-saludos-cumpleanos/', label: 'Agradecer saludos recibidos' }
-    ]
-  },
-  'cartas-para-mi-papa-que-lo-haga-llorar': {
-    texto: '¿Buscás un saludo más breve o para otro papá?',
-    enlaces: [
-      { href: '/feliz-cumpleanos-papa/', label: 'Frases y mensajes para mi papá' },
-      { href: '/cumpleanos-para-un-papa/', label: 'Saludos para un padre' },
-      { href: '/feliz-cumpleanos-padrastro/', label: 'Palabras para mi padrastro' }
-    ]
-  },
-  'cumpleanos-para-un-papa': {
-    texto: 'Más opciones para saludar a papá:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-papa/', label: 'Feliz cumpleaños papá (50 frases)' },
-      { href: '/cartas-para-mi-papa-que-lo-haga-llorar/', label: 'Cartas que lo hagan llorar' },
-      { href: '/feliz-cumpleanos-padrastro/', label: 'Para mi padrastro' }
-    ]
-  },
-  'feliz-cumpleanos-padrastro': {
-    texto: 'Más dedicatorias familiares con gratitud:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-papa/', label: 'Frases para papá' },
-      { href: '/cartas-para-mi-papa-que-lo-haga-llorar/', label: 'Cartas largas emotivas' },
-      { href: '/cumpleanos-para-un-papa/', label: 'Saludos para un padre' }
-    ]
-  },
-  'feliz-cumpleanos-para-mi-esposa': {
-    texto: 'Más textos románticos para pareja y matrimonio:',
-    enlaces: [
-      { href: '/frases-para-mi-esposa/', label: 'Frases románticas para mi esposa' },
-      { href: '/feliz-cumpleanos-para-mi-esposo/', label: 'Para mi esposo' },
-      { href: '/feliz-cumpleanos-mi-amor/', label: 'Feliz cumpleaños mi amor' }
-    ]
-  },
-  'frases-para-mi-esposa': {
-    texto: 'Más mensajes y cartas para tu esposa:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-para-mi-esposa/', label: 'Feliz cumpleaños esposa (50 mensajes)' },
-      { href: '/feliz-cumpleanos-mi-amor/', label: 'Frases para mi amor' },
-      { href: '/feliz-aniversario-mi-amor/', label: 'Aniversario de pareja' }
-    ]
-  },
-  'feliz-cumpleanos-para-mi-esposo': {
-    texto: 'Más dedicatorias para tu esposo:',
-    enlaces: [
-      { href: '/frases-para-mi-esposo/', label: 'Frases cortas para mi esposo' },
-      { href: '/carta-de-feliz-cumpleanos-para-mi-esposo-que-lo-haga-llorar/', label: 'Cartas que lo hagan llorar' },
-      { href: '/feliz-cumpleanos-para-mi-esposa/', label: 'Para mi esposa' }
-    ]
-  },
-  'frases-para-mi-esposo': {
-    texto: 'Más formatos para sorprender a tu esposo:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-para-mi-esposo/', label: 'Feliz cumpleaños esposo (50 mensajes)' },
-      { href: '/carta-de-feliz-cumpleanos-para-mi-esposo-que-lo-haga-llorar/', label: 'Cartas largas emotivas' },
-      { href: '/frases-para-esposo-que-esta-lejos/', label: 'Para esposo a la distancia' }
-    ]
-  },
-  'carta-de-feliz-cumpleanos-para-mi-esposo-que-lo-haga-llorar': {
-    texto: '¿Preferís un mensaje más breve para WhatsApp?',
-    enlaces: [
-      { href: '/feliz-cumpleanos-para-mi-esposo/', label: 'Mensajes para mi esposo' },
-      { href: '/frases-para-mi-esposo/', label: 'Frases cortas para mi esposo' },
-      { href: '/feliz-cumpleanos-mi-amor/', label: 'Feliz cumpleaños mi amor' }
-    ]
-  },
-  'frases-para-un-hijo-que-esta-lejos': {
-    texto: 'Más mensajes llenos de amor para tu hijo:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-hijo/', label: 'Feliz cumpleaños hijo (50 dedicatorias)' },
-      { href: '/feliz-cumpleanos-hijo-dios-te-bendiga/', label: 'Hijo, Dios te bendiga' },
-      { href: '/feliz-cumpleanos-a-distancia/', label: 'Saludos a la distancia' }
-    ]
-  },
-  'feliz-cumpleanos-hijo': {
-    texto: 'Explorá otros tonos y situaciones para tu hijo:',
-    enlaces: [
-      { href: '/frases-para-un-hijo/', label: 'Frases cortas para un hijo' },
-      { href: '/frases-para-un-hijo-que-esta-lejos/', label: 'Para un hijo que está lejos' },
-      { href: '/feliz-cumpleanos-hijo-dios-te-bendiga/', label: 'Hijo, Dios te bendiga' }
-    ]
-  },
-  'frases-para-un-hijo': {
-    texto: 'Más dedicatorias para un hijo:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-hijo/', label: 'Feliz cumpleaños hijo (50 mensajes)' },
-      { href: '/frases-para-un-hijo-que-esta-lejos/', label: 'Hijo que está lejos' },
-      { href: '/frases-para-un-hijo-de-2-anos/', label: 'Para hijo de 2 años' }
-    ]
-  },
-  'frases-para-un-hijo-de-2-anos': {
-    texto: 'Otras edades de infancia para tu hijo:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-para-un-hijo-de-1-ano/', label: 'Para hijo de 1 año' },
-      { href: '/carta-para-mi-hijo-de-3-anos/', label: 'Cartas para hijo de 3 años' },
-      { href: '/feliz-cumpleanos-hijo/', label: 'Todas las dedicatorias para hijo' }
-    ]
-  },
-  'carta-para-mi-hijo-de-3-anos': {
-    texto: 'Otras edades cercanas para tu hijo:',
-    enlaces: [
-      { href: '/frases-para-un-hijo-de-2-anos/', label: 'Palabras para hijo de 2 años' },
-      { href: '/carta-para-hijo-de-4-anos/', label: 'Cartas para hijo de 4 años' },
-      { href: '/feliz-cumpleanos-hijo/', label: 'Feliz cumpleaños hijo' }
-    ]
-  },
-  'carta-para-hijo-de-4-anos': {
-    texto: 'Otras edades cercanas para tu hijo:',
-    enlaces: [
-      { href: '/carta-para-mi-hijo-de-3-anos/', label: 'Cartas para hijo de 3 años' },
-      { href: '/frases-para-un-hijo-de-5-anos/', label: 'Frases para hijo de 5 años' },
-      { href: '/feliz-cumpleanos-hijo/', label: 'Feliz cumpleaños hijo' }
-    ]
-  },
-  'carta-para-mi-hijo-de-10-anos': {
-    texto: 'Más dedicatorias para hijos preadolescentes:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-para-hijo-de-12-anos/', label: 'Para hijo de 12 años' },
-      { href: '/palabras-para-mi-hijo-de-14-anos/', label: 'Para hijo de 14 años' },
-      { href: '/feliz-cumpleanos-hijo/', label: 'Feliz cumpleaños hijo' }
-    ]
-  },
-  'carta-para-mi-hermana-mayor': {
-    texto: 'Más dedicatorias para tu hermana:',
-    enlaces: [
-      { href: '/carta-para-mi-hermana-menor-que-la-haga-llorar/', label: 'Para mi hermana menor (llorar)' },
-      { href: '/feliz-cumpleanos-hermana/', label: 'Mensajes para hermana' },
-      { href: '/frases-para-una-hermana/', label: 'Frases cortas para hermana' }
-    ]
-  },
-  'carta-para-mi-hermana-menor-que-la-haga-llorar': {
-    texto: 'Más dedicatorias para tu hermana:',
-    enlaces: [
-      { href: '/carta-para-mi-hermana-mayor/', label: 'Cartas para mi hermana mayor' },
-      { href: '/feliz-cumpleanos-hermana/', label: 'Mensajes para hermana' },
-      { href: '/frases-para-una-hermana/', label: 'Frases cortas para hermana' }
-    ]
-  },
-  'carta-para-mi-prima-en-su-cumpleanos-que-la-haga-llorar': {
-    texto: 'Más mensajes y bendiciones para tu prima:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-prima-dios-te-bendiga/', label: 'Prima, Dios te bendiga' },
-      { href: '/feliz-cumpleanos-prima/', label: 'Feliz cumpleaños prima (50 frases)' },
-      { href: '/carta-para-mi-hermana-menor-que-la-haga-llorar/', label: 'Cartas para hermana menor' }
-    ]
-  },
-  'feliz-cumpleanos-abuelito': {
-    texto: 'Más dedicatorias llenas de cariño para abuelos:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-abuelo/', label: 'Frases para mi abuelo' },
-      { href: '/feliz-cumpleanos-abuela/', label: 'Frases para mi abuela' },
-      { href: '/feliz-dia-de-los-abuelos/', label: 'Día de los Abuelos' }
-    ]
-  },
-  'feliz-cumpleanos-para-doctora': {
-    texto: 'Más saludos elegantes y de admiración:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-mujer/', label: 'Feliz cumpleaños mujer' },
-      { href: '/feliz-cumpleanos-amiga/', label: 'Feliz cumpleaños amiga' },
-      { href: '/cumpleanos-en-la-oficina-y-equipo/', label: 'Saludos para colegas' }
-    ]
-  },
-  'feliz-cumpleanos-mi-princesa': {
-    texto: 'Más dedicatorias tiernas:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-hija/', label: 'Feliz cumpleaños hija' },
-      { href: '/feliz-cumpleanos-mi-amor/', label: 'Feliz cumpleaños mi amor' },
-      { href: '/feliz-cumpleanos-para-una-nina/', label: 'Para una niña' }
-    ]
-  },
-  'feliz-cumpleanos-amigo-hermano': {
-    texto: 'Más mensajes de amistad leal:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-amigo/', label: 'Feliz cumpleaños amigo' },
-      { href: '/feliz-cumpleanos-mejor-amigo/', label: 'Para mi mejor amigo' },
-      { href: '/feliz-cumpleanos-amigo-dios-te-bendiga/', label: 'Amigo, Dios te bendiga' }
-    ]
-  },
-  'frases-para-un-primo-que-esta-lejos': {
-    texto: 'Más dedicatorias para tu primo:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-primo/', label: 'Feliz cumpleaños primo (50 mensajes)' },
-      { href: '/frases-para-un-primo/', label: 'Frases cortas y graciosas' },
-      { href: '/feliz-cumpleanos-a-distancia/', label: 'Saludos a la distancia' }
-    ]
-  },
-  'feliz-cumpleanos-mi-amor': {
-    texto: 'Más dedicatorias románticas:',
-    enlaces: [
-      { href: '/frases-para-un-amor/', label: 'Frases para un gran amor' },
-      { href: '/feliz-cumpleanos-para-mi-esposa/', label: 'Para mi esposa' },
-      { href: '/feliz-cumpleanos-para-mi-esposo/', label: 'Para mi esposo' }
-    ]
-  },
-  'feliz-cumpleanos-mama-texto-largo': {
-    texto: 'Más saludos y cartas para mamá:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-mama/', label: 'Frases cortas para mamá' },
-      { href: '/cartas-para-mi-madre/', label: 'Cartas para mi madre' },
-      { href: '/feliz-cumpleanos-de-hija-para-mama/', label: 'De hija para mamá' }
-    ]
-  },
-  'feliz-cumpleanos-cortos-y-bonitos': {
-    texto: 'Más saludos breves listos para enviar:',
-    enlaces: [
-      { href: '/mensajes-cortos-de-cumpleanos/', label: 'Frases cortas para WhatsApp' },
-      { href: '/felicitaciones-de-cumpleanos-originales/', label: 'Felicitaciones originales' },
-      { href: '/tarjetas-de-cumpleanos-para-whatsapp-estados/', label: 'Estados de WhatsApp' }
-    ]
-  },
-  'feliz-cumpleanos-a-distancia': {
-    texto: 'Más mensajes de cumpleaños para quienes están lejos:',
-    enlaces: [
-      { href: '/frases-para-alguien-especial-que-esta-lejos/', label: 'Para alguien especial que está lejos' },
-      { href: '/frases-para-un-hijo-que-esta-lejos/', label: 'Para un hijo que está lejos' },
-      { href: '/frases-para-esposo-que-esta-lejos/', label: 'Para esposo a la distancia' },
-      { href: '/frases-para-mama-que-esta-lejos/', label: 'Para mamá que está lejos' }
-    ]
-  },
-  'frases-para-alguien-especial-que-esta-lejos': {
-    texto: 'Otras colecciones para saludar a la distancia:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-a-distancia/', label: 'Feliz cumpleaños a la distancia' },
-      { href: '/feliz-cumpleanos-a-distancia-mi-amor/', label: 'Para mi amor a la distancia' },
-      { href: '/frases-para-un-hijo-que-esta-lejos/', label: 'Para un hijo que está lejos' },
-      { href: '/frases-para-un-primo-que-esta-lejos/', label: 'Para un primo que está lejos' }
-    ]
-  },
-  'feliz-cumpleanos-mama': {
-    texto: 'Más formatos y dedicatorias para mamá:',
-    enlaces: [
-      { href: '/feliz-cumpleanos-mama-texto-largo/', label: 'Textos largos y cartas para mamá' },
-      { href: '/cartas-para-mi-madre/', label: 'Cartas para mi madre' },
-      { href: '/frases-para-mama-que-esta-lejos/', label: 'Para mamá que está lejos' },
-      { href: '/poemas-para-mi-mama/', label: 'Poemas para mamá' }
-    ]
-  },
-  'feliz-cumpleanos-papa': {
-    texto: 'Más formatos y saludos para papá:',
-    enlaces: [
-      { href: '/cartas-para-mi-papa-que-lo-haga-llorar/', label: 'Cartas para papá que lo hagan llorar' },
-      { href: '/cumpleanos-para-un-papa/', label: 'Saludos para un padre' },
-      { href: '/cumpleanos-para-papa-que-esta-lejos/', label: 'Para papá que está lejos' },
-      { href: '/feliz-cumpleanos-padrastro/', label: 'Dedicatorias para padrastro' }
-    ]
   }
 };
-const parContextual = esHub
-  ? PARES_CONTEXTUALES[registro.slug] || clusterGscDe(registro.slug, catalogo.hubsPorSlug, 3)
-  : undefined;
+const parContextual = esHub ? PARES_CONTEXTUALES[registro.slug] : undefined;
 
 if (esHub) {
   jsonld.push({
@@ -1118,7 +809,7 @@ const textoEnviar = esHub ? '' : registro.texto;
       <p class="meta-linea-editorial">
         <span>{esBanderines ? `${mensajesCat.length} guías prácticas e ideas` : `${mensajesCat.length} dedicatorias inéditas`}</span>
         <span aria-hidden="true">·</span>
-        <span>{esBanderines ? 'Herramienta online A4 independiente' : 'Personalizables en vivo · Copiar / WhatsApp / PNG gratis'}</span>
+        <span>{esBanderines ? 'Herramienta online A4 independiente' : 'Abrí cada texto para personalizar su tarjeta'}</span>
         <span aria-hidden="true">·</span>
         <span>Actualizado el <time datetime={actualizado}>{actualizado}</time></span>
       </p>
@@ -1179,13 +870,6 @@ const textoEnviar = esHub ? '' : registro.texto;
         </>
       ) : null}
 
-      {!esBanderines ? (
-        <PersonalizadorRapidoHub
-          totalMensajes={mensajesCat.length}
-          esDuelo={editorialHub.perfil === 'duelo'}
-        />
-      ) : null}
-
       <FiltrosSegmentacion
         mensajesTodos={mensajesCat}
         hub={hub}
@@ -1236,40 +920,11 @@ const textoEnviar = esHub ? '' : registro.texto;
 
       <section class="guia-categoria" aria-labelledby="guia-seo-titulo">
         <h2 id="guia-seo-titulo">{registro.seoTitulo}</h2>
-
-        <div class="respuesta-directa guia-resumen-intencion">
-          <p class="respuesta-etiqueta">Clave rápida para elegir en esta categoría</p>
-          <p>{editorialHub.resumenIntencion}</p>
-        </div>
-
         {String(registro.seoTexto || '').split('\n\n').map(function (p) {
           return <p>{p}</p>;
         })}
 
         <blockquote class="cita-editorial">{editorialHub.citaClave}</blockquote>
-
-        <div class="comparacion-concreta" aria-label="Qué conviene evitar y qué funciona mejor">
-          <div class="comp-item comp-evitar">
-            <span class="comp-etiqueta">{editorialHub.comparacionValor.etiquetaEvitar}</span>
-            <p>«{editorialHub.comparacionValor.evitar}»</p>
-          </div>
-          <div class="comp-item comp-mejor">
-            <span class="comp-etiqueta">{editorialHub.comparacionValor.etiquetaMejor}</span>
-            <p>«{editorialHub.comparacionValor.mejor}»</p>
-          </div>
-        </div>
-        <p class="comp-explicacion"><strong>Por qué funciona:</strong> {editorialHub.comparacionValor.explicacion}</p>
-
-        {editorialHub.seccionesValor.map(function (sec) {
-          return (
-            <div class="guia-subseccion">
-              <h3>{sec.subtitulo}</h3>
-              {sec.parrafos.map(function (par) {
-                return <p>{par}</p>;
-              })}
-            </div>
-          );
-        })}
 
         <h3>{editorialHub.subtituloClaves}</h3>
         <ol class="lista-editorial lista-numerada">
@@ -1278,17 +933,8 @@ const textoEnviar = esHub ? '' : registro.texto;
           })}
         </ol>
 
-        <div class="guia-checklist-hub">
-          <h3>{editorialHub.checklistEnvio.titulo}</h3>
-          <ul class="lista-editorial">
-            {editorialHub.checklistEnvio.pasos.map(function (paso) {
-              return <li>{paso}</li>;
-            })}
-          </ul>
-        </div>
-
         <p class="ver-tambien">
-          Lectura complementaria: <a href={`/guias/${editorialHub.guia.slug}/`}>{editorialHub.guia.titulo} →</a> · <a href="/herramientas/">Herramientas gratuitas de tarjetas y recordatorios →</a>
+          Lectura complementaria: <a href={`/guias/${editorialHub.guia.slug}/`}>{editorialHub.guia.titulo} →</a>
         </p>
       </section>
 
@@ -1398,22 +1044,6 @@ const textoEnviar = esHub ? '' : registro.texto;
               mostrarDescarga={true}
             />
           </div>
-
-          {prevMsg && nextMsg ? (
-            <nav class="nav-dedicatorias" aria-label="Navegar entre dedicatorias de esta categoría">
-              <a class="nav-ded-link nav-ded-prev" href={'/' + prevMsg.slug + '/'}>
-                <span class="nav-ded-eyebrow">‹ Anterior</span>
-                <span class="nav-ded-titulo">{prevMsg.titulo}</span>
-              </a>
-              <a class="nav-ded-hub" href={'/' + hub.slug + '/'}>
-                Ver las {totalMensajesHub} opciones
-              </a>
-              <a class="nav-ded-link nav-ded-next" href={'/' + nextMsg.slug + '/'}>
-                <span class="nav-ded-eyebrow">Siguiente dedicatoria ›</span>
-                <span class="nav-ded-titulo">{nextMsg.titulo}</span>
-              </a>
-            </nav>
-          ) : null}
 
           <blockquote class="cita-editorial">{guiaMsg.citaDestacada}</blockquote>
 

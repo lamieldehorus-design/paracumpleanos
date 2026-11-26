@@ -1,6 +1,5 @@
 import { GUIAS_EDITORIALES, guiaPorSlug, type GuiaEditorial } from '../data/guias.ts';
 import { nombreHub } from './catalogo.ts';
-import { faqsGscParaHub } from './gsc-estrategia.ts';
 
 export type ClaseTono =
   | 'corto'
@@ -111,31 +110,9 @@ export interface FaqItem {
   respuesta: string;
 }
 
-export interface ComparacionValorHub {
-  etiquetaEvitar: string;
-  evitar: string;
-  etiquetaMejor: string;
-  mejor: string;
-  explicacion: string;
-}
-
-export interface SeccionValorHub {
-  subtitulo: string;
-  parrafos: string[];
-}
-
-export interface ChecklistEnvioHub {
-  titulo: string;
-  pasos: string[];
-}
-
 export interface EditorialHub {
   perfil: PerfilEditorial;
   tabla: FilaDecisionHub[];
-  resumenIntencion: string;
-  comparacionValor: ComparacionValorHub;
-  seccionesValor: SeccionValorHub[];
-  checklistEnvio: ChecklistEnvioHub;
   subtituloClaves: string;
   claves: string[];
   citaClave: string;
@@ -157,7 +134,7 @@ export interface GuiaAdaptacionMensaje {
 }
 
 const REGEX_DUELO = /fallecid|hasta-el-cielo|condolencias|pesame|consuelo|luctuoso|duelo|tristes|nostalgia|extranas/;
-const REGEX_ANIV = /^(?!.*luctuoso).*(mes(es)?-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/;
+const REGEX_ANIV = /^(?!.*luctuoso).*(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/;
 const REGEX_POEMA = /^poema|poesia|-poema/;
 
 function contarPalabras(texto: string): number {
@@ -195,27 +172,10 @@ const DEST_GENERICOS = new Set([
   'en el cielo',
   'graduación',
   'invitación',
-  'invitaciones',
   'para mí',
-  'para mí 18 años',
-  'para mí 20 años',
-  'para mí 30 años',
-  'cumpleaños a solas',
   'gatos',
   'perros',
-  'banderines',
-  'motivaciones',
-  'francés',
-  'italiano',
-  'portugués',
-  'brindis en fiesta',
-  'canciones y mañanitas',
-  'cumpleaños retro y elegante',
-  'discursos para leer',
-  'estados de whatsapp',
-  'oración cristiana',
-  'regalos y decoración',
-  'respuesta a saludos'
+  'banderines'
 ]);
 
 const DEST_FRASES_NATURALES: Record<string, { frase: string; vocativo: string }> = {
@@ -224,44 +184,6 @@ const DEST_FRASES_NATURALES: Record<string, { frase: string; vocativo: string }>
   'mamá en el cielo': { frase: 'mamá', vocativo: 'mamá' },
   'papá en el cielo': { frase: 'papá', vocativo: 'papá' },
   'hermana en el cielo': { frase: 'tu hermana', vocativo: 'hermana' },
-  'condolencias y duelo': { frase: 'esa familia o persona querida', vocativo: '' },
-  'familia en duelo': { frase: 'una familia en duelo', vocativo: '' },
-  'fe en duelo': { frase: 'quien atraviesa un duelo', vocativo: '' },
-  'memoria luctuosa': { frase: 'quien guarda este recuerdo', vocativo: '' },
-  'pésame breve': { frase: 'esa persona querida', vocativo: '' },
-  'nostalgia y recuerdos': { frase: 'esa persona que recordás', vocativo: '' },
-  'recuerdos tristes': { frase: 'esa persona querida', vocativo: '' },
-  'cuando extrañas a alguien': { frase: 'esa persona que extrañás', vocativo: '' },
-  'amigo en duelo': { frase: 'tu amigo', vocativo: '' },
-  'compañero en duelo': { frase: 'tu compañero de trabajo', vocativo: '' },
-  'hijos por mamá': { frase: 'quien despidió a su mamá', vocativo: '' },
-  'hijos por papá': { frase: 'quien despidió a su papá', vocativo: '' },
-  'abuelos en su día': { frase: 'tus abuelos', vocativo: '' },
-  'amigo en su día': { frase: 'tu amigo', vocativo: '' },
-  'madre en su día': { frase: 'mamá', vocativo: 'mamá' },
-  'padre en su día': { frase: 'papá', vocativo: 'papá' },
-  'maestro en su día': { frase: 'tu maestro', vocativo: '' },
-  'año nuevo familiar': { frase: 'tu familia', vocativo: '' },
-  'navidad familiar': { frase: 'tu familia', vocativo: '' },
-  'nochebuena': { frase: 'tus seres queridos', vocativo: '' },
-  'pascuas': { frase: 'tus seres queridos', vocativo: '' },
-  'halloween': { frase: 'tus amigos y familia', vocativo: '' },
-  'san valentín': { frase: 'tu pareja', vocativo: 'mi amor' },
-  'día de la familia': { frase: 'tu familia', vocativo: '' },
-  'día de la mujer': { frase: 'esa mujer que admirás', vocativo: '' },
-  'día de la primavera': { frase: 'tus amigos y afectos', vocativo: '' },
-  'día de reyes': { frase: 'los más chicos y tu familia', vocativo: '' },
-  'día del niño': { frase: 'los más chicos', vocativo: '' },
-  'día del trabajador': { frase: 'tu equipo y colegas', vocativo: '' },
-  'oficina y equipo': { frase: 'tu equipo de trabajo', vocativo: '' },
-  'persona que se jubila': { frase: 'la persona que se jubila', vocativo: '' },
-  'recién nacido': { frase: 'el bebé y su familia', vocativo: '' },
-  'bebé en su cumplemes': { frase: 'el bebé y su familia', vocativo: '' },
-  'niños superhéroes': { frase: 'el pequeño cumpleañero', vocativo: '' },
-  'princesas y hadas': { frase: 'la pequeña cumpleañera', vocativo: '' },
-  'fanáticos del fútbol y deporte': { frase: 'esa persona fanática del deporte', vocativo: '' },
-  'pareja 25 años': { frase: 'tu pareja', vocativo: 'mi amor' },
-  'pareja larga': { frase: 'tu pareja', vocativo: 'mi amor' },
   'quinceañera': { frase: 'la quinceañera', vocativo: 'quinceañera' },
   'bebé': { frase: 'el bebé', vocativo: '' },
   'niña': { frase: 'la niña', vocativo: '' },
@@ -270,7 +192,7 @@ const DEST_FRASES_NATURALES: Record<string, { frase: string; vocativo: string }>
   'joven': { frase: 'esa persona joven', vocativo: '' },
   'mujer': { frase: 'esa mujer especial', vocativo: '' },
   'hombre': { frase: 'ese hombre especial', vocativo: '' },
-  'novios': { frase: 'tu pareja', vocativo: '' },
+  'novios': { frase: 'los novios', vocativo: '' },
   'pareja': { frase: 'tu pareja', vocativo: 'mi amor' },
   'amor': { frase: 'tu pareja', vocativo: 'mi amor' },
   'crush': { frase: 'esa persona que te gusta', vocativo: '' },
@@ -302,12 +224,6 @@ function destNatural(hub?: any, msg?: any): { frase: string; vocativo: string } 
   if (DEST_FRASES_NATURALES[lower]) {
     return DEST_FRASES_NATURALES[lower];
   }
-  if (/^\d+\s*(mes|meses|año|años)\s+de\s+novios$/i.test(lower)) {
-    return { frase: 'tu pareja', vocativo: 'mi amor' };
-  }
-  if (/^\d+\s*años$/i.test(lower) || /^cumpleaños de /i.test(lower)) {
-    return { frase: 'la persona que cumple', vocativo: '' };
-  }
   return { frase: `tu ${lower}`, vocativo: raw };
 }
 
@@ -318,7 +234,7 @@ export function detectarPerfilEditorial(hub?: any, msg?: any): PerfilEditorial {
 
   if (slug === 'banderines-de-cumpleanos-para-imprimir' || slug.includes('banderin')) return 'banderines';
   if (slug === 'motivaciones' || slug.includes('motivacion')) return 'motivaciones';
-  if (grupo === 'meses' || /^cumpleanos-en-(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)$/.test(slug)) return 'meses';
+  if (grupo === 'meses' || /^cumpleanos-en-/.test(slug)) return 'meses';
   if (/jubilacion/.test(slug)) return 'jubilacion';
   if (/nacimiento|cumplemes/.test(slug)) return 'nacimiento';
   if (
@@ -328,7 +244,7 @@ export function detectarPerfilEditorial(hub?: any, msg?: any): PerfilEditorial {
     return 'fecha_especial';
   }
   if (REGEX_DUELO.test(slug) || grupo === 'duelo_recuerdos') return 'duelo';
-  if (/mes(es)?-de-novios/.test(slug)) return 'aniv_meses';
+  if (/meses-de-novios/.test(slug)) return 'aniv_meses';
   if (REGEX_ANIV.test(slug)) return 'aniv_anos';
   if (/ingles|english|biling|italiano|portugues|frances/.test(slug)) return 'bilingue';
   if (/invitacion/.test(slug)) return 'invitacion';
@@ -571,13 +487,10 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
   const slug = String((hub && hub.slug) || '');
   const grupo = String((hub && hub.grupo) || '');
 
-  let target = 'mensajes-de-cumpleanos-cortos-emotivos-o-reflexivos-como-elegir';
+  let target = 'como-personalizar-tarjetas-y-dedicatorias-whatsapp';
   if (slug === 'motivaciones') {
     target = 'como-escribir-frases-motivacionales-diarias-que-inspiren';
-  } else if (
-    grupo === 'meses' ||
-    /^cumpleanos-en-(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)$/.test(slug)
-  ) {
+  } else if (grupo === 'meses' || /^cumpleanos-en-/.test(slug)) {
     target = 'cumpleanos-segun-tu-signo-del-zodiaco-como-felicitar';
   } else if (slug === 'brindis-de-cumpleanos' || slug === 'discursos-cortos-de-cumpleanos-para-leer') {
     target = 'como-dar-un-brindis-de-cumpleanos-inolvidable-en-60-segundos';
@@ -587,14 +500,10 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'que-regalar-y-como-decorar-un-cumpleanos-con-presupuesto-inteligente';
   } else if (/superheroes|princesas|futbol|retro-vintage/.test(slug)) {
     target = 'tematicas-de-cumpleanos-ideas-originales-para-fiestas';
-  } else if (slug === 'agradecimiento-por-saludos-cumpleanos' || /^((frases|palabras)-de-agradecimiento)$/.test(slug)) {
+  } else if (slug === 'agradecimiento-por-saludos-cumpleanos') {
     target = 'como-agradecer-los-mensajes-de-cumpleanos-por-whatsapp-y-redes';
   } else if (slug === 'feliz-cumpleanos-para-mi-si-estoy-lejos-o-solo') {
     target = 'cumpleanos-solo-o-en-momentos-dificiles-ideas-para-pasar-el-dia-con-calma';
-  } else if (/jubilacion|nacimiento|cumplemes|graduacion/.test(slug)) {
-    target = 'que-escribir-en-nacimiento-jubilacion-y-graduacion-hitos-de-vida';
-  } else if (/perros|gatos/.test(slug)) {
-    target = 'como-celebrar-y-escribir-por-el-cumpleanos-de-perros-y-gatos';
   } else if (slug === 'feliz-dia-del-padre') {
     target = 'que-regalar-a-papa-que-dice-que-no-quiere-nada-ideas-con-dedicatoria';
   } else if (/30-anos-para-mi|bodas-de-plata/.test(slug)) {
@@ -602,21 +511,18 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
   } else if (
     hub && (
       hub.grupo === 'fechas_especiales' ||
-      /feliz-dia-|navidad|nochebuena|ano-nuevo|san-valentin|pascuas|halloween|primavera/.test(slug)
+      /feliz-dia-|jubilacion|cumplemes|nacimiento|navidad|nochebuena|ano-nuevo|san-valentin|pascuas|halloween|primavera/.test(slug)
     )
   ) {
-    target = 'mensajes-para-fechas-especiales-del-ano-navidad-madre-san-valentin';
+    target = 'regalos-economicos-con-valor-emocional-y-tarjeta-personalizada';
   } else if (slug === 'banderines-de-cumpleanos-para-imprimir') {
     target = 'banderines-de-cumpleanos-para-imprimir-medidas-y-plantillas';
   } else if (
+    slug.startsWith('condolencias') ||
+    /pesame|consuelo|luctuoso|duelo-recuerdos|acompanar-a-una-familia-en-duelo/.test(slug) ||
     slug === 'frases-tristes-para-recordar-momentos' ||
     slug === 'frases-de-nostalgia-y-recuerdos' ||
     slug === 'mensajes-cuando-extranas-a-alguien'
-  ) {
-    target = 'como-escribir-mensajes-de-nostalgia-y-cuando-extranas-a-alguien';
-  } else if (
-    slug.startsWith('condolencias') ||
-    /pesame|consuelo|luctuoso|duelo-recuerdos|acompanar-a-una-familia-en-duelo/.test(slug)
   ) {
     target = 'como-escribir-condolencias-y-palabras-de-pesame-respetuosas';
   } else if (REGEX_DUELO.test(slug)) {
@@ -639,8 +545,6 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'cumpleanos-de-15-anos-dedicatorias-y-reglas-del-festejo';
   } else if (/18-anos/.test(slug)) {
     target = 'ideas-para-cumpleanos-de-18-anos-regalos-y-dedicatorias';
-  } else if (/(?:^|-)(25|30|35|40|45)-anos/.test(slug)) {
-    target = 'cumpleanos-de-30-y-40-anos-palabras-sinceras-sin-cliches-de-edad';
   } else if (/50-anos|65-anos/.test(slug)) {
     target = 'como-celebrar-cumpleanos-de-50-anos-homenajes-y-palabras';
   } else if (/90-anos|abuel/.test(slug)) {
@@ -649,24 +553,22 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'como-felicitar-a-una-embarazada-en-su-cumpleanos';
   } else if (/gracioso|divertido|chist|humor|risa/.test(slug)) {
     target = 'frases-de-cumpleanos-graciosas-sin-incomodar';
-  } else if (/(?:^|-)para-mi($|-mism|-si-)|frases-por-mi-cumpleanos/.test(slug)) {
+  } else if (/para-mi\b/.test(slug)) {
     target = 'auto-felicitacion-por-mi-cumpleanos-para-agradecer-y-reflexionar';
+  } else if (/whatsapp/.test(slug)) {
+    target = 'como-felicitar-por-whatsapp-sin-sonar-automatico';
+  } else if (/herman/.test(slug)) {
+    target = 'como-escribir-dedicatorias-de-cumpleanos-para-hermanos-complices';
+  } else if (grupo === 'cartas' && /(novi|espos|mi-amor|pareja)/.test(slug)) {
+    target = 'como-escribir-una-carta-de-cumpleanos-a-tu-pareja';
+  } else if (grupo === 'cartas') {
+    target = 'como-escribir-una-carta-de-cumpleanos-que-emocione';
   } else if (grupo === 'profesionales' || /oficina-y-equipo/.test(slug)) {
     target = 'como-felicitar-en-el-trabajo-jefe-companeros-clientes';
   } else if (grupo === 'distancia') {
     target = 'como-celebrar-un-cumpleanos-a-la-distancia';
   } else if (grupo === 'cristiano' || /oracion/.test(slug)) {
     target = 'frases-de-fe-y-agradecimiento-para-cumpleanos-cristianos';
-  } else if (grupo === 'cartas' && /(novi|espos|mi-amor|pareja)/.test(slug)) {
-    target = 'como-escribir-una-carta-de-cumpleanos-a-tu-pareja';
-  } else if (grupo === 'cartas') {
-    target = 'como-escribir-una-carta-de-cumpleanos-que-emocione';
-  } else if (/whatsapp/.test(slug)) {
-    target = 'como-felicitar-por-whatsapp-sin-sonar-automatico';
-  } else if (/facebook/.test(slug)) {
-    target = 'frases-para-estados-de-whatsapp-e-instagram-de-cumpleanos';
-  } else if (/herman/.test(slug)) {
-    target = 'como-escribir-dedicatorias-de-cumpleanos-para-hermanos-complices';
   } else if (/(bebe|primer-anito|nino|nina)/.test(slug)) {
     target = 'cumpleanos-infantiles-entre-amigos-y-companeros-de-colegio';
   } else if (grupo === 'edades') {
@@ -679,15 +581,6 @@ export function guiaRelacionadaParaHub(hub: any): GuiaEditorial {
     target = 'mensajes-de-cumpleanos-para-padres-e-hijos-por-etapa';
   } else if (/(novi|espos|mi-amor|pareja|crush)/.test(slug)) {
     target = 'como-escribir-una-carta-de-cumpleanos-a-tu-pareja';
-  } else if (/(amig|compadre|comadre)/.test(slug)) {
-    target = 'mensajes-de-cumpleanos-para-amigos-y-mejores-amigos';
-  } else if (
-    grupo === 'familia' ||
-    /(suegr|cunad|tia|tio|prim[oa]|sobrin|yerno|nuera|niet[oa]|padrino|madrina|ahijad|gemel)/.test(slug)
-  ) {
-    target = 'como-felicitar-a-familia-politica-y-extendida-suegra-cunados-tios';
-  } else if (/tarjetas-/.test(slug)) {
-    target = 'como-personalizar-tarjetas-y-dedicatorias-whatsapp';
   }
 
   return guiaPorSlug(target) || GUIAS_EDITORIALES[0];
@@ -1494,417 +1387,14 @@ export function editorialHubCompleto(hub: any, mensajes: any[]): EditorialHub {
       break;
   }
 
-  const faqsFinales = faqsGscParaHub(hub, mensajes.length) || faqs;
-  const altoValor = construirBloquesAltoValorHub({
-    perfil,
-    nombre,
-    dest,
-    slug,
-    total: mensajes.length,
-    cortos,
-    medios,
-    largos
-  });
-
   return {
     perfil,
     tabla,
-    resumenIntencion: altoValor.resumenIntencion,
-    comparacionValor: altoValor.comparacionValor,
-    seccionesValor: altoValor.seccionesValor,
-    checklistEnvio: altoValor.checklistEnvio,
     subtituloClaves,
     claves,
     citaClave,
-    faqs: faqsFinales,
+    faqs,
     guia: guiaRelacionadaParaHub(hub)
-  };
-}
-
-function construirBloquesAltoValorHub(ctx: {
-  perfil: PerfilEditorial;
-  nombre: string;
-  dest: string;
-  slug: string;
-  total: number;
-  cortos: number;
-  medios: number;
-  largos: number;
-}): {
-  resumenIntencion: string;
-  comparacionValor: ComparacionValorHub;
-  seccionesValor: SeccionValorHub[];
-  checklistEnvio: ChecklistEnvioHub;
-} {
-  const { perfil, nombre, dest, slug, total, cortos, medios, largos } = ctx;
-  const temaMin = nombre.toLowerCase();
-
-  const unirLista = (partes: string[]): string =>
-    partes.length <= 1 ? (partes[0] || '') : `${partes.slice(0, -1).join(', ')} y ${partes[partes.length - 1]}`;
-  const partesMasc = [
-    cortos > 0 ? `${cortos} ${cortos === 1 ? 'breve' : 'breves'}` : '',
-    medios > 0 ? `${medios} ${medios === 1 ? 'intermedio' : 'intermedios'}` : '',
-    largos > 0 ? `${largos} ${largos === 1 ? 'desarrollado' : 'desarrollados'}` : ''
-  ].filter(Boolean);
-  const detalleMasc = partesMasc.length ? ` (${unirLista(partesMasc)})` : '';
-
-  // 1. Respuesta directa en piramide invertida (2 oraciones activas, sin contaminacion tematica)
-  let resumenIntencion = `Para destacar con ${temaMin}, elegí una dedicatoria acorde al canal y sumá al menos un detalle cotidiano de ${dest} —un apodo, una costumbre o una anécdota reciente— en el personalizador rápido. En esta colección tenés ${total} textos inéditos${detalleMasc} listos para copiar o bajar en tarjeta PNG.`;
-
-  if (perfil === 'duelo') {
-    resumenIntencion = `Al elegir palabras sobre ${temaMin}, priorizá la sencillez, el respeto por el silencio familiar y un recuerdo concreto del legado de esa persona en vez de frases hechas. Reunimos ${total} textos serenos revisados uno por uno para acompañar con tacto por mensaje privado o tarjeta sobria.`;
-  } else if (perfil === 'aniv_meses' || perfil === 'aniv_anos') {
-    resumenIntencion = `Un saludo por ${temaMin} emociona de verdad cuando nombra una escena real que comparten como pareja —una risa de entrecasa, un viaje chico o el apoyo cotidiano— y evita promesas abstractas. Acá tenés ${total} dedicatorias inéditas pensadas exclusivamente para celebrar su tiempo juntos.`;
-  } else if (perfil === 'banderines') {
-    resumenIntencion = `Para lograr guirnaldas prolijas en ${temaMin}, definí primero el largo de la pared, imprimí 2 banderines por hoja A4 en cartulina mate de 180 a 240 gramos y dejá 35 cm de cordón extra en cada extremo. Esta sección integra el creador online A4 gratuito junto a ${total} guías prácticas de armado.`;
-  } else if (perfil === 'motivaciones') {
-    resumenIntencion = `Una reflexión de ${temaMin} genera resultados reales cuando se convierte en una acción concreta de cinco minutos en lugar de quedar en un lema vacío. Recorré estas ${total} frases curadas para ordenar tu mañana, compartir foco real o descargar como Story vertical.`;
-  } else if (perfil === 'profesionales') {
-    resumenIntencion = `Al enviar ${temaMin}, mantené exactamente el trato habitual con ${dest} (vos o usted) y combiná un deseo cordial con el reconocimiento de una cualidad laboral concreta. Estas ${total} opciones equilibran cercanía y etiqueta sin invadir espacios privados.`;
-  } else if (perfil === 'distancia') {
-    resumenIntencion = `En ${temaMin}, acortar kilómetros depende de dos gestos simples: enviar temprano según el huso horario de ${dest} y cerrar con un plan concreto para el próximo reencuentro o videollamada. Estas ${total} dedicatorias combinan cariño luminoso y cero tristeza pesada.`;
-  } else if (perfil === 'jubilacion') {
-    resumenIntencion = `Al despedir una etapa en ${temaMin}, agradecé una enseñanza o aporte concreto de su trayectoria y celebrá con optimismo el descanso y los proyectos personales que comienzan ahora. Reunimos ${total} dedicatorias equilibradas para firmar solo o en nombre de todo el equipo.`;
-  } else if (perfil === 'nacimiento') {
-    resumenIntencion = `Para acompañar ${temaMin} con tacto, celebrá la llegada del bebé y abrazá también a mamá y papá sin sumar consejos no pedidos ni presionar visitas. Estas ${total} opciones breves y tiernas funcionan perfecto por chat o en una lámina impresa para el álbum.`;
-  } else if (perfil === 'fecha_especial') {
-    resumenIntencion = `En fechas muy concurridas como ${temaMin}, cuatro líneas escritas con el nombre real de ${dest} y un gesto de gratitud cotidiano destacan muchísimo más que cualquier imagen reenviada en cadena. Acá tenés ${total} opciones originales listas para personalizar.`;
-  }
-
-  // 2. Comparacion SUCCESs (Cliché a evitar vs. Concreto que conecta)
-  const compPorPerfil: Record<PerfilEditorial, ComparacionValorHub> = {
-    duelo: {
-      etiquetaEvitar: 'Frase automática que suena distante',
-      evitar: 'El tiempo todo lo cura, mucha fuerza en este día tan difícil.',
-      etiquetaMejor: 'Palabra serena que abraza y honra el recuerdo',
-      mejor: 'Hoy te tengo muy presente y recuerdo con cariño su calma y la manera en que siempre recibía a todos en casa. Si querés charlar o tomar un café en silencio esta semana, acá estoy.',
-      explicacion: 'En fechas sensibles, validar la ausencia y nombrar un rasgo real de la persona recordada reconforta mucho más que intentar explicar el dolor.'
-    },
-    aniv_meses: {
-      etiquetaEvitar: 'Cliché exagerado y poco creíble',
-      evitar: 'Sos el amor eterno de todas mis vidas, feliz cumplemes.',
-      etiquetaMejor: 'Detalle fresco y cotidiano de ustedes dos',
-      mejor: 'Qué rápido y lindo pasó este tiempo juntos: sigo disfrutando cada caminata improvisada y cómo me cambiás el humor con un solo mensaje. Por muchos meses más eligiéndonos así.',
-      explicacion: 'Durante los primeros meses, las imágenes concretas de lo que disfrutan hoy suenan infinitamente más auténticas que las promesas solemnes.'
-    },
-    aniv_anos: {
-      etiquetaEvitar: 'Saludo genérico de molde',
-      evitar: 'Feliz aniversario, que sigamos siempre felices como el primer día.',
-      etiquetaMejor: 'Reconocimiento real del camino compartido',
-      mejor: 'Agradezco el equipo que armamos en estos años: la risa de entrecasa, cómo nos cuidamos cuando la semana pesa y las ganas intactas de planear el próximo viaje juntos.',
-      explicacion: 'Nombrar la complicidad real que se construye con el paso del tiempo demuestra atención genuina y renueva la emoción de la pareja.'
-    },
-    banderines: {
-      etiquetaEvitar: 'Improvisar sin medir papel ni pared',
-      evitar: 'Imprimir letras gigantes en papel común de 75 g y colgarlas en una sola tira que se dobla al primer viento.',
-      etiquetaMejor: 'Planificar proporción, gramaje y dos filas',
-      mejor: 'Ajustar el nombre en el estudio A4 (2 banderines de 14 × 19 cm por hoja), imprimir en opalina de 200 g y colgar en dos filas equilibradas dejando 35 cm de cordón libre en cada punta.',
-      explicacion: 'El gramaje correcto y la separación por palabras garantizan bordes firmes, lectura nítida en las fotos y armado en menos de veinte minutos.'
-    },
-    motivaciones: {
-      etiquetaEvitar: 'Slogan vacío sin aplicación práctica',
-      evitar: 'Si lo deseás con fuerza, el universo te va a dar todo sin esfuerzo.',
-      etiquetaMejor: 'Impulso realista orientado a una micro-acción',
-      mejor: 'No necesitás resolver toda la semana hoy: elegí una sola tarea clave, dedicá veinte minutos sin distracciones y celebrá haber empezado con calma.',
-      explicacion: 'Las reflexiones útiles reducen la parálisis y proponen un paso concreto que cualquiera puede aplicar durante la mañana.'
-    },
-    profesionales: {
-      etiquetaEvitar: 'Tono confianzudo o mezcla con pendientes',
-      evitar: 'Feliz cumple, pasala bomba y cuando puedas revisá el informe del viernes.',
-      etiquetaMejor: 'Cordialidad limpia con reconocimiento puntual',
-      mejor: 'Muy feliz cumpleaños. Que tenga un gran año personal y profesional; da gusto compartir proyectos con alguien de su criterio y buena disposición diaria.',
-      explicacion: 'Separar el saludo de los pendientes laborales y reconocer una cualidad real del trato cotidiano fortalece la relación profesional.'
-    },
-    distancia: {
-      etiquetaEvitar: 'Mensaje que remarca solo la tristeza',
-      evitar: 'Qué pena que estés tan lejos, acá nada es lo mismo sin vos.',
-      etiquetaMejor: 'Cercanía luminosa con foco en el reencuentro',
-      mejor: 'Aunque haya kilómetros y husos horarios en el medio, hoy brindamos por tu nuevo año y por todo lo bueno que estás construyendo allá. Guardá un rato a la tarde para nuestra videollamada.',
-      explicacion: 'Equilibrar el cariño con orgullo por su presente y una cita concreta para verse o hablar convierte la distancia en compañía real.'
-    },
-    fe: {
-      etiquetaEvitar: 'Cadena impersonal reenviada sin nombre',
-      evitar: 'Que Dios te bendiga siempre en este día especial, amén.',
-      etiquetaMejor: 'Bendición personal unida a una virtud concreta',
-      mejor: 'Doy gracias a Dios por tu vida y por la calma generosa con la que cuidás a quienes te rodean. Que este nuevo año te regale salud, paz en tu hogar y motivos diarios de alegría.',
-      explicacion: 'Unir la fe con el agradecimiento por un rasgo real de la persona hace que la bendición suene rezada especialmente para ella.'
-    },
-    humor: {
-      etiquetaEvitar: 'Broma gastada o incómoda sobre la edad',
-      evitar: 'Un año más cerca de jubilarte, ya ni entran las velas en la torta.',
-      etiquetaMejor: 'Guiño cómplice seguido de afecto sincero',
-      mejor: 'No vamos a contar cuántas velas van esta vez para no activar la alarma de incendios, pero sí celebro cada anécdota que compartimos. Ojalá este año te traiga risas y grandes planes.',
-      explicacion: 'El humor compartido funciona siempre que evita incomodar y remata con un abrazo genuino en la última oración.'
-    },
-    bilingue: {
-      etiquetaEvitar: 'Traducción literal forzada palabra por palabra',
-      evitar: 'Pegar una frase traducida mecánicamente que pierde sentido cultural en el otro idioma.',
-      etiquetaMejor: 'Frase natural en idioma original más cierre cálido',
-      mejor: 'Conservar la expresión auténtica en su idioma original arriba y sumar una línea propia en español con el apodo real de la persona.',
-      explicacion: 'Respetar el ritmo idiomatico original y añadir una posdata cercana mantiene elegancia sin perder calidez humana.'
-    },
-    invitacion: {
-      etiquetaEvitar: 'Invitación vaga que obliga a preguntar todo',
-      evitar: 'Te invito a festejar mi cumple el sábado en casa, avisame cualquier cosa.',
-      etiquetaMejor: 'Entusiasmo claro con datos prácticos ordenados',
-      mejor: 'Te espero este sábado 18 a las 20:30 en casa (Av. Rivadavia 1420) para compartir pizza y brindis. No hace falta traer nada; confirmame antes del jueves así calculo la mesa.',
-      explicacion: 'Resolver fecha, horario, dirección y confirmación en tres líneas evita decenas de mensajes repetidos y mejora la asistencia.'
-    },
-    atrasado: {
-      etiquetaEvitar: 'Excusa larga e inverosímil o silencio total',
-      evitar: 'Perdón, se me rompió el celular y tuve mil líos esta semana, feliz cumple atrasado.',
-      etiquetaMejor: 'Sinceridad breve más plan para compensar',
-      mejor: 'Llegué un día tarde al calendario, pero no quería dejar pasar tu vuelta al sol sin desearte un año enorme. Esta semana te invito un café para brindar como corresponde.',
-      explicacion: 'Admitir el despiste con calidez y proponer un encuentro concreto transforma el retraso en una linda excusa para verse.'
-    },
-    embarazo: {
-      etiquetaEvitar: 'Hablar solo del bebé o dar consejos no pedidos',
-      evitar: 'Aprovechá para dormir ahora porque cuando nazca no vas a descansar más.',
-      etiquetaMejor: 'Celebrarla a ella y ofrecer apoyo real',
-      mejor: 'Muy feliz cumpleaños para vos en esta etapa tan luminosa. Te deseo descanso, mimos y alegría hoy; cuando quieras te llevo algo rico a casa para charlar sin apuro.',
-      explicacion: 'Recordarle que hoy también es su día personal —no solo su embarazo— la hace sentir cuidada y valorada.'
-    },
-    infantil: {
-      etiquetaEvitar: 'Texto adulto demasiado abstracto',
-      evitar: 'Que alcances la plenitud existencial en este nuevo ciclo.',
-      etiquetaMejor: 'Recuerdo vivo de su edad y sus juegos hoy',
-      mejor: 'Qué alegría verte crecer con esa risa contagiosa y tus ganas de descubrir todo. Guardamos estas palabras para que dentro de unos años recuerdes cuánto te queremos.',
-      explicacion: 'Capturar un detalle de su etapa actual alegra hoy a la familia y crea un tesoro para el álbum familiar.'
-    },
-    jovenes: {
-      etiquetaEvitar: 'Sermón largo con advertencias sobre el futuro',
-      evitar: 'Disfrutá ahora que sos joven porque después la vida se pone muy difícil.',
-      etiquetaMejor: 'Orgullo por su voz propia y sus proyectos',
-      mejor: 'Me encanta ver cómo estás armando tu propio camino con criterio y humor. Que este nuevo año te traiga libertad, buenos amigos y proyectos que te entusiasmen.',
-      explicacion: 'A los 15, 18 o 21 años conmueve sentirse mirado con respeto y confianza, no con sermones repetidos.'
-    },
-    adultos: {
-      etiquetaEvitar: 'Chiste repetido sobre ponerse viejo',
-      evitar: 'Bienvenido al club de los dolores de espalda y las canas.',
-      etiquetaMejor: 'Celebración de la calma y los logros elegidos',
-      mejor: 'Qué bien te sienta esta etapa: más claridad para elegir dónde poner tu energía y menos apuro por agradar. Ojalá este año te regale salud, tiempo libre y grandes viajes.',
-      explicacion: 'A partir de los 30 o 40 años, un mensaje que celebra quién es hoy y desea descanso real se agradece el doble.'
-    },
-    mayores: {
-      etiquetaEvitar: 'Saludo apurado de dos palabras sin calidez',
-      evitar: 'Feliz cumple, que la pases lindo.',
-      etiquetaMejor: 'Gratitud concreta por su ejemplo y sobremesas',
-      mejor: 'Gracias por las historias compartidas, tu paciencia infinita y ese ejemplo que mantiene unida a toda la familia. Hoy te llamo al mediodía y pronto pasamos a compartir unos mates.',
-      explicacion: 'Nombrar una enseñanza o costumbre familiar y sumar una llamada o visita convierte el texto en un abrazo verdadero.'
-    },
-    poema: {
-      etiquetaEvitar: 'Pegar versos amontonados sin saltos de estrofa',
-      evitar: 'Enviar un poema entero en un solo bloque corrido sin pausas ni destinatario.',
-      etiquetaMejor: 'Estrofas limpias con nombre propio arriba',
-      mejor: 'Respetar cada salto de verso al copiar, abrir con el nombre real arriba y elegir una tarjeta en tono Marfil o Rosa si va impresa.',
-      explicacion: 'El aire visual entre estrofas preserva la musicalidad del poema y mejora muchísimo su lectura en celular o papel.'
-    },
-    carta: {
-      etiquetaEvitar: 'Bloque interminable sin pausas ni foco',
-      evitar: 'Escribir veinte renglones seguidos repitiendo las mismas cualidades sin un recuerdo concreto.',
-      etiquetaMejor: 'Cuatro párrafos breves con una escena real',
-      mejor: 'Abrir con su apodo, contar un momento puntual del año, agradecer una cualidad concreta y cerrar deseándole paz y proyectos lindos.',
-      explicacion: 'Dividir la carta en párrafos cortos de dos o tres oraciones sostiene la emoción sin cansar la vista en la pantalla.'
-    },
-    pareja: {
-      etiquetaEvitar: 'Frase de tarjeta genérica sin historia propia',
-      evitar: 'Feliz cumpleaños mi amor, sos todo para mí, que seas muy feliz.',
-      etiquetaMejor: 'Escena íntima de la vida cotidiana compartida',
-      mejor: 'Amo la calma que trae volver a casa y encontrarte, las risas de entrecasa y el equipo que armamos cada semana. Gracias por compartir tu vida conmigo; brindemos hoy por tu nuevo año.',
-      explicacion: 'Lo que más emociona a una pareja es sentirse mirada en los gestos reales de todos los días, no en frases abstractas.'
-    },
-    amistad: {
-      etiquetaEvitar: 'Saludo frío igual al de un conocido lejano',
-      evitar: 'Feliz cumpleaños, que pases un excelente día con tus seres queridos.',
-      etiquetaMejor: 'Complicidad real más invitación concreta',
-      mejor: 'Gracias por las charlas que arreglan cualquier semana y por aparecer siempre con la palabra justa. Guardame una noche esta semana que el brindis corre por mi cuenta.',
-      explicacion: 'Entre amigos, recordar una cualidad real del vínculo y proponer un encuentro cercano hace que el saludo destaque al instante.'
-    },
-    meses: {
-      etiquetaEvitar: 'Saludo desconectado de la época del año',
-      evitar: 'Feliz cumple, que cumplas muchos más.',
-      etiquetaMejor: 'Guiño a su temporada y temperamento',
-      mejor: 'Qué lindo celebrar tu vuelta al sol en este mes tan tuyo: ojalá el clima de la temporada acompañe con buena mesa, descanso merecido y proyectos nuevos que te ilusionen.',
-      explicacion: 'Conectar la dedicatoria con el mes y los signos zodiacales correspondientes vuelve el mensaje mucho más personal desde la primera línea.'
-    },
-    fecha_especial: {
-      etiquetaEvitar: 'Reenviar la misma cadena masiva con imagen saturada',
-      evitar: 'Reenviar una placa genérica que ya recibieron veinte veces en distintos grupos.',
-      etiquetaMejor: 'Cuatro líneas personalizadas con nombre y gratitud',
-      mejor: 'Te escribo directo y sin cadenas para agradecerte el cariño compartido este año y desearte una jornada serena, rodeada de buena mesa y abrazos sinceros.',
-      explicacion: 'En fechas masivas del calendario, un mensaje breve con nombre propio se lee con mucha más atención que cualquier reenvío.'
-    },
-    jubilacion: {
-      etiquetaEvitar: 'Tono melancólico como si todo terminara',
-      evitar: 'Qué tristeza que te vayas, ahora vas a tener demasiado tiempo libre.',
-      etiquetaMejor: 'Gratitud por lo enseñado y entusiasmo por lo nuevo',
-      mejor: 'Gracias por tu paciencia para enseñar y tu criterio sereno en cada proyecto. Ahora empieza lo mejor: mañanas sin despertador, viajes pendientes y tiempo pleno para disfrutar.',
-      explicacion: 'Celebrar la trayectoria recorrida y mirar con alegría la etapa libre que empieza deja el mejor recuerdo laboral.'
-    },
-    nacimiento: {
-      etiquetaEvitar: 'Presionar visitas o dar consejos médicos',
-      evitar: 'Avisame cuándo podemos caer todos a conocerlo, y acordate de abrigarlo mucho.',
-      etiquetaMejor: 'Ternura sin presión y cuidado por el descanso',
-      mejor: 'Qué noticia tan luminosa la llegada del bebé. Les mando un abrazo gigante a los tres; lean este mensaje tranquilos cuando puedan y avisen si necesitan que les acerque comida casera.',
-      explicacion: 'Respetar los tiempos de descanso de la familia recién ampliada hace que tu saludo sea recordado con enorme cariño.'
-    },
-    familia: {
-      etiquetaEvitar: 'Saludo genérico igual para cualquier contacto',
-      evitar: 'Feliz cumpleaños, que pases un día lleno de bendiciones y éxitos.',
-      etiquetaMejor: 'Apodo familiar más recuerdo cotidiano concreto',
-      mejor: 'Qué suerte compartir la mesa, las charlas largas y tu humor de siempre. Gracias por estar en cada momento importante; deseamos que este nuevo año te encuentre con salud y tiempo para disfrutar.',
-      explicacion: 'Incluir una escena cotidiana familiar y el trato afectuoso de todos los días multiplica de inmediato el valor emocional del texto.'
-    }
-  };
-
-  const comparacionValor = compPorPerfil[perfil] || compPorPerfil.familia;
-
-  // 3. Dos subsecciones H3 semanticas con valor practico (sin repetir exacto el H1)
-  const partesFem = [
-    cortos > 0 ? `${cortos} ${cortos === 1 ? 'opción breve' : 'opciones breves'} (hasta 65 palabras)` : '',
-    medios > 0 ? `${medios} ${medios === 1 ? 'intermedia' : 'intermedias'}` : '',
-    largos > 0 ? `${largos} ${largos === 1 ? 'desarrollada' : 'desarrolladas'}` : ''
-  ].filter(Boolean);
-  const distribucionTexto =
-    cortos > 0 && largos > 0
-      ? `Esta sección equilibra ${unirLista(partesFem)}.`
-      : largos > 0
-      ? `Las ${total} propuestas de esta sección priorizan el desarrollo amplio (más de 120 palabras) con párrafos aireados para leer con calma.`
-      : `Las ${total} propuestas de esta sección mantienen una extensión ágil para leerse completa en una sola pantalla de celular.`;
-
-  const seccionesValor: SeccionValorHub[] =
-    perfil === 'duelo'
-      ? [
-          {
-            subtitulo: `Cómo encontrar palabras honestas para acompañar a ${dest}`,
-            parrafos: [
-              `Cuando falta alguien querido o se conmemora una fecha sensible, menos artificio siempre acompaña mejor. En vez de buscar frases solemnes que no usarías en voz alta, elegí una oración clara que nombre el afecto que permanece intacto.`,
-              `Un recurso que aporta consuelo genuino es evocar un recuerdo cotidiano simple: una comida de domingo, una enseñanza práctica o una sonrisa característica. Ese detalle mantiene viva la memoria con serenidad y sin abrumar.`
-            ]
-          },
-          {
-            subtitulo: 'Canal adecuado, horario respetuoso y formato de entrega',
-            parrafos: [
-              `${distribucionTexto} Para un chat privado de WhatsApp suelen funcionar mejor las opciones breves que no exigen una respuesta inmediata; si dejás una tarjeta o nota familiar, los textos intermedios permiten desarrollar un homenaje más pausado.`,
-              `Al abrir cualquiera de las ${total} publicaciones podés sumar el nombre y tu firma, elegir los estilos visuales Marfil Sobrio o Celeste Calma y descargar la imagen o imprimirla limpia para conservarla.`
-            ]
-          }
-        ]
-      : perfil === 'aniv_meses' || perfil === 'aniv_anos'
-      ? [
-          {
-            subtitulo: 'Qué convierte una dedicatoria de pareja en un recuerdo verdadero',
-            parrafos: [
-              `Las dedicatorias que más conmueven a tu pareja tienen tres ingredientes simples: un apodo propio, una micro-escena real que vivieron juntos recientemente y un deseo concreto para lo que quieren construir a partir de ahora.`,
-              `Cambiar promesas genéricas por agradecimientos específicos —cómo se escuchan al final de un día largo, una costumbre del fin de semana o una risa compartida— hace que el mensaje suene escrito únicamente para ustedes dos.`
-            ]
-          },
-          {
-            subtitulo: 'Cómo combinar WhatsApp, tarjeta impresa y momento del día',
-            parrafos: [
-              `${distribucionTexto} Una fórmula que siempre sorprende es enviar una frase breve al comenzar la mañana y reservar un texto más desarrollado o una postal visual personalizada para acompañar una foto, merienda o cena a la noche.`,
-              `Usá el personalizador rápido de esta página para probar su nombre en todas las tarjetas al instante, guardá tus favoritas con el corazón y descargá el PNG cuadrado o Story vertical sin registro.`
-            ]
-          }
-        ]
-      : perfil === 'banderines'
-      ? [
-          {
-            subtitulo: 'Medidas reales, gramaje de papel y acabado limpio en casa',
-            parrafos: [
-              `El formato de dos piezas de 14 × 19 cm por hoja A4 logra el mejor equilibrio entre impacto visual en las fotos y aprovechamiento del papel. Imprimir sobre cartulina opalina o ilustración mate de 180 a 240 gramos evita que las puntas se curven con la humedad.`,
-              `Si buscás una estética artesanal económica, el papel kraft de 180 gramos con tinta negra ofrece alto contraste, consume muy poca tinta y combina con hilo de algodón o cinta de yute.`
-            ]
-          },
-          {
-            subtitulo: 'Cómo colgar la guirnalda sin dañar la pared ni torcer las letras',
-            parrafos: [
-              `Para frases largas con nombre y edad, dividir el armado en dos filas ordenadas por palabra evita que el cordón haga panza en el centro y mejora la legibilidad en cada fotografía del encuentro.`,
-              `Usá cinta de pintor o ganchos adhesivos removibles en las paredes pintadas y dejá al menos 35 cm de cordón libre en cada punta para tensar con comodidad.`
-            ]
-          }
-        ]
-      : perfil === 'motivaciones'
-      ? [
-          {
-            subtitulo: 'Por qué una sola idea concreta supera a veinte frases leídas de golpe',
-            parrafos: [
-              `Leer decenas de citas motivacionales seguidas entretiene un minuto pero rara vez cambia el día. Elegir una sola reflexión clara cada mañana y traducirla en un bloque concreto de quince minutos produce avances visibles sin agotamiento.`,
-              `Cada texto de esta colección evita el optimismo tóxico y trabaja pilares aplicables: claridad para priorizar, constancia sin culpa, descanso estratégico y conversación interna respetuosa.`
-            ]
-          },
-          {
-            subtitulo: 'Cómo guardar, agendar o compartir tu impulso diario',
-            parrafos: [
-              `${distribucionTexto} Podés activar el aviso matutino del portal o descargar el recordatorio recurrente de calendario para leer una frase curada antes de sumergirte en notificaciones.`,
-              `Si querés alentar a un amigo o guardar una frase como fondo, abrí la publicación elegida y bajala en formato Story 1080×1920 con tonos Oliva Cálida o Lavanda Serena.`
-            ]
-          }
-        ]
-      : [
-          {
-            subtitulo: `Qué hace que un saludo para ${dest} se sienta propio y no copiado`,
-            parrafos: [
-              `Un texto conecta de verdad cuando cumple una regla sencilla: nombra a ${dest} con el trato real de todos los días y ancla el deseo en una escena concreta compartida durante el último año.`,
-              `Evitar adjetivos inflados y hablar con naturalidad —como lo harías en una charla tranquila— vuelve memorable incluso una frase breve de tres líneas. Si sumás una posdata con un plan cercano, el mensaje además abre conversación.`
-            ]
-          },
-          {
-            subtitulo: 'Cómo elegir extensión, horario y canal según tu vínculo',
-            parrafos: [
-              `${distribucionTexto} Para sorprender por WhatsApp o subir a historias de Instagram, elegí las opciones ágiles; para acompañar un obsequio, imprimir una postal o dedicar en un momento de calma, aprovechá los textos intermedios y largos.`,
-              `Saludar temprano en la mañana o al caer la tarde ayuda a que tus palabras no se pierdan entre las notificaciones del mediodía. Probá el personalizador rápido con nombre y firma para adaptar las ${total} opciones de una sola vez.`
-            ]
-          }
-        ];
-
-  // 4. Checklist breve y escaneable antes de enviar
-  const checklistEnvio: ChecklistEnvioHub =
-    perfil === 'duelo'
-      ? {
-          titulo: 'Revisión rápida antes de enviar tu dedicatoria',
-          pasos: [
-            'Verificá que el nombre y el trato (vos o usted) coincidan exactamente con la relación familiar.',
-            'Revisá que el tono acompañe con serenidad sin frases hechas ni expresiones festivas.',
-            'Si enviás por WhatsApp, elegí una extensión breve que no exija respuesta inmediata.',
-            'Si descargás la tarjeta PNG, preferí las paletas Marfil Sobrio o Celeste Calma.'
-          ]
-        }
-      : perfil === 'banderines'
-      ? {
-          titulo: 'Lista de verificación antes de imprimir tus banderines A4',
-          pasos: [
-            'Revisá la ortografía del nombre, los acentos y la cantidad total de hojas A4 en la vista previa.',
-            'Activá «Gráficos de fondo» y escala al 100 % en el diálogo de impresión para mantener medidas exactas.',
-            'Cargá cartulina u opalina de 180 a 240 g para evitar que las puntas se doblen al colgar.',
-            'Perforá sobre las marcas superiores y dejá 35 cm extra de hilo o cinta a cada lado.'
-          ]
-        }
-      : perfil === 'aniv_meses' || perfil === 'aniv_anos'
-      ? {
-          titulo: 'Lista rápida antes de compartir tu dedicatoria de aniversario',
-          pasos: [
-            'Escribí el apodo real de tu pareja y tu firma en el personalizador rápido.',
-            'Sumá una posdata de una línea mencionando un recuerdo reciente o el plan para verse hoy.',
-            'Elegí formato corto si va por WhatsApp a la mañana, o carta larga si acompaña una foto o regalo.',
-            'Chequeá la vista previa de la tarjeta PNG (cuadrada o Story) antes de descargar o imprimir.'
-          ]
-        }
-      : {
-          titulo: 'Lista rápida antes de copiar o enviar tu mensaje',
-          pasos: [
-            `Ingresá el nombre o apodo real de ${dest} y tu firma en la barra de personalización.`,
-            'Ajustá el registro (vos o usted) para que coincida con cómo hablan en persona.',
-            'Sumá un detalle concreto de este último año o una posdata con una invitación sencilla.',
-            'Elegí texto directo para abrir charla en WhatsApp o tarjeta PNG / Story para redes e impresión.'
-          ]
-        };
-
-  return {
-    resumenIntencion,
-    comparacionValor,
-    seccionesValor,
-    checklistEnvio
   };
 }
 

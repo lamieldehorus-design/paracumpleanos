@@ -3,7 +3,7 @@ import { AUTOR_BIO_DEFAULT, AUTOR_ROL_DEFAULT, type GuiaEditorial } from './guia
 export const GUIAS_PARTE_1: GuiaEditorial[] = [
   {
     slug: 'como-escribir-una-carta-de-cumpleanos-que-emocione',
-    seoTitle: 'Cómo escribir una carta de cumpleaños emotiva y personal',
+    seoTitle: 'Cómo escribir una carta de cumpleaños que emocione hoy',
     titulo: 'Cómo escribir una carta de cumpleaños que emocione paso a paso',
     h1: 'Cómo escribir una carta de cumpleaños que emocione sin quedarte en blanco',
     descripcion: 'Aprendé cómo escribir una carta de cumpleaños emotiva en 4 pasos claros, con ejemplos reales, checklist práctica y plantillas editables listas para copiar hoy.',
@@ -25,9 +25,9 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
     respuestaDirecta: 'Para saber cómo escribir una carta de cumpleaños que emocione de verdad, dividí el texto en cuatro bloques breves: nombrá a la persona por su apodo real, contá un recuerdo concreto vivido este último año, agradecé una cualidad suya cotidiana y cerrá con un deseo sencillo de salud y alegría junto a tu firma.',
     citaDestacada: 'Las cartas que terminan guardadas en un cajón durante años nunca son las más rebuscadas: son las que suenan exactamente como hablás vos cuando estás cómodo.',
     datosPropios: {
-      titulo: 'Dato editorial de nuestro catálogo (22.280 textos analizados)',
-      dato: 'En ParaCumpleanos reunimos más de 2.500 cartas epistolares de más de 140 palabras distribuidas en 50 colecciones. Las versiones con al menos una escena cotidiana en el segundo párrafo muestran mayor lectura completa que los textos con adjetivos abstractos.',
-      fuente: 'Auditoría interna del archivo epistolar de ParaCumpleanos (441 categorías, noviembre 2026).'
+      titulo: 'Dato editorial de nuestro catálogo (14.080 textos analizados)',
+      dato: 'En ParaCumpleanos reunimos 2.040 cartas epistolares de más de 140 palabras distribuidas en 51 colecciones. Las versiones con al menos una escena cotidiana en el segundo párrafo muestran mayor lectura completa que los textos con adjetivos abstractos.',
+      fuente: 'Auditoría interna del archivo epistolar de ParaCumpleanos (352 categorías, noviembre 2026).'
     },
     comparacionPractica: {
       titulo: '¿Cuál es la diferencia entre un párrafo de molde y una carta personal real?',
@@ -810,7 +810,7 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
   },
   {
     slug: 'como-personalizar-tarjetas-y-dedicatorias-whatsapp',
-    seoTitle: 'Cómo personalizar tarjetas de cumpleaños para WhatsApp',
+    seoTitle: 'Cómo personalizar tarjetas y mensajes de WhatsApp en 30s',
     titulo: 'Cómo personalizar tarjetas y mensajes de WhatsApp para que no suenen copiados',
     h1: 'Cómo personalizar tarjetas y dedicatorias de WhatsApp en 30 segundos',
     descripcion: 'Aprendé cómo personalizar tarjetas y mensajes de WhatsApp con nuestra regla 1+1+1. Elegí entre 6 temas, formato cuadrado o Story IG y descargá en PNG hoy.',
@@ -832,8 +832,8 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
     respuestaDirecta: 'Para saber cómo personalizar tarjetas en 30 segundos sin que parezcan copiadas, aplicá la fórmula 1+1+1: escribí su nombre o apodo real al comienzo, agregá una posdata o escena puntual compartida este año y cerrá con tu firma cotidiana. En ParaCumpleanos elegís paleta, ícono, tipografía y formato cuadrado o Story IG en PNG.',
     citaDestacada: 'No hace falta inventar la rueda desde cero: una buena base combinada con un apodo real, un recuerdo breve y diseño cuidado ya es cien por ciento tuya.',
     datosPropios: {
-      titulo: 'Personalización integral en nuestras 441 categorías',
-      dato: 'Nuestro estudio en vivo adapta automáticamente vocativos, saludos de cartas, etiquetas bilingües y estrofas en las 22.280 dedicatorias del sitio, permitiendo elegir 6 paletas visuales, 3 tipografías, 8 íconos, posdata propia y exportación PNG 1080×1080 o 1080×1920 sin recortar párrafos.',
+      titulo: 'Personalización integral en nuestras 352 categorías',
+      dato: 'Nuestro estudio en vivo adapta automáticamente vocativos, saludos de cartas, etiquetas bilingües y estrofas en las 14.080 dedicatorias del sitio, permitiendo elegir 6 paletas visuales, 3 tipografías, 8 íconos, posdata propia y exportación PNG 1080×1080 o 1080×1920 sin recortar párrafos.',
       fuente: 'Documentación funcional del personalizador en vivo de ParaCumpleanos (2026).'
     },
     comparacionPractica: {
@@ -1354,7 +1354,7 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
   // === 5 NUEVAS GUÍAS (11..15) ===
   {
     slug: 'como-escribir-frases-motivacionales-diarias-que-inspiren',
-    seoTitle: 'Frases motivacionales diarias: cómo escribir con criterio',
+    seoTitle: 'Frases motivacionales diarias que inspiran de verdad hoy',
     titulo: 'Cómo usar y escribir frases motivacionales diarias que impulsen sin clichés vacíos',
     h1: 'Frases motivacionales diarias que inspiran acciones reales cada mañana',
     descripcion: 'Descubrí cómo elegir y escribir frases motivacionales diarias con método práctico, sin humo ni clichés. Ejemplos por momento del día, checklist y guías hoy.',
@@ -1774,7 +1774,7 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
   },
   {
     slug: 'discurso-de-cumpleanos-para-brindis-sin-nervios',
-    seoTitle: 'Discurso de cumpleaños para brindis breve y sin nervios',
+    seoTitle: 'Discurso de cumpleaños para brindis corto y emotivo hoy',
     titulo: 'Cómo preparar un discurso breve de cumpleaños para el brindis sin trabarte',
     h1: 'Discurso de cumpleaños para brindis: estructura de 90 segundos sin nervios',
     descripcion: 'Aprendé cómo armar un discurso de cumpleaños para brindis en 90 segundos sin nervios ni silencios incómodos. Guiones adaptables para 15, 40, 50 o 60 años.',
@@ -1934,8 +1934,8 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
     respuestaDirecta: 'Para saber cómo felicitar por WhatsApp sin sonar automático, evitá reenviar cadenas llenas de íconos, abrí directamente con el apodo real de esa persona en los primeros tres segundos de lectura, sumá un recuerdo breve o posdata concreta y elegí el horario tranquilo del desayuno o la tarde.',
     citaDestacada: 'En un chat lleno de saludos idénticos al mediodía, el mensaje que empieza por su apodo real y pregunta algo concreto gana toda la atención.',
     datosPropios: {
-      titulo: 'Optimización móvil en nuestros 22.280 textos',
-      dato: 'Clasificamos automáticamente los mensajes breves de hasta 65 palabras ("WhatsApp o estado") dentro de las 441 colecciones para leerlos enteros en una sola pantalla de teléfono sin necesidad de desplegar "Leer más".',
+      titulo: 'Optimización móvil en nuestros 14.080 textos',
+      dato: 'Clasificamos automáticamente los mensajes breves de hasta 65 palabras ("WhatsApp o estado") dentro de las 352 colecciones para leerlos enteros en una sola pantalla de teléfono sin necesidad de desplegar "Leer más".',
       fuente: 'Clasificación de longitud y canal en ParaCumpleanos (2026).'
     },
     comparacionPractica: {

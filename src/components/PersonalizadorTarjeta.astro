@@ -587,36 +587,28 @@ const temaDefaultId = esDuelo ? 'elegante' : 'rosa';
       aplicarTema(temaDefault);
     }
 
-    function restaurarPersonalizador() {
-      try {
-        var sNom = sessionStorage.getItem('pc_pers_nombre') || '';
-        var sFir = sessionStorage.getItem('pc_pers_firma') || '';
-        var sSub = sessionStorage.getItem('pc_pers_subtitulo') || '';
-        var sPos = sessionStorage.getItem('pc_pers_posdata') || '';
-        var sTem = sessionStorage.getItem('pc_pers_tema') || temaDefault;
-        var sIco = sessionStorage.getItem('pc_pers_icono') || '';
-        var sFue = sessionStorage.getItem('pc_pers_fuente') || 'editorial';
-        var sFmt = sessionStorage.getItem('pc_pers_formato') || 'cuadrada';
-        if (sNom) inputNombre.value = sNom;
-        if (sFir) inputFirma.value = sFir;
-        if (sSub && inputSub) inputSub.value = sSub;
-        if (sPos && inputPosdata) inputPosdata.value = sPos;
-        if (sIco && (!esDuelo || ['🕊️', '🤍', '🌿', '🕯️', '🙏', '⭐'].indexOf(sIco) !== -1)) {
-          iconoActual = sIco;
-        }
-        if (sFue) fuenteActual = sFue;
-        if (sFmt) formatoActual = sFmt;
-        if (sTem && !esDuelo && sTem !== temaDefault) aplicarTema(sTem);
-        if (sNom || sFir || sSub || sPos || iconoActual || sFue !== 'editorial' || sFmt !== 'cuadrada') {
-          aplicarTodo(false);
-        }
-      } catch (err) {}
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', restaurarPersonalizador);
-    } else {
-      restaurarPersonalizador();
-    }
+    try {
+      var sNom = sessionStorage.getItem('pc_pers_nombre') || '';
+      var sFir = sessionStorage.getItem('pc_pers_firma') || '';
+      var sSub = sessionStorage.getItem('pc_pers_subtitulo') || '';
+      var sPos = sessionStorage.getItem('pc_pers_posdata') || '';
+      var sTem = sessionStorage.getItem('pc_pers_tema') || temaDefault;
+      var sIco = sessionStorage.getItem('pc_pers_icono') || '';
+      var sFue = sessionStorage.getItem('pc_pers_fuente') || 'editorial';
+      var sFmt = sessionStorage.getItem('pc_pers_formato') || 'cuadrada';
+      if (sNom) inputNombre.value = sNom;
+      if (sFir) inputFirma.value = sFir;
+      if (sSub && inputSub) inputSub.value = sSub;
+      if (sPos && inputPosdata) inputPosdata.value = sPos;
+      if (sIco && (!esDuelo || ['🕊️', '🤍', '🌿', '🕯️', '🙏', '⭐'].indexOf(sIco) !== -1)) {
+        iconoActual = sIco;
+      }
+      if (sFue) fuenteActual = sFue;
+      if (sFmt) formatoActual = sFmt;
+      if (sTem && !esDuelo && sTem !== temaDefault) aplicarTema(sTem);
+      if (sNom || sFir || sSub || sPos || iconoActual || sFue !== 'editorial' || sFmt !== 'cuadrada') {
+        aplicarTodo(false);
+      }
+    } catch (err) {}
   })();
 </script>

@@ -19,8 +19,7 @@ const rutaAlt = alternativoSlug ? '/' + alternativoSlug + '/' : '';
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex, follow" />
-  <meta name="google-adsense-account" content="ca-pub-7756135514831267" />
+  <meta name="robots" content="follow" />
   <title>{titulo} — {MARCA}</title>
   <link rel="canonical" href={urlDestino} />
   <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -29,22 +28,11 @@ const rutaAlt = alternativoSlug ? '/' + alternativoSlug + '/' : '';
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="theme-color" content="#9f1239" />
-  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
   <link rel="preconnect" href="https://www.statcounter.com" crossorigin />
   <link rel="preconnect" href="https://c.statcounter.com" crossorigin />
   <meta http-equiv="refresh" content={`1;url=${rutaDestino}`} />
-  <script is:inline>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { window.dataLayer.push(arguments); }
-    window.gtag = gtag;
-    window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-    gtag('js', new Date());
-  </script>
-  <script is:inline async src="https://www.googletagmanager.com/gtm.js?id=GTM-NKFBN6X5"></script>
-  <script is:inline async src="https://www.googletagmanager.com/gtm.js?id=GTM-WKC77GT5"></script>
 </head>
 <body>
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NKFBN6X5" height="0" width="0" style="display:none;visibility:hidden"></iframe><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WKC77GT5" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script is:inline type="text/javascript" define:vars={{ rutaDestino }}>
     window.sc_project = 13334162;
     window.sc_invisible = 1;

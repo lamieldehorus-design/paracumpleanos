@@ -3,7 +3,7 @@ import { AUTOR_BIO_DEFAULT, AUTOR_ROL_DEFAULT, type GuiaEditorial } from './guia
 export const GUIAS_PARTE_3: GuiaEditorial[] = [
   {
     slug: 'cumpleanos-segun-tu-signo-del-zodiaco-como-felicitar',
-    seoTitle: 'Cumpleaños según el signo del zodiaco: guía por mes',
+    seoTitle: 'Cumpleaños según el signo del zodiaco: guía práctica hoy',
     titulo: 'Cumpleaños según el signo del zodiaco: cómo acertar con cada mensaje y regalo',
     h1: 'Cumpleaños según el signo del zodiaco: guía práctica por mes y elemento',
     descripcion: 'Aprendé a felicitar en cumpleaños según el signo del zodiaco: qué tono prefiere Fuego, Tierra, Aire o Agua, ideas de regalo y enlace directo con su mes natal.',
@@ -237,7 +237,7 @@ export const GUIAS_PARTE_3: GuiaEditorial[] = [
   },
   {
     slug: 'juegos-trivias-y-libro-de-firmas-para-fiestas-de-cumpleanos',
-    seoTitle: 'Juegos para fiestas de cumpleaños: trivias y firmas',
+    seoTitle: 'Juegos para fiestas de cumpleaños: trivias y libro hoy',
     titulo: 'Juegos, trivias y libro de firmas para fiestas de cumpleaños sin incomodar',
     h1: 'Juegos para fiestas de cumpleaños: trivias sobre el homenajeado y libro de firmas',
     descripcion: 'Ideas fáciles de juegos para fiestas de cumpleaños de jóvenes y adultos: trivia de anécdotas, cápsula del tiempo y libro de firmas que todos disfrutan hoy.',
@@ -471,7 +471,7 @@ export const GUIAS_PARTE_3: GuiaEditorial[] = [
   },
   {
     slug: 'frasco-de-los-30-motivos-como-armarlo-paso-a-paso-con-frases',
-    seoTitle: 'Frasco de los 30 motivos: cómo armarlo con frases reales',
+    seoTitle: 'Frasco de los 30 motivos: cómo armarlo paso a paso hoy',
     titulo: 'Frasco de los 30 motivos: cómo armarlo paso a paso para cumpleaños o aniversario',
     h1: 'Frasco de los 30 motivos: guía práctica con categorías de frases e ideas',
     descripcion: 'Aprendé a armar un frasco de los 30 motivos (o 25 o 50) paso a paso: materiales, cómo dividir los papelitos por emoción y 15 disparadores listos para escribir.',
@@ -589,7 +589,7 @@ export const GUIAS_PARTE_3: GuiaEditorial[] = [
   },
   {
     slug: 'regalos-economicos-con-valor-emocional-y-tarjeta-personalizada',
-    seoTitle: 'Regalos económicos con valor emocional: 15 ideas reales',
+    seoTitle: 'Regalos económicos con valor emocional: 15 ideas hoy',
     titulo: 'Regalos económicos con valor emocional que sorprenden más que gastar de más',
     h1: 'Regalos económicos con valor emocional: ideas reales con tarjeta personalizada',
     descripcion: 'Descubrí 15 regalos económicos con valor emocional para cumpleaños, Día de la Madre o amigos: gestos cuidados, comida casera, postales y mensajes que emocionan.',

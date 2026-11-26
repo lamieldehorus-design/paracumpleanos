@@ -1,11 +1,10 @@
 ---
-import { catalogo, nombreHub } from '../lib/contenido.ts';
-import { enlacesHermanasInteligentes } from '../lib/gsc-estrategia.ts';
+import { hermanasDe, nombreHub } from '../lib/contenido.ts';
 interface Props { hub: any; }
-const lista = enlacesHermanasInteligentes(Astro.props.hub, catalogo, 8);
+const lista = hermanasDe(Astro.props.hub);
 ---
-<section class="hermanas" aria-labelledby="hermanas-titulo">
-  <h2 id="hermanas-titulo">Otras categorías relacionadas que te pueden interesar</h2>
+<section class="hermanas">
+  <h2>Otras categorías que te pueden interesar</h2>
   <div class="chips">
     {lista.map(function (h) { return <a class="chip" href={'/' + h.slug + '/'}>{h.emoji} {nombreHub(h)}</a>; })}
   </div>

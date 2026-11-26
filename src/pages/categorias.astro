@@ -4,7 +4,6 @@ import { GRUPOS, hubs, todosMensajes, hubsPorGrupo, mensajesDe, nombreHub, SITIO
 import { PAISES_HITOS, HITOS_MUNDIALES } from '../data/hitos-historicos.ts';
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { ZODIACOS } from '../lib/horoscopo.ts';
-import { TOP_FOOTER_GSC, ordenarHubsPorDemandaGsc } from '../lib/gsc-estrategia.ts';
 
 const totalPublicacionesWeb = todosMensajes.length + PAISES_HITOS.length + GUIAS_EDITORIALES.length;
 const continentes = [
@@ -22,39 +21,6 @@ const paisesDestacados = ['argentina', 'mexico', 'espana', 'colombia', 'chile', 
   .map((s) => PAISES_HITOS.find((p) => p.slug === s))
   .filter(Boolean) as typeof PAISES_HITOS;
 
-const DESCRIPCIONES_GRUPOS: Record<string, string> = {
-  destinatarios:
-    'Dedicatorias pensadas para el vínculo cotidiano más cercano: mamá, papá, esposa, esposo, hijos, hermanos, pareja y amistades clave. Cada colección combina opciones breves para WhatsApp temprano, textos emotivos intermedios y cartas desarrolladas con personalización de apodo y firma en vivo.',
-  familia:
-    'Saludos adaptados a toda la familia extendida y política —abuelos, primos, sobrinos, tíos, suegros, cuñados, padrinos, ahijados y nietos— cuidando exactamente el nivel de cercanía. Incluimos tonos afectuosos y respetuosos que evitan la incomodidad de los textos genéricos.',
-  edades:
-    'Mensajes calibrados para cada etapa real de la vida, desde el primer añito e infancia hasta los 15, 18, 20, 30, 40, 50, 60, 70, 80 y 90 años. Celebramos lo propio de cada década sin caer en sermones para jóvenes ni en chistes gastados sobre cumplir años.',
-  cartas:
-    'Textos largos con estructura epistolar en cinco o más párrafos respirables para conmover en fechas importantes, imprimir en postal o leer en voz alta sin apuro. Cada carta ordena el afecto en cuatro tiempos: saludo cercano, recuerdo concreto, gratitud y deseo luminoso.',
-  cristiano:
-    'Bendiciones, oraciones de cumpleaños, agradecimientos a Dios y saludos de «Dios te bendiga» redactados con fe cercana, calidez familiar y respeto. Pensados para acompañar con paz, salud y esperanza sin sonar a cadenas impersonales reenviadas.',
-  tono:
-    'Opciones filtradas por intención y formato: frases cortas para WhatsApp y estados, humor sano con complicidad, poemas en estrofas limpias, textos reflexivos y agradecimientos por saludos recibidos. Elegí primero el estilo que mejor calza con tu voz habitual.',
-  distancia:
-    'Saludos diseñados para acortar kilómetros y diferencias horarias con alegría luminosa, cercanía real y foco en el próximo reencuentro. Ideales para sorprender en el desayuno de su huso horario local sin teñir la fecha de tristeza exagerada.',
-  profesionales:
-    'Etiqueta práctica para jefes, colegas, docentes, médicos, clientes y vecinos respetando estrictamente el trato habitual de vos o de usted. Textos cordiales, sobrios y limpios que fortalecen el vínculo laboral sin mezclar temas pendientes.',
-  aniversarios:
-    'Textos exclusivos para celebrar meses y años de noviazgo o matrimonio —incluido el generador de +10 años personalizable de 11 a 80 años— redactados sin mezclar vocabulario de cumpleaños. Ideales para desayunos, cenas, fotos o tarjetas íntimas.',
-  duelo_recuerdos:
-    'Palabras serenas, respetuosas y auditadas para condolencias, pésame breve, recuerdos hasta el cielo, nostalgia y aniversarios luctuosos completamente libres de expresiones festivas. Incluye selector de fecha de duelo para agendar recordatorios discretos.',
-  meses:
-    'Colecciones amplias de 70 mensajes por cada mes del año, enlazadas directamente con sus dos signos del zodíaco correspondientes y el calendario perpetuo. Conectan el saludo con el clima de la estación y la energía propia de cada mes.',
-  fechas_especiales:
-    'Dedicatorias originales para Navidad, Nochebuena, Año Nuevo, Día de la Madre, Día del Padre, Día del Amigo, San Valentín, Pascuas y celebraciones anuales. Escritas para destacar con calidez humana cuando el celular se llena de cadenas repetidas.',
-  fechas_hitos:
-    'Mensajes calibrados para grandes hitos vitales fuera del cumpleaños tradicional: graduaciones, nacimientos y cumplemeses de bebés, jubilaciones, bodas de plata y logros personales importantes. Cada texto celebra el cierre o inicio de etapa con orgullo genuino y respeto.',
-  especiales:
-    'Ocasiones puntuales y recursos imprimibles: banderines A4 con 6 paletas y versión para colorear, invitaciones listas para completar, saludos en inglés, italiano, portugués y francés traducidos, motivación diaria, embarazo y mascotas.',
-  motivaciones:
-    'Reflexiones diarias orientadas a claridad mental, disciplina serena y micro-acciones concretas para empezar la mañana con foco real. Incluye recordatorio opcional en tu navegador y tarjetas descargables en tonos sobrios.'
-};
-
 const jsonld = [migasLd([
   { name: 'Inicio', url: SITIO + '/' },
   { name: 'Categorías', url: SITIO + '/categorias/' }
@@ -70,20 +36,11 @@ const jsonld = [migasLd([
   </nav>
   <h1>Todas las categorías y secciones ({hubs.length} colecciones)</h1>
   <p class="lead">
-    Explorá las <strong>{hubs.length} categorías temáticas</strong> organizadas en <strong>{GRUPOS.length} secciones</strong> con <strong>{todosMensajes.length.toLocaleString('es-AR')} dedicatorias y textos únicos</strong>, además de <strong>{PAISES_HITOS.length} publicaciones de hitos históricos mundiales</strong>, <strong>{GUIAS_EDITORIALES.length} guías prácticas</strong> y el <strong>calendario perpetuo de 366 días sin año</strong> ({totalPublicacionesWeb.toLocaleString('es-AR')} publicaciones originales en total). Usá el buscador instantáneo de abajo para filtrar por vínculo, edad, ocasión, país o herramienta y entrá directo a personalizar con nombre y firma gratis.
+    Explorá las <strong>{hubs.length} categorías temáticas</strong> organizadas en <strong>{GRUPOS.length} secciones</strong> con <strong>{todosMensajes.length.toLocaleString('es-AR')} dedicatorias y textos únicos</strong>, además de <strong>{PAISES_HITOS.length} publicaciones de hitos históricos mundiales</strong>, <strong>{GUIAS_EDITORIALES.length} guías prácticas</strong> y el <strong>calendario perpetuo de 366 días sin año</strong> ({totalPublicacionesWeb.toLocaleString('es-AR')} publicaciones originales en total).
   </p>
 
   <label for="filtro-cats" style="display:block;font-weight:600;margin-top:12px;">Buscar categoría, destinatario, país o herramienta:</label>
   <input id="filtro-cats" class="buscador-cats" type="search" placeholder="Ej.: mamá, condolencias, nostalgia, 5 años de novios, banderines, Argentina, calendario…" autocomplete="off" />
-
-  <section class="cats-top-gsc" aria-label="Colecciones más buscadas ahora">
-    <p class="cats-top-gsc-titulo">Más buscadas ahora:</p>
-    <div class="cats-top-gsc-links">
-      {TOP_FOOTER_GSC.map(function (item) {
-        return <a href={'/' + item.slug + '/'}>{item.label}</a>;
-      })}
-    </div>
-  </section>
 
   <div class="chips" style="margin-top:12px;">
     {GRUPOS.map(function (g) {
@@ -96,13 +53,12 @@ const jsonld = [migasLd([
 
   <div id="lista-categorias">
     {GRUPOS.map(function (g) {
-      const lista = ordenarHubsPorDemandaGsc(hubsPorGrupo.get(g.id) || []);
+      const lista = hubsPorGrupo.get(g.id) || [];
       if (!lista.length) return null;
       const totalGrupo = lista.reduce((acc, h) => acc + mensajesDe(h.slug).length, 0);
       return (
         <section class="cat-grupo-bloque" id={g.id}>
           <h2>{g.emoji} {g.nombre} ({lista.length} categorías · {totalGrupo.toLocaleString('es-AR')} publicaciones)</h2>
-          {DESCRIPCIONES_GRUPOS[g.id] ? <p class="cat-grupo-desc">{DESCRIPCIONES_GRUPOS[g.id]}</p> : null}
           <ul class="cat-lista">
             {lista.map(function (h) {
               const cant = mensajesDe(h.slug).length;
@@ -169,22 +125,6 @@ const jsonld = [migasLd([
       </ul>
     </section>
   </div>
-
-  <section class="cats-guia-editorial" aria-labelledby="titulo-guia-directorio">
-    <h2 id="titulo-guia-directorio">Cómo elegir la colección exacta dentro de las {hubs.length} categorías del archivo</h2>
-    <p>
-      Este directorio está diseñado para que encuentres el registro humano exacto en menos de un minuto, sin perder tiempo recorriendo frases repetidas ni mezclando tonos que no corresponden al vínculo. Cada una de las {hubs.length} colecciones reúne entre 40 y 70 textos inéditos revisados por extensión, vocabulario y contexto emocional.
-    </p>
-    <h3>Tres criterios rápidos para acertar desde el primer clic</h3>
-    <ul>
-      <li><strong>Partí del vínculo real y luego ajustá el formato:</strong> si buscás un saludo breve para WhatsApp temprano, entrá por destinatario (<a href="/feliz-cumpleanos-mama/">mamá</a>, <a href="/feliz-cumpleanos-papa/">papá</a>, <a href="/feliz-cumpleanos-para-mi-esposa/">esposa</a>, <a href="/feliz-cumpleanos-para-mi-esposo/">esposo</a>, hijos o amigos) y activá el filtro de textos cortos; si entregás una tarjeta física o un obsequio especial, elegí directamente la sección de <a href="#cartas">Cartas largas y emotivas</a>.</li>
-      <li><strong>Respetá la frontera entre cumpleaños, aniversarios y duelo:</strong> nuestras 27 colecciones de <a href="#aniversarios">Aniversarios de pareja</a> (incluidos meses de novios y la herramienta personalizable de 11 a 80 años) están libres de referencias a cumpleaños, y las 17 colecciones de <a href="#duelo_recuerdos">Condolencias, duelo y recuerdos</a> se auditan para mantener serenidad absoluta sin ninguna expresión festiva.</li>
-      <li><strong>Combiná el texto con herramientas prácticas del mismo archivo:</strong> podés sumar el <a href="/calendario/">calendario perpetuo de 366 días</a> para consultar celebraciones, signo zodiacal y efemérides de <a href="/hitos-historicos/">los {PAISES_HITOS.length} países del mundo</a>, o abrir <a href="/herramientas/">Herramientas gratuitas</a> para imprimir banderines A4, calcular días vividos o agendar recordatorios en formato <code>.ics</code>.</li>
-    </ul>
-    <p>
-      Dentro de cada categoría contás además con personalización en tiempo real de nombre y firma, guardado de favoritas en tu navegador y descarga gratuita de postales PNG cuadradas (1080×1080) o verticales Story (1080×1920) listas para compartir por WhatsApp, Instagram o imprimir en casa.
-    </p>
-  </section>
 
   <script is:inline>
     (function () {

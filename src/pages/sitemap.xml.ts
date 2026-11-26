@@ -17,7 +17,6 @@ import { generarUrlsSitio, construirMapaLastmodSitemap, generarSitemapXml } from
 import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { PAISES_HITOS } from '../data/hitos-historicos.ts';
 import { ZODIACOS } from '../lib/horoscopo.ts';
-import { ARCANOS_MAYORES } from '../lib/tarot-egipcio.ts';
 
 export const GET: APIRoute = () => {
   const catalogo = {
@@ -37,16 +36,14 @@ export const GET: APIRoute = () => {
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
   const slugsSignos = ZODIACOS.map((s) => s.slug);
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
-  const slugsTarot = ARCANOS_MAYORES.map((a) => a.slug);
 
-  const urls = generarUrlsSitio(catalogo, slugsGuias, slugsSignos, slugsPaises, slugsTarot);
+  const urls = generarUrlsSitio(catalogo, slugsGuias, slugsSignos, slugsPaises);
   const lastmodPorUrl = construirMapaLastmodSitemap(
     catalogo,
     GUIAS_EDITORIALES,
     slugsSignos,
     slugsPaises,
-    '2026-11-25',
-    slugsTarot
+    '2026-11-20'
   );
   const xml = generarSitemapXml(urls, lastmodPorUrl);
 
