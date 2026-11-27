@@ -175,7 +175,11 @@ const DEST_GENERICOS = new Set([
   'para mí',
   'gatos',
   'perros',
-  'banderines'
+  'banderines',
+  'italiano',
+  'inglés',
+  'portugués',
+  'francés'
 ]);
 
 const DEST_FRASES_NATURALES: Record<string, { frase: string; vocativo: string }> = {
@@ -216,7 +220,8 @@ const DEST_FRASES_NATURALES: Record<string, { frase: string; vocativo: string }>
   'cumpleaños a solas': { frase: 'quien celebra su día a solas o lejos', vocativo: '' },
   'regalos y decoración': { frase: 'acompañar un regalo o tarjeta de mesa', vocativo: '' },
   'regalos': { frase: 'quien abre este regalo', vocativo: '' },
-  'redes sociales': { frase: 'quien saludás en redes o estados', vocativo: '' }
+  'redes sociales': { frase: 'quien saludás en redes o estados', vocativo: '' },
+  'canciones y mañanitas': { frase: 'quien recibe música y mañanitas en su cumpleaños', vocativo: '' }
 };
 
 function destNatural(hub?: any, msg?: any): { frase: string; vocativo: string } {
@@ -1854,290 +1859,877 @@ export interface ExplicacionCosmicaMensaje {
   canalSugerido: string;
 }
 
-interface MotivoDetectado {
+interface EspectroHumano {
   id: string;
   regex: RegExp;
-  frasesNormal: string[];
-  frasesDuelo: string[];
+  lecturaNormal: string[];
+  lecturaDuelo?: string[];
+  impactoNormal: string[];
+  impactoDuelo?: string[];
 }
 
-const MOTIVOS_TEXTO: MotivoDetectado[] = [
+const ESPECTRO_HUMANO: EspectroHumano[] = [
   {
-    id: 'mesa_cafe',
-    regex: /\b(mate|mates|caf[eé]|desayuno|sobremesa|mesa|cena|almuerzo|asado|parrilla|brindis|brindar|copa)\b/i,
-    frasesNormal: [
-      'ancla el saludo en una escena cotidiana de mesa compartida, café o sobremesa',
-      'parte de lo cercano —la mesa, los mates o el brindis sin apuro— para evitar solemnidades vacías',
-      'sitúa la dedicatoria alrededor de un encuentro real y cálido antes que en frases abstractas'
+    id: 'duelo_alivio_respuesta',
+    regex: /\b(no\s+hace\s+falta\s+(?:que\s+)?respond|sin\s+compromiso|sin\s+prisa|no\s+respondas|ni\s+que\s+expliques|descans[aá]\s+tranquil|exigir\s+conversaci[oó]n)\b/i,
+    lecturaNormal: [
+      'pone por delante el alivio de quien atraviesa un momento pesado, quitándole la obligación de responder o dar explicaciones',
+      'demuestra tacto genuino al ofrecer cercanía sin exigir atención inmediata ni respuestas de cortesía'
     ],
-    frasesDuelo: [
-      'evoca las costumbres serenas de casa y la mesa familiar como refugio de memoria',
-      'sostiene el recuerdo desde lo cotidiano compartido en calma junto a los afectos'
+    lecturaDuelo: [
+      'le quita a quien atraviesa la pérdida el peso de tener que contestar mensajes o sostener formalidades cuando apenas tiene aire',
+      'libera a la familia de responder por compromiso y ofrece un acompañamiento que no invade el silencio del duelo'
+    ],
+    impactoNormal: [
+      'Para quien recibe estas palabras, saber que no debe dar explicaciones convierte el mensaje en un verdadero respiro.',
+      'Ese gesto de no apurar respuestas suele sentirse mucho más humano y considerado que cualquier discurso largo.'
+    ],
+    impactoDuelo: [
+      'Quien atraviesa un duelo reciente suele quedar agotado de atender teléfonos; por eso liberar de responder es una de las formas más respetuosas de cuidar.',
+      'Transmite que el cariño sigue firme sin pedir nada a cambio en horas donde cada mensaje cuesta energía.'
     ]
   },
   {
-    id: 'risa_humor',
-    regex: /\b(risa|risas|re[ií]r|sonrisa|sonrisas|sonre[ií]|humor|chispa|broma|complicidad|ocurrencia)\b/i,
-    frasesNormal: [
-      'prioriza la chispa y la sonrisa compartida para romper el hielo desde la primera línea',
-      'combina humor liviano con aprecio honesto para destacar entre mensajes protocolares',
-      'rescata la alegría genuina y esa complicidad que vuelve más llevadera cualquier semana'
+    id: 'duelo_ayuda_practica',
+    regex: /\b(tr[aá]mite|tr[aá]mites|vianda|viandas|compras|recado|alcance\s+comida|caminar\s+diez\s+minutos|ayuda\s+en\s+lo\s+pr[aá]ctico|disposici[oó]n\s+para\s+ayudar)\b/i,
+    lecturaNormal: [
+      'pasa de las buenas intenciones al ofrecimiento concreto de ayuda en lo diario',
+      'convierte el afecto en disposición real para resolver pendientes cuando hace falta una mano'
     ],
-    frasesDuelo: [
-      'recuerda con ternura la sonrisa buena y la calidez que dejó en quienes caminaron cerca',
-      'equilibra el respeto del momento con el recuerdo luminoso de su sonrisa tranquila'
+    lecturaDuelo: [
+      'pasa de la condolencia abstracta al gesto concreto: acercar comida, hacerse cargo de un trámite o salir a caminar en silencio',
+      'resuelve una necesidad real del duelo ofreciendo ayuda cotidiana específica en lugar de un “avisame cualquier cosa” impreciso'
+    ],
+    impactoNormal: [
+      'Ofrecer acciones concretas facilita muchísimo que la otra persona acepte apoyo sin sentir vergüenza ni carga.',
+      'En momentos sensibles, proponer una mano puntual dice mucho más sobre la lealtad del vínculo que mil adjetivos.'
+    ],
+    impactoDuelo: [
+      'Cuando falta alguien querido, resolver las tareas chicas del día pesa el doble; ofrecer ayuda puntual alivia de verdad.',
+      'Le da a la familia una puerta clara y cercana para apoyarse sin tener que pensar qué pedir.'
     ]
   },
   {
-    id: 'recuerdo_memoria',
-    regex: /\b(recuerdo|recuerdos|an[eé]cdota|an[eé]cdotas|historia|historias|memoria|infancia|barrio|foto|fotos|ayer)\b/i,
-    frasesNormal: [
-      'pone en primer plano la memoria compartida y las historias vividas juntos',
-      'apoya el saludo en recuerdos reales que solo toman sentido cuando hay camino recorrido',
-      'recupera vivencias concretas para demostrar atención y continuidad en el vínculo'
+    id: 'duelo_legado_casa',
+    regex: /\b(huella|ense[ñn]anz|ejemplo\s+noble|sembr[oó]|sigue\s+viv[ao]|abrir\s+la\s+puerta|hospitalidad|mano\s+atenta|memoria\s+buena|recuerdo\s+limpio|bien\s+sembr[oó]|nostalgia\s+dulce|cansancio\s+f[ií]sico\s+y\s+emocional)\b/i,
+    lecturaNormal: [
+      'recoge las enseñanzas sencillas y la huella cotidiana que una persona deja en quienes la rodean',
+      'celebra la coherencia silenciosa de alguien cuya manera de cuidar y recibir en casa marca a todos'
     ],
-    frasesDuelo: [
-      'honra la memoria agradecida y las enseñanzas concretas que siguen vivas en casa',
-      'transforma el recuerdo en abrigo sereno sin forzar consuelos apurados'
+    lecturaDuelo: [
+      'honra lo que esa persona sembró en vida —su manera de abrir la puerta, escuchar o cuidar sin poses— como algo que sigue vivo en los suyos',
+      'pone nombre concreto a las virtudes diarias y la huella serena que permanecen en la casa más allá de la ausencia física'
+    ],
+    impactoNormal: [
+      'Reconocer la huella real de alguien confirma que su entrega diaria dejó raíces hondas en su entorno.',
+      'Quien lee estas palabras siente que su forma de cuidar y enseñar no pasó inadvertida.'
+    ],
+    impactoDuelo: [
+      'Recordar gestos precisos de quien partió ayuda a que el dolor dialogue con la gratitud y mantenga viva su presencia en lo cotidiano.',
+      'Le devuelve a la familia la certeza de que su ejemplo bueno continúa habitando la memoria compartida de la casa.'
     ]
   },
   {
-    id: 'fe_cielo',
-    regex: /\b(dios|se[ñn]or|cristo|fe|oraci[oó]n|oraciones|bendici[oó]n|bendiga|bendigo|bendecimos|cielo|gracia|esp[ií]ritu)\b/i,
-    frasesNormal: [
-      'une buenos deseos con espiritualidad serena y gratitud sincera por la vida',
-      'expresa fe cercana y cuidado espiritual sin caer en fórmulas repetitivas ni sermones',
-      'eleva una oración tranquila pidiendo calma, guía y protección sobre su nuevo ciclo'
+    id: 'hogar_sosten_silencioso',
+    regex: /\b(sost[eé]n\s+silencioso|columna\s+y\s+abrigo|sin\s+esperar\s+reconocimiento|entrega\s+discreta|un[ia]ndo\s+generaciones|cuidado\s+diario|orden\s+invisible|poner\s+el\s+hombro|demostr[aá]s\s+en\s+hechos|sacrificios)\b/i,
+    lecturaNormal: [
+      'agradece esa fuerza discreta que sostiene la casa y la familia todos los días sin buscar aplausos ni protagonismo',
+      'hace visible el trabajo afectivo y el amor demostrado en hechos de quien cuida lo cotidiano sin reclamar nada a cambio'
     ],
-    frasesDuelo: [
-      'ofrece acompañamiento espiritual, oración silenciosa y paz para toda la familia',
-      'abraza desde la fe y la serenidad respetando los tiempos íntimos del duelo'
+    impactoNormal: [
+      'Muchas veces quienes sostienen el hogar dan tanto en silencio que rara vez escuchan un gracias a la altura; esta frase repara ese olvido con justicia y ternura.',
+      'Al nombrar esa entrega silenciosa, quien la recibe se siente realmente vista, valorada y abrazada por los suyos.'
     ]
   },
   {
-    id: 'esfuerzo_metas',
-    regex: /\b(esfuerzo|logro|logros|meta|metas|proyecto|proyectos|trabajo|oficio|camino|paso|pasos|fortaleza|coraje|liderazgo)\b/i,
-    frasesNormal: [
-      'reconoce el mérito real, la constancia diaria y los proyectos propios con respeto',
-      'destaca la fuerza tranquila y lo construido a pulso en lugar de halagos genéricos',
-      'pone foco en el crecimiento personal y las metas que merecen celebrarse hoy'
+    id: 'legado_ejemplo_familiar',
+    regex: /\b(orgullo|de\s+tu\s+sangre|marca\s+caminos|no\s+seamos\s+muy\s+de\s+decirlo|todo\s+lo\s+que\s+somos|consejos|sabidur[ií]a|ejemplo)\b/i,
+    lecturaNormal: [
+      'pone en palabras el orgullo y la admiración hacia un ejemplo familiar que a veces cuesta decir de frente en la rutina',
+      'reconoce que mucho de lo bueno que hoy somos viene de sus consejos, su coherencia y su forma de acompañar'
     ],
-    frasesDuelo: [
-      'reconoce la huella honesta, el esfuerzo noble y el ejemplo sereno que dejó en todos',
-      'valora la integridad y la entrega cotidiana que siguen guiando a los suyos'
+    lecturaDuelo: [
+      'abraza el orgullo sereno por su ejemplo y sus consejos, que siguen orientando a quienes quedan en casa',
+      'honra esa enseñanza cotidiana que dejó huella firme en toda la familia'
+    ],
+    impactoNormal: [
+      'Decir en voz alta el orgullo que da alguien de la propia familia suele emocionar mucho más que cualquier regalo material.',
+      'Abre un espacio sincero para expresar afecto que tal vez no se dice todos los días.'
+    ],
+    impactoDuelo: [
+      'Nombrar el orgullo y la gratitud por su ejemplo da sostén y serenidad en los momentos de mayor nostalgia.',
+      'Mantiene viva la voz de sus consejos dentro de la historia familiar.'
     ]
   },
   {
-    id: 'calma_salud',
-    regex: /\b(calma|paz|serenidad|sereno|serena|salud|descanso|sosiego|equilibrio|ternura|cuidado)\b/i,
-    frasesNormal: [
-      'prioriza la calma, la salud firme y el descanso real por encima del ruido superficial',
-      'transmite abrigo emocional y equilibrio en pocas líneas limpias de leer',
-      'desea bienestar durable y mañanas tranquilas adaptadas al ritmo actual de quien recibe'
+    id: 'detalles_atencion_hogar',
+    regex: /\b(transforman\s+en\s+hogar|acordarte\s+de\s+lo\s+que\s+al\s+otro|sin\s+hacer\s+ruido|contar\s+con\s+alguien\s+tan\s+genuino|encuentros\s+verdaderos|tal\s+cual\s+sos)\b/i,
+    lecturaNormal: [
+      'agradece esa sensibilidad cotidiana de estar atento a lo que el otro necesita sin buscar protagonismo',
+      'pone en primer plano la paz de sentirse querido tal cual uno es, sin máscaras ni exigencias raras'
     ],
-    frasesDuelo: [
-      'ofrece presencia discreta, sosiego y alivio sin exigir respuestas inmediatas',
-      'acompaña con palabras medidas que respetan el silencio y el descanso familiar'
+    impactoNormal: [
+      'Reconocer a alguien por los pequeños cuidados que hace sin alardear genera una emoción genuina y muy cercana.',
+      'Recuerda que la verdadera calidez de una relación se nota en cómo nos conocemos y cuidamos en lo simple.'
     ]
   },
   {
-    id: 'distancia_viaje',
-    regex: /\b(distancia|kil[oó]metros|lejos|frontera|ciudad|viaje|viajes|horario|pantalla|reencuentro|abrazarnos)\b/i,
-    frasesNormal: [
-      'acorta la distancia física reconociendo los kilómetros sin perder tono de cercanía real',
-      'conecta el saludo presente con las ganas concretas del próximo encuentro',
-      'funciona especialmente bien cuando el abrazo presencial queda pendiente en el mapa'
+    id: 'pausa_valorar_esencial',
+    regex: /\b(rutina\s+corre|damos\s+por\s+sentado|frenamos\s+con\s+gusto|quienes\s+te\s+conocen|alrededor\s+de\s+la\s+mesa|ma[ñn]anas\s+ordenadas)\b/i,
+    lecturaNormal: [
+      'invita a frenar el piloto automático de la rutina para decir en voz alta todo eso valioso que suele darse por sentado',
+      'rescata la importancia de parar un momento a valorar la presencia del otro en medio de agendas cargadas'
     ],
-    frasesDuelo: [
-      'hace sentir presencia leal aunque medien kilómetros en este día sensible',
-      'acerca acompañamiento honesto a la distancia sin incomodar con formalidades frías'
+    impactoNormal: [
+      'Rompe la inercia de los días apurados y le regala a quien recibe el mensaje un momento honesto de reconocimiento.',
+      'Transmite que su presencia y su lugar en el entorno nunca pasan desapercibidos.'
+    ]
+  },
+  {
+    id: 'gratitud_saludos_mesa',
+    regex: /\b(sentirse\s+acompa[ñn]ado|tantas\s+etapas\s+distintas|mesas\s+compartidas|buena\s+m[uú]sica\s+en\s+casa|rodeado\s+de\s+afecto|mejor\s+regalo)\b/i,
+    lecturaNormal: [
+      'devuelve el cariño recibido agradeciendo la presencia de personas de distintas etapas de la vida en un mismo abrazo',
+      'celebra el privilegio de sentirse acompañado con música, mesa compartida y afecto sincero sin mirar el reloj'
+    ],
+    impactoNormal: [
+      'Expresar gratitud sincera multiplica el sentido del encuentro y deja a quienes acompañaron con una linda sensación de hogar.',
+      'Recuerda que lo mejor de cualquier fecha importante es la red real de afectos que se hace presente.'
+    ]
+  },
+  {
+    id: 'invertir_cuidado_descanso',
+    regex: /\b(dejarte\s+cuidar|apagar\s+pendientes|porci[oó]n\s+favorita|descanso\s+verdadero|mimos|hoy\s+te\s+mimen|soltar\s+cargas)\b/i,
+    lecturaNormal: [
+      'invierte los papeles habituales para recordarle a quien siempre resuelve todo que hoy le toca descansar y dejarse mimar',
+      'corre el foco de las obligaciones diarias para invitar a soltar pendientes y disfrutar un momento genuino de cuidado'
+    ],
+    impactoNormal: [
+      'Quienes están acostumbrados a cuidar a todos suelen olvidarse de sí mismos; recibir permiso explícito para descansar emociona profundamente.',
+      'Transmite el deseo sincero de devolver en tranquilidad y mimos una parte del cuidado recibido.'
+    ]
+  },
+  {
+    id: 'escucha_sin_juicio',
+    regex: /\b(escuchan\s+sin\s+juzgar|escuchar\s+todo\s+el\s+cuento|antes\s+de\s+opinar|escuchados\s+sin\s+apuro|paciencia\s+serena)\b/i,
+    lecturaNormal: [
+      'pone en primer plano una virtud cada vez más escasa: saber escuchar de verdad, sin apuro y sin juzgar',
+      'valora esa presencia calma que ofrece oídos atentos y paciencia genuina antes de sacar conclusiones'
+    ],
+    impactoNormal: [
+      'Sentirse escuchado con respeto genera un refugio emocional difícil de reemplazar, y nombrarlo refuerza muchísimo la confianza mutua.',
+      'Es una manera honesta de decirle al otro que su calma y su atención hacen bien a quienes lo tratan.'
+    ]
+  },
+  {
+    id: 'evitar_cliches_poses',
+    regex: /\b(sin\s+poses|promesas\s+de\s+pel[ií]cula|mensaje\s+apurado\s+de\s+compromiso|gr[aá]ndes\s+discursos|lugares\s+comunes|c[oó]mo\s+sos\s+en\s+lo\s+concreto)\b/i,
+    lecturaNormal: [
+      'toma distancia de los elogios artificiales o de compromiso para decir algo creíble y pegado a la vida real',
+      'prefiere la cercanía honesta por encima de frases hechas, mostrando que el afecto se prueba en lo diario'
+    ],
+    impactoNormal: [
+      'Cuando un saludo renuncia a exagerar y habla desde lo cotidiano, suena mucho más verdadero y difícil de olvidar.',
+      'Quien lo lee percibe enseguida que detrás no hay formalidad automática sino aprecio real.'
+    ]
+  },
+  {
+    id: 'risa_complicidad',
+    regex: /\b(humor\s+r[aá]pido|desarma\s+cualquier\s+mal\s+humor|chistes\s+internos|c[oó]digos\s+secretos|ocurrencia|risas?\s+largas|complicidad|momentos\s+torpes)\b/i,
+    lecturaNormal: [
+      'rescata la complicidad compartida: esa chispa y esos códigos propios capaces de descomprimir hasta el día más cruzado',
+      'celebra el humor compartido y los chistes internos que solo existen cuando dos personas se conocen de verdad'
+    ],
+    impactoNormal: [
+      'Recordar cómo se ríen juntos confirma que la relación conserva frescura, confianza y alegría más allá del paso del tiempo.',
+      'Saca una sonrisa inmediata porque apela a momentos reales vividos entre los dos.'
+    ]
+  },
+  {
+    id: 'mesa_mate_sobremesa',
+    regex: /\b(mate|mates|caf[eé]|desayuno|sobremesa|mesa\s+c[aá]lida|pizza\s+casera|velitas\s+chuecas|comida\s+casera|rosca|asado|comidas\s+c[aá]lidas|misma\s+mesa)\b/i,
+    lecturaNormal: [
+      'sitúa el afecto en escenas reales de casa: una mesa sin apuro, unos mates, café compartido o charlas que se estiran',
+      'identifica lo sagrado dentro de lo simple —compartir la mesa, reírse alrededor de algo casero y conversar sin mirar el reloj'
+    ],
+    impactoNormal: [
+      'Anclar los buenos deseos en rituales cotidianos vuelve cercano el sentimiento y evoca el calor del encuentro presencial.',
+      'Hace sentir que la verdadera celebración pasa por compartir tiempo tranquilo con quienes importan.'
+    ]
+  },
+  {
+    id: 'distancia_puente',
+    regex: /\b(audios\s+largos|diferencia\s+horaria|fotos\s+espont[aá]neas|vuelos|mudanzas|kil[oó]metros|distancia|lejos|frente\s+a\s+frente|pr[oó]ximo\s+abrazo|cruzando\s+cualquier\s+distancia)\b/i,
+    lecturaNormal: [
+      'demuestra que los kilómetros, mudanzas o cambios de horario no enfrían un vínculo sostenido con gestos chicos y constantes',
+      'pone en valor esos puentes diarios —un audio largo, una foto mandada al pasar— que mantienen intacta la cercanía a la distancia'
+    ],
+    lecturaDuelo: [
+      'hace sentir presencia leal aunque la distancia física impida estar ahí en persona en una jornada tan sensible',
+      'acorta kilómetros con cercanía honesta y respetuosa para acompañar a la familia a pesar de estar lejos'
+    ],
+    impactoNormal: [
+      'Quien vive lejos suele temer volverse invisible en las rutinas ajenas; escuchar que sigue presente disuelve esa distancia al instante.',
+      'Reafirma que el cariño maduro sabe adaptarse al mapa y mantiene vivo el deseo de volver a abrazarse.'
+    ],
+    impactoDuelo: [
+      'Aunque no se pueda estar físicamente en la sala o la casa, hacer presente el abrazo sincero acompaña de verdad.',
+      'Le recuerda a quien sufre que la distancia geográfica no disminuye el respeto ni el apoyo.'
+    ]
+  },
+  {
+    id: 'pareja_cotidiano',
+    regex: /\b(elegirnos|acuerdos\s+peque[ñn]os|detalles\s+invisibles|esperar\s+despierto|hogar\s+compartido|persona\s+favorita|mirada\s+c[oó]mplice|decisiones\s+tomadas\s+de\s+a\s+dos|mejor\s+equipo)\b/i,
+    lecturaNormal: [
+      'define el amor desde la elección diaria y los detalles discretos: cuidar acuerdos, acompañar semanas intensas y construirse como equipo',
+      'muestra madurez afectiva al agradecer lo pequeño compartido antes que grandes gestos espectaculares pero pasajeros'
+    ],
+    impactoNormal: [
+      'Le confirma a la pareja que los gestos invisibles de todos los días son vistos, agradecidos y valorados como el verdadero sostén del vínculo.',
+      'Transmite seguridad tranquila, ternura y ganas genuinas de seguir caminando juntos.'
+    ]
+  },
+  {
+    id: 'autocuidado_propio_cumple',
+    regex: /\b(compa[ñn][ií]a\s+un\s+lugar\s+amable|me\s+perdono|a\s+mi\s+ritmo\s+real|para\s+m[ií]|mi\s+propia\s+constancia|sostenerme\s+firme|semanas\s+exigentes|cero\s+culpas)\b/i,
+    lecturaNormal: [
+      'propone tratarse a uno mismo con la misma compasión que se ofrece a los demás, soltando culpas y exigencias ajenas en un día propio',
+      'agradece la propia constancia en meses exigentes y convierte la pausa personal en un lugar amable de paz y descanso'
+    ],
+    impactoNormal: [
+      'Validar el propio ritmo cuando toca celebrar a solas o hacer balance interior trae mucho alivio emocional.',
+      'Recuerda que cuidarse y agradecer el camino recorrido también merece espacio propio.'
+    ]
+  },
+  {
+    id: 'graduacion_puentes',
+    regex: /\b(graduaci[oó]n|tendieron\s+puentes|llegar\s+hasta\s+la\s+meta|etapa\s+laboral|t[ií]tulo\s+universitario|recibirse)\b/i,
+    lecturaNormal: [
+      'une la alegría del logro personal con la gratitud hacia quienes acompañaron en silencio durante el esfuerzo del estudio',
+      'mira hacia el nuevo capítulo profesional sin olvidar las manos que ayudaron a cruzar la meta'
+    ],
+    impactoNormal: [
+      'Reconocer el apoyo compartido hace que el triunfo sea todavía más luminoso y humano para todo el entorno.',
+      'Expresa orgullo sano y gratitud limpia hacia quienes creyeron desde el comienzo.'
+    ]
+  },
+  {
+    id: 'memoria_raices',
+    regex: /\b(patio|vereda|sillas\s+de\s+pl[aá]stico|heladera|fotos\s+improvisadas|infancia|veranos|ni[ñn]ez|barrio|recuerdos)\b/i,
+    lecturaNormal: [
+      'despierta imágenes sensoriales de raíces comunes y momentos sencillos que el paso de los años vuelve todavía más valiosos',
+      'recupera escenas concretas de la memoria compartida para recordarle al otro cuánto significó ese tiempo vivido juntos'
+    ],
+    lecturaDuelo: [
+      'guarda con ternura las escenas simples de la vida compartida, transformando la nostalgia en gratitud viva',
+      'recupera pequeños cuadros familiares llenos de calidez que mantienen presente a quien se extraña'
+    ],
+    impactoNormal: [
+      'Volver sobre recuerdos cotidianos tiene una fuerza emotiva enorme porque recuerda de dónde venimos y con quién construimos historia.',
+      'Invita a sonreír con nostalgia amable al reconocer que aquellas escenas siguen intactas en la memoria.'
+    ],
+    impactoDuelo: [
+      'Nombrar recuerdos concretos y cotidianos acompaña la nostalgia sin herir, recordando la calidez vivida juntos.',
+      'Ofrece un refugio sereno donde extrañar también es seguir agradeciendo lo compartido.'
+    ]
+  },
+  {
+    id: 'atrasado_sin_excusas',
+    regex: /\b(pasaron\s+unos\s+d[ií]as|tarde\s+al\s+calendario|atrasad|vale\s+el\s+doble|fuera\s+de\s+fecha)\b/i,
+    lecturaNormal: [
+      'transforma la demora en una oportunidad de cariño genuino: asume con franqueza haber pasado la fecha y elige saludar igual con más calma',
+      'muestra que el afecto verdadero no caduca cuando cambia la hoja del calendario y prefiere aparecer tarde con sinceridad antes que callar'
+    ],
+    impactoNormal: [
+      'Quien recibe un saludo unos días después percibe enseguida que no fue compromiso automático, sino ganas reales de estar presente.',
+      'Saca incomodidad al atraso y deja abierta la puerta para encontrarse o ponerse al día sin apuro.'
+    ]
+  },
+  {
+    id: 'oficio_vocacion',
+    regex: /\b(consultorio|explicaciones\s+claras|incertidumbre|alumnos|chicos\s+miran|coherencia\s+diaria|vocaci[oó]n|sector|imprevistos|vecina|oficina|en\s+remoto|informe|compa[ñn]ero)\b/i,
+    lecturaNormal: [
+      'reconoce el costado humano detrás de una tarea, oficio o trato diario: la serenidad, la coherencia y la paciencia hacia quienes acompañan',
+      'valora el respeto y la calidez profesional o laboral sin caer en halagos forzados ni perder naturalidad'
+    ],
+    impactoNormal: [
+      'Agradecer la calidad humana con la que alguien desempeña su trabajo o comparte el día suele emocionar más que cualquier formalidad.',
+      'Combina aprecio auténtico con un deseo honesto de descanso y bienestar fuera de la rutina.'
+    ]
+  },
+  {
+    id: 'fe_cercana',
+    regex: /\b(dios|se[ñn]or|cristo|oraci[oó]n|or[aá]s|bendici[oó]n|bendiga|gracia\s+de\s+dios|ordena\s+los\s+tiempos|esperanza)\b/i,
+    lecturaNormal: [
+      'une el cariño cotidiano con una fe serena que agradece la vida y pide paz, fortaleza y guía sobre el camino que empieza',
+      'refleja confianza espiritual cercana, reconociendo cómo la fe del otro sostiene a quienes tiene alrededor en tiempos difíciles'
+    ],
+    lecturaDuelo: [
+      'ofrece consuelo espiritual silencioso, oración y paz para el hogar en medio del dolor por la partida',
+      'acompaña desde la fe serena, pidiendo descanso y alivio para quienes atraviesan la ausencia'
+    ],
+    impactoNormal: [
+      'Le recuerda a la persona que su fe se vuelve visible en cómo anima, cuida y transmite paz a su entorno.',
+      'Transmite amparo espiritual y gratitud profunda sin solemnidad distante.'
+    ],
+    impactoDuelo: [
+      'Cuando las explicaciones humanas no alcanzan, una oración sencilla y respetuosa ofrece sosiego real a la familia.',
+      'Envuelve el recuerdo en paz espiritual y respeto profundo por el momento íntimo del hogar.'
+    ]
+  },
+  {
+    id: 'cansancio_habitos',
+    regex: /\b(se[ñn]ales\s+de\s+cansancio|energ[ií]a\s+mental|una\s+sola\s+tarea|distracciones|di[aá]logo\s+interno|tropiezo|constancia\s+silenciosa|postergaci[oó]n|frustraci[oó]n|metas\s+enormes|cerrar\s+ciclos\s+diarios)\b/i,
+    lecturaNormal: [
+      'baja la exigencia irreal del día a día y propone un gesto concreto de cuidado personal, foco tranquilo y trato amable hacia uno mismo',
+      'detecta un desgaste cotidiano muy común —postergar por abarcar demasiado o hablarse con dureza— y lo reemplaza por un paso posible hoy'
+    ],
+    impactoNormal: [
+      'Resulta aliviadora en jornadas cargadas porque convierte la motivación en calma práctica en vez de presión vacía.',
+      'Ayuda a recuperar aire mental y confianza diaria cumpliendo metas concretas sin agotarse.'
+    ]
+  },
+  {
+    id: 'poesia_calidez',
+    regex: /\b(dulce\s+amparo|costumbres\s+sencillas|ratos\s+nublados|mano\s+tendida|abrazos\s+verdaderos|mesa\s+dispuesta|sol\s+claro|versos)\b/i,
+    lecturaNormal: [
+      'recurre a imágenes cálidas y delicadas —el sol claro, la mesa dispuesta, la mano abierta en días grises— para expresar afecto con profundidad',
+      'honra la ternura constante de quien acompaña en los ratos nublados y vuelve más amable la vida cotidiana'
+    ],
+    impactoNormal: [
+      'Su tono poético eleva sentimientos diarios para que suenen memorables y dignos de guardarse.',
+      'Transmite refugio emocional, admiración serena y gratitud sincera.'
+    ]
+  },
+  {
+    id: 'humor_ligero',
+    regex: /\b(risa|re[ií]r|broma|arrugas|edad|juventud|chiste|velas|soplar)\b/i,
+    lecturaNormal: [
+      'elige el humor amable y la sonrisa compartida para celebrar la fecha sin solemnidad excesiva y con mucha cercanía',
+      'combina guiños simpáticos sobre el paso del tiempo con un cariño genuino que desarma cualquier seriedad'
+    ],
+    lecturaDuelo: [
+      'recuerda con ternura la sonrisa buena y la calidez que dejó en quienes compartieron días juntos',
+      'rescata la alegría luminosa de sus gestos diarios como parte viva del cariño en casa'
+    ],
+    impactoNormal: [
+      'Despierta una sonrisa espontánea mientras deja claro cuánto aprecio real hay detrás de la broma.',
+      'Mantiene el encuentro liviano, cómplice y cercano.'
+    ],
+    impactoDuelo: [
+      'Recordar una sonrisa buena ayuda a mantener cerca lo luminoso de su paso sin herir el respeto del momento.',
+      'Abraza la memoria desde la calidez de los buenos ratos compartidos.'
+    ]
+  },
+  {
+    id: 'banderin_practico',
+    regex: /\b(bander[ií]n|guirnalda|mesa\s+dulce|cartulina|gramos|hoja\s+a4|encuadre|fotos\s+verticales|altura\s+ideal|luz\s+c[aá]lida)\b/i,
+    lecturaNormal: [
+      'resuelve un problema concreto de armado y visibilidad para que la decoración luzca prolija tanto en persona como en las fotos del encuentro',
+      'traduce experiencia práctica de montaje, medidas y contraste de materiales en decisiones claras que ahorran pruebas fallidas'
+    ],
+    impactoNormal: [
+      'Tener presente este criterio antes de imprimir o colgar evita que el cartel quede tapado, torcido o apagado bajo la luz del lugar.',
+      'Hace más simple lograr un resultado limpio y armonioso sin gastar tiempo ni papel de más.'
+    ]
+  },
+  {
+    id: 'regalo_atencion',
+    regex: /\b(obsequio|comentario\s+al\s+pasar|gustos\s+reales|envuelto|sorpresa)\b/i,
+    lecturaNormal: [
+      'pone en palabras el verdadero sentido de regalar: haber prestado atención meses atrás a un gusto dicho al pasar',
+      'acompaña el detalle material explicando el pensamiento y el cariño que guiaron la elección'
+    ],
+    impactoNormal: [
+      'Hace sentir a quien abre el presente que es verdaderamente conocida en sus gustos y rutinas tranquilas.',
+      'Convierte cualquier objeto sencillo en una prueba tangible de atención y cercanía.'
+    ]
+  },
+  {
+    id: 'infancia_crecer',
+    regex: /\b(curiosidad|juegos\s+en\s+el\s+patio|dibujos|escuela|primer\s+a[ñn]ito|crecer\s+sano|risa\s+chica)\b/i,
+    lecturaNormal: [
+      'celebra el asombro de crecer rodeado de juegos, curiosidad y afecto familiar, atesorando una etapa irrepetible de la infancia',
+      'traduce la emoción de los adultos al ver crecer sano y feliz a alguien tan chico dentro de la casa'
+    ],
+    impactoNormal: [
+      'Guarda una foto emocional de esta edad exacta que cobra todavía más ternura cuando se relee años después.',
+      'Transmite protección, orgullo dulce y alegría compartida alrededor de toda la familia.'
+    ]
+  },
+  {
+    id: 'juventud_alas',
+    regex: /\b(15\s+a[ñn]os|quince|18\s+a[ñn]os|proyectos\s+propios|alas|empezar\s+a\s+elegir|camino\s+nuevo)\b/i,
+    lecturaNormal: [
+      'acompaña el paso hacia nuevas libertades con orgullo y confianza, celebrando que aparezcan sueños propios sin perder el abrazo de casa',
+      'equilibra el entusiasmo por los desafíos nuevos con el respaldo sereno de quienes creen en su capacidad'
+    ],
+    impactoNormal: [
+      'Le da seguridad a quien empieza una etapa bisagra saber que puede desplegar sus proyectos sintiéndose acompañado.',
+      'Reconoce madurez creciente sin soltar la calidez del afecto cercano.'
+    ]
+  },
+  {
+    id: 'madurez_cosecha',
+    regex: /\b(cincuenta|50\s+a[ñn]os|60\s+a[ñn]os|70\s+a[ñn]os|80\s+a[ñn]os|90\s+a[ñn]os|pies\s+en\s+la\s+tierra|balance\s+amable|proyectos\s+reales)\b/i,
+    lecturaNormal: [
+      'valora la serenidad de quien mira el camino recorrido con los pies en la tierra, celebrando lo sembrado y los proyectos que siguen vivos',
+      'pone en primer plano la experiencia real, los vínculos cuidados en el tiempo y el equilibrio ganado con los años'
+    ],
+    impactoNormal: [
+      'En lugar de mirar la edad desde la nostalgia pesada, la celebra como cosecha de afectos reales y claridad personal.',
+      'Reafirma que cada etapa adulta conserva intacta la capacidad de proyectar y disfrutar con gente leal.'
+    ]
+  },
+  {
+    id: 'esperanza_estacion',
+    regex: /\b(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|primavera|invierno|mitad\s+de\s+a[ñn]o|abrir\s+ventanas|pascuas|navidad|reyes)\b/i,
+    lecturaNormal: [
+      'conecta el sentir personal con la atmósfera propia de este momento del año, invitando a frenar, hacer balance amable y renovar aire',
+      'enmarca el afecto dentro de una fecha especial del calendario, destacando el valor de reunirse y empezar con buena energía'
+    ],
+    impactoNormal: [
+      'Aprovecha la pausa simbólica de esa estación o fecha para decir lo que muchas veces queda tapado por el apuro semanal.',
+      'Deja una sensación luminosa de encuentro, descanso y esperanza compartida.'
+    ]
+  },
+  {
+    id: 'embarazo_espera',
+    regex: /\b(embaraz|futura\s+mam[aá]|dulce\s+espera|beb[eé]\s+en\s+camino|nueva\s+vida)\b/i,
+    lecturaNormal: [
+      'abraza con ternura tanto a la mujer que transita esta espera como a la vida nueva que se prepara para llegar',
+      'celebra este momento irrepetible deseando serenidad, mimos y acompañamiento real para la futura mamá'
+    ],
+    impactoNormal: [
+      'Le recuerda a ella que sigue siendo protagonista de su propio día y merece cuidado especial mientras espera.',
+      'Contagia alegría serena y calidez familiar alrededor de la llegada próxima.'
     ]
   }
 ];
 
-function limpiarFragmentoInicial(texto: string): string {
-  const plano = String(texto || '').replace(/\s+/g, ' ').trim();
-  const primera = plano.split(/(?<=[.!?])\s+/)[0] || plano;
-  const sinEtiq = primera.replace(/^(Mensaje en [^:]+:|Traducción al español:)\s*/i, '').trim();
-  if (sinEtiq.length <= 78) return sinEtiq.replace(/[""«»]/g, '');
-  const corte = sinEtiq.slice(0, 74);
-  const lastSpace = corte.lastIndexOf(' ');
-  return (lastSpace > 24 ? corte.slice(0, lastSpace) : corte).replace(/[,;:.!?]+$/, '') + '…';
-}
-
-function limpiarFocoTitulo(titulo: string): string {
-  const limpio = String(titulo || '').replace(/\s+/g, ' ').replace(/[""«»]/g, '').trim();
-  if (limpio.length <= 68) return limpio;
-  const corte = limpio.slice(0, 64);
-  const lastSpace = corte.lastIndexOf(' ');
-  return (lastSpace > 20 ? corte.slice(0, lastSpace) : corte).replace(/[,;:.!?]+$/, '') + '…';
-}
-
-function limpiarCierre(texto: string): string {
-  const plano = String(texto || '').replace(/\s+/g, ' ').trim();
-  const oraciones = plano.split(/(?<=[.!?])\s+/).filter(Boolean);
-  const ultima = (oraciones.length > 1 ? oraciones[oraciones.length - 1] : plano)
-    .replace(/^(Mensaje en [^:]+:|Traducción al español:)\s*/i, '')
-    .replace(/[""«»]/g, '')
+function extraerTextoInterpretado(texto: string): {
+  cuerpo: string;
+  idioma?: string;
+} {
+  const raw = String(texto || '').trim();
+  const mTrad = raw.match(/Mensaje en\s+([a-záéíóúñ]+):\s*[\s\S]*?Traducción al español:\s*\n*\s*[“"]?([\s\S]+?)[”"]?(?:\n|$)/i);
+  if (mTrad) {
+    return {
+      idioma: mTrad[1].toLowerCase(),
+      cuerpo: mTrad[2].replace(/[“”"]/g, '').trim()
+    };
+  }
+  const limpio = raw
+    .split(/\n+/)
+    .filter((ln) => !/(personalizador|copiarlo o descargarlo|estilo visual)/i.test(ln))
+    .join('\n')
     .trim();
-  if (ultima.length <= 56) return ultima;
-  const inicio = Math.max(0, ultima.length - 54);
-  const slice = ultima.slice(inicio);
-  const sp = slice.indexOf(' ');
-  return '…' + (sp > 0 ? slice.slice(sp + 1) : slice);
+  return { cuerpo: limpio || raw };
+}
+
+function normalizarGestoSegundaAPose(gesto: string): string {
+  return gesto
+    .replace(/\b(tu|tus)\b/gi, (m) => (m[0] === m[0].toUpperCase() ? 'Su' : m.toLowerCase() === 'tus' ? 'esos' : 'ese'))
+    .replace(/\bacordarte\b/gi, 'acordarse')
+    .replace(/\bcompartiste\b/gi, 'supo regalar')
+    .replace(/\btransmitís\b/gi, 'transmite')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extraerGestoConcreto(cuerpo: string, esDuelo: boolean): string | null {
+  const plano = cuerpo.replace(/\s+/g, ' ').trim();
+  const patrones: RegExp[] = [
+    /(?:seguir compartiendo|compartir)\s+([^.;!\n]{18,135})/i,
+    /(?:agradecerte por|agradecemos(?:\s+también)?)\s+([^.;!\n]{18,135})/i,
+    /destacar(?:\s+especialmente|\s+lo bien que hace)?\s+([^.;!\n]{18,135})/i,
+    /valoramos(?:\s+con\s+el\s+corazón)?\s+([^.;!\n]{18,135})/i,
+    /a través de\s+([^.;!\n]{18,135})/i,
+    /gestos nobles[^:]*:\s*([^.;!\n]{18,135})/i,
+    /se demuestra en lo pequeño:\s*en\s+([^.;!\n]{18,135})/i,
+    /sabemos cuánto alivia\s+([^.;!\n]{18,135})/i,
+    /huella profunda hecha de\s+([^.;!\n]{18,135})/i,
+    /alrededor de\s+(la paz de[^.;!\n]{14,125})/i
+  ];
+
+  for (const rx of patrones) {
+    const m = plano.match(rx);
+    if (!m || !m[1]) continue;
+    let frag = m[1]
+      .replace(/,\s*(porque\s+ahí|cualidad\s+que|porque\s+en|y\s+en\s+la\s+manera|que\s+hoy\s+siento)[\s\S]*$/i, '')
+      .replace(/\s*[—–-]+\s*$/, '')
+      .trim();
+    if (frag.length < 18 || frag.length > 130) continue;
+    if (esDuelo && /torta|pastel|sopl[aá]|velas|fiesta|festej|brindis|regalos/i.test(frag)) continue;
+    if (/^\b(tu|tus)\b/i.test(frag) || /\bacordarte\b/i.test(frag)) {
+      frag = normalizarGestoSegundaAPose(frag);
+    }
+    return frag.replace(/[,:;]+$/, '');
+  }
+  return null;
+}
+
+const PROPIOS_INICIO = /^(Dios|Señor|Cristo|Navidad|Nochebuena|Pascuas|Reyes|San\s+Valent[ií]n|Halloween|Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre)\b/;
+
+function bajarInicialTitulo(titulo: string): string {
+  const limpio = String(titulo || '').replace(/\s+/g, ' ').replace(/[“”"«»]+/g, '').replace(/[.!]+$/, '').trim();
+  if (!limpio) return '';
+  if (PROPIOS_INICIO.test(limpio)) return limpio;
+  return limpio.charAt(0).toLowerCase() + limpio.slice(1);
+}
+
+function esTituloExtranjero(titulo: string): boolean {
+  return /\b(buon|auguri|felice|compleanno|tanti|cuore|sempre|gioia|giorni|festa|gioiosa|celebrare|insieme|bello|verr[aà]|parab[eé]ns|anivers[aá]rio|felicidade|joyeux|anniversaire|journ[eé]e|lumineuse|bonheur|wishing|birthday|smiles|heart|warmth)\b/i.test(
+    titulo
+  );
+}
+
+function integrarNucleoTitulo(
+  titulo: string,
+  dest: string,
+  perfil: PerfilEditorial,
+  idioma: string | undefined,
+  semilla: string,
+  esNostalgia = false
+): string {
+  const esDuelo = perfil === 'duelo' && !esNostalgia;
+  const esMotiv = perfil === 'motivaciones';
+  const esAniv = perfil === 'aniv_meses' || perfil === 'aniv_anos';
+  const esBanderin = perfil === 'banderines';
+
+  const limpio = String(titulo || '').replace(/\s+/g, ' ').replace(/[“”"«»]+/g, '').replace(/[.!]+$/, '').trim();
+  const lower = bajarInicialTitulo(limpio);
+
+  if (idioma || esTituloExtranjero(limpio)) {
+    const idLabel = idioma || (
+      /\b(buon|auguri|felice|compleanno|cuore|festa|gioiosa)\b/i.test(limpio)
+        ? 'italiano'
+        : /\b(parab[eé]ns|anivers[aá]rio|voc[eê]|sua)\b/i.test(limpio)
+        ? 'portugués'
+        : /\b(joyeux|anniversaire|journ[eé]e|lumineuse)\b/i.test(limpio)
+        ? 'francés'
+        : 'inglés'
+    );
+    const conjIdioma = idLabel === 'italiano' || idLabel === 'inglés' ? 'e' : 'y';
+    if (esTituloExtranjero(limpio)) {
+      return elegirVariante(
+        [
+          `Este saludo en ${idLabel} (“${limpio}”) condensa buenos deseos sinceros hacia ${dest} más allá del idioma`,
+          `La dedicatoria en ${idLabel} —“${limpio}”— expresa un deseo cercano de luz, calma y afecto real hacia ${dest}`
+        ],
+        semilla,
+        1
+      );
+    }
+    return elegirVariante(
+      [
+        `Este saludo bilingüe (español ${conjIdioma} ${idLabel}) nace de una intención muy cercana hacia ${dest}: ${lower}`,
+        `La propuesta en ${idLabel} con su sentido en español transmite un deseo genuino de alegría y calidez: ${lower}`
+      ],
+      semilla,
+      1
+    );
+  }
+
+  if (esNostalgia) {
+    return elegirVariante(
+      [
+        `Esta frase nace desde la memoria afectiva y el cariño que perdura: ${lower}`,
+        `Pone en palabras esa nostalgia luminosa que sigue viva con el paso del tiempo: ${lower}`
+      ],
+      semilla,
+      1
+    );
+  }
+
+  if (esBanderin) {
+    return elegirVariante(
+      [
+        `Este consejo se centra en un punto concreto de la decoración: ${lower}`,
+        `La recomendación explica el porqué de una decisión visual clave: ${lower}`
+      ],
+      semilla,
+      1
+    );
+  }
+
+  if (esMotiv) {
+    return elegirVariante(
+      [
+        `Esta reflexión diaria parte de una idea práctica y amable: ${lower}`,
+        `El mensaje invita a mirar el día desde un criterio concreto: ${lower}`,
+        `En el centro de esta pausa cotidiana aparece una invitación clara: ${lower}`
+      ],
+      semilla,
+      1
+    );
+  }
+
+  if (esDuelo) {
+    return elegirVariante(
+      [
+        `Estas palabras nacen de un gesto sereno y respetuoso: ${lower}`,
+        `El sentido más hondo de este acompañamiento se resume en una intención limpia: ${lower}`,
+        `Quien envía este mensaje busca sostener desde la calma: ${lower}`
+      ],
+      semilla,
+      1
+    );
+  }
+
+  if (esAniv) {
+    return elegirVariante(
+      [
+        `Esta dedicatoria celebra la historia en pareja desde una certeza sencilla: ${lower}`,
+        `En el corazón de este aniversario aparece un sentimiento genuino: ${lower}`,
+        `El mensaje pone en palabras lo que sostiene la relación día tras día: ${lower}`
+      ],
+      semilla,
+      1
+    );
+  }
+
+  if (/^(que|ojal[aá])\b/i.test(limpio)) {
+    return elegirVariante(
+      [
+        `Esta frase nace de un deseo directo hacia ${dest}: ${lower}`,
+        `El núcleo emocional del saludo está en anhelar algo concreto y bueno: ${lower}`,
+        `Lo que busca transmitir este mensaje de corazón es sencillo y sincero: ${lower}`
+      ],
+      semilla,
+      1
+    );
+  }
+
+  if (/^(gracias|agradezco|agradecemos)\b/i.test(limpio)) {
+    return elegirVariante(
+      [
+        `La dedicatoria parte de un agradecimiento honesto y sin rodeos: ${lower}`,
+        `Todo el mensaje gira alrededor de reconocer con gratitud lo compartido: ${lower}`
+      ],
+      semilla,
+      1
+    );
+  }
+
+  if (/^[a-záéíóúñ]+(ar|er|ir)(te|se|nos|le|lo|la)?\b/i.test(limpio)) {
+    return elegirVariante(
+      [
+        `Pone en primer plano una manera real de querer y estar cerca de ${dest}: ${lower}`,
+        `Resume en una imagen concreta el valor de este vínculo: ${lower}`,
+        `Invita a mirar la fecha desde algo tangible y cercano: ${lower}`
+      ],
+      semilla,
+      1
+    );
+  }
+
+  return elegirVariante(
+    [
+      `El sentido de esta frase hacia ${dest} se condensa en una idea cercana: ${lower}`,
+      `Esta dedicatoria pone en palabras un sentimiento muy reconocible: ${lower}`,
+      `La intención detrás del mensaje busca expresar algo verdadero sin exagerar: ${lower}`,
+      `Transmite un gesto afectuoso claro y humano hacia ${dest}: ${lower}`
+    ],
+    semilla,
+    1
+  );
+}
+
+function defaultLecturaPerfil(perfil: PerfilEditorial): { lectura: string; impacto: string } {
+  switch (perfil) {
+    case 'duelo':
+      return {
+        lectura: 'acompaña el dolor desde la discreción, sin apurar consuelos ni recurrir a frases hechas frías',
+        impacto: 'Sirve para hacer sentir cercanía verdadera en horas difíciles, respetando los tiempos íntimos de quien extraña.'
+      };
+    case 'motivaciones':
+      return {
+        lectura: 'ofrece un punto de apoyo concreto y sereno para ordenar la cabeza sin exigirse de más',
+        impacto: 'Ayuda a frenar la inercia del apuro diario y retomar lo importante con claridad y calma.'
+      };
+    case 'aniv_meses':
+    case 'aniv_anos':
+      return {
+        lectura: 'valora la historia construida paso a paso, destacando la complicidad y el cuidado cotidiano por encima de promesas grandilocuentes',
+        impacto: 'Le recuerda a la otra persona que la magia del vínculo está en seguir eligiéndose en lo simple de todos los días.'
+      };
+    case 'banderines':
+      return {
+        lectura: 'detalla criterios visuales y de armado pensados para evitar imprevistos el día de la reunión',
+        impacto: 'Permite preparar una guirnalda legible, bien proporcionada y acorde al espacio donde se va a sacar las fotos.'
+      };
+    case 'atrasado':
+      return {
+        lectura: 'asume con naturalidad haber pasado la fecha y convierte el saludo posterior en una muestra sincera de atención',
+        impacto: 'Demuestra que el cariño pesa más que el reloj y abre un lindo puente para ponerse al día sin incomodidades.'
+      };
+    case 'profesionales':
+      return {
+        lectura: 'mantiene respeto y cordialidad equilibrada, reconociendo la dedicación y el trato humano en el ámbito laboral o de estudio',
+        impacto: 'Deja una impresión cálida y agradecida sin cruzar límites ni sonar distante.'
+      };
+    default:
+      return {
+        lectura: 'pone el afecto genuino por delante de cualquier formalidad, rescatando lo que hace valioso el vínculo en la vida diaria',
+        impacto: 'Le hace sentir a quien lo recibe que es recordado con atención real y no con un saludo automático de compromiso.'
+      };
+  }
 }
 
 export function explicacionCosmicaMensaje(m: any, hub: any): ExplicacionCosmicaMensaje {
   const slug = String(m.slug || '');
-  const texto = String(m.texto || '');
-  const titulo = String(m.titulo || '');
+  const catSlug = String((hub && hub.slug) || m.categoria || '');
+  const textoOrig = String(m.texto || '');
+  const tituloOrig = String(m.titulo || '');
   const perfil = detectarPerfilEditorial(hub, m);
   const clasif = clasificarMensaje(m, hub);
   const { frase: dest } = destNatural(hub, m);
+  const esNostalgia = /nostalgia|tristes|extranas/.test(catSlug);
   const esDuelo = perfil === 'duelo';
+  const esDueloEstricto = esDuelo && !esNostalgia;
   const esAniv = perfil === 'aniv_meses' || perfil === 'aniv_anos';
   const esMotiv = perfil === 'motivaciones';
   const esBanderin = perfil === 'banderines';
 
-  const parrafosCount = texto.split(/\n\n+/).filter(Boolean).length;
-  const usaUsted = /\b(usted|le\s+(?:deseamos|auguramos|pedimos|enviamos|mando)|su\s+(?:presencia|calidez|fortaleza|caminar|ejemplo|hogar|descanso))\b/i.test(texto);
-  const pluralVoz = /\b(celebramos|deseamos|brindamos|agradecemos|honramos|enviamos|abrazamos|acompañamos|sostenemos)\b/i.test(texto);
+  const { cuerpo, idioma } = extraerTextoInterpretado(textoOrig);
+  const gestoConcreto = extraerGestoConcreto(cuerpo, esDuelo);
 
-  const motivos = MOTIVOS_TEXTO.filter((mot) => mot.regex.test(texto));
-  const motivoPrincipal = motivos[0];
+  const bloqueAnalisis = `${tituloOrig} ${cuerpo}`;
+  const espectroCoincidente = ESPECTRO_HUMANO.filter((e) => {
+    if (esBanderin && e.id === 'memoria_raices') return false;
+    if (esAniv && e.id === 'legado_ejemplo_familiar') return false;
+    return e.regex.test(bloqueAnalisis);
+  });
+  if (esBanderin) {
+    espectroCoincidente.sort((a, b) => (a.id === 'banderin_practico' ? -1 : b.id === 'banderin_practico' ? 1 : 0));
+  }
+  const espectroPrincipal = espectroCoincidente[0];
+  const espectroSecundario = espectroCoincidente[1];
 
-  const fragmento = limpiarFragmentoInicial(texto);
-  const cierreFragmento = limpiarCierre(texto);
-  const focoCrudo = limpiarFocoTitulo(titulo);
-  const focoTitulo = esDuelo && /torta|pastel|sopl[aá]|velas|fiesta|festej|brindis|regalos/i.test(focoCrudo)
-    ? nombreHub(hub)
-    : focoCrudo;
-  const nombreColeccion = nombreHub(hub);
+  const tituloLimpio =
+    esDuelo && /torta|pastel|sopl[aá]|velas|fiesta|festej|brindis|regalos/i.test(tituloOrig)
+      ? `${nombreHub(hub)} (${slug.replace(/-/g, ' ')})`
+      : tituloOrig;
 
-  const tituloPrefijos = esDuelo
+  const h2Opciones = esNostalgia
     ? [
-        `Sentido y uso respetuoso de esta dedicatoria`,
-        `Por qué acompaña bien este mensaje sereno`,
-        `Cuándo y cómo enviar estas palabras con tacto`
+        'Qué evoca este recuerdo compartido',
+        'El sentimiento detrás de estas memorias',
+        'Por qué sigue vivo este lazo en la memoria'
+      ]
+    : esDueloEstricto
+    ? [
+        'Sentido humano detrás de este abrazo escrito',
+        'Qué transmite este acompañamiento sereno',
+        'El gesto de respeto que guarda este mensaje'
       ]
     : esMotiv
     ? [
-        `Idea clave detrás de esta reflexión diaria`,
-        `Cómo aplicar esta frase en tu jornada de hoy`,
-        `Por qué destraba el foco este recordatorio breve`
+        'La idea de fondo para atravesar hoy',
+        'Qué invita a mirar con calma esta reflexión',
+        'El mensaje humano detrás de este recordatorio'
       ]
     : esAniv
     ? [
-        `Qué transmite esta dedicatoria de aniversario`,
-        `Por qué funciona este mensaje para celebrar juntos`,
-        `Cómo y cuándo compartir esta frase de pareja`
+        'Lo que celebra realmente esta dedicatoria',
+        'El valor de lo compartido en esta historia',
+        'Qué expresa sobre su camino este mensaje'
       ]
     : esBanderin
     ? [
-        `Lo esencial de esta guía práctica de banderines`,
-        `Qué vas a resolver con este tutorial paso a paso`,
-        `Resumen rápido antes de pasar a la guía`
+        'Qué resuelve esta recomendación práctica',
+        'El criterio clave detrás de este consejo',
+        'Por qué funciona este detalle de armado'
       ]
     : [
-        `Por qué conecta esta dedicatoria (${clasif.tonoLabel.toLowerCase()})`,
-        `Qué aporta este saludo antes de enviarlo`,
-        `Lectura rápida y mejor uso para ${dest}`,
-        `Contexto y pulso de esta frase de ${nombreColeccion.toLowerCase()}`
+        `Qué expresa esta dedicatoria para ${dest}`,
+        'El sentido humano de este saludo',
+        'Qué busca transmitir de corazón este mensaje',
+        `Por qué toca una fibra real para ${dest}`
       ];
 
-  const h2Titulo = elegirVariante(tituloPrefijos, slug, 1);
+  const h2Titulo = elegirVariante(h2Opciones, slug, 0);
+  const aperturaSentido = integrarNucleoTitulo(tituloLimpio, dest, perfil, idioma, slug, esNostalgia);
+
+  const fallback = esNostalgia
+    ? {
+        lectura: 'rescata la nostalgia luminosa de lo vivido sin encerrarse en tristeza ni perder gratitud por lo compartido',
+        impacto: 'Sirve para decirle al otro o recordar en voz alta que las etapas lindas dejan una huella que ni la distancia ni los años borran.'
+      }
+    : defaultLecturaPerfil(perfil);
+  const usaModoDuelo = (e?: EspectroHumano) =>
+    Boolean(e && (esDueloEstricto || (esNostalgia && e.id === 'humor_ligero')));
+
+  const lecturaEspectro = espectroPrincipal
+    ? elegirVariante(
+        usaModoDuelo(espectroPrincipal) && espectroPrincipal.lecturaDuelo
+          ? espectroPrincipal.lecturaDuelo
+          : espectroPrincipal.lecturaNormal,
+        slug,
+        3
+      )
+    : fallback.lectura;
 
   let p1 = '';
-  const fraseMotivo = motivoPrincipal
-    ? elegirVariante(esDuelo ? motivoPrincipal.frasesDuelo : motivoPrincipal.frasesNormal, slug, 2)
-    : esDuelo
-    ? 'sostiene la cercanía desde palabras limpias, sin exageraciones ni promesas irreales'
-    : esMotiv
-    ? 'condensa una decisión práctica y amable para ordenar la mañana sin discursos pesados'
-    : esAniv
-    ? 'valora el camino compartido en la pareja desde gestos simples y cotidianos'
-    : 'va directo al afecto real por el vínculo sin rellenar con lugares comunes gastados';
-
-  const anclaUnica =
-    focoTitulo && focoTitulo.toLowerCase().slice(0, 24) !== fragmento.toLowerCase().slice(0, 24)
-      ? ` bajo el eje “${focoTitulo}”`
-      : cierreFragmento
-      ? ` rematando en “${cierreFragmento}”`
-      : '';
-
-  if (esBanderin) {
-    p1 = `Esta guía de ${clasif.palabras} palabras aborda el diseño y armado real del tema “${focoTitulo || fragmento}” dentro de ${nombreColeccion.toLowerCase()}. Explica medidas, materiales y errores frecuentes para que el cartel o guirnalda quede prolijo sin perder tiempo.`;
-  } else if (esDuelo) {
-    const registro = usaUsted ? 'mantiene trato respetuoso de usted' : 'adopta una cercanía serena y cuidada';
-    p1 = `Con apertura en “${fragmento}”${anclaUnica}, este texto ${fraseMotivo}. Además ${registro} en ${clasif.palabras} palabras (${clasif.tiempoLectura}), evitando frases invasivas para acompañar a ${dest}.`;
-  } else if (esMotiv) {
-    p1 = `Esta reflexión de ${clasif.palabras} palabras —titulada “${focoTitulo}”— arranca con “${fragmento}” y ${fraseMotivo}. Su tono equilibrado ayuda a pasar de la intención abstracta a un paso concreto que podés sostener hoy mismo.`;
-  } else if (esAniv) {
-    const voz = pluralVoz ? 'habla desde el nosotros compartido' : 'nace en primera persona directa';
-    p1 = `Enfocada en ${nombreColeccion.toLowerCase()}${anclaUnica}, esta dedicatoria parte de “${fragmento}” y ${fraseMotivo}. Su redacción ${voz} a lo largo de ${clasif.palabras} palabras, logrando intimidad honesta lejos de tarjetas acartonadas.`;
+  if (gestoConcreto) {
+    const puenteGesto = esDueloEstricto
+      ? `Al nombrar ${gestoConcreto}, el mensaje`
+      : esAniv
+      ? `Lejos de promesas irreales, recuerda ${gestoConcreto} y`
+      : `Cuando trae a escena ${gestoConcreto}, la dedicatoria`;
+    p1 = `${aperturaSentido}. ${puenteGesto} ${lecturaEspectro}.`;
+  } else if (idioma) {
+    const tradLimpia = cuerpo.replace(/\s+/g, ' ').trim();
+    p1 = `${aperturaSentido}. Su significado en español apunta a un deseo muy cálido —“${tradLimpia}”— y ${lecturaEspectro}.`;
   } else {
-    const idiomaDetectado = /italiano/.test(hub.slug)
-      ? 'en italiano con sentido claro y natural'
-      : /portugues/.test(hub.slug)
-      ? 'en portugués cálido y cotidiano'
-      : /frances/.test(hub.slug)
-      ? 'en francés elegante y cercano'
-      : /ingles|english|biling/.test(hub.slug)
-      ? 'bilingüe inglés-español pensada para lucir natural'
-      : usaUsted
-      ? 'en trato respetuoso de usted'
-      : pluralVoz
-      ? 'en voz plural familiar o grupal'
-      : 'en español rioplatense cercano';
-
-    const estructura =
-      parrafosCount >= 4
-        ? `se desarrolla en ${parrafosCount} párrafos epistolares`
-        : clasif.claseTono === 'poema'
-        ? `conserva cadencia en versos`
-        : `se lee de corrido en ${clasif.tiempoLectura}`;
-
-    p1 = `Pensado para ${dest}${anclaUnica}, este texto ${idiomaDetectado} abre con “${fragmento}” y ${fraseMotivo}. Su extensión de ${clasif.palabras} palabras ${estructura}, lo que evita que suene genérico frente a saludos copiados al azar.`;
+    const conectorLectura = esDueloEstricto
+      ? 'Además, el mensaje'
+      : esMotiv
+      ? 'En su trasfondo,'
+      : 'En su sentido profundo,';
+    p1 = `${aperturaSentido}. ${conectorLectura} ${lecturaEspectro}.`;
   }
 
   let p2 = '';
-  if (esBanderin) {
-    p2 = `Leé las recomendaciones antes de abrir el creador online de hojas A4: elegir bien el gramaje y el contraste ahorra impresiones fallidas y mejora la lectura en fotos.`;
-  } else if (esDuelo) {
-    const canalDuelo =
-      clasif.palabras <= 65
-        ? 'Enviarlo por mensaje privado sin esperar respuesta inmediata funciona con mucho respeto'
-        : 'Funciona muy bien impreso en tarjeta sobria Marfil o enviado por chat con calma';
-    p2 = `${canalDuelo}. En el personalizador podés sumar el nombre familiar y quién firma para adaptar el cuerpo antes de copiar o descargar la postal.`;
-  } else if (esMotiv) {
-    p2 = `Rinde mejor a primera hora antes de revisar notificaciones o guardada como Story vertical 1080×1920. Si la dedicás a alguien que está atravesando un día exigente, agregale su nombre en el personalizador para volverla personal.`;
-  } else if (esAniv) {
-    const soporteAniv =
-      clasif.palabras <= 65
-        ? 'Ideal como primer mensaje de la mañana o pie de foto en historias'
-        : 'Ideal para acompañar una cena tranquila, unas flores o una tarjeta impresa a solas';
-    p2 = `${soporteAniv} (${clasif.canalLabel.toLowerCase()}). Completá su apodo, una posdata con un plan cercano y tu firma en el personalizador para generar tanto el texto limpio como la imagen PNG.`;
+  if (espectroPrincipal) {
+    const listaImpacto =
+      usaModoDuelo(espectroPrincipal) && espectroPrincipal.impactoDuelo
+        ? espectroPrincipal.impactoDuelo
+        : espectroPrincipal.impactoNormal;
+    p2 = elegirVariante(listaImpacto, slug, 5);
+    if (espectroSecundario) {
+      const matizSec =
+        usaModoDuelo(espectroSecundario) && espectroSecundario.lecturaDuelo
+          ? espectroSecundario.lecturaDuelo[0]
+          : espectroSecundario.lecturaNormal[0];
+      p2 += ` Al mismo tiempo, ${matizSec}.`;
+    }
   } else {
-    const canalTip =
-      clasif.palabras <= 65
-        ? 'Entra entero en una pantalla de WhatsApp o estado sin cortes de “Leer más”'
-        : parrafosCount >= 4
-        ? 'Pide lectura tranquila junto a un café o impresa en papel para acompañar tu regalo'
-        : 'Equilibra cuerpo claro para chat privado, correo cordial o tarjeta cuadrada/Story IG';
-    const cierreTip = usaUsted
-      ? 'Ajustá el nombre o tratamiento en el personalizador antes de copiar o bajar la postal en PNG.'
-      : 'Sumá su apodo, una breve anécdota en Posdata y tu firma en el personalizador para que quede cien por ciento tuyo.';
-    p2 = `${canalTip}. ${cierreTip}`;
+    p2 = fallback.impacto;
   }
+
+  if (esAniv) {
+    p1 = p1.replace(/cumpleaños/gi, 'aniversario');
+    p2 = p2.replace(/cumpleaños/gi, 'aniversario');
+  }
+
+  const enfoqueLabel = esNostalgia
+    ? `Memoria y cercanía · ${nombreHub(hub)}`
+    : esDueloEstricto
+    ? `Acompañamiento sereno · ${nombreHub(hub)}`
+    : esMotiv
+    ? 'Sentido de la reflexión diaria'
+    : esBanderin
+    ? 'Criterio práctico de diseño'
+    : esAniv
+    ? `Sentido del aniversario · ${nombreHub(hub)}`
+    : `Sentido del mensaje · ${clasif.tonoLabel}`;
 
   return {
     titulo: h2Titulo,
     parrafos: [p1, p2],
-    enfoqueLabel: esDuelo
-      ? 'Tono sereno · Acompañamiento'
-      : esMotiv
-      ? 'Enfoque diario · Accionable'
-      : `${clasif.tonoLabel} · ${clasif.palabras} palabras`,
+    enfoqueLabel,
     canalSugerido: clasif.canalLabel
   };
 }

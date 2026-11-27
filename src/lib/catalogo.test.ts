@@ -1093,6 +1093,12 @@ test('GSC noindex/rastreada: 0 mensajes en noindex, robots bloquea .json, /posts
     const ex = explicacionCosmicaMensaje(m, hub);
     assert.ok(ex.titulo.length >= 12 && ex.parrafos.length === 2);
     const blob = `${ex.titulo} | ${ex.parrafos.join(' ')}`;
+    assert.ok(
+      !/(seg de lectura|Leer más|sin cortes de|apertura en|bajo el eje|en el personalizador|extensión de \d+|párrafos epistolares|en español rioplatense|\d+\s+palabras)/i.test(
+        `${ex.enfoqueLabel} ${blob}`
+      ),
+      `Explicacion robotica de redaccion detectada en ${m.slug}`
+    );
     explicaciones.add(blob);
 
     const isDuelo = /fallecid|hasta-el-cielo|condolencias|pesame|consuelo|luctuoso|tristes|nostalgia|extranas/.test(hub.slug) || hub.grupo === 'duelo_recuerdos';
