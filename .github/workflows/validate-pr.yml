@@ -21,9 +21,10 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Validar contenido y construir el sitio
         run: npm run build
-      - name: Validar estructura y contenido del sitemap
+      - name: Validar estructura y contenido del sitemap y RSS
         run: |
           python - <<'PY'
+          import re
           import xml.etree.ElementTree as ET
           from pathlib import Path
           from urllib.parse import urlparse
@@ -33,13 +34,28 @@ jobs:
           root = ET.parse(path).getroot()
           ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
           assert root.tag == "{http://www.sitemaps.org/schemas/sitemap/0.9}urlset", "Raíz XML incorrecta"
-          urls = [node.text or "" for node in root.findall("sm:url/sm:loc", ns)]
-          assert len(urls) == 18814, f"Se esperaban 18814 URLs; hay {len(urls)}"
-          assert len(set(urls)) == len(urls), "Hay URLs duplicadas"
-          for url in urls:
+
+          url_nodes = root.findall("sm:url", ns)
+          urls = []
+          iso_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+          for node in url_nodes:
+              loc_el = node.find("sm:loc", ns)
+              lastmod_el = node.find("sm:lastmod", ns)
+              assert loc_el is not None and loc_el.text, "Falta <loc> en <url>"
+              url = loc_el.text
+              urls.append(url)
               parsed = urlparse(url)
               assert parsed.scheme == "https" and parsed.netloc == "paracumpleanos.com", f"URL fuera del dominio: {url}"
               assert not parsed.query and not parsed.fragment, f"URL con query o fragmento: {url}"
-          assert not root.findall(".//sm:lastmod", ns), "No usar lastmod sin fechas reales por URL"
-          print(f"Sitemap validado: {len(urls)} URLs únicas, absolutas y del dominio correcto.")
+              assert "/posts/" not in parsed.path and parsed.path != "/404.html", f"URL excluida en sitemap: {url}"
+              assert lastmod_el is not None and lastmod_el.text and iso_re.match(lastmod_el.text), f"lastmod inválido para {url}"
+
+          assert 24760 <= len(urls) <= 50000, f"Cantidad inesperada de URLs en sitemap: {len(urls)}"
+          assert len(set(urls)) == len(urls), "Hay URLs duplicadas en sitemap.xml"
+
+          rss_path = Path("dist/rss.xml")
+          assert rss_path.is_file() and rss_path.stat().st_size > 0, "No se generó dist/rss.xml"
+          rss_root = ET.parse(rss_path).getroot()
+          assert rss_root.tag == "rss", "Raíz XML de rss.xml incorrecta"
+          print(f"Sitemap y RSS validados: {len(urls)} URLs únicas, absolutas y con lastmod ISO válido.")
           PY

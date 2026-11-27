@@ -87,7 +87,8 @@ if (esHub && editorialHub) {
 }
 
 const creado = hub.creado || '2026-11-15';
-const actualizado = hub.actualizado || '2026-11-19';
+const actualizadoBase = hub.actualizado || '2026-11-22';
+const actualizado = actualizadoBase > '2026-11-27' ? actualizadoBase : '2026-11-27';
 const parrafosMsg = esHub ? [] : registro.texto.split('\n\n');
 const textoCompletoCard = esHub ? '' : registro.texto;
 

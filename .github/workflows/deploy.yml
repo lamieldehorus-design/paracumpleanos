@@ -39,6 +39,12 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+      - name: Guardar sitemap para IndexNow
+        uses: actions/upload-artifact@v4
+        with:
+          name: sitemap-xml
+          path: dist/sitemap.xml
+          retention-days: 1
 
   deploy:
     needs: build
@@ -57,13 +63,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Descargar sitemap construido
+        uses: actions/download-artifact@v4
+        with:
+          name: sitemap-xml
+          path: dist
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
       - name: Notificar todas las URLs a Bing IndexNow
         continue-on-error: true
-        run: node scripts/enviar-indexnow.mjs --wait-key=60 --from-catalog
+        run: node scripts/enviar-indexnow.mjs --wait-key=60
 
   google-notify:
     needs: deploy

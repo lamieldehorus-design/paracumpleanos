@@ -1132,3 +1132,43 @@ test('GSC noindex/rastreada: 0 mensajes en noindex, robots bloquea .json, /posts
   assert.equal(pagLeads.size, totalPags, 'Cada pagina /2/..N debe tener lead unico');
 });
 
+test('sitemap.xml.ts actualiza lastmod con edicion 2026-11-27 sin fechas obsoletas ni validacion PR rota', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+  const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
+  const slugsSignos = ZODIACOS.map((s) => s.slug);
+  const slugsPaises = PAISES_HITOS.map((p) => p.slug);
+  const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises);
+  const mapaActual = construirMapaLastmodSitemap(
+    cat,
+    GUIAS_EDITORIALES,
+    slugsSignos,
+    slugsPaises,
+    '2026-11-22',
+    '2026-11-27'
+  );
+
+  assert.equal(mapaActual['https://paracumpleanos.com/'], '2026-11-27');
+  assert.equal(mapaActual['https://paracumpleanos.com/feliz-cumpleanos-mama/'], '2026-11-27');
+  assert.equal(mapaActual['https://paracumpleanos.com/feliz-cumpleanos-mama/2/'], '2026-11-27');
+  assert.equal(mapaActual['https://paracumpleanos.com/hitos-historicos/argentina/'], '2026-11-22');
+  assert.equal(mapaActual['https://paracumpleanos.com/horoscopo/geminis/'], '2026-11-22');
+  for (const m of cat.todosMensajes) {
+    assert.equal(mapaActual[`https://paracumpleanos.com/${m.slug}/`], '2026-11-27', `Mensaje ${m.slug} debe reflejar 2026-11-27`);
+  }
+  for (const g of GUIAS_EDITORIALES) {
+    assert.equal(mapaActual[`https://paracumpleanos.com/guias/${g.slug}/`], g.fechaActualizacion || g.fechaPublicacion);
+  }
+  assert.equal(Object.keys(mapaActual).length, urls.length);
+
+  const sitemapSrc = fs.readFileSync(path.resolve('src/pages/sitemap.xml.ts'), 'utf8');
+  assert.ok(sitemapSrc.includes("'2026-11-27'"), 'sitemap.xml.ts debe incluir fecha de edicion 2026-11-27');
+
+  const slugSrc = fs.readFileSync(path.resolve('src/pages/[slug].astro'), 'utf8');
+  assert.ok(slugSrc.includes("'2026-11-27'"), '[slug].astro debe alinear actualizado con 2026-11-27');
+
+  const prWf = fs.readFileSync(path.resolve('.github/workflows/validate-pr.yml'), 'utf8');
+  assert.ok(!prWf.includes('18814'), 'validate-pr.yml no debe hardcodear 18814 URLs');
+  assert.ok(!prWf.includes('No usar lastmod'), 'validate-pr.yml debe validar lastmod ISO en lugar de prohibirlo');
+});
+

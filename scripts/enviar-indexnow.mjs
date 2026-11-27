@@ -41,11 +41,40 @@ function cargarUrlsDesdeSitemap(sitemapPath) {
 }
 
 function cargarSlugsGuias() {
-  const guiasPath = path.resolve('src/data/guias.ts');
-  if (!fs.existsSync(guiasPath)) return [];
-  const src = fs.readFileSync(guiasPath, 'utf8');
+  const dataDir = path.resolve('src/data');
+  if (!fs.existsSync(dataDir)) return [];
+  const files = fs.readdirSync(dataDir).filter((f) => /^guias-parte\d+\.ts$/.test(f)).sort();
   const slugs = [];
-  for (const m of src.matchAll(/\n  \{\n    slug: '([^']+)'/g)) {
+  for (const f of files) {
+    const src = fs.readFileSync(path.join(dataDir, f), 'utf8');
+    for (const m of src.matchAll(/\n  \{\n    slug: '([^']+)'/g)) {
+      slugs.push(m[1]);
+    }
+  }
+  return slugs;
+}
+
+function cargarSlugsPaises() {
+  const files = ['hitos-america.ts', 'hitos-europa.ts', 'hitos-asia.ts', 'hitos-africa.ts', 'hitos-oceania.ts'];
+  const slugs = [];
+  for (const f of files) {
+    const p = path.resolve('src/data', f);
+    if (!fs.existsSync(p)) continue;
+    const src = fs.readFileSync(p, 'utf8');
+    for (const m of src.matchAll(/\n  \{\n    slug: '([^']+)'/g)) {
+      slugs.push(m[1]);
+    }
+  }
+  return slugs;
+}
+
+function cargarSlugsSignos() {
+  const p = path.resolve('src/lib/horoscopo.ts');
+  if (!fs.existsSync(p)) return [];
+  const src = fs.readFileSync(p, 'utf8');
+  const bloque = src.split('export const ZODIACOS:')[1]?.split('export const MESES_CON_SIGNOS:')[0] || '';
+  const slugs = [];
+  for (const m of bloque.matchAll(/\n  \{\n    slug: '([^']+)'/g)) {
     slugs.push(m[1]);
   }
   return slugs;
@@ -76,13 +105,25 @@ function cargarUrlsDesdeCatalogo() {
 
   const urls = [
     `https://${HOST}/`,
+    `https://${HOST}/calendario/`,
+    `https://${HOST}/hitos-historicos/`,
     `https://${HOST}/categorias/`,
+    `https://${HOST}/herramientas/`,
+    `https://${HOST}/horoscopo/`,
     `https://${HOST}/guias/`,
     `https://${HOST}/sobre-nosotros/`,
     `https://${HOST}/contacto/`,
     `https://${HOST}/privacidad/`,
     `https://${HOST}/terminos-de-uso/`
   ];
+
+  for (const slugPais of cargarSlugsPaises()) {
+    urls.push(`https://${HOST}/hitos-historicos/${slugPais}/`);
+  }
+
+  for (const slugSigno of cargarSlugsSignos()) {
+    urls.push(`https://${HOST}/horoscopo/${slugSigno}/`);
+  }
 
   for (const slugGuia of cargarSlugsGuias()) {
     urls.push(`https://${HOST}/guias/${slugGuia}/`);
@@ -92,36 +133,23 @@ function cargarUrlsDesdeCatalogo() {
     urls.push(`https://${HOST}/${h.slug}/`);
   }
 
-  const freqParrafos = new Map();
+  const cuerposVistos = new Set();
   for (const m of mensajes) {
-    const ps = String(m.texto || '').split(/\n\n+/).map((p) => p.trim()).filter((p) => p.length > 25);
-    for (const p of ps) freqParrafos.set(p, (freqParrafos.get(p) || 0) + 1);
+    const slug = String(m.slug || '').trim();
+    const titulo = String(m.titulo || '').trim();
+    const texto = String(m.texto || '').normalize('NFC').replace(/\s+/g, ' ').trim();
+    const categoria = String(m.categoria || '').trim();
+    const claveTexto = texto.toLocaleLowerCase('es');
+    if (slug && titulo && texto && categoria && !cuerposVistos.has(claveTexto)) {
+      cuerposVistos.add(claveTexto);
+      urls.push(`https://${HOST}/${slug}/`);
+    }
   }
 
-  const cuerposVistos = new Set();
-  const tokensSeleccionados = [];
-  const toTokens = (s) => new Set(
-    String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((w) => w.length > 3)
-  );
-
-  for (const m of mensajes) {
-    const texto = String(m.texto || '').trim();
-    if (!texto || cuerposVistos.has(texto)) continue;
-    const ps = texto.split(/\n\n+/).map((p) => p.trim()).filter((p) => p.length > 25);
-    if (!ps.length || ps.some((p) => (freqParrafos.get(p) || 0) > 1)) continue;
-    const toks = toTokens(texto);
-    if (toks.size < 6) continue;
-    let dup = false;
-    for (const prev of tokensSeleccionados) {
-      let inter = 0;
-      toks.forEach((w) => { if (prev.has(w)) inter++; });
-      if (inter / (toks.size + prev.size - inter) >= 0.55) { dup = true; break; }
-    }
-    if (!dup) {
-      cuerposVistos.add(texto);
-      tokensSeleccionados.push(toks);
-      urls.push(`https://${HOST}/${m.slug}/`);
+  for (const h of hubs) {
+    const total = Math.ceil((porCat.get(h.slug) || []).length / POR_PAGINA);
+    for (let p = 2; p <= total; p++) {
+      urls.push(`https://${HOST}/${h.slug}/${p}/`);
     }
   }
 

@@ -289,11 +289,18 @@ export function construirMapaLastmodSitemap(
   guias: { slug: string; fechaActualizacion?: string; fechaPublicacion?: string }[] = [],
   slugsSignos: string[] = [],
   slugsPaises: string[] = [],
-  fechaBaseSitio: string = '2026-11-20'
+  fechaBaseSitio: string = '2026-11-20',
+  fechaEdicionCatalogo?: string
 ): Record<string, string> {
   if (!esFechaIsoValida(fechaBaseSitio)) {
     throw new Error(`Fecha base lastmod inválida: ${fechaBaseSitio}`);
   }
+  if (fechaEdicionCatalogo !== undefined && !esFechaIsoValida(fechaEdicionCatalogo)) {
+    throw new Error(`Fecha edición catálogo lastmod inválida: ${fechaEdicionCatalogo}`);
+  }
+
+  const aplicarEdicion = (fecha: string): string =>
+    fechaEdicionCatalogo && fechaEdicionCatalogo > fecha ? fechaEdicionCatalogo : fecha;
 
   const mapa: Record<string, string> = {};
   const fechasGlobales: string[] = [fechaBaseSitio];
@@ -322,13 +329,14 @@ export function construirMapaLastmodSitemap(
         : fHub;
       if (fMsg > maxF) maxF = fMsg;
     }
-    maxFechaHub.set(h.slug, maxF);
-    mapa[`${SITIO}/${h.slug}/`] = maxF;
-    fechasGlobales.push(maxF);
+    const maxFConEdicion = aplicarEdicion(maxF);
+    maxFechaHub.set(h.slug, maxFConEdicion);
+    mapa[`${SITIO}/${h.slug}/`] = maxFConEdicion;
+    fechasGlobales.push(maxFConEdicion);
 
     const totalPags = Math.ceil(msgs.length / POR_PAGINA);
     for (let p = 2; p <= totalPags; p++) {
-      mapa[`${SITIO}/${h.slug}/${p}/`] = maxF;
+      mapa[`${SITIO}/${h.slug}/${p}/`] = maxFConEdicion;
     }
   }
 
@@ -341,7 +349,9 @@ export function construirMapaLastmodSitemap(
       : esFechaIsoValida(String(m.creado || ''))
       ? String(m.creado)
       : fallbackHub;
-    mapa[`${SITIO}/${m.slug}/`] = fMsg;
+    const fFinal = aplicarEdicion(fMsg);
+    mapa[`${SITIO}/${m.slug}/`] = fFinal;
+    fechasGlobales.push(fFinal);
   }
 
   const fechaMasRecienteSitio = fechasGlobales.sort().slice(-1)[0] || fechaBaseSitio;
