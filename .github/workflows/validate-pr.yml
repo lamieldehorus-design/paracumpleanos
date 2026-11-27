@@ -50,7 +50,7 @@ jobs:
               assert "/posts/" not in parsed.path and parsed.path != "/404.html", f"URL excluida en sitemap: {url}"
               assert lastmod_el is not None and lastmod_el.text and iso_re.match(lastmod_el.text), f"lastmod inválido para {url}"
 
-          assert 24760 <= len(urls) <= 50000, f"Cantidad inesperada de URLs en sitemap: {len(urls)}"
+          assert 24791 <= len(urls) <= 50000, f"Cantidad inesperada de URLs en sitemap: {len(urls)}"
           assert len(set(urls)) == len(urls), "Hay URLs duplicadas en sitemap.xml"
 
           rss_path = Path("dist/rss.xml")

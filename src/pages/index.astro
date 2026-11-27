@@ -17,6 +17,7 @@ import { GUIAS_EDITORIALES } from '../data/guias.ts';
 import { TEMAS_TARJETA } from '../lib/personalizador.ts';
 import { ZODIACOS } from '../lib/horoscopo.ts';
 import { PAISES_HITOS, HITOS_MUNDIALES } from '../data/hitos-historicos.ts';
+import { TAROT_MAYORES_22 } from '../data/tarot-egipcio.ts';
 import { rankearGuiasPorPopularidad, seleccionarPoolPopularMixto } from '../lib/popularidad.ts';
 import { ETIQUETAS_SEGMENTOS, type SegmentoTono } from '../lib/editorial.ts';
 
@@ -123,6 +124,20 @@ const indiceBuscador = hubs
       emoji: s.simbolo,
       q: `horoscopo ${s.nombre} ${s.rangoTexto} ${s.mesesNombres.join(' ')} ${s.elemento}`.toLowerCase()
     })),
+    {
+      titulo: 'Tarot Egipcio gratis: tirada interactiva, Arcano natal y 78 cartas',
+      slug: '/tarot-egipcio/',
+      tipo: 'Tarot Egipcio',
+      emoji: '☀️',
+      q: 'tarot egipcio tirada gratis arcanos mayores menores libro de thot arcano cumpleaños natal'.toLowerCase()
+    },
+    ...TAROT_MAYORES_22.map((a) => ({
+      titulo: `${a.romano} · ${a.nombre} (Tarot Egipcio y ${a.astrologia})`,
+      slug: `/tarot-egipcio/${a.slug}/`,
+      tipo: 'Tarot Egipcio',
+      emoji: a.glyph,
+      q: `tarot egipcio arcano ${a.romano} ${a.nombre} ${a.astrologia} ${a.deidad} ${a.esencia}`.toLowerCase()
+    })),
     ...PAISES_HITOS.map((p) => ({
       titulo: `${p.nombre}: ${p.hitoPrincipal.titulo} (${p.hitoPrincipal.dia}/${p.hitoPrincipal.mes})`,
       slug: `/hitos-historicos/${p.slug}/`,
@@ -216,6 +231,8 @@ const jsonld = [
         <a href="/calendario/">Calendario</a>
         <span aria-hidden="true">·</span>
         <a href="/hitos-historicos/">Hitos históricos</a>
+        <span aria-hidden="true">·</span>
+        <a href="/tarot-egipcio/">Tarot Egipcio</a>
       </div>
     </div>
 
@@ -280,6 +297,11 @@ const jsonld = [
       <span class="portal-util-kicker">Imprimible gratis A4</span>
       <span class="portal-util-titulo">Banderines para imprimir</span>
       <span class="portal-util-desc">Armá guirnaldas por nombre con bordes listos para recortar.</span>
+    </a>
+    <a class="portal-util-card" href="/tarot-egipcio/">
+      <span class="portal-util-kicker">78 láminas · Tirada gratis</span>
+      <span class="portal-util-titulo">Tarot Egipcio y Arcano natal</span>
+      <span class="portal-util-desc">Tiradas interactivas, calculadora de Arcano de cumpleaños y dedicatorias.</span>
     </a>
     <a class="portal-util-card" href="/herramientas/">
       <span class="portal-util-kicker">Herramientas gratuitas</span>
@@ -366,6 +388,7 @@ const jsonld = [
           <li><a href="/hitos-historicos/mexico/">México · 16 de septiembre</a></li>
           <li><a href="/hitos-historicos/espana/">España · 12 de octubre</a></li>
           <li><a href="/horoscopo/">Horóscopo de cumpleaños (12 signos)</a></li>
+          <li><a href="/tarot-egipcio/">Tarot Egipcio (78 arcanos y tirada)</a></li>
         </ul>
         <p class="portal-seccion-pie">
           <a href="/hitos-historicos/">Explorar los {PAISES_HITOS.length} hitos históricos →</a>
@@ -459,6 +482,77 @@ const jsonld = [
         Mostrar más publicaciones populares ({poolPopular.length - 6} más)
       </button>
     </div>
+  </section>
+
+  <section class="portal-banda portal-compartidos portal-compartidos--minimal" id="lo-mas-compartido" aria-labelledby="titulo-mas-compartido">
+    <details class="comp-detalles comp-detalles--raiz">
+      <summary class="comp-raiz-summary">
+        <span id="titulo-mas-compartido" class="comp-raiz-titulo">Registro anónimo de lo más compartido en el portal</span>
+        <span class="comp-total-meta" id="pc-home-comp-total">0 compartidos registrados</span>
+      </summary>
+      <div class="comp-detalles-cuerpo">
+        <div class="comp-cabecera-acciones comp-cabecera-acciones--inline">
+          <a class="btn-leer-mas comp-archivo-link" href="/compartidos-historial.json" target="_blank" rel="noopener">Archivo (.json)</a>
+          <button type="button" class="btn-leer-mas" id="pc-home-comp-descargar">Descargar historial</button>
+        </div>
+        <div class="comp-redes-grid comp-redes-grid--compact" role="list" aria-label="Totales compartidos por red social y copia">
+          <div class="comp-red-card comp-red-card--wa" role="listitem">
+            <span class="comp-red-etiqueta">WhatsApp</span>
+            <strong class="comp-red-num" id="pc-stat-whatsapp">0</strong>
+            <span class="comp-red-pct" id="pc-pct-whatsapp">0%</span>
+            <div class="comp-red-barra"><span id="pc-bar-whatsapp" style="width:0%"></span></div>
+          </div>
+          <div class="comp-red-card comp-red-card--ig" role="listitem">
+            <span class="comp-red-etiqueta">Instagram</span>
+            <strong class="comp-red-num" id="pc-stat-instagram">0</strong>
+            <span class="comp-red-pct" id="pc-pct-instagram">0%</span>
+            <div class="comp-red-barra"><span id="pc-bar-instagram" style="width:0%"></span></div>
+          </div>
+          <div class="comp-red-card comp-red-card--fb" role="listitem">
+            <span class="comp-red-etiqueta">Facebook</span>
+            <strong class="comp-red-num" id="pc-stat-facebook">0</strong>
+            <span class="comp-red-pct" id="pc-pct-facebook">0%</span>
+            <div class="comp-red-barra"><span id="pc-bar-facebook" style="width:0%"></span></div>
+          </div>
+          <div class="comp-red-card comp-red-card--copiar" role="listitem">
+            <span class="comp-red-etiqueta">Copiar texto</span>
+            <strong class="comp-red-num" id="pc-stat-copiar">0</strong>
+            <span class="comp-red-pct" id="pc-pct-copiar">0%</span>
+            <div class="comp-red-barra"><span id="pc-bar-copiar" style="width:0%"></span></div>
+          </div>
+        </div>
+        <div class="filtros-tono comp-filtros" role="toolbar" aria-label="Filtrar lo más compartido y su historial por red">
+          <button type="button" class="filtro-btn activo" data-comp-filtro="todas" aria-pressed="true">Todas las redes</button>
+          <button type="button" class="filtro-btn" data-comp-filtro="whatsapp" aria-pressed="false">WhatsApp</button>
+          <button type="button" class="filtro-btn" data-comp-filtro="instagram" aria-pressed="false">Instagram</button>
+          <button type="button" class="filtro-btn" data-comp-filtro="facebook" aria-pressed="false">Facebook</button>
+          <button type="button" class="filtro-btn" data-comp-filtro="copiar" aria-pressed="false">Copiar</button>
+        </div>
+        <div class="comp-paneles-grid">
+          <div class="comp-panel-bloque">
+            <div class="comp-subhead">
+              <h3>Ranking más compartido</h3>
+              <span class="comp-submeta" id="pc-home-rank-count">0 publicaciones</span>
+            </div>
+            <div id="pc-home-comp-lista" class="comp-lista" aria-live="polite">
+              <p class="comp-vacio">Todavía no hay compartidos registrados. Tocá <strong>WhatsApp</strong>, <strong>Instagram</strong>, <strong>Facebook</strong> o <strong>Copiar</strong> en cualquier dedicatoria para sumar al ranking público.</p>
+            </div>
+          </div>
+          <div class="comp-panel-bloque">
+            <div class="comp-subhead">
+              <h3>Historial de cada compartido</h3>
+              <span class="comp-submeta" id="pc-home-hist-count">0 eventos</span>
+            </div>
+            <ol id="pc-home-comp-historial" class="comp-historial-lista" aria-live="polite">
+              <li class="comp-vacio">Cada vez que un visitante comparte o copia una dedicatoria, queda registrado aquí con fecha, hora y red elegida.</li>
+            </ol>
+          </div>
+        </div>
+        <p class="pc-aviso-local" role="note">
+          <strong>Archivo público y guardadas:</strong> el historial es anónimo y se consulta en <a href="/compartidos-historial.json" target="_blank" rel="noopener"><code>/compartidos-historial.json</code></a>. Tus <strong>dedicatorias guardadas</strong> viven solo en tu navegador: si borrás cookies o datos del sitio se borrarán (podés copiar un respaldo desde <button type="button" class="pie-link-btn" data-abrir-guardadas>Tus guardadas</button>).
+        </p>
+      </div>
+    </details>
   </section>
 
   <section class="portal-estandares" aria-labelledby="titulo-criterio-portal">

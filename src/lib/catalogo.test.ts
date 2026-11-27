@@ -21,6 +21,7 @@ import {
 import { GUIAS_EDITORIALES } from '../data/guias';
 import { ZODIACOS, MESES_CON_SIGNOS } from './horoscopo';
 import { PAISES_HITOS, HITOS_MUNDIALES, hitosPaisesPorDiaMes } from '../data/hitos-historicos';
+import { TAROT_78_ARCANOS, TAROT_MAYORES_22, TAROT_TIRADAS } from '../data/tarot-egipcio';
 import {
   obtenerResumenFechaSinAnio,
   generarIndiceCalendarioAnualSinAnio,
@@ -346,7 +347,7 @@ test('guias editoriales cumplen checklist completo SEO y GEO 2026 para guias act
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
 
-  assert.equal(GUIAS_EDITORIALES.length, 45, `Se esperaban 45 guias editoriales, hay ${GUIAS_EDITORIALES.length}`);
+  assert.equal(GUIAS_EDITORIALES.length, 53, `Se esperaban 53 guias editoriales, hay ${GUIAS_EDITORIALES.length}`);
   const slugsGuias = new Set<string>();
   for (const g of GUIAS_EDITORIALES) {
     assert.ok(!slugsGuias.has(g.slug), `Slug de guia duplicado: ${g.slug}`);
@@ -491,19 +492,27 @@ test('personalizador adapta saludos, cartas, bilingues, poemas y firma sin corta
   assert.equal(Object.keys(FORMATOS_TARJETA).length, 2);
 });
 
-test('generarUrlsSitio y generarSitemapXml cubren las 24760 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
+test('generarUrlsSitio y generarSitemapXml cubren las 24791 URLs indexables sin duplicados y priorizan hubs y mensajes antes que paginacion', () => {
   const datos = cargarDatosCompletos();
   const cat = crearCatalogo(datos);
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
   const slugsSignos = ZODIACOS.map((s) => s.slug);
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
-  const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises);
+  const slugsTarot = TAROT_MAYORES_22.map((a) => a.slug);
+  const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises, slugsTarot);
 
-  assert.equal(urls.length, 24760, `Se esperaban 24760 URLs indexables, se obtuvieron ${urls.length}`);
-  assert.equal(new Set(urls).size, 24760, 'Las URLs del sitemap deben ser todas unicas');
+  assert.equal(TAROT_78_ARCANOS.length, 78);
+  assert.equal(TAROT_MAYORES_22.length, 22);
+  assert.equal(TAROT_TIRADAS.length, 4);
+  assert.equal(urls.length, 24791, `Se esperaban 24791 URLs indexables, se obtuvieron ${urls.length}`);
+  assert.equal(new Set(urls).size, 24791, 'Las URLs del sitemap deben ser todas unicas');
   assert.ok(urls.every((url) => url.startsWith('https://paracumpleanos.com/')));
   assert.ok(urls.every((url) => !/[?#]/.test(url)));
   assert.ok(urls.includes('https://paracumpleanos.com/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/tarot-egipcio/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/tarot-egipcio/el-mago/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/tarot-egipcio/el-loco/'));
+  assert.ok(urls.includes('https://paracumpleanos.com/guias/como-celebrar-y-escribir-por-el-cumpleanos-de-perros-y-gatos/'));
   assert.ok(urls.includes('https://paracumpleanos.com/categorias/'));
   assert.ok(urls.includes('https://paracumpleanos.com/calendario/'));
   assert.ok(urls.includes('https://paracumpleanos.com/hitos-historicos/'));
@@ -555,13 +564,13 @@ test('generarUrlsSitio y generarSitemapXml cubren las 24760 URLs indexables sin 
   assert.ok(xmlSinLastmod.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
   assert.ok(xmlSinLastmod.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'));
   const locs = xmlSinLastmod.match(/<loc>/g) || [];
-  assert.equal(locs.length, 24760);
+  assert.equal(locs.length, 24791);
   assert.ok(!xmlSinLastmod.includes('<lastmod>'), 'Sin mapa lastmod no debe emitir etiquetas lastmod');
 
-  const mapaLastmod = construirMapaLastmodSitemap(cat, GUIAS_EDITORIALES, slugsSignos, slugsPaises, '2026-11-22');
+  const mapaLastmod = construirMapaLastmodSitemap(cat, GUIAS_EDITORIALES, slugsSignos, slugsPaises, '2026-11-22', undefined, slugsTarot);
   const xmlConLastmod = generarSitemapXml(urls, mapaLastmod);
   const lastmods = xmlConLastmod.match(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/g) || [];
-  assert.equal(lastmods.length, 24760, 'Cada una de las 24760 URLs debe recibir su lastmod real YYYY-MM-DD');
+  assert.equal(lastmods.length, 24791, 'Cada una de las 24791 URLs debe recibir su lastmod real YYYY-MM-DD');
   assert.ok(
     xmlConLastmod.includes('<loc>https://paracumpleanos.com/banderines-de-cumpleanos-para-imprimir/</loc><lastmod>2026-11-22</lastmod>'),
     'El sitemap debe reflejar el lastmod real de banderines'
@@ -569,7 +578,7 @@ test('generarUrlsSitio y generarSitemapXml cubren las 24760 URLs indexables sin 
   assert.throws(() => generarSitemapXml(['https://paracumpleanos.com/'], { 'https://paracumpleanos.com/': '2026-02-31' }));
 });
 
-test('Bing IndexNow cubre las 24760 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
+test('Bing IndexNow cubre las 24791 URLs en lotes validos de hasta 10000 y tiene archivo de clave valido', () => {
   const keyFile = path.resolve('public', `${INDEXNOW_KEY}.txt`);
   assert.ok(fs.existsSync(keyFile), `Falta archivo de clave IndexNow: ${keyFile}`);
   assert.equal(fs.readFileSync(keyFile, 'utf8'), INDEXNOW_KEY);
@@ -580,16 +589,17 @@ test('Bing IndexNow cubre las 24760 URLs en lotes validos de hasta 10000 y tiene
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
   const slugsSignos = ZODIACOS.map((s) => s.slug);
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
-  const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises));
+  const slugsTarot = TAROT_MAYORES_22.map((a) => a.slug);
+  const xml = generarSitemapXml(generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises, slugsTarot));
   const extraidas = extraerUrlsDeSitemap(xml);
-  assert.equal(extraidas.length, 24760);
+  assert.equal(extraidas.length, 24791);
 
   const payloads = construirPayloadsIndexNow(extraidas);
   assert.equal(payloads.length, 3);
-  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 24760);
+  assert.equal(payloads.reduce((total, p) => total + p.urlList.length, 0), 24791);
   assert.equal(payloads[0].urlList.length, INDEXNOW_MAX_BATCH);
   assert.equal(payloads[1].urlList.length, INDEXNOW_MAX_BATCH);
-  assert.equal(payloads[2].urlList.length, 4760);
+  assert.equal(payloads[2].urlList.length, 4791);
   for (const p of payloads) {
     assert.equal(p.host, INDEXNOW_HOST);
     assert.equal(p.key, INDEXNOW_KEY);
@@ -1044,6 +1054,12 @@ test('AdSense pub-7933111729537978 etiqueta todas las paginas, ads.txt coincide,
     const src = fs.readFileSync(path.resolve(archivo), 'utf8');
     assert.ok(src.includes('lamieldehorus@gmail.com'), `${archivo} debe incluir el contacto lamieldehorus@gmail.com`);
   }
+
+  assert.ok(baseSrc.includes('GTM-NKFBN6X5') && baseSrc.includes('GTM-WKC77GT5'), 'Base.astro debe incluir contenedores GTM');
+  assert.ok(baseSrc.includes('pc-cmp-banner') && baseSrc.includes('pc_consentimiento_v1'), 'Base.astro debe incluir RGPD CMP y Consent Mode v2');
+  assert.ok(baseSrc.includes('pc-favoritas-barra') && baseSrc.includes('/tarot-egipcio/'), 'Base.astro debe incluir barra de guardadas y enlace a /tarot-egipcio/');
+  assert.ok(fs.existsSync(path.resolve('public/compartidos-historial.json')), 'Debe existir public/compartidos-historial.json');
+  assert.ok(indexSrc.includes('id="lo-mas-compartido"') && indexSrc.includes('/tarot-egipcio/'), 'index.astro debe incluir #lo-mas-compartido y /tarot-egipcio/');
 });
 
 test('GSC noindex/rastreada: 0 mensajes en noindex, robots bloquea .json, /posts/* GSC resuelven, explicacionCosmica (22280) y paginacion (1775) 100% unicas', () => {
@@ -1138,17 +1154,21 @@ test('sitemap.xml.ts actualiza lastmod con edicion 2026-11-27 sin fechas obsolet
   const slugsGuias = GUIAS_EDITORIALES.map((g) => g.slug);
   const slugsSignos = ZODIACOS.map((s) => s.slug);
   const slugsPaises = PAISES_HITOS.map((p) => p.slug);
-  const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises);
+  const slugsTarot = TAROT_MAYORES_22.map((a) => a.slug);
+  const urls = generarUrlsSitio(cat, slugsGuias, slugsSignos, slugsPaises, slugsTarot);
   const mapaActual = construirMapaLastmodSitemap(
     cat,
     GUIAS_EDITORIALES,
     slugsSignos,
     slugsPaises,
     '2026-11-22',
-    '2026-11-27'
+    '2026-11-27',
+    slugsTarot
   );
 
   assert.equal(mapaActual['https://paracumpleanos.com/'], '2026-11-27');
+  assert.equal(mapaActual['https://paracumpleanos.com/tarot-egipcio/'], '2026-11-27');
+  assert.equal(mapaActual['https://paracumpleanos.com/tarot-egipcio/el-mago/'], '2026-11-27');
   assert.equal(mapaActual['https://paracumpleanos.com/feliz-cumpleanos-mama/'], '2026-11-27');
   assert.equal(mapaActual['https://paracumpleanos.com/feliz-cumpleanos-mama/2/'], '2026-11-27');
   assert.equal(mapaActual['https://paracumpleanos.com/hitos-historicos/argentina/'], '2026-11-22');

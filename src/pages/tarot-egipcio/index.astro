@@ -1,80 +1,76 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { SITIO, MARCA } from '../../lib/contenido.ts';
-import { MESES_CON_SIGNOS, ZODIACOS } from '../../lib/horoscopo.ts';
+import { SITIO, MARCA, migasLd } from '../../lib/contenido.ts';
 import {
-  ARCANOS_MAYORES,
-  ARCANOS_MENORES,
-  TODOS_LOS_ARCANOS,
-  PLANOS_ARCANO,
-  NUMEROLOGIA_TAROT,
-  ESQUEMAS_TIRADA,
-  FAQS_TAROT_HUB,
-  construirGrafoTarotHubLd,
-  signosPorArcano
-} from '../../lib/tarot-egipcio.ts';
+  TAROT_78_ARCANOS,
+  TAROT_TIRADAS,
+  TAROT_MAYORES_RESUMEN,
+  TAROT_SIGNOS_LOOKUP,
+  TAROT_MESES_LOOKUP,
+  TAROT_MAYORES_22,
+  TAROT_FAQS_INDEX,
+  clasificarMenorPlaneta,
+  notaMenor
+} from '../../data/tarot-egipcio.ts';
 
-const titulo = `Tarot Egipcio gratis: tirada, 78 arcanos y guía cósmica - ${MARCA}`;
+const titulo = `Tarot Egipcio gratis: tirada interactiva, Arcano natal y 78 arcanos · ${MARCA}`;
 const descripcion =
-  'Hacé tu tirada gratis de Tarot Egipcio (1, 3, 5 o 7 cartas), calculá tu Arcano de cumpleaños y explorá los 22 Arcanos Mayores y 56 Menores con vínculo directo al horóscopo.';
+  'Hacé tu tirada interactiva de Tarot Egipcio gratis, calculá tu Arcano de cumpleaños y explorá los 22 Arcanos Mayores y 56 Arcanos Menores con dedicatorias.';
 
-const planetasMenores = Array.from(new Set(ARCANOS_MENORES.map((m) => m.planeta)));
+const menores = TAROT_78_ARCANOS.filter((c) => c.tipo === 'menor');
+const planetasMenores = Array.from(new Set(menores.map((c) => clasificarMenorPlaneta(c.astrologia)))).filter(Boolean);
 
-const signosClient = ZODIACOS.map((s) => ({
-  slug: s.slug,
-  nombre: s.nombre,
-  simbolo: s.simbolo,
-  elemento: s.elemento,
-  rangoTexto: s.rangoTexto,
-  inicioMes: s.inicioMes,
-  inicioDia: s.inicioDia,
-  finMes: s.finMes,
-  finDia: s.finDia,
-  mesesSlugs: s.mesesSlugs,
-  mesesNombres: s.mesesNombres
-}));
-
-const mesesClient = MESES_CON_SIGNOS.map((m) => ({
-  mesNum: m.mesNum,
-  slug: m.slug,
-  nombre: m.nombre,
-  nombreCap: m.nombreCap
-}));
-
-const arcanosMayoresClient = ARCANOS_MAYORES.map((a) => ({
-  numero: a.numero,
-  romano: a.romano,
-  slug: a.slug,
-  nombre: a.nombre,
-  deidad: a.deidad,
-  astrologia: a.astrologiaTexto,
-  numerologia: a.numerologia,
-  esencia: a.esencia,
-  aforismo: a.aforismo,
-  consejo: a.consejoCumpleanos
-}));
-
-const jsonld = [
-  construirGrafoTarotHubLd({
-    sitio: SITIO,
-    marca: MARCA,
-    titulo,
-    descripcion
-  })
+const numerologiaOpciones = [
+  { num: 1, label: '1 — Principio creador y voluntad' },
+  { num: 2, label: '2 — Dualidad fértil y receptividad' },
+  { num: 3, label: '3 — Triplicidad y creación viva' },
+  { num: 4, label: '4 — Estabilidad y los cuatro elementos' },
+  { num: 5, label: '5 — Espíritu consciente y cambio activo' },
+  { num: 6, label: '6 — Equilibrio de fuerzas y afecto' },
+  { num: 7, label: '7 — Armonía mística y superación' },
+  { num: 8, label: '8 — Equilibrio cósmico y retribución' },
+  { num: 9, label: '9 — Madurez, fruto y cierre de ciclo' }
 ];
 
-function normTexto(s: string): string {
+function normQ(s: string): string {
   return String(s || '')
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
 }
+
+const arcDefault = TAROT_MAYORES_22[18]; // XIX La Inspiracion (11 de agosto)
+
+const jsonld = [
+  migasLd([
+    { name: 'Inicio', url: SITIO + '/' },
+    { name: 'Horóscopo de cumpleaños', url: SITIO + '/horoscopo/' },
+    { name: 'Tarot Egipcio', url: SITIO + '/tarot-egipcio/' }
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: titulo,
+    description: descripcion,
+    url: SITIO + '/tarot-egipcio/',
+    inLanguage: 'es'
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: TAROT_FAQS_INDEX.map((f) => ({
+      '@type': 'Question',
+      name: f.pregunta,
+      acceptedAnswer: { '@type': 'Answer', text: f.respuesta }
+    }))
+  }
+];
 ---
 <Base
   titulo={titulo}
   descripcion={descripcion}
   jsonld={jsonld}
-  grupoActual="tarot_horoscopo"
+  grupoActual="meses"
   slugActual="tarot-egipcio"
 >
   <nav class="migas" aria-label="Migas de pan">
@@ -94,7 +90,6 @@ function normTexto(s: string): string {
     <p class="lead">
       El <strong>Tarot Egipcio</strong> es uno de los sistemas simbólicos más profundos de la tradición reflexiva: reúne 78 láminas únicas —22 Arcanos Mayores y 56 Arcanos Menores sin palos europeos— diseñadas para ordenar pensamientos, iluminar decisiones y acompañar cada nueva vuelta al sol con claridad serena. Acá podés hacer tu tirada interactiva al instante, calcular tu Arcano de cumpleaños y recorrer cada lámina en diálogo directo con tu <a href="/horoscopo/">signo del horóscopo</a> y tu <a href="/categorias/#meses">mes de nacimiento</a>.
     </p>
-
     <nav class="tarot-saltos" aria-label="Ir a las secciones del Tarot Egipcio">
       <a href="#estudio-tarot">Hacer tirada gratis</a>
       <a href="#calculadora-arcano">Arcano de cumpleaños</a>
@@ -105,7 +100,6 @@ function normTexto(s: string): string {
     </nav>
   </header>
 
-  <!-- 1. ESTUDIO INTERACTIVO DE TIRADAS DEL TAROT EGIPCIO -->
   <section id="estudio-tarot" class="tarot-estudio" aria-labelledby="tit-estudio-tarot">
     <div class="tarot-sec-head">
       <p class="banda-kicker">Estudio interactivo 100 % en tu navegador · Sin registro ni guardado externo</p>
@@ -119,14 +113,13 @@ function normTexto(s: string): string {
       <div class="herr-campo">
         <label for="tarot-modo-sel">Esquema de tirada</label>
         <select id="tarot-modo-sel">
-          {ESQUEMAS_TIRADA.map((e) => (
-            <option value={e.id} selected={e.id === 'pasado-presente-futuro'}>
-              {e.nombre} ({e.cantidadCartas} {e.cantidadCartas === 1 ? 'carta' : 'cartas'})
+          {TAROT_TIRADAS.map((esq, idx) => (
+            <option value={esq.id} selected={idx === 1}>
+              {esq.nombre} ({esq.cantidadCartas} {esq.cantidadCartas === 1 ? 'carta' : 'cartas'})
             </option>
           ))}
         </select>
       </div>
-
       <div class="herr-campo">
         <label for="tarot-mazo-sel">Baraja a consultar</label>
         <select id="tarot-mazo-sel">
@@ -134,7 +127,6 @@ function normTexto(s: string): string {
           <option value="mayores">Solo 22 Arcanos Mayores</option>
         </select>
       </div>
-
       <div class="herr-campo tarot-campo-full">
         <label for="tarot-consulta-inp">Intención o consulta (opcional, queda solo en tu dispositivo)</label>
         <input
@@ -152,42 +144,32 @@ function normTexto(s: string): string {
         <input id="tarot-invertidas-chk" type="checkbox" checked />
         <span>Incluir cartas invertidas (bloqueos o matices internos)</span>
       </label>
-
       <div class="tarot-botones-row">
-        <button type="button" id="tarot-btn-tirar" class="btn btn-copiar tarot-btn-pri">
-          Barajar y sacar cartas
-        </button>
-        <button type="button" id="tarot-btn-copiar" class="btn-leer-mas" hidden>
-          Copiar lectura
-        </button>
-        <a id="tarot-btn-wa" class="btn-leer-mas" href="#" target="_blank" rel="noopener" hidden>
-          Compartir por WhatsApp
-        </a>
+        <button type="button" id="tarot-btn-tirar" class="btn btn-copiar tarot-btn-pri">Barajar y sacar cartas</button>
+        <button type="button" id="tarot-btn-copiar" class="btn-leer-mas" hidden>Copiar lectura</button>
+        <a id="tarot-btn-wa" class="btn-leer-mas" href="#" target="_blank" rel="noopener" hidden>Compartir por WhatsApp</a>
       </div>
     </div>
 
     <p id="tarot-esquema-info" class="tarot-esquema-info">
-      <strong>Pasado, Presente y Futuro</strong> (Versión ágil del Esquema III): Tres láminas que conectan lo que traés aprendido, la escena actual y la tendencia más fértil hacia adelante.
+      <strong>{TAROT_TIRADAS[1].nombre}</strong> ({TAROT_TIRADAS[1].referenciaTradicional}): {TAROT_TIRADAS[1].resumen}
     </p>
 
     <div id="tarot-mesa-resultado" class="tarot-mesa-resultado" aria-live="polite">
       <div class="tarot-estado-inicial">
         <div class="tarot-emblema-svg" aria-hidden="true">
           <svg viewBox="0 0 80 80" width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.6">
-            <circle cx="40" cy="40" r="32" stroke-dasharray="3 3" opacity="0.55" />
-            <circle cx="40" cy="40" r="14" />
-            <path d="M40 8v12M40 60v12M8 40h12M60 40h12M18 18l8 8M54 54l8 8M62 18l-8 8M26 54l-8 8" />
-            <polygon points="40,28 48,44 32,44" fill="currentColor" opacity="0.18" />
+            <circle cx="40" cy="40" r="32" stroke-dasharray="3 3" opacity="0.55"></circle>
+            <circle cx="40" cy="40" r="14"></circle>
+            <path d="M40 8v12M40 60v12M8 40h12M60 40h12M18 18l8 8M54 54l8 8M62 18l-8 8M26 54l-8 8"></path>
+            <polygon points="40,28 48,44 32,44" fill="currentColor" opacity="0.18"></polygon>
           </svg>
         </div>
-        <p>
-          Respirá tranquilo, elegí el esquema que prefieras arriba y tocá <strong>«Barajar y sacar cartas»</strong> para desplegar tu lectura del Tarot Egipcio al instante.
-        </p>
+        <p>Respirá tranquilo, elegí el esquema que prefieras arriba y tocá <strong>«Barajar y sacar cartas»</strong> para desplegar tu lectura del Tarot Egipcio al instante.</p>
       </div>
     </div>
   </section>
 
-  <!-- 2. CALCULADORA DE ARCANO DE CUMPLEAÑOS / NATAL -->
   <section id="calculadora-arcano" class="tarot-calculadora" aria-labelledby="tit-calc-arcano">
     <div class="tarot-sec-head">
       <p class="banda-kicker">Puente directo entre tu fecha de cumpleaños, el Tarot Egipcio y el Horóscopo</p>
@@ -201,8 +183,8 @@ function normTexto(s: string): string {
       <div class="herr-campo">
         <label for="tarot-mes-sel">Mes de nacimiento</label>
         <select id="tarot-mes-sel">
-          {MESES_CON_SIGNOS.map((m) => (
-            <option value={m.mesNum} selected={m.mesNum === 8}>{m.nombreCap}</option>
+          {TAROT_MESES_LOOKUP.map((m) => (
+            <option value={String(m.mesNum)} selected={m.mesNum === 8}>{m.nombreCap}</option>
           ))}
         </select>
       </div>
@@ -218,20 +200,17 @@ function normTexto(s: string): string {
 
     <div id="tarot-calc-res" class="tarot-calc-res" aria-live="polite">
       <p class="tarot-calc-resumen">
-        <strong>Arcano XIX · La Inspiración (El Sol)</strong> — Tu fecha de cumpleaños (11 de agosto) suma 19, bajo la energía solar de <strong>♌ Leo</strong> y numerología <strong>1</strong>.
+        <strong>Arcano {arcDefault.romano} · {arcDefault.nombre}</strong> — Tu fecha de cumpleaños (11 de agosto) suma 19, bajo la energía solar de <strong>♌ Leo</strong> y numerología <strong>{arcDefault.numerologia}</strong>.
       </p>
-      <p class="tarot-calc-esencia">
-        Alegría transparente, éxito merecido, amor puro, salud vital y entusiasmo que ilumina a toda la mesa.
-      </p>
+      <p class="tarot-calc-esencia">{arcDefault.esencia}</p>
       <div class="tarot-calc-links">
-        <a href="/tarot-egipcio/la-inspiracion/">Abrir ficha y dedicatorias de La Inspiración →</a>
+        <a href={`/tarot-egipcio/${arcDefault.slug}/`}>Abrir ficha y dedicatorias de {arcDefault.nombre} →</a>
         <a href="/horoscopo/leo/">Ver Horóscopo de Leo →</a>
         <a href="/cumpleanos-en-agosto/">Cumpleaños en Agosto →</a>
       </div>
     </div>
   </section>
 
-  <!-- 3. ARCHIVO DE LOS 22 ARCANOS MAYORES -->
   <section id="arcanos-mayores" class="tarot-seccion" aria-labelledby="tit-arcanos-mayores">
     <div class="tarot-sec-head">
       <p class="banda-kicker">Los 22 arquetipos fundamentales · Cada ficha incluye simbolismo, 3 planos y 8 dedicatorias</p>
@@ -242,40 +221,32 @@ function normTexto(s: string): string {
     </div>
 
     <div class="tarot-mayores-grid">
-      {ARCANOS_MAYORES.map((a) => {
-        const signos = signosPorArcano(a);
-        return (
-          <article class="tarot-mayor-card">
-            <div class="tarot-mayor-top">
-              <span class="tarot-romano" aria-label={`Arcano número ${a.numero}`}>{a.romano}</span>
-              <span class="tarot-glyph" aria-hidden="true">{a.simboloGlyph}</span>
-            </div>
-            <h3>
-              <a href={`/tarot-egipcio/${a.slug}/`}>{a.nombre}</a>
-            </h3>
-            <p class="tarot-mayor-meta">
-              <span>{a.deidad}</span>
-              <span aria-hidden="true">·</span>
-              <span>{a.astrologiaTexto}</span>
-              <span aria-hidden="true">·</span>
-              <span>Num. {a.numerologia}</span>
-            </p>
-            <p class="tarot-mayor-esencia">{a.esencia}</p>
-            <div class="tarot-mayor-enlaces">
-              <a class="tarot-enlace-pri" href={`/tarot-egipcio/${a.slug}/`}>Leer ficha y 8 dedicatorias →</a>
-              {signos[0] ? (
-                <a class="tarot-enlace-sec" href={`/horoscopo/${signos[0].slug}/`}>
-                  {signos[0].simbolo} {signos[0].nombre}
-                </a>
-              ) : null}
-            </div>
-          </article>
-        );
-      })}
+      {TAROT_MAYORES_22.map((a) => (
+        <article class="tarot-mayor-card">
+          <div class="tarot-mayor-top">
+            <span class="tarot-romano" aria-label={`Arcano número ${a.numero}`}>{a.romano}</span>
+            <span class="tarot-glyph" aria-hidden="true">{a.glyph}</span>
+          </div>
+          <h3>
+            <a href={`/tarot-egipcio/${a.slug}/`}>{a.nombre}</a>
+          </h3>
+          <p class="tarot-mayor-meta">
+            <span>{a.deidad}</span>
+            <span aria-hidden="true">·</span>
+            <span>{a.astrologia}</span>
+            <span aria-hidden="true">·</span>
+            <span>Num. {a.numerologia}</span>
+          </p>
+          <p class="tarot-mayor-esencia">{a.esencia}</p>
+          <div class="tarot-mayor-enlaces">
+            <a class="tarot-enlace-pri" href={`/tarot-egipcio/${a.slug}/`}>Leer ficha y 8 dedicatorias →</a>
+            <a class="tarot-enlace-sec" href={`/horoscopo/${a.signoSlug}/`}>{a.signoBadge}</a>
+          </div>
+        </article>
+      ))}
     </div>
   </section>
 
-  <!-- 4. ARCHIVO BUSCABLE DE LOS 56 ARCANOS MENORES (23 AL 78) -->
   <section id="arcanos-menores" class="tarot-seccion" aria-labelledby="tit-arcanos-menores">
     <div class="tarot-sec-head">
       <p class="banda-kicker">Del 23 al 78 · Láminas cotidianas únicas sin palos europeos</p>
@@ -308,8 +279,8 @@ function normTexto(s: string): string {
         <label for="tarot-menores-num">Numerología (1 al 9)</label>
         <select id="tarot-menores-num">
           <option value="todos">Todos los números</option>
-          {NUMEROLOGIA_TAROT.map((n) => (
-            <option value={n.numero}>{n.numero} — {n.titulo}</option>
+          {numerologiaOpciones.map((n) => (
+            <option value={String(n.num)}>{n.label}</option>
           ))}
         </select>
       </div>
@@ -320,24 +291,26 @@ function normTexto(s: string): string {
     </p>
 
     <div id="tarot-menores-grid" class="tarot-menores-grid">
-      {ARCANOS_MENORES.map((m) => {
-        const clave = normTexto(`${m.numero} ${m.nombre} ${m.planeta} ${m.notaPlanetaria} ${m.derecho} ${m.invertido} ${m.consejo}`);
+      {menores.map((c) => {
+        const planeta = clasificarMenorPlaneta(c.astrologia);
+        const nota = notaMenor(c.astrologia);
+        const q = normQ(`${c.numero} ${c.nombre} ${c.astrologia} ${c.derecho} ${c.invertido} ${c.consejo}`);
         return (
           <article
             class="tarot-menor-card"
-            data-menor-q={clave}
-            data-menor-planeta={m.planeta}
-            data-menor-num={String(m.numerologia)}
+            data-menor-q={q}
+            data-menor-planeta={planeta}
+            data-menor-num={String(c.numerologia)}
           >
             <div class="tarot-menor-head">
-              <span class="tarot-menor-num">Arcano {m.numero}</span>
-              <span class="tarot-menor-astro">{m.planeta} · Num. {m.numerologia}</span>
+              <span class="tarot-menor-num">Arcano {c.numero}</span>
+              <span class="tarot-menor-astro">{planeta} · Num. {c.numerologia}</span>
             </div>
-            <h3>{m.nombre}</h3>
-            <p class="tarot-menor-nota">{m.notaPlanetaria}</p>
-            <p class="tarot-menor-linea"><strong>Al derecho:</strong> {m.derecho}</p>
-            <p class="tarot-menor-linea"><strong>Invertido:</strong> {m.invertido}</p>
-            <p class="tarot-menor-consejo">{m.consejo}</p>
+            <h3>{c.nombre}</h3>
+            <p class="tarot-menor-nota">{nota}</p>
+            <p class="tarot-menor-linea"><strong>Al derecho:</strong> {c.derecho}</p>
+            <p class="tarot-menor-linea"><strong>Invertido:</strong> {c.invertido}</p>
+            <p class="tarot-menor-consejo">{c.consejo}</p>
           </article>
         );
       })}
@@ -348,7 +321,6 @@ function normTexto(s: string): string {
     </p>
   </section>
 
-  <!-- 5. ULTRA GUIA COSMICA DE ALTO VALOR SEO/GEO -->
   <section id="guia-tarot-egipcio" class="portal-guia-cosmica tarot-guia-editorial" aria-labelledby="tit-guia-tarot">
     <div class="banda-cabecera">
       <div>
@@ -362,7 +334,7 @@ function normTexto(s: string): string {
       <div class="guia-cosmica-resumen">
         <p class="guia-cosmica-etiqueta">Definición clara y enfoque editorial</p>
         <p>
-          El <strong>Tarot Egipcio</strong> —tradicionalmente asociado al mítico <em>Libro de Thot</em>— es un sistema de 78 láminas simbólicas divididas en 22 Arcanos Mayores arquetípicos y 56 Arcanos Menores cotidianos. En {MARCA} lo abordamos como una herramienta de <strong>autoconocimiento, claridad psicológica e inspiración afectiva</strong>: nunca dicta un destino rígido, sino que ofrece un espejo simbólico para pensar mejor tus elecciones y celebrar cada ciclo con palabras más hondas.
+          El <strong>Tarot Egipcio</strong> —tradicionalmente asociado al mítico <em>Libro de Thot</em>— es un sistema de 78 láminas simbólicas divididas en 22 Arcanos Mayores arquetípicos y 56 Arcanos Menores cotidianos. En ParaCumpleanos lo abordamos como una herramienta de <strong>autoconocimiento, claridad psicológica e inspiración afectiva</strong>: nunca dicta un destino rígido, sino que ofrece un espejo simbólico para pensar mejor tus elecciones y celebrar cada ciclo con palabras más hondas.
         </p>
       </div>
 
@@ -379,14 +351,24 @@ function normTexto(s: string): string {
         Cada carta del Tarot Egipcio se lee verticalmente en tres franjas complementarias —Espiritual, Mental y Físico— que muestran cómo una intención interior madura en actitud y termina materializándose en hechos concretos.
       </p>
       <dl class="geo-glosario">
-        {PLANOS_ARCANO.map((plano) => (
-          <div class="geo-glosario-item">
-            <dt>{plano.nombre}</dt>
-            <dd>
-              <span><strong>{plano.zona}:</strong> {plano.descripcion}</span>
-            </dd>
-          </div>
-        ))}
+        <div class="geo-glosario-item">
+          <dt>Plano Superior (Espiritual)</dt>
+          <dd>
+            <span><strong>Parte superior de la lámina:</strong> Reúne los jeroglíficos, deidades, astros y coronas simbólicas. Representa el mundo de las causas, la intención profunda y el propósito que origina cada proceso.</span>
+          </dd>
+        </div>
+        <div class="geo-glosario-item">
+          <dt>Plano Central (Mental)</dt>
+          <dd>
+            <span><strong>Escena principal de la lámina:</strong> Muestra la figura central, sus gestos, herramientas y equilibrio postural. Expresa las fuerzas creadoras de la mente, la actitud con la que decidís y cómo orientás tu voluntad.</span>
+          </dd>
+        </div>
+        <div class="geo-glosario-item">
+          <dt>Plano Inferior (Físico y Material)</dt>
+          <dd>
+            <span><strong>Basamento inferior de la lámina:</strong> Contiene animales sagrados, símbolos de tierra, números y signos planetarios. Traduce la energía del arcano en hechos tangibles: salud, trabajo, hogar y vínculos diarios.</span>
+          </dd>
+        </div>
       </dl>
 
       <h3>Enfoque psicológico y reflexivo: intuición clara frente a la fantasía</h3>
@@ -402,11 +384,15 @@ function normTexto(s: string): string {
         Todos los arcanos —desde el 1 hasta el 78— se reducen sumando sus dígitos hasta llegar a una cifra simple del 1 al 9, que revela el ritmo de base de la carta dentro del ciclo vital.
       </p>
       <ul class="lista-editorial lista-geo-prosa">
-        {NUMEROLOGIA_TAROT.map((item) => (
-          <li>
-            <strong>Número {item.numero} — {item.titulo}:</strong> {item.significado}
-          </li>
-        ))}
+        <li><strong>Número 1 — Principio creador y voluntad:</strong> Unidad, arranque consciente, iniciativa propia y chispa intelectual que abre un camino inédito.</li>
+        <li><strong>Número 2 — Dualidad fértil y receptividad:</strong> Escucha interior, intuición, acompañamiento afectivo y armonía entre dos polos complementarios.</li>
+        <li><strong>Número 3 — Triplicidad y creación viva:</strong> Expresión creativa, fertilidad de proyectos, alegría compartida y síntesis que da fruto.</li>
+        <li><strong>Número 4 — Estabilidad y los cuatro elementos:</strong> Estructura concreta, orden cotidiano, constancia en el trabajo y cimientos duraderos.</li>
+        <li><strong>Número 5 — Espíritu consciente y cambio activo:</strong> Libertad interior, aprendizaje, movimiento oportuno y discernimiento por encima de la rutina.</li>
+        <li><strong>Número 6 — Equilibrio de fuerzas y afecto:</strong> Amor responsable, belleza, acuerdos sanos, cuidado del hogar y elección desde el corazón.</li>
+        <li><strong>Número 7 — Armonía mística y superación:</strong> Reflexión profunda, maestría personal, viaje interior y victoria obtenida con serenidad.</li>
+        <li><strong>Número 8 — Equilibrio cósmico y retribución:</strong> Causa y efecto, justicia serena, disciplina recompensada y fuerza sostenida en el tiempo.</li>
+        <li><strong>Número 9 — Madurez, fruto y cierre de ciclo:</strong> Sabiduría destilada de la experiencia, gestación completa y cierre agradecido para renacer.</li>
       </ul>
 
       <h3>Métodos clásicos de tirada y cómo elegir el adecuado</h3>
@@ -414,7 +400,7 @@ function normTexto(s: string): string {
         No toda consulta exige desplegar muchas cartas: cuanto más concreta es tu inquietud, más clara resulta una tirada breve; reservá los esquemas de cinco o siete láminas para balances de etapa, vínculos importantes o el inicio de un nuevo año personal.
       </p>
       <ul class="lista-editorial lista-geo-prosa">
-        {ESQUEMAS_TIRADA.map((esq) => (
+        {TAROT_TIRADAS.map((esq) => (
           <li>
             <strong>{esq.nombre} ({esq.referenciaTradicional}):</strong> {esq.resumen} <em>Cómo leerla:</em> {esq.comoLeer}
           </li>
@@ -429,12 +415,11 @@ function normTexto(s: string): string {
         Cada cumpleaños marca un retorno solar exacto: combinar el signo zodiacal con el Arcano Mayor de la fecha enriquece tanto tu reflexión personal como las dedicatorias que regalás a quienes querés.
       </p>
       <p>
-        En {MARCA} enlazamos ambos mundos sin perder practicidad: podés recorrer los <a href="/horoscopo/">12 signos del horóscopo de cumpleaños</a>, abrir las <a href="/categorias/#meses">12 colecciones ampliadas por mes de nacimiento</a>, consultar cualquier fecha en nuestro <a href="/calendario/">calendario perpetuo de 366 días</a> o calcular edad exacta e hitos de 10.000 días en <a href="/herramientas/">herramientas gratuitas</a>.
+        En ParaCumpleanos enlazamos ambos mundos sin perder practicidad: podés recorrer los <a href="/horoscopo/">12 signos del horóscopo de cumpleaños</a>, abrir las <a href="/categorias/#meses">12 colecciones ampliadas por mes de nacimiento</a>, consultar cualquier fecha en nuestro <a href="/calendario/">calendario perpetuo de 366 días</a> o calcular edad exacta e hitos de 10.000 días en <a href="/herramientas/">herramientas gratuitas</a>.
       </p>
     </div>
   </section>
 
-  <!-- 6. PREGUNTAS FRECUENTES VISIBLES -->
   <section id="faqs-tarot" class="faqs-hub" aria-labelledby="tit-faqs-tarot">
     <div class="banda-cabecera">
       <div>
@@ -443,7 +428,7 @@ function normTexto(s: string): string {
       </div>
     </div>
     <div class="faq-grid-visible">
-      {FAQS_TAROT_HUB.map((f) => (
+      {TAROT_FAQS_INDEX.map((f) => (
         <article class="faq-card-visible">
           <h3>{f.pregunta}</h3>
           <p>{f.respuesta}</p>
@@ -452,11 +437,11 @@ function normTexto(s: string): string {
     </div>
   </section>
 
-  <script id="tarot-todos-json" type="application/json" set:html={JSON.stringify(TODOS_LOS_ARCANOS)} />
-  <script id="tarot-esquemas-json" type="application/json" set:html={JSON.stringify(ESQUEMAS_TIRADA)} />
-  <script id="tarot-mayores-json" type="application/json" set:html={JSON.stringify(arcanosMayoresClient)} />
-  <script id="tarot-signos-json" type="application/json" set:html={JSON.stringify(signosClient)} />
-  <script id="tarot-meses-json" type="application/json" set:html={JSON.stringify(mesesClient)} />
+  <script id="tarot-todos-json" type="application/json" set:html={JSON.stringify(TAROT_78_ARCANOS)} />
+  <script id="tarot-esquemas-json" type="application/json" set:html={JSON.stringify(TAROT_TIRADAS)} />
+  <script id="tarot-mayores-json" type="application/json" set:html={JSON.stringify(TAROT_MAYORES_RESUMEN)} />
+  <script id="tarot-signos-json" type="application/json" set:html={JSON.stringify(TAROT_SIGNOS_LOOKUP)} />
+  <script id="tarot-meses-json" type="application/json" set:html={JSON.stringify(TAROT_MESES_LOOKUP)} />
 
   <script is:inline>
     (function () {
@@ -467,7 +452,6 @@ function normTexto(s: string): string {
           return [];
         }
       }
-
       function esc(s) {
         return String(s || '')
           .replace(/&/g, '&amp;')
@@ -475,14 +459,12 @@ function normTexto(s: string): string {
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;');
       }
-
       function norm(s) {
         return String(s || '')
           .toLowerCase()
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '');
       }
-
       function reducirHasta22(n) {
         var v = Math.abs(Math.trunc(n));
         if (v === 0) return 22;
@@ -493,7 +475,6 @@ function normTexto(s: string): string {
         }
         return v === 0 ? 22 : v;
       }
-
       function reducirHasta9(n) {
         var v = Math.abs(Math.trunc(n));
         if (v === 0) return 9;
@@ -530,7 +511,6 @@ function normTexto(s: string): string {
         infoEsq.innerHTML =
           '<strong>' + esc(esq.nombre) + '</strong> (' + esc(esq.referenciaTradicional) + '): ' + esc(esq.resumen);
       }
-
       if (selModo) {
         selModo.addEventListener('change', actualizarDescripcionEsquema);
         actualizarDescripcionEsquema();
@@ -546,7 +526,6 @@ function normTexto(s: string): string {
         var pool = mazo === 'mayores'
           ? TODOS.filter(function (c) { return c.tipo === 'mayor'; })
           : TODOS.slice();
-
         for (var i = pool.length - 1; i > 0; i--) {
           var j = Math.floor(Math.random() * (i + 1));
           var tmp = pool[i];
@@ -610,14 +589,12 @@ function normTexto(s: string): string {
             '</article>';
         });
         html += '</div>';
-
         html +=
           '<div class="tarot-sintesis-box">' +
             '<p class="tarot-sintesis-kicker">Síntesis orientadora · ' + esc(esq.nombre) + '</p>' +
             '<p><strong>Clave central (' + esc(regente.carta.nombre) + (regente.invertida ? ', invertida' : '') + '):</strong> ' + esc(regente.carta.consejo) + '</p>' +
             '<p class="tarot-sintesis-nota">' + esc(esq.comoLeer) + '</p>' +
           '</div>';
-
         mesa.innerHTML = html;
 
         if (btnCopiar) btnCopiar.hidden = false;
@@ -631,7 +608,6 @@ function normTexto(s: string): string {
       if (btnTirar) {
         btnTirar.addEventListener('click', realizarTirada);
       }
-
       if (btnCopiar) {
         btnCopiar.addEventListener('click', function () {
           if (!ultimaSintesis) return;
@@ -667,7 +643,6 @@ function normTexto(s: string): string {
         var maxDias = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][mes - 1];
         var dia = Math.max(1, Math.min(maxDias, Math.trunc(Number(calcDia.value || '1'))));
         var anioVal = calcAnio && calcAnio.value ? Math.trunc(Number(calcAnio.value)) : NaN;
-
         var sumaDiaMes = dia + mes;
         var numArcanoCumple = reducirHasta22(sumaDiaMes);
         var arcCumple = MAYORES[numArcanoCumple - 1] || MAYORES[0];
@@ -687,7 +662,6 @@ function normTexto(s: string): string {
           '<strong>Arcano ' + esc(arcCumple.romano) + ' · ' + esc(arcCumple.nombre) + '</strong> — Tu fecha (' +
           dia + ' de ' + esc(mesInfo.nombre) + ') vibra bajo este arquetipo solar junto a <strong>' +
           esc(signo.simbolo) + ' ' + esc(signo.nombre) + '</strong> (numerología <strong>' + numBase + '</strong>).';
-
         if (arcNatal) {
           textoResumen +=
             ' Al sumar tu año ' + anioVal + ', tu <strong>Arcano Natal completo</strong> es <strong>' +
@@ -730,7 +704,6 @@ function normTexto(s: string): string {
         var pla = (selPla && selPla.value) || 'todos';
         var num = (selNum && selNum.value) || 'todos';
         var visibles = 0;
-
         cardsMen.forEach(function (card) {
           var okQ = !q || (card.getAttribute('data-menor-q') || '').indexOf(q) !== -1;
           var okP = pla === 'todos' || card.getAttribute('data-menor-planeta') === pla;
@@ -739,7 +712,6 @@ function normTexto(s: string): string {
           card.hidden = !show;
           if (show) visibles++;
         });
-
         if (contMen) {
           contMen.textContent = visibles === cardsMen.length
             ? 'Mostrando los 56 Arcanos Menores (del 23 al 78)'

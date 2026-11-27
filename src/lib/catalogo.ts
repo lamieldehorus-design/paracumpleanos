@@ -220,7 +220,8 @@ export function generarUrlsSitio(
   catalogo: ReturnType<typeof crearCatalogo>,
   slugsGuias: string[] = [],
   slugsSignos: string[] = [],
-  slugsPaises: string[] = []
+  slugsPaises: string[] = [],
+  slugsTarot: string[] = []
 ): string[] {
   const urls: string[] = [
     `${SITIO}/`,
@@ -235,6 +236,13 @@ export function generarUrlsSitio(
     `${SITIO}/privacidad/`,
     `${SITIO}/terminos-de-uso/`
   ];
+
+  if (slugsTarot.length > 0) {
+    urls.push(`${SITIO}/tarot-egipcio/`);
+    for (const slugTarot of slugsTarot) {
+      urls.push(`${SITIO}/tarot-egipcio/${slugTarot}/`);
+    }
+  }
 
   for (const slugPais of slugsPaises) {
     urls.push(`${SITIO}/hitos-historicos/${slugPais}/`);
@@ -290,7 +298,8 @@ export function construirMapaLastmodSitemap(
   slugsSignos: string[] = [],
   slugsPaises: string[] = [],
   fechaBaseSitio: string = '2026-11-20',
-  fechaEdicionCatalogo?: string
+  fechaEdicionCatalogo?: string,
+  slugsTarot: string[] = []
 ): Record<string, string> {
   if (!esFechaIsoValida(fechaBaseSitio)) {
     throw new Error(`Fecha base lastmod inválida: ${fechaBaseSitio}`);
@@ -361,6 +370,13 @@ export function construirMapaLastmodSitemap(
   }
   for (const slugSigno of slugsSignos) {
     mapa[`${SITIO}/horoscopo/${slugSigno}/`] = fechaBaseSitio;
+  }
+  if (slugsTarot.length > 0) {
+    const fechaTarot = fechaEdicionCatalogo || fechaBaseSitio;
+    mapa[`${SITIO}/tarot-egipcio/`] = fechaTarot;
+    for (const slugTarot of slugsTarot) {
+      mapa[`${SITIO}/tarot-egipcio/${slugTarot}/`] = fechaTarot;
+    }
   }
 
   const estaticas = [

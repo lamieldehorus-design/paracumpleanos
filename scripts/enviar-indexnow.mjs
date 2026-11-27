@@ -44,14 +44,14 @@ function cargarSlugsGuias() {
   const dataDir = path.resolve('src/data');
   if (!fs.existsSync(dataDir)) return [];
   const files = fs.readdirSync(dataDir).filter((f) => /^guias-parte\d+\.ts$/.test(f)).sort();
-  const slugs = [];
+  const slugs = new Set();
   for (const f of files) {
     const src = fs.readFileSync(path.join(dataDir, f), 'utf8');
-    for (const m of src.matchAll(/\n  \{\n    slug: '([^']+)'/g)) {
-      slugs.push(m[1]);
+    for (const m of src.matchAll(/\n\s{2,4}(?:"slug"|slug):\s*['"]([^'"]+)['"]/g)) {
+      slugs.add(m[1]);
     }
   }
-  return slugs;
+  return Array.from(slugs);
 }
 
 function cargarSlugsPaises() {
@@ -78,6 +78,18 @@ function cargarSlugsSignos() {
     slugs.push(m[1]);
   }
   return slugs;
+}
+
+function cargarSlugsTarot() {
+  const p = path.resolve('src/data/tarot-egipcio.ts');
+  if (!fs.existsSync(p)) return [];
+  const src = fs.readFileSync(p, 'utf8');
+  const bloque = src.split('export const TAROT_MAYORES_22')[1]?.split('export const TAROT_FAQS_INDEX')[0] || '';
+  const slugs = [];
+  for (const m of bloque.matchAll(/"slug":\s*"([^"]+)"/g)) {
+    slugs.push(m[1]);
+  }
+  return Array.from(new Set(slugs));
 }
 
 function cargarUrlsDesdeCatalogo() {
@@ -116,6 +128,14 @@ function cargarUrlsDesdeCatalogo() {
     `https://${HOST}/privacidad/`,
     `https://${HOST}/terminos-de-uso/`
   ];
+
+  const slugsTarot = cargarSlugsTarot();
+  if (slugsTarot.length > 0) {
+    urls.push(`https://${HOST}/tarot-egipcio/`);
+    for (const slugTarot of slugsTarot) {
+      urls.push(`https://${HOST}/tarot-egipcio/${slugTarot}/`);
+    }
+  }
 
   for (const slugPais of cargarSlugsPaises()) {
     urls.push(`https://${HOST}/hitos-historicos/${slugPais}/`);

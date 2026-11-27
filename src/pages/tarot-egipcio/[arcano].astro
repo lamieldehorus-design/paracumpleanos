@@ -1,78 +1,66 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Compartir from '../../components/Compartir.astro';
 import PersonalizadorTarjeta from '../../components/PersonalizadorTarjeta.astro';
-import { SITIO, MARCA, mensajesDe } from '../../lib/contenido.ts';
+import Compartir from '../../components/Compartir.astro';
+import { SITIO, MARCA, migasLd } from '../../lib/contenido.ts';
 import {
-  ARCANOS_MAYORES,
-  NUMEROLOGIA_TAROT,
-  signosPorArcano,
-  construirGrafoArcanoLd,
-  type ArcanoMayor
-} from '../../lib/tarot-egipcio.ts';
-import { MESES_CON_SIGNOS } from '../../lib/horoscopo.ts';
+  TAROT_MAYORES_22,
+  clasificarTonoTarot,
+  type ArcanoMayorCompleto
+} from '../../data/tarot-egipcio.ts';
 
 export function getStaticPaths() {
-  return ARCANOS_MAYORES.map((arcano) => ({
+  return TAROT_MAYORES_22.map((arcano, idx) => ({
     params: { arcano: arcano.slug },
-    props: { arcano }
+    props: { arcano, idx }
   }));
 }
 
 interface Props {
-  arcano: ArcanoMayor;
+  arcano: ArcanoMayorCompleto;
+  idx: number;
 }
 
-const { arcano } = Astro.props;
-const signosVinculados = signosPorArcano(arcano);
-const numInfo = NUMEROLOGIA_TAROT.find((n) => n.numero === arcano.numerologia) || NUMEROLOGIA_TAROT[0];
-
-const mesesSlugsUnicos = Array.from(
-  new Set(signosVinculados.flatMap((s) => s.mesesSlugs))
-);
-const mesesVinculados = mesesSlugsUnicos
-  .map((slugMes) => {
-    const info = MESES_CON_SIGNOS.find((m) => m.slug === slugMes);
-    if (!info) return null;
-    return {
-      slug: info.slug,
-      nombreCap: info.nombreCap,
-      cantidad: mensajesDe(info.slug).length
-    };
-  })
-  .filter((x): x is { slug: string; nombreCap: string; cantidad: number } => Boolean(x));
-
-const idxActual = ARCANOS_MAYORES.findIndex((a) => a.slug === arcano.slug);
-const arcanoAnterior = ARCANOS_MAYORES[(idxActual - 1 + ARCANOS_MAYORES.length) % ARCANOS_MAYORES.length];
-const arcanoSiguiente = ARCANOS_MAYORES[(idxActual + 1) % ARCANOS_MAYORES.length];
-const otrosArcanos = ARCANOS_MAYORES.filter((a) => a.slug !== arcano.slug);
-
-const titulo = `${arcano.nombre} (${arcano.romano}) en el Tarot Egipcio: significado y dedicatorias - ${MARCA}`;
-const descripcion = `Descubrí el significado derecho e invertido de ${arcano.nombre} (Arcano ${arcano.romano}) en el Tarot Egipcio, sus 3 planos, vínculo con ${arcano.astrologiaTexto} y ${arcano.dedicatorias.length} dedicatorias.`;
-
-const etiquetasTono: Record<string, string> = {
-  emotivo: 'Emotivo y cercano',
-  breve: 'Breve para WhatsApp',
-  reflexivo: 'Reflexivo y simbólico',
-  fe: 'Con fe y gratitud'
-};
+const { arcano, idx } = Astro.props;
+const anterior = TAROT_MAYORES_22[(idx - 1 + TAROT_MAYORES_22.length) % TAROT_MAYORES_22.length];
+const siguiente = TAROT_MAYORES_22[(idx + 1) % TAROT_MAYORES_22.length];
+const otros21 = TAROT_MAYORES_22.filter((x) => x.slug !== arcano.slug);
+const letraHebrea = arcano.fichaDl.find((d) => d.label.toLowerCase().includes('letra'))?.valor || '';
+const urlArcano = `${SITIO}/tarot-egipcio/${arcano.slug}/`;
 
 const jsonld = [
-  construirGrafoArcanoLd({
-    sitio: SITIO,
-    marca: MARCA,
-    arcano,
-    titulo,
-    descripcion
-  })
+  migasLd([
+    { name: 'Inicio', url: SITIO + '/' },
+    { name: 'Tarot Egipcio', url: SITIO + '/tarot-egipcio/' },
+    { name: `${arcano.romano} · ${arcano.nombre}`, url: urlArcano }
+  ]),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: arcano.h1,
+    description: arcano.metaDesc,
+    url: urlArcano,
+    inLanguage: 'es',
+    author: { '@type': 'Organization', name: MARCA },
+    publisher: { '@type': 'Organization', name: MARCA }
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: arcano.faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.pregunta,
+      acceptedAnswer: { '@type': 'Answer', text: f.respuesta }
+    }))
+  }
 ];
 ---
 <Base
-  titulo={titulo}
-  descripcion={descripcion}
+  titulo={arcano.titleTag}
+  descripcion={arcano.metaDesc}
   jsonld={jsonld}
-  grupoActual="tarot_horoscopo"
-  slugActual={`tarot:${arcano.slug}`}
+  grupoActual="meses"
+  slugActual={arcano.slug}
 >
   <nav class="migas" aria-label="Migas de pan">
     <a href="/">Inicio</a> › <a href="/tarot-egipcio/">Tarot Egipcio</a> › <span>{arcano.romano} · {arcano.nombre}</span>
@@ -80,19 +68,21 @@ const jsonld = [
 
   <header class="tarot-arcano-hero">
     <p class="banda-kicker">Arcano Mayor {arcano.romano} de 22 · Tradición del Tarot Egipcio</p>
-    <h1>{arcano.nombre} ({arcano.romano}): significado, simbolismo y dedicatorias</h1>
+    <h1>{arcano.h1}</h1>
     <p class="meta-linea-editorial">
       <span>Deidad: {arcano.deidad}</span>
       <span aria-hidden="true">·</span>
-      <span>{arcano.astrologiaTexto}</span>
-      <span aria-hidden="true">·</span>
-      <span>Letra {arcano.letraHebrea}</span>
+      <span>{arcano.astrologia}</span>
+      {letraHebrea ? (
+        <>
+          <span aria-hidden="true">·</span>
+          <span>Letra {letraHebrea}</span>
+        </>
+      ) : null}
       <span aria-hidden="true">·</span>
       <span>Numerología {arcano.numerologia}</span>
     </p>
-    <p class="lead">
-      <strong>{arcano.tituloTradicional}.</strong> {arcano.esencia} En esta guía editorial de alto valor recorremos su lectura al derecho e invertida, su estructura en tres planos, su relación directa con el horóscopo y {arcano.dedicatorias.length} dedicatorias originales listas para personalizar en tarjeta PNG o compartir por WhatsApp.
-    </p>
+    <p class="lead">{arcano.lead}</p>
   </header>
 
   <blockquote class="tarot-aforismo" aria-label={`Aforismo tradicional de ${arcano.nombre}`}>
@@ -100,51 +90,23 @@ const jsonld = [
     <cite>Aforismo tradicional del Arcano {arcano.romano} ({arcano.nombre})</cite>
   </blockquote>
 
-  <!-- FICHA DE ACCESION EDITORIAL (SIN TABLAS QUE SE ROMPAN EN MOVIL) -->
   <dl class="horoscopo-ficha-dl tarot-ficha-dl">
-    <div>
-      <dt>Arcano y número</dt>
-      <dd>{arcano.romano} (N.º {arcano.numero})</dd>
-    </div>
-    <div>
-      <dt>Deidad egipcia</dt>
-      <dd>{arcano.deidad}</dd>
-    </div>
-    <div>
-      <dt>Astrología</dt>
-      <dd>{arcano.astrologiaTexto}</dd>
-    </div>
-    <div>
-      <dt>Letra hebrea</dt>
-      <dd>{arcano.letraHebrea}</dd>
-    </div>
-    <div>
-      <dt>Numerología ({arcano.numerologia})</dt>
-      <dd>{numInfo.titulo}</dd>
-    </div>
-    <div>
-      <dt>Claves esenciales</dt>
-      <dd>{arcano.palabrasClave.join(' · ')}</dd>
-    </div>
+    {arcano.fichaDl.map((item) => (
+      <div>
+        <dt>{item.label}</dt>
+        <dd>{item.valor}</dd>
+      </div>
+    ))}
   </dl>
 
-  <!-- INTERLINK BIDIRECCIONAL CON HOROSCOPO Y MESES DE CUMPLEANOS -->
   <aside class="enlace-horoscopo-mes tarot-interlink-zodiaco" aria-labelledby="tarot-zodiaco-tit">
     <h2 id="tarot-zodiaco-tit">Vínculo de {arcano.nombre} con el Horóscopo y los meses de cumpleaños</h2>
-    <p>
-      En la tradición astrológica del Tarot Egipcio, el Arcano {arcano.romano} resuena directamente con <strong>{arcano.astrologiaTexto}</strong>. Explorá su guía zodiacal y las colecciones mensuales asociadas:
-    </p>
+    <p>{arcano.zodiacoIntro}</p>
     <div class="enlace-horoscopo-grid">
-      {signosVinculados.map((s) => (
-        <a class="signo-mes-card" href={`/horoscopo/${s.slug}/`}>
-          <span class="signo-mes-nombre">{s.simbolo} Horóscopo de {s.nombre}</span>
-          <span class="signo-mes-rango">{s.rangoTexto} · Elemento {s.elemento} · {s.frasesCumpleanos.length} frases</span>
-        </a>
-      ))}
-      {mesesVinculados.map((m) => (
-        <a class="signo-mes-card" href={`/${m.slug}/`}>
-          <span class="signo-mes-nombre">🎂 Cumpleaños en {m.nombreCap}</span>
-          <span class="signo-mes-rango">Colección completa con {m.cantidad} dedicatorias originales</span>
+      {arcano.enlacesZodiaco.map((en) => (
+        <a class="signo-mes-card" href={en.href}>
+          <span class="signo-mes-nombre">{en.nombre}</span>
+          <span class="signo-mes-rango">{en.rango}</span>
         </a>
       ))}
     </div>
@@ -154,61 +116,54 @@ const jsonld = [
     </p>
   </aside>
 
-  <!-- LECTURA AL DERECHO E INVERTIDA -->
   <section class="tarot-polaridad-sec" aria-labelledby="tit-polaridad">
     <h2 id="tit-polaridad">Significado de {arcano.nombre} al derecho e invertido</h2>
     <div class="tarot-polaridad-grid">
       <article class="tarot-polaridad-card">
         <p class="tarot-pol-etiqueta">Posición al derecho · Energía en flujo</p>
         <h3>Qué anuncia cuando aparece derecho</h3>
-        <p>{arcano.significadoDerecho}</p>
+        <p>{arcano.derechoDetalle}</p>
       </article>
       <article class="tarot-polaridad-card tarot-polaridad-card--inv">
         <p class="tarot-pol-etiqueta">Posición invertida · Invitación a revisar</p>
         <h3>Qué matiza cuando sale invertido</h3>
-        <p>{arcano.significadoInvertido}</p>
+        <p>{arcano.invertidoDetalle}</p>
       </article>
     </div>
   </section>
 
-  <!-- ANATOMIA EN 3 PLANOS + FILOSOFIA ESOTERICA -->
   <section class="guia-categoria tarot-planos-sec" aria-labelledby="tit-planos-arcano">
     <h2 id="tit-planos-arcano">Los tres planos simbólicos y la filosofía de {arcano.nombre}</h2>
     <dl class="geo-glosario">
-      <div class="geo-glosario-item">
-        <dt>Plano Superior (Espiritual)</dt>
-        <dd><span>{arcano.planoEspiritual}</span></dd>
-      </div>
-      <div class="geo-glosario-item">
-        <dt>Plano Central (Mental)</dt>
-        <dd><span>{arcano.planoMental}</span></dd>
-      </div>
-      <div class="geo-glosario-item">
-        <dt>Plano Inferior (Físico y cotidiano)</dt>
-        <dd><span>{arcano.planoFisico}</span></dd>
-      </div>
+      {arcano.planos.map((pl) => (
+        <div class="geo-glosario-item">
+          <dt>{pl.nombre}</dt>
+          <dd><span>{pl.texto}</span></dd>
+        </div>
+      ))}
     </dl>
     <h3>Filosofía simbólica del Arcano {arcano.romano}</h3>
-    <p>{arcano.filosofiaEsoterica}</p>
+    {arcano.filosofiaParrafos[0] ? <p>{arcano.filosofiaParrafos[0]}</p> : null}
     <h3>Cómo usar {arcano.nombre} en un cumpleaños o cambio de etapa</h3>
-    <p>{arcano.consejoCumpleanos}</p>
+    {arcano.filosofiaParrafos[1] ? <p>{arcano.filosofiaParrafos[1]}</p> : null}
   </section>
 
-  <!-- PERSONALIZADOR + DEDICATORIAS INSPIRADAS EN EL ARCANO -->
   <PersonalizadorTarjeta modo="hub" />
 
   <div class="tarjeta-visual" role="img" aria-label={`Tarjeta destacada inspirada en ${arcano.nombre}`}>
-    <div class="tarjeta-visual-emoji">{arcano.simboloGlyph}</div>
+    <div class="tarjeta-visual-emoji">{arcano.glyph}</div>
     <p class="tarjeta-visual-subtitulo" hidden></p>
     <p class="tarjeta-visual-titulo">{arcano.romano} · {arcano.nombre}</p>
-    <p class="tarjeta-visual-extracto">{arcano.dedicatorias[0].texto}</p>
+    <p class="tarjeta-visual-extracto">{arcano.dedicatorias[0]?.texto || arcano.esencia}</p>
     <p class="tarjeta-visual-marca">paracumpleanos.com</p>
   </div>
 
   <section aria-labelledby="tit-dedicatorias-arcano">
     <h2 id="tit-dedicatorias-arcano">{arcano.dedicatorias.length} dedicatorias de cumpleaños inspiradas en {arcano.nombre}</h2>
     <div class="filtros-tono" role="group" aria-label={`Filtrar dedicatorias de ${arcano.nombre} por tono`}>
-      <button type="button" class="filtro-btn activo" data-tarot-filtro="todos" aria-pressed="true">Todas ({arcano.dedicatorias.length})</button>
+      <button type="button" class="filtro-btn activo" data-tarot-filtro="todos" aria-pressed="true">
+        Todas ({arcano.dedicatorias.length})
+      </button>
       <button type="button" class="filtro-btn" data-tarot-filtro="emotivo" aria-pressed="false">Emotivo</button>
       <button type="button" class="filtro-btn" data-tarot-filtro="breve" aria-pressed="false">Breve WhatsApp</button>
       <button type="button" class="filtro-btn" data-tarot-filtro="reflexivo" aria-pressed="false">Reflexivo</button>
@@ -220,28 +175,26 @@ const jsonld = [
         <article
           class="card"
           data-card-personalizable="1"
-          data-tarot-tono={d.tono}
+          data-tarot-tono={clasificarTonoTarot(d.tono)}
           data-orig-titulo={d.titulo}
           data-orig-texto={d.texto}
           data-orig-resumen={d.texto}
         >
-          <p class="card-meta"><span>{etiquetasTono[d.tono] || 'Dedicatoria'}</span></p>
+          <p class="card-meta"><span>{d.tono}</span></p>
           <h3>{d.titulo}</h3>
           <p class="card-resumen">{d.texto}</p>
           <Compartir
+            titulo={d.titulo}
             texto={d.texto}
-            url={`${SITIO}/tarot-egipcio/${arcano.slug}/`}
-            tituloCard={d.titulo}
-            cuerpoCard={d.texto}
-            emojiCard={arcano.simboloGlyph}
+            url={urlArcano}
             mostrarDescarga={true}
+            emoji={arcano.glyph}
           />
         </article>
       ))}
     </div>
   </section>
 
-  <!-- FAQS VISIBLES -->
   <section class="faqs-hub" aria-labelledby="tit-faq-arcano">
     <h2 id="tit-faq-arcano">Preguntas frecuentes sobre {arcano.nombre}</h2>
     <div class="faq-grid-visible">
@@ -254,28 +207,27 @@ const jsonld = [
     </div>
   </section>
 
-  <!-- NAVEGACION ANTERIOR / SIGUIENTE + LOS OTROS 21 ARCANOS -->
   <nav class="tarot-nav-seq" aria-label="Navegación entre Arcanos Mayores">
-    <a class="tarot-nav-seq-card" href={`/tarot-egipcio/${arcanoAnterior.slug}/`}>
+    <a class="tarot-nav-seq-card" href={`/tarot-egipcio/${anterior.slug}/`}>
       <span class="tarot-nav-dir">← Arcano anterior</span>
-      <strong>{arcanoAnterior.romano} · {arcanoAnterior.nombre}</strong>
+      <strong>{anterior.romano} · {anterior.nombre}</strong>
     </a>
     <a class="tarot-nav-seq-card tarot-nav-seq-card--centro" href="/tarot-egipcio/">
       <span class="tarot-nav-dir">Archivo y tirada</span>
       <strong>Ver los 78 arcanos</strong>
     </a>
-    <a class="tarot-nav-seq-card tarot-nav-seq-card--der" href={`/tarot-egipcio/${arcanoSiguiente.slug}/`}>
+    <a class="tarot-nav-seq-card tarot-nav-seq-card--der" href={`/tarot-egipcio/${siguiente.slug}/`}>
       <span class="tarot-nav-dir">Arcano siguiente →</span>
-      <strong>{arcanoSiguiente.romano} · {arcanoSiguiente.nombre}</strong>
+      <strong>{siguiente.romano} · {siguiente.nombre}</strong>
     </a>
   </nav>
 
   <section class="hermanas" aria-labelledby="tit-otros-arcanos">
     <h2 id="tit-otros-arcanos">Explorá los otros 21 Arcanos Mayores del Tarot Egipcio</h2>
     <div class="chips">
-      {otrosArcanos.map((otro) => (
-        <a class="chip" href={`/tarot-egipcio/${otro.slug}/`}>
-          {otro.romano} · {otro.nombre}
+      {otros21.map((x) => (
+        <a class="chip" href={`/tarot-egipcio/${x.slug}/`}>
+          {x.romano} · {x.nombre}
         </a>
       ))}
     </div>
