@@ -152,6 +152,69 @@ export const REDIRECCIONES_POSTS: RedireccionLegada[] = [
     slugOrigen: 'frases-de-cumpleanos-graciosas',
     destinoSlug: 'feliz-cumpleanos-gracioso',
     titulo: 'Frases graciosas de cumpleaños'
+  },
+  {
+    slugOrigen: '30-plantillas-de-invitaciones-para-cumpleanos',
+    destinoSlug: 'invitaciones-de-cumpleanos-para-editar-e-imprimir',
+    titulo: 'Plantillas e invitaciones de cumpleaños para editar e imprimir',
+    alternativoSlug: 'frases-para-invitacion-de-cumpleanos',
+    alternativoTexto: 'Ver también frases para tarjetas de invitación'
+  },
+  {
+    slugOrigen: '100-frases-de-cumpleanos-que-emocionan',
+    destinoSlug: 'mensajes-de-cumpleanos-emotivos',
+    titulo: 'Frases y mensajes de cumpleaños que emocionan',
+    alternativoSlug: 'feliz-cumpleanos-hija',
+    alternativoTexto: 'Ver dedicatorias emotivas para hija'
+  },
+  {
+    slugOrigen: 'outfits-para-cumpleanos-2026',
+    destinoSlug: 'frases-y-cumpleanos-para-mujeres',
+    titulo: 'Ideas y dedicatorias para celebrar cumpleaños de mujeres',
+    alternativoSlug: 'feliz-cumpleanos-amiga',
+    alternativoTexto: 'Ver felicitaciones para amiga'
+  },
+  {
+    slugOrigen: 'zenitsu-cumpleanos',
+    destinoSlug: 'felicitaciones-de-cumpleanos-divertidas',
+    titulo: 'Felicitaciones divertidas y temáticas de cumpleaños',
+    alternativoSlug: 'banderines-de-cumpleanos-para-imprimir',
+    alternativoTexto: 'Crear banderines temáticos para imprimir'
+  },
+  {
+    slugOrigen: 'feliz-cumpleanos-querida-hija',
+    destinoSlug: 'feliz-cumpleanos-hija',
+    titulo: 'Feliz cumpleaños querida hija',
+    alternativoSlug: 'carta-para-mi-hija',
+    alternativoTexto: 'Ver cartas largas para mi hija'
+  },
+  {
+    slugOrigen: 'frases-de-cumpleanos-para-hermanos',
+    destinoSlug: 'feliz-cumpleanos-para-un-hermano',
+    titulo: 'Frases de cumpleaños para hermanos',
+    alternativoSlug: 'feliz-cumpleanos-hermana',
+    alternativoTexto: 'Ver dedicatorias para hermana'
+  },
+  {
+    slugOrigen: 'como-organizar-un-cumpleanos-en-7-dias',
+    destinoSlug: 'banderines-de-cumpleanos-para-imprimir',
+    titulo: 'Cómo organizar y decorar un cumpleaños paso a paso',
+    alternativoSlug: 'invitaciones-de-cumpleanos-para-editar-e-imprimir',
+    alternativoTexto: 'Ver invitaciones listas para editar'
+  },
+  {
+    slugOrigen: '20-ideas-de-tematicas-para-cumpleanos-que-nadie-mas-tiene',
+    destinoSlug: 'banderines-de-cumpleanos-para-imprimir',
+    titulo: 'Ideas de temáticas y decoración original para cumpleaños',
+    alternativoSlug: 'invitaciones-de-cumpleanos-para-editar-e-imprimir',
+    alternativoTexto: 'Ver invitaciones temáticas para imprimir'
+  },
+  {
+    slugOrigen: '10-ideas-para-cumpleanos-inolvidables',
+    destinoSlug: 'feliz-cumpleanos-amiga',
+    titulo: 'Ideas y dedicatorias para un cumpleaños inolvidable',
+    alternativoSlug: 'banderines-de-cumpleanos-para-imprimir',
+    alternativoTexto: 'Diseñar guirnalda de cumpleaños A4'
   }
 ];
 

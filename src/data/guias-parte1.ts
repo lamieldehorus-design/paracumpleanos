@@ -27,7 +27,7 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
     datosPropios: {
       titulo: 'Dato editorial de nuestro catálogo (14.080 textos analizados)',
       dato: 'En ParaCumpleanos reunimos 2.040 cartas epistolares de más de 140 palabras distribuidas en 51 colecciones. Las versiones con al menos una escena cotidiana en el segundo párrafo muestran mayor lectura completa que los textos con adjetivos abstractos.',
-      fuente: 'Auditoría interna del archivo epistolar de ParaCumpleanos (352 categorías, noviembre 2026).'
+      fuente: 'Auditoría interna del archivo epistolar de ParaCumpleanos (441 categorías, noviembre 2026).'
     },
     comparacionPractica: {
       titulo: '¿Cuál es la diferencia entre un párrafo de molde y una carta personal real?',
@@ -832,8 +832,8 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
     respuestaDirecta: 'Para saber cómo personalizar tarjetas en 30 segundos sin que parezcan copiadas, aplicá la fórmula 1+1+1: escribí su nombre o apodo real al comienzo, agregá una posdata o escena puntual compartida este año y cerrá con tu firma cotidiana. En ParaCumpleanos elegís paleta, ícono, tipografía y formato cuadrado o Story IG en PNG.',
     citaDestacada: 'No hace falta inventar la rueda desde cero: una buena base combinada con un apodo real, un recuerdo breve y diseño cuidado ya es cien por ciento tuya.',
     datosPropios: {
-      titulo: 'Personalización integral en nuestras 352 categorías',
-      dato: 'Nuestro estudio en vivo adapta automáticamente vocativos, saludos de cartas, etiquetas bilingües y estrofas en las 14.080 dedicatorias del sitio, permitiendo elegir 6 paletas visuales, 3 tipografías, 8 íconos, posdata propia y exportación PNG 1080×1080 o 1080×1920 sin recortar párrafos.',
+      titulo: 'Personalización integral en nuestras 441 categorías',
+      dato: 'Nuestro estudio en vivo adapta automáticamente vocativos, saludos de cartas, etiquetas bilingües y estrofas en las 22.280 dedicatorias del sitio, permitiendo elegir 6 paletas visuales, 3 tipografías, 8 íconos, posdata propia y exportación PNG 1080×1080 o 1080×1920 sin recortar párrafos.',
       fuente: 'Documentación funcional del personalizador en vivo de ParaCumpleanos (2026).'
     },
     comparacionPractica: {
@@ -1934,8 +1934,8 @@ export const GUIAS_PARTE_1: GuiaEditorial[] = [
     respuestaDirecta: 'Para saber cómo felicitar por WhatsApp sin sonar automático, evitá reenviar cadenas llenas de íconos, abrí directamente con el apodo real de esa persona en los primeros tres segundos de lectura, sumá un recuerdo breve o posdata concreta y elegí el horario tranquilo del desayuno o la tarde.',
     citaDestacada: 'En un chat lleno de saludos idénticos al mediodía, el mensaje que empieza por su apodo real y pregunta algo concreto gana toda la atención.',
     datosPropios: {
-      titulo: 'Optimización móvil en nuestros 14.080 textos',
-      dato: 'Clasificamos automáticamente los mensajes breves de hasta 65 palabras ("WhatsApp o estado") dentro de las 352 colecciones para leerlos enteros en una sola pantalla de teléfono sin necesidad de desplegar "Leer más".',
+      titulo: 'Optimización móvil en nuestros 22.280 textos',
+      dato: 'Clasificamos automáticamente los mensajes breves de hasta 65 palabras ("WhatsApp o estado") dentro de las 441 colecciones para leerlos enteros en una sola pantalla de teléfono sin necesidad de desplegar "Leer más".',
       fuente: 'Clasificación de longitud y canal en ParaCumpleanos (2026).'
     },
     comparacionPractica: {

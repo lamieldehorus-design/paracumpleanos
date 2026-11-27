@@ -626,6 +626,35 @@ img { max-width: 100%; }
 }
 .chip:hover { border-color: var(--rosa); color: var(--rosa-oscuro); }
 
+.contexto-frase-cosmico {
+  margin: 14px 0 18px;
+  padding: 18px 20px;
+  border: 1px solid var(--borde);
+  border-left: 4px solid var(--rosa-oscuro);
+  border-radius: 12px;
+  background: var(--superficie);
+  max-width: 72ch;
+}
+.contexto-frase-kicker {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--rosa-oscuro);
+  font-variant-numeric: tabular-nums;
+}
+.contexto-frase-cosmico h2 {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+  color: var(--texto);
+}
+.contexto-frase-cosmico p {
+  margin: 0 0 10px;
+  font-size: 0.97rem;
+  line-height: 1.65;
+  color: var(--texto-suave);
+}
+.contexto-frase-cosmico p:last-child { margin-bottom: 0; }
+
 /* Mensaje individual y bloque editorial */
 .mensaje {
   border: 1px solid var(--borde);
@@ -1741,6 +1770,7 @@ input, textarea, select { font-size: 16px; }
   .grilla,
   .paginacion,
   .acciones,
+  .contexto-frase-cosmico,
   .mensaje,
   .cita-editorial,
   .consejo-mensaje,

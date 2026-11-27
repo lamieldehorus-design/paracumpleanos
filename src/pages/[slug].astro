@@ -24,7 +24,8 @@ import {
 } from '../lib/contenido.ts';
 import {
   editorialHubCompleto,
-  guiaAdaptacionMensaje
+  guiaAdaptacionMensaje,
+  explicacionCosmicaMensaje
 } from '../lib/editorial.ts';
 import { mesInfoPorSlug } from '../lib/horoscopo.ts';
 
@@ -50,6 +51,12 @@ const noindexPagina = !esHub && !esMensajeIndexable(registro);
 const editorialHub = esHub ? editorialHubCompleto(registro, mensajesCat) : null;
 const mesZodiaco = esHub && hub.grupo === 'meses' ? mesInfoPorSlug(hub.slug) : undefined;
 const guiaMsg = !esHub ? guiaAdaptacionMensaje(registro, hub) : null;
+const explMsg = !esHub ? explicacionCosmicaMensaje(registro, hub) : null;
+const descripcionFinal = esHub
+  ? registro.meta
+  : descripcion.length < 118
+  ? metaDe(`${descripcion} (${nombreHub(hub)}). Editá nombre, posdata y firma gratis.`, 158)
+  : descripcion;
 const esAnivPersonalizable = hub.slug === 'mas-de-10-anos-de-novios';
 const esBanderines = hub.slug === 'banderines-de-cumpleanos-para-imprimir';
 
@@ -792,7 +799,7 @@ const textoEnviar = esHub ? '' : registro.texto;
 ---
 <Base
   titulo={titulo}
-  descripcion={descripcion}
+  descripcion={descripcionFinal}
   jsonld={jsonld}
   grupoActual={hub.grupo || 'destinatarios'}
   slugActual={hub.slug}
@@ -968,6 +975,16 @@ const textoEnviar = esHub ? '' : registro.texto;
         <span aria-hidden="true">·</span>
         <span>{guiaMsg.clasificacion.palabras} palabras ({guiaMsg.clasificacion.tiempoLectura})</span>
       </p>
+
+      {explMsg ? (
+        <section class="contexto-frase-cosmico" aria-labelledby="contexto-frase-titulo">
+          <p class="contexto-frase-kicker">{explMsg.enfoqueLabel}</p>
+          <h2 id="contexto-frase-titulo">{explMsg.titulo}</h2>
+          {explMsg.parrafos.map(function (p) {
+            return <p>{p}</p>;
+          })}
+        </section>
+      ) : null}
 
       {esBanderines ? (
         <article class="guia-banderin-articulo" id="mensaje-cuerpo" data-slug={registro.slug}>

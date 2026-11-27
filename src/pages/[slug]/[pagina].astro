@@ -6,7 +6,7 @@ import FiltrosSegmentacion from '../../components/FiltrosSegmentacion.astro';
 import PersonalizadorAniosAniversario from '../../components/PersonalizadorAniosAniversario.astro';
 import EstudioBanderines from '../../components/EstudioBanderines.astro';
 import { hubs, POR_PAGINA, SITIO, MARCA, mensajesDe, nombreHub, migasLd } from '../../lib/contenido.ts';
-import { guiaRelacionadaParaHub } from '../../lib/editorial.ts';
+import { guiaRelacionadaParaHub, editorialPaginaHub } from '../../lib/editorial.ts';
 export function getStaticPaths() {
   const paths: any[] = [];
   hubs.forEach(function (h) {
@@ -23,8 +23,9 @@ const lote = msj.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA);
 const prev = pagina - 1;
 const next = pagina + 1;
 const urlPrev = prev === 1 ? '/' + hub.slug + '/' : '/' + hub.slug + '/' + prev + '/';
+const edPag = editorialPaginaHub(hub, lote, pagina, total);
 const titulo = nombreHub(hub) + ' (página ' + pagina + ') - ' + MARCA;
-const descripcion = nombreHub(hub) + ': página ' + pagina + ' de ' + total + '. Más mensajes originales listos para copiar y enviar por WhatsApp o escribir en su tarjeta.';
+const descripcion = edPag.metaDescripcion;
 const guia = guiaRelacionadaParaHub(hub);
 const esAnivPersonalizable = hub.slug === 'mas-de-10-anos-de-novios';
 const esBanderines = hub.slug === 'banderines-de-cumpleanos-para-imprimir';
@@ -54,7 +55,11 @@ const jsonld = [migasLd([
     <span aria-hidden="true">·</span>
     <span>{esBanderines ? 'Herramienta online A4 independiente' : 'Abrí cada texto para personalizar su tarjeta'}</span>
   </p>
-  <p class="lead">{hub.meta}</p>
+  <div class="lead-bloque">
+    {edPag.leadParrafos.map(function (p) {
+      return <p class="lead">{p}</p>;
+    })}
+  </div>
   {esAnivPersonalizable ? <PersonalizadorAniosAniversario modo="hub" /> : null}
   {esBanderines ? <EstudioBanderines modo="hub" /> : null}
   <FiltrosSegmentacion mensajesTodos={msj} hub={hub} cantPaginaActual={lote.length} />
@@ -72,17 +77,17 @@ const jsonld = [migasLd([
     })}
     {next <= total ? <a href={'/' + hub.slug + '/' + next + '/'}>Siguiente ›</a> : null}
   </nav>
-  {hub.seoTitulo && hub.seoTexto ? (
-    <section class="guia-categoria" aria-labelledby="guia-pag-titulo">
-      <h2 id="guia-pag-titulo">{hub.seoTitulo}</h2>
-      <p>{String(hub.seoTexto).split('\n\n')[0]}</p>
-      <p class="ver-tambien">
-        <a href={'/' + hub.slug + '/'}>Ver tabla comparativa, preguntas frecuentes y guía completa de {nombreHub(hub)} →</a>
-      </p>
-      <p class="ver-tambien">
-        Lectura complementaria: <a href={`/guias/${guia.slug}/`}>{guia.titulo} →</a>
-      </p>
-    </section>
-  ) : null}
+  <section class="guia-categoria" aria-labelledby="guia-pag-titulo">
+    <h2 id="guia-pag-titulo">{edPag.guiaSubtitulo}</h2>
+    {edPag.guiaParrafos.map(function (p) {
+      return <p>{p}</p>;
+    })}
+    <p class="ver-tambien">
+      <a href={'/' + hub.slug + '/'}>Ver tabla comparativa, preguntas frecuentes y guía completa de {nombreHub(hub)} →</a>
+    </p>
+    <p class="ver-tambien">
+      Lectura complementaria: <a href={`/guias/${guia.slug}/`}>{guia.titulo} →</a>
+    </p>
+  </section>
   <Hermanas hub={hub} />
 </Base>

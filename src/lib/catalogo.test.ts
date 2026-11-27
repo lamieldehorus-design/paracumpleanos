@@ -51,7 +51,9 @@ import {
   extraerCitaDestacada,
   guiaRelacionadaParaHub,
   editorialHubCompleto,
-  guiaAdaptacionMensaje
+  guiaAdaptacionMensaje,
+  explicacionCosmicaMensaje,
+  editorialPaginaHub
 } from './editorial';
 import {
   INDEXNOW_HOST,
@@ -1043,3 +1045,84 @@ test('AdSense pub-7933111729537978 etiqueta todas las paginas, ads.txt coincide,
     assert.ok(src.includes('lamieldehorus@gmail.com'), `${archivo} debe incluir el contacto lamieldehorus@gmail.com`);
   }
 });
+
+test('GSC noindex/rastreada: 0 mensajes en noindex, robots bloquea .json, /posts/* GSC resuelven, explicacionCosmica (22280) y paginacion (1775) 100% unicas', () => {
+  const datos = cargarDatosCompletos();
+  const cat = crearCatalogo(datos);
+
+  // 1. Solo 404.astro emite noindex={true}; paginacion nunca emite noindex; robots.txt bloquea /*.json$
+  const robots = fs.readFileSync(path.resolve('public/robots.txt'), 'utf8');
+  assert.ok(robots.includes('Disallow: /*.json$'), 'robots.txt debe bloquear endpoints legacy .json');
+  const pagSrc = fs.readFileSync(path.resolve('src/pages/[slug]/[pagina].astro'), 'utf8');
+  assert.ok(!pagSrc.includes('noindex'), '[slug]/[pagina].astro nunca debe emitir noindex');
+  const pag404 = fs.readFileSync(path.resolve('src/pages/404.astro'), 'utf8');
+  assert.ok(pag404.includes('noindex={true}'), '404.astro debe mantener noindex={true}');
+
+  // 2. Los 9 slugs /posts/* detectados en GSC resuelven a hubs reales
+  const postsGsc = [
+    '30-plantillas-de-invitaciones-para-cumpleanos',
+    '100-frases-de-cumpleanos-que-emocionan',
+    'outfits-para-cumpleanos-2026',
+    'zenitsu-cumpleanos',
+    'feliz-cumpleanos-querida-hija',
+    'frases-de-cumpleanos-para-hermanos',
+    'como-organizar-un-cumpleanos-en-7-dias',
+    '20-ideas-de-tematicas-para-cumpleanos-que-nadie-mas-tiene',
+    '10-ideas-para-cumpleanos-inolvidables'
+  ];
+  for (const pSlug of postsGsc) {
+    assert.ok(
+      REDIRECCIONES_POSTS.some((r) => r.slugOrigen === pSlug),
+      `Falta redireccion en REDIRECCIONES_POSTS para /posts/${pSlug}/`
+    );
+    const destino = sugerirHubParaRutaLegada(`/posts/${pSlug}/`, cat.hubs);
+    assert.ok(destino && cat.hubsPorSlug.has(destino), `/posts/${pSlug}/ debe resolver a hub real, resolvio: ${destino}`);
+  }
+
+  // 3. [slug].astro renderiza .contexto-frase-cosmico ANTES de #mensaje-detalle-bloque
+  const slugSrc = fs.readFileSync(path.resolve('src/pages/[slug].astro'), 'utf8');
+  const idxCtx = slugSrc.indexOf('class="contexto-frase-cosmico"');
+  const idxDetalle = slugSrc.indexOf('id="mensaje-detalle-bloque"');
+  const idxBanderin = slugSrc.indexOf('class="guia-banderin-articulo"');
+  assert.ok(idxCtx !== -1 && idxDetalle > idxCtx && idxBanderin > idxCtx, 'La explicacion cosmica debe renderizarse antes de la frase/guia');
+
+  // 4. explicacionCosmicaMensaje: 22280/22280 unicas y sin contaminacion de tono ni duelo con "Festeja"
+  const explicaciones = new Set<string>();
+  for (const m of cat.todosMensajes) {
+    const hub = cat.hubDe(m)!;
+    const ex = explicacionCosmicaMensaje(m, hub);
+    assert.ok(ex.titulo.length >= 12 && ex.parrafos.length === 2);
+    const blob = `${ex.titulo} | ${ex.parrafos.join(' ')}`;
+    explicaciones.add(blob);
+
+    const isDuelo = /fallecid|hasta-el-cielo|condolencias|pesame|consuelo|luctuoso|tristes|nostalgia|extranas/.test(hub.slug) || hub.grupo === 'duelo_recuerdos';
+    const isAniv = /^(?!.*luctuoso).*(meses-de-novios|ano-de-novios|anos-de-novios|bodas-de-|aniversario)/.test(hub.slug);
+    if (isDuelo) {
+      assert.ok(!/(?<![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(torta|pastel|sopl[aá]|velas|fiesta|festej[a-záéíóú]*|brindis|regalos)(?![A-Za-zÁÉÍÓÚÜÑáéíóúüñ])/i.test(`${m.titulo} ${blob}`), `Contaminacion festiva en duelo ${m.slug}`);
+    }
+    if (isAniv) {
+      assert.ok(!/cumpleaños/i.test(blob), `Explicacion de aniversario menciona cumpleanos en ${m.slug}`);
+    }
+  }
+  assert.equal(explicaciones.size, 22280, `Las 22280 explicaciones deben ser unicas, hay ${explicaciones.size}`);
+
+  // 5. editorialPaginaHub: meta y lead unicos en todas las paginas /2/..total
+  const pagMetas = new Set<string>();
+  const pagLeads = new Set<string>();
+  let totalPags = 0;
+  for (const hub of cat.hubs) {
+    const msgs = cat.mensajesDe(hub.slug);
+    const total = Math.ceil(msgs.length / POR_PAGINA);
+    for (let p = 2; p <= total; p++) {
+      totalPags++;
+      const lote = msgs.slice((p - 1) * POR_PAGINA, p * POR_PAGINA);
+      const ep = editorialPaginaHub(hub, lote, p, total);
+      assert.ok(ep.metaDescripcion.length >= 100 && ep.metaDescripcion.length <= 165);
+      pagMetas.add(ep.metaDescripcion);
+      pagLeads.add(ep.leadParrafos.join(' '));
+    }
+  }
+  assert.equal(pagMetas.size, totalPags, 'Cada pagina /2/..N debe tener metaDescripcion unica');
+  assert.equal(pagLeads.size, totalPags, 'Cada pagina /2/..N debe tener lead unico');
+});
+

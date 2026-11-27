@@ -1,5 +1,5 @@
 import { GUIAS_EDITORIALES, guiaPorSlug, type GuiaEditorial } from '../data/guias.ts';
-import { nombreHub } from './catalogo.ts';
+import { nombreHub, metaDe } from './catalogo.ts';
 
 export type ClaseTono =
   | 'corto'
@@ -212,7 +212,11 @@ const DEST_FRASES_NATURALES: Record<string, { frase: string; vocativo: string }>
   'embarazada': { frase: 'la futura mamá', vocativo: '' },
   'gemelas': { frase: 'las gemelas', vocativo: '' },
   'gemelos': { frase: 'los gemelos', vocativo: '' },
-  'sobrinas gemelas': { frase: 'tus sobrinas gemelas', vocativo: '' }
+  'sobrinas gemelas': { frase: 'tus sobrinas gemelas', vocativo: '' },
+  'cumpleaños a solas': { frase: 'quien celebra su día a solas o lejos', vocativo: '' },
+  'regalos y decoración': { frase: 'acompañar un regalo o tarjeta de mesa', vocativo: '' },
+  'regalos': { frase: 'quien abre este regalo', vocativo: '' },
+  'redes sociales': { frase: 'quien saludás en redes o estados', vocativo: '' }
 };
 
 function destNatural(hub?: any, msg?: any): { frase: string; vocativo: string } {
@@ -223,6 +227,18 @@ function destNatural(hub?: any, msg?: any): { frase: string; vocativo: string } 
   }
   if (DEST_FRASES_NATURALES[lower]) {
     return DEST_FRASES_NATURALES[lower];
+  }
+  if (/^\d+\s*(años|año|meses|mes)\b/.test(lower) || /\b(años|meses|aniversario|bodas|cumplemes)\b/.test(lower)) {
+    return { frase: `quien celebra ${lower}`, vocativo: '' };
+  }
+  if (/^cumpleaños\b/.test(lower)) {
+    return { frase: `quien celebra su ${lower}`, vocativo: '' };
+  }
+  if (/^(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre|san valentín|navidad|nochebuena|año nuevo|pascuas|halloween|primavera|día del|jubilación|nacimiento)/.test(lower)) {
+    return { frase: `esta ocasión especial (${raw})`, vocativo: '' };
+  }
+  if (/^(reflexiones|motivaciones|condolencias|nostalgia|recuerdos|discursos|tarjetas|dedicatorias|mensajes|frases)/.test(lower)) {
+    return { frase: 'quien recibe estas palabras', vocativo: '' };
   }
   return { frase: `tu ${lower}`, vocativo: raw };
 }
@@ -1830,3 +1846,394 @@ export function guiaAdaptacionMensaje(m: any, hub: any): GuiaAdaptacionMensaje {
     guia
   };
 }
+
+export interface ExplicacionCosmicaMensaje {
+  titulo: string;
+  parrafos: string[];
+  enfoqueLabel: string;
+  canalSugerido: string;
+}
+
+interface MotivoDetectado {
+  id: string;
+  regex: RegExp;
+  frasesNormal: string[];
+  frasesDuelo: string[];
+}
+
+const MOTIVOS_TEXTO: MotivoDetectado[] = [
+  {
+    id: 'mesa_cafe',
+    regex: /\b(mate|mates|caf[eé]|desayuno|sobremesa|mesa|cena|almuerzo|asado|parrilla|brindis|brindar|copa)\b/i,
+    frasesNormal: [
+      'ancla el saludo en una escena cotidiana de mesa compartida, café o sobremesa',
+      'parte de lo cercano —la mesa, los mates o el brindis sin apuro— para evitar solemnidades vacías',
+      'sitúa la dedicatoria alrededor de un encuentro real y cálido antes que en frases abstractas'
+    ],
+    frasesDuelo: [
+      'evoca las costumbres serenas de casa y la mesa familiar como refugio de memoria',
+      'sostiene el recuerdo desde lo cotidiano compartido en calma junto a los afectos'
+    ]
+  },
+  {
+    id: 'risa_humor',
+    regex: /\b(risa|risas|re[ií]r|sonrisa|sonrisas|sonre[ií]|humor|chispa|broma|complicidad|ocurrencia)\b/i,
+    frasesNormal: [
+      'prioriza la chispa y la sonrisa compartida para romper el hielo desde la primera línea',
+      'combina humor liviano con aprecio honesto para destacar entre mensajes protocolares',
+      'rescata la alegría genuina y esa complicidad que vuelve más llevadera cualquier semana'
+    ],
+    frasesDuelo: [
+      'recuerda con ternura la sonrisa buena y la calidez que dejó en quienes caminaron cerca',
+      'equilibra el respeto del momento con el recuerdo luminoso de su sonrisa tranquila'
+    ]
+  },
+  {
+    id: 'recuerdo_memoria',
+    regex: /\b(recuerdo|recuerdos|an[eé]cdota|an[eé]cdotas|historia|historias|memoria|infancia|barrio|foto|fotos|ayer)\b/i,
+    frasesNormal: [
+      'pone en primer plano la memoria compartida y las historias vividas juntos',
+      'apoya el saludo en recuerdos reales que solo toman sentido cuando hay camino recorrido',
+      'recupera vivencias concretas para demostrar atención y continuidad en el vínculo'
+    ],
+    frasesDuelo: [
+      'honra la memoria agradecida y las enseñanzas concretas que siguen vivas en casa',
+      'transforma el recuerdo en abrigo sereno sin forzar consuelos apurados'
+    ]
+  },
+  {
+    id: 'fe_cielo',
+    regex: /\b(dios|se[ñn]or|cristo|fe|oraci[oó]n|oraciones|bendici[oó]n|bendiga|bendigo|bendecimos|cielo|gracia|esp[ií]ritu)\b/i,
+    frasesNormal: [
+      'une buenos deseos con espiritualidad serena y gratitud sincera por la vida',
+      'expresa fe cercana y cuidado espiritual sin caer en fórmulas repetitivas ni sermones',
+      'eleva una oración tranquila pidiendo calma, guía y protección sobre su nuevo ciclo'
+    ],
+    frasesDuelo: [
+      'ofrece acompañamiento espiritual, oración silenciosa y paz para toda la familia',
+      'abraza desde la fe y la serenidad respetando los tiempos íntimos del duelo'
+    ]
+  },
+  {
+    id: 'esfuerzo_metas',
+    regex: /\b(esfuerzo|logro|logros|meta|metas|proyecto|proyectos|trabajo|oficio|camino|paso|pasos|fortaleza|coraje|liderazgo)\b/i,
+    frasesNormal: [
+      'reconoce el mérito real, la constancia diaria y los proyectos propios con respeto',
+      'destaca la fuerza tranquila y lo construido a pulso en lugar de halagos genéricos',
+      'pone foco en el crecimiento personal y las metas que merecen celebrarse hoy'
+    ],
+    frasesDuelo: [
+      'reconoce la huella honesta, el esfuerzo noble y el ejemplo sereno que dejó en todos',
+      'valora la integridad y la entrega cotidiana que siguen guiando a los suyos'
+    ]
+  },
+  {
+    id: 'calma_salud',
+    regex: /\b(calma|paz|serenidad|sereno|serena|salud|descanso|sosiego|equilibrio|ternura|cuidado)\b/i,
+    frasesNormal: [
+      'prioriza la calma, la salud firme y el descanso real por encima del ruido superficial',
+      'transmite abrigo emocional y equilibrio en pocas líneas limpias de leer',
+      'desea bienestar durable y mañanas tranquilas adaptadas al ritmo actual de quien recibe'
+    ],
+    frasesDuelo: [
+      'ofrece presencia discreta, sosiego y alivio sin exigir respuestas inmediatas',
+      'acompaña con palabras medidas que respetan el silencio y el descanso familiar'
+    ]
+  },
+  {
+    id: 'distancia_viaje',
+    regex: /\b(distancia|kil[oó]metros|lejos|frontera|ciudad|viaje|viajes|horario|pantalla|reencuentro|abrazarnos)\b/i,
+    frasesNormal: [
+      'acorta la distancia física reconociendo los kilómetros sin perder tono de cercanía real',
+      'conecta el saludo presente con las ganas concretas del próximo encuentro',
+      'funciona especialmente bien cuando el abrazo presencial queda pendiente en el mapa'
+    ],
+    frasesDuelo: [
+      'hace sentir presencia leal aunque medien kilómetros en este día sensible',
+      'acerca acompañamiento honesto a la distancia sin incomodar con formalidades frías'
+    ]
+  }
+];
+
+function limpiarFragmentoInicial(texto: string): string {
+  const plano = String(texto || '').replace(/\s+/g, ' ').trim();
+  const primera = plano.split(/(?<=[.!?])\s+/)[0] || plano;
+  const sinEtiq = primera.replace(/^(Mensaje en [^:]+:|Traducción al español:)\s*/i, '').trim();
+  if (sinEtiq.length <= 78) return sinEtiq.replace(/[""«»]/g, '');
+  const corte = sinEtiq.slice(0, 74);
+  const lastSpace = corte.lastIndexOf(' ');
+  return (lastSpace > 24 ? corte.slice(0, lastSpace) : corte).replace(/[,;:.!?]+$/, '') + '…';
+}
+
+function limpiarFocoTitulo(titulo: string): string {
+  const limpio = String(titulo || '').replace(/\s+/g, ' ').replace(/[""«»]/g, '').trim();
+  if (limpio.length <= 68) return limpio;
+  const corte = limpio.slice(0, 64);
+  const lastSpace = corte.lastIndexOf(' ');
+  return (lastSpace > 20 ? corte.slice(0, lastSpace) : corte).replace(/[,;:.!?]+$/, '') + '…';
+}
+
+function limpiarCierre(texto: string): string {
+  const plano = String(texto || '').replace(/\s+/g, ' ').trim();
+  const oraciones = plano.split(/(?<=[.!?])\s+/).filter(Boolean);
+  const ultima = (oraciones.length > 1 ? oraciones[oraciones.length - 1] : plano)
+    .replace(/^(Mensaje en [^:]+:|Traducción al español:)\s*/i, '')
+    .replace(/[""«»]/g, '')
+    .trim();
+  if (ultima.length <= 56) return ultima;
+  const inicio = Math.max(0, ultima.length - 54);
+  const slice = ultima.slice(inicio);
+  const sp = slice.indexOf(' ');
+  return '…' + (sp > 0 ? slice.slice(sp + 1) : slice);
+}
+
+export function explicacionCosmicaMensaje(m: any, hub: any): ExplicacionCosmicaMensaje {
+  const slug = String(m.slug || '');
+  const texto = String(m.texto || '');
+  const titulo = String(m.titulo || '');
+  const perfil = detectarPerfilEditorial(hub, m);
+  const clasif = clasificarMensaje(m, hub);
+  const { frase: dest } = destNatural(hub, m);
+  const esDuelo = perfil === 'duelo';
+  const esAniv = perfil === 'aniv_meses' || perfil === 'aniv_anos';
+  const esMotiv = perfil === 'motivaciones';
+  const esBanderin = perfil === 'banderines';
+
+  const parrafosCount = texto.split(/\n\n+/).filter(Boolean).length;
+  const usaUsted = /\b(usted|le\s+(?:deseamos|auguramos|pedimos|enviamos|mando)|su\s+(?:presencia|calidez|fortaleza|caminar|ejemplo|hogar|descanso))\b/i.test(texto);
+  const pluralVoz = /\b(celebramos|deseamos|brindamos|agradecemos|honramos|enviamos|abrazamos|acompañamos|sostenemos)\b/i.test(texto);
+
+  const motivos = MOTIVOS_TEXTO.filter((mot) => mot.regex.test(texto));
+  const motivoPrincipal = motivos[0];
+
+  const fragmento = limpiarFragmentoInicial(texto);
+  const cierreFragmento = limpiarCierre(texto);
+  const focoCrudo = limpiarFocoTitulo(titulo);
+  const focoTitulo = esDuelo && /torta|pastel|sopl[aá]|velas|fiesta|festej|brindis|regalos/i.test(focoCrudo)
+    ? nombreHub(hub)
+    : focoCrudo;
+  const nombreColeccion = nombreHub(hub);
+
+  const tituloPrefijos = esDuelo
+    ? [
+        `Sentido y uso respetuoso de esta dedicatoria`,
+        `Por qué acompaña bien este mensaje sereno`,
+        `Cuándo y cómo enviar estas palabras con tacto`
+      ]
+    : esMotiv
+    ? [
+        `Idea clave detrás de esta reflexión diaria`,
+        `Cómo aplicar esta frase en tu jornada de hoy`,
+        `Por qué destraba el foco este recordatorio breve`
+      ]
+    : esAniv
+    ? [
+        `Qué transmite esta dedicatoria de aniversario`,
+        `Por qué funciona este mensaje para celebrar juntos`,
+        `Cómo y cuándo compartir esta frase de pareja`
+      ]
+    : esBanderin
+    ? [
+        `Lo esencial de esta guía práctica de banderines`,
+        `Qué vas a resolver con este tutorial paso a paso`,
+        `Resumen rápido antes de pasar a la guía`
+      ]
+    : [
+        `Por qué conecta esta dedicatoria (${clasif.tonoLabel.toLowerCase()})`,
+        `Qué aporta este saludo antes de enviarlo`,
+        `Lectura rápida y mejor uso para ${dest}`,
+        `Contexto y pulso de esta frase de ${nombreColeccion.toLowerCase()}`
+      ];
+
+  const h2Titulo = elegirVariante(tituloPrefijos, slug, 1);
+
+  let p1 = '';
+  const fraseMotivo = motivoPrincipal
+    ? elegirVariante(esDuelo ? motivoPrincipal.frasesDuelo : motivoPrincipal.frasesNormal, slug, 2)
+    : esDuelo
+    ? 'sostiene la cercanía desde palabras limpias, sin exageraciones ni promesas irreales'
+    : esMotiv
+    ? 'condensa una decisión práctica y amable para ordenar la mañana sin discursos pesados'
+    : esAniv
+    ? 'valora el camino compartido en la pareja desde gestos simples y cotidianos'
+    : 'va directo al afecto real por el vínculo sin rellenar con lugares comunes gastados';
+
+  const anclaUnica =
+    focoTitulo && focoTitulo.toLowerCase().slice(0, 24) !== fragmento.toLowerCase().slice(0, 24)
+      ? ` bajo el eje “${focoTitulo}”`
+      : cierreFragmento
+      ? ` rematando en “${cierreFragmento}”`
+      : '';
+
+  if (esBanderin) {
+    p1 = `Esta guía de ${clasif.palabras} palabras aborda el diseño y armado real del tema “${focoTitulo || fragmento}” dentro de ${nombreColeccion.toLowerCase()}. Explica medidas, materiales y errores frecuentes para que el cartel o guirnalda quede prolijo sin perder tiempo.`;
+  } else if (esDuelo) {
+    const registro = usaUsted ? 'mantiene trato respetuoso de usted' : 'adopta una cercanía serena y cuidada';
+    p1 = `Con apertura en “${fragmento}”${anclaUnica}, este texto ${fraseMotivo}. Además ${registro} en ${clasif.palabras} palabras (${clasif.tiempoLectura}), evitando frases invasivas para acompañar a ${dest}.`;
+  } else if (esMotiv) {
+    p1 = `Esta reflexión de ${clasif.palabras} palabras —titulada “${focoTitulo}”— arranca con “${fragmento}” y ${fraseMotivo}. Su tono equilibrado ayuda a pasar de la intención abstracta a un paso concreto que podés sostener hoy mismo.`;
+  } else if (esAniv) {
+    const voz = pluralVoz ? 'habla desde el nosotros compartido' : 'nace en primera persona directa';
+    p1 = `Enfocada en ${nombreColeccion.toLowerCase()}${anclaUnica}, esta dedicatoria parte de “${fragmento}” y ${fraseMotivo}. Su redacción ${voz} a lo largo de ${clasif.palabras} palabras, logrando intimidad honesta lejos de tarjetas acartonadas.`;
+  } else {
+    const idiomaDetectado = /italiano/.test(hub.slug)
+      ? 'en italiano con sentido claro y natural'
+      : /portugues/.test(hub.slug)
+      ? 'en portugués cálido y cotidiano'
+      : /frances/.test(hub.slug)
+      ? 'en francés elegante y cercano'
+      : /ingles|english|biling/.test(hub.slug)
+      ? 'bilingüe inglés-español pensada para lucir natural'
+      : usaUsted
+      ? 'en trato respetuoso de usted'
+      : pluralVoz
+      ? 'en voz plural familiar o grupal'
+      : 'en español rioplatense cercano';
+
+    const estructura =
+      parrafosCount >= 4
+        ? `se desarrolla en ${parrafosCount} párrafos epistolares`
+        : clasif.claseTono === 'poema'
+        ? `conserva cadencia en versos`
+        : `se lee de corrido en ${clasif.tiempoLectura}`;
+
+    p1 = `Pensado para ${dest}${anclaUnica}, este texto ${idiomaDetectado} abre con “${fragmento}” y ${fraseMotivo}. Su extensión de ${clasif.palabras} palabras ${estructura}, lo que evita que suene genérico frente a saludos copiados al azar.`;
+  }
+
+  let p2 = '';
+  if (esBanderin) {
+    p2 = `Leé las recomendaciones antes de abrir el creador online de hojas A4: elegir bien el gramaje y el contraste ahorra impresiones fallidas y mejora la lectura en fotos.`;
+  } else if (esDuelo) {
+    const canalDuelo =
+      clasif.palabras <= 65
+        ? 'Enviarlo por mensaje privado sin esperar respuesta inmediata funciona con mucho respeto'
+        : 'Funciona muy bien impreso en tarjeta sobria Marfil o enviado por chat con calma';
+    p2 = `${canalDuelo}. En el personalizador podés sumar el nombre familiar y quién firma para adaptar el cuerpo antes de copiar o descargar la postal.`;
+  } else if (esMotiv) {
+    p2 = `Rinde mejor a primera hora antes de revisar notificaciones o guardada como Story vertical 1080×1920. Si la dedicás a alguien que está atravesando un día exigente, agregale su nombre en el personalizador para volverla personal.`;
+  } else if (esAniv) {
+    const soporteAniv =
+      clasif.palabras <= 65
+        ? 'Ideal como primer mensaje de la mañana o pie de foto en historias'
+        : 'Ideal para acompañar una cena tranquila, unas flores o una tarjeta impresa a solas';
+    p2 = `${soporteAniv} (${clasif.canalLabel.toLowerCase()}). Completá su apodo, una posdata con un plan cercano y tu firma en el personalizador para generar tanto el texto limpio como la imagen PNG.`;
+  } else {
+    const canalTip =
+      clasif.palabras <= 65
+        ? 'Entra entero en una pantalla de WhatsApp o estado sin cortes de “Leer más”'
+        : parrafosCount >= 4
+        ? 'Pide lectura tranquila junto a un café o impresa en papel para acompañar tu regalo'
+        : 'Equilibra cuerpo claro para chat privado, correo cordial o tarjeta cuadrada/Story IG';
+    const cierreTip = usaUsted
+      ? 'Ajustá el nombre o tratamiento en el personalizador antes de copiar o bajar la postal en PNG.'
+      : 'Sumá su apodo, una breve anécdota en Posdata y tu firma en el personalizador para que quede cien por ciento tuyo.';
+    p2 = `${canalTip}. ${cierreTip}`;
+  }
+
+  return {
+    titulo: h2Titulo,
+    parrafos: [p1, p2],
+    enfoqueLabel: esDuelo
+      ? 'Tono sereno · Acompañamiento'
+      : esMotiv
+      ? 'Enfoque diario · Accionable'
+      : `${clasif.tonoLabel} · ${clasif.palabras} palabras`,
+    canalSugerido: clasif.canalLabel
+  };
+}
+
+export interface EditorialPaginaHub {
+  metaDescripcion: string;
+  leadParrafos: string[];
+  guiaSubtitulo: string;
+  guiaParrafos: string[];
+}
+
+export function editorialPaginaHub(
+  hub: any,
+  lote: any[],
+  pagina: number,
+  total: number
+): EditorialPaginaHub {
+  const nombre = nombreHub(hub);
+  const { frase: dest } = destNatural(hub);
+  const perfil = detectarPerfilEditorial(hub);
+  const esDuelo = perfil === 'duelo';
+  const esAniv = perfil === 'aniv_meses' || perfil === 'aniv_anos';
+  const esMotiv = perfil === 'motivaciones';
+
+  const inicioIdx = (pagina - 1) * 12 + 1;
+  const finIdx = inicioIdx + Math.max(0, lote.length - 1);
+
+  let breves = 0;
+  let extensos = 0;
+  let totalPalabras = 0;
+  const titulosMuestra: string[] = [];
+  const segCounts: Record<string, number> = {};
+
+  for (const item of lote) {
+    const c = clasificarMensaje(item, hub);
+    totalPalabras += c.palabras;
+    if (c.palabras <= 65) breves++;
+    if (c.claseTono === 'carta' || c.palabras >= 130) extensos++;
+    for (const s of c.segmentos) {
+      segCounts[s] = (segCounts[s] || 0) + 1;
+    }
+    if (item?.titulo && titulosMuestra.length < 2) {
+      titulosMuestra.push(String(item.titulo).trim());
+    }
+  }
+
+  const promedio = lote.length ? Math.round(totalPalabras / lote.length) : 55;
+  const segDominantes = Object.entries(segCounts)
+    .filter(([k]) => k !== 'estado')
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 2)
+    .map(([k]) => ETIQUETAS_SEGMENTOS[k as SegmentoTono]?.toLowerCase() || k);
+
+  const enfoqueSeg = segDominantes.length ? segDominantes.join(' y ') : 'varios registros cuidados';
+  const muestraTxt = titulosMuestra.length ? `“${titulosMuestra[0]}”` : nombre;
+
+  let metaBase = '';
+  if (esDuelo) {
+    metaBase = `${nombre} (pág. ${pagina}/${total}): textos ${inicioIdx} al ${finIdx} con acompañamiento respetuoso para ${dest}. Listos para copiar o bajar en tarjeta sobria.`;
+  } else if (esAniv) {
+    metaBase = `${nombre} (pág. ${pagina}/${total}): dedicatorias ${inicioIdx} a ${finIdx} de ${enfoqueSeg}. Editables con nombres, fecha y postal PNG gratis.`;
+  } else if (esMotiv) {
+    metaBase = `${nombre} (pág. ${pagina}/${total}): reflexiones ${inicioIdx} a ${finIdx} (${promedio} palabras promedio) listas para aplicar hoy y bajar en Story IG.`;
+  } else {
+    metaBase = `${nombre} (pág. ${pagina}/${total}): mensajes ${inicioIdx} al ${finIdx} con estilos ${enfoqueSeg} para ${dest}. Personalizá y copiá gratis.`;
+  }
+
+  const metaDescripcion = metaDe(metaBase, 160);
+
+  const lead1 = esDuelo
+    ? `Este tramo (${inicioIdx} al ${finIdx} de ${total} páginas) reúne ${lote.length} mensajes adicionales de ${nombre.toLowerCase()} centrados en ${enfoqueSeg}, con promedio de ${promedio} palabras por texto.`
+    : esMotiv
+    ? `Recorrés la página ${pagina} de ${total} de ${nombre.toLowerCase()} (piezas ${inicioIdx} a ${finIdx}). Este bloque promedia ${promedio} palabras y combina enfoques de ${enfoqueSeg}.`
+    : `En esta página ${pagina} de ${total} encontrás las dedicatorias ${inicioIdx} a ${finIdx} de ${nombre.toLowerCase()}, destacando tonos ${enfoqueSeg} para ${dest}.`;
+
+  const lead2 =
+    breves >= Math.ceil(lote.length / 2)
+      ? `Predominan formatos ágiles (${breves} de ${lote.length} piezas entran completas en WhatsApp sin cortes), como ${muestraTxt}. Abrí cualquiera para sumar apodo y descargar su tarjeta.`
+      : extensos >= 4
+      ? `Este lote incluye ${extensos} textos de mayor desarrollo y lectura pausada (promedio ${promedio} palabras), empezando por ${muestraTxt}. Entrá en tu favorito para personalizar firma y postal.`
+      : `Cada tarjeta abajo (desde ${muestraTxt}) promedia ${promedio} palabras e incluye su contexto previo, personalizador completo en vivo y exportación limpia a WhatsApp o PNG.`;
+
+  const guiaSubtitulo = `Qué distingue este lote (página ${pagina} de ${total}) en ${nombre}`;
+  const guiaP1 = esDuelo
+    ? `Mientras la primera página presenta las opciones iniciales de ${nombre.toLowerCase()}, este bloque #${pagina} profundiza en alternativas discretas para quienes prefieren expresar cercanía sin repetir fórmulas conocidas (${breves} opciones breves y ${lote.length - breves} de desarrollo sereno).`
+    : esAniv
+    ? `Esta selección del bloque #${pagina} alterna ${breves} dedicatorias breves ideales para el primer saludo del día y ${lote.length - breves} textos más amplios pensados para celebrar la historia en pareja sin sonar repetitivos.`
+    : `Si ya recorriste las primeras opciones de ${nombre.toLowerCase()}, esta página ${pagina} amplía el abanico con ${lote.length} piezas inéditas que oscilan alrededor de las ${promedio} palabras y priorizan matices de ${enfoqueSeg}.`;
+
+  const guiaP2 = `Todas las publicaciones de esta vista enlazan a su página individual con explicación contextual antes de la frase, personalización de nombre y firma en el acto y descarga en formato cuadrado o Story IG.`;
+
+  return {
+    metaDescripcion,
+    leadParrafos: [lead1, lead2],
+    guiaSubtitulo,
+    guiaParrafos: [guiaP1, guiaP2]
+  };
+}
+
